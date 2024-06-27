@@ -2,6 +2,7 @@
 .streamlit/secrets.toml
 secrets.toml
 .vscode/launch.json
+.vscode
 **.py[cod]
 __pycache__/
 __pycache__/database.cpython-311.pyc

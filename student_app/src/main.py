@@ -13,8 +13,7 @@ import utils.db_config as db_config
 from data.data_access_layer import DatabaseAccess, ContentAccess
 from datetime import datetime
 from _pages.lecture_overview import LectureOverview
-from _pages.courses_overview import CoursesOverview
-# import streamlit_antd_components as sac
+from _pages.course_overview import CoursesOverview
 from learnloop import question
 print(question.QuestionType.OPEN_QUESTION.value)
 
@@ -999,7 +998,7 @@ def render_selected_page():
     """
     Determines what type of page to display based on which module the user selected.
     """
-    cont_dal.load_page_content_of_module_in_session_state(st.session_state.selected_module)
+    st.session_state.page_content = cont_dal.fetch_module_content(st.session_state.selected_module)
 
     # Determine what type of page to display
     if st.session_state.info_page:
@@ -1240,7 +1239,7 @@ def create_empty_progress_dict(module):
     """
     empty_dict = {}
 
-    cont_dal.load_page_content_of_module_in_session_state(module)
+    st.session_state.page_content = cont_dal.fetch_module_content(module)
 
     number_of_segments = len(st.session_state.page_content['segments'])
     

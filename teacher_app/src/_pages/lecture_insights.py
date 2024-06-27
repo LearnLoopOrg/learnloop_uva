@@ -12,13 +12,14 @@ from utils.constants import QuestionType
 
 import pandas as pd
 import altair as alt
-class QuestionsFeedbackPage:
+
+
+class LectureInsights:
     def __init__(self, module_title) -> None:
-        self.db = db_config.connect_db(st.session_state.use_mongodb) # database connection
+        self.db = db_config.connect_db(st.session_state.use_mongodb)
         self.db_dal = DatabaseAccess()
         self.cont_dal = ContentAccess()
         self.module_title = module_title
-
         
     def convert_image_base64(self, image_path):
         """
@@ -77,7 +78,7 @@ class QuestionsFeedbackPage:
         """
         empty_dict = {}
 
-        self.cont_dal.load_page_content_of_module_in_session_state(module)
+        st.session_state.page_content = self.cont_dal.fetch_module_content(module)
 
         number_of_segments = len(st.session_state.page_content['segments'])
         
@@ -425,12 +426,16 @@ class QuestionsFeedbackPage:
                         st.write(feedback_analyses[str(question_index)]["text"])
                         self.plot_scores(question_stats['scores'])
 
-    def render_page(self):
+    def run(self):
         """
         Renders the overview page with the lecture title and the topics from the 
         lecture in seperate containers that allow the user to look at the contents
         and to select the topics they want to learn.
         """
+        # Fetch module info to be rendered
+        module = st.session_state.selected_module
+        st.session_state.page_content = self.cont_dal.fetch_module_content(module)
+        
         self.set_styling() # for texts
 
         self.render_title()

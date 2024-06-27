@@ -3,11 +3,12 @@ from openai import AzureOpenAI, OpenAI
 from dotenv import load_dotenv
 import json
 import streamlit as st
+from typing import Literal
 
 load_dotenv()
 
 
-def connect_to_openai(llm_model='gpt-4o'):
+def connect_to_openai(llm_model: Literal['gpt-4o', 'azure_gpt-4', 'azure_gpt-4_Turbo'] = 'gpt-4o'):
     if llm_model == 'gpt-4o':
         print("Using OpenAI GPT-4o")
         st.session_state.openai_model = "gpt-4o"

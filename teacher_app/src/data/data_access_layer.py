@@ -75,12 +75,10 @@ class ContentAccess:
     def get_segment_mc_answers(self, segment_index):
         return self.segments_list[segment_index].get('answers', None)
 
-    def load_page_content_of_module_in_session_state(self, module):
+    def fetch_module_content(self, module):
         file_name = self.fetch_json_file_name_of_module(module)
         path = self.generate_json_path(file_name)
-        st.session_state.page_content = self.load_json_content(path)
-
-        return st.session_state.page_content
+        return self.load_json_content(path)
 
     def fetch_json_file_name_of_module(self, module):
         return module.replace(" ", "_") + ".json"
@@ -230,3 +228,19 @@ class DatabaseAccess:
         results = self.db.users.find(query)
         
         return results
+    
+    def fetch_last_phase(self):
+        """
+        Fetches the phase that the user last visited, such as 'courses', 'practice' etc.
+        """
+        user_doc = self.find_user_doc()
+        return user_doc['last_phase']
+    
+    def update_last_phase(self, phase):
+        """
+        Update the last phase the user visitied, such as 'courses', 'practice' etc.
+        """
+        self.db.users.update_one(
+            {"username": st.session_state.username},
+            {"$set": {"last_phase": phase}}
+        )

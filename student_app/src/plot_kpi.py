@@ -67,7 +67,7 @@ class PlotUsage:
     def count_all_questions(self):
         total = 0
         for module in st.session_state.modules:
-            self.cont_dal.load_page_content_of_module_in_session_state(module)
+            st.session_state.page_content = self.cont_dal.fetch_module_content(module)
             total += len([segment for segment in st.session_state.page_content['segments'] if segment['type'] == 'question'])
 
         return total
