@@ -1,5 +1,4 @@
 import streamlit as st
-from .topic_overview import TopicOverview
 from data.data_access_layer import DatabaseAccess
 
 class LectureOverview:
@@ -92,8 +91,6 @@ class LectureOverview:
         # Spacing
         st.write("\n\n")
         st.write("\n\n")
-
-        # self.render_sidebar()
 
         self.render_page()
 

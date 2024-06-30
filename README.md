@@ -30,7 +30,7 @@ Activate the virtual environment:
 
 ### 4. Install python version
 
-Download and install the required Python version (replace `<version_number>` with the correct version number, which you can find at the top of the requirements.txt):
+Download and install the required Python version (replace `<version_number>` with the correct version number, which you can find at the top of the general_requirements.txt):
 
 ```
 curl -o python-installer.exe <https://www.python.org/ftp/python/><version_number>/python-<version_number>-amd64.exe
@@ -41,7 +41,7 @@ curl -o python-installer.exe <https://www.python.org/ftp/python/><version_number
 Install the required packages:
 
 ```
-pip install -r requirements.txt
+pip install -r general_requirements.txt
 ```
 
 ### 6. Deactivate the virtual environment

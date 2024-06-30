@@ -244,3 +244,11 @@ class DatabaseAccess:
             {"username": st.session_state.username},
             {"$set": {"last_phase": phase}}
         )
+
+    def fetch_module_status(self):
+        """
+        Fetches if the module has been generated and checked on quality by teacher.
+        """
+        print(f"Fetching module status for {st.session_state.selected_module}")
+        print(f"{self.db.content.find_one({'module_name': st.session_state.selected_module})['status']}")
+        # return self.db.content.find_one({"module_name": st.session_state.selected_module})['status']

@@ -15,11 +15,11 @@ import altair as alt
 
 
 class LectureInsights:
-    def __init__(self, module_title) -> None:
+    def __init__(self) -> None:
         self.db = db_config.connect_db(st.session_state.use_mongodb)
         self.db_dal = DatabaseAccess()
         self.cont_dal = ContentAccess()
-        self.module_title = module_title
+        self.module_title = st.session_state.selected_module
         
     def convert_image_base64(self, image_path):
         """

@@ -23,10 +23,9 @@ st.set_page_config(page_title="LearnLoop", layout="wide")
 load_dotenv()
 
 class QualityCheck:
-    def __init__(self, module):
-        self.module = module
-        self.lecture_number = module.split('_')[0]
-        self.lecture_name = module.split("_", 1)[1].replace("_"," ")
+    def __init__(self):
+        self.module = st.session_state.selected_module
+        self.lecture_number, self.lecture_name = self.module.split(' ', 1)
         self.utils = Utils()
     
     def run(self):
@@ -109,14 +108,25 @@ class QualityCheck:
         if st.button("Opslaan"):
             self.utils.upload_json(self.module)
 
-
+# @st.cache_resource(show_spinner=False)
 class Controller:
-    @st.cache_resource(show_spinner=False)
     def __init__(_self):
+        _self.initialise_session_states()
+        # OpenAI & database
+        st.session_state.openai_client = connect_to_openai(llm_model='gpt-4o')
+        st.session_state.use_mongodb = True
+        st.session_state.db = db_config.connect_db(use_mongodb=st.session_state.use_mongodb)
+
+        # User
+        st.session_state.username = 'test_user_6'
         
         # Data access layer
         _self.db_dal = DatabaseAccess()
         _self.cont_dal = ContentAccess()
+
+        # Fetch were user left off
+        st.session_state.selected_module = _self.db_dal.fetch_last_module()
+        st.session_state.selected_phase = _self.db_dal.fetch_last_phase()
 
         # Pages
         _self.lectures_page = LectureOverview()
@@ -124,14 +134,19 @@ class Controller:
         _self.insights_page = LectureInsights()
         _self.quality_check_page = QualityCheck()
 
-        # Connections
-        st.session_state.openai_client = connect_to_openai(llm_model='gpt-4o')
-        st.session_state.db = db_config.connect_db(use_mongodb=True)
-
-        # Fetch were left off
-        st.session_state.selected_module = _self.db_dal.fetch_last_module()
-        st.session_state.selected_phase = _self.db_dal.fetch_last_phase()
-
+    def initialise_session_states(self):
+        if 'selected_phase' not in st.session_state:
+            st.session_state.selected_phase = None
+        if 'selected_module' not in st.session_state:
+            st.session_state.selected_module = None
+        if 'openai_client' not in st.session_state:
+            st.session_state.openai_client = None
+        if 'use_mongodb' not in st.session_state:
+            st.session_state.use_mongodb = None
+        if 'username' not in st.session_state:
+            st.session_state.username = None
+        if 'db' not in st.session_state:
+            st.session_state.db = None
 
     def render_page(self):
         """
@@ -148,38 +163,6 @@ class Controller:
             self.quality_check_page.run()
 
 
-        
-    def render_logo(self):
-        st.image('src/data/content/images/logo.png', width=100)
-
-
-    def set_selected_phase(self, phase):
-        st.session_state.selected_phase = phase
-    
-    def reset_feedback(self):
-        user_query = {"username": st.session_state.username}
-        set_empty_array = {
-            "$set": {
-                f"progress.{st.session_state.selected_module}.feedback.questions": []
-            }
-        }
-
-        self.db.users.update_one(user_query, set_empty_array)
-    
-    def render_page_button(self, page_title, module, phase):
-        """
-        Renders the buttons that the users clicks to go to a certain page.
-        """
-        if st.button(page_title, key=f'{module} {phase}', use_container_width=True):
-            st.session_state.selected_module = module
-
-            # If the state is changed, then the feedback will be reset
-            if st.session_state.selected_phase != phase and phase == "practice":
-                self.reset_feedback()
-            st.session_state.selected_phase = phase
-            st.session_state.info_page = False
-
-
     def render_sidebar(self):
         with st.sidebar:
             spacer, image_col = st.columns([0.4, 1])
@@ -189,44 +172,20 @@ class Controller:
             st.title("Navigatie")
             st.button("Vakken", on_click=self.set_selected_phase, args=('courses',), use_container_width=True)
             st.button("Colleges", on_click=self.set_selected_phase, args=('lectures',), use_container_width=True)
-            
-            st.title("Colleges")
 
-            # Toggle to show only questions during learning phase
-            st.session_state.questions_only = st.toggle("Alleen vragen tonen")
-            
-            practice_exam_count = 0
-            # Display the modules in expanders in the sidebar
-            for i, module in enumerate(st.session_state.modules):
+        
+    def render_logo(self):
+        st.image('src/data/content/images/logo.png', width=100)
 
-                # If the module is not a Oefententamen, then skip it
-                if not module.startswith(st.session_state.practice_exam_name.split(' ')[0]):
-                    zero_width_space = "\u200B"
-                    with st.expander(f"{i + 1}.{zero_width_space} " + ' '.join(module.split(' ')[1:])):
 
-                        # Display buttons for the two types of phases per module
-                        self.render_page_button('Leren 📖', module, phase='topics')
-                        self.render_page_button('Herhalen 🔄', module, phase='practice')
-
-                elif module.startswith(st.session_state.practice_exam_name.split(' ')[0]):
-                    practice_exam_count += 1
-
-            st.title(st.session_state.practice_exam_name)
-            
-            # Render the practice exam buttons
-            for i in range(practice_exam_count):
-                practice_exam_name = st.session_state.practice_exam_name
-                # render_page_button(f'{practice_exam_name} {i + 1} ✍🏽', f'{practice_exam_name} {i + 1}', 'learning')
-                self.render_page_button(f'{practice_exam_name} ✍🏽', f'{practice_exam_name}', 'learning')
-
+    def set_selected_phase(self, phase):
+        st.session_state.selected_phase = phase
+  
 
 if __name__=="__main__":
-    controller = Controller()
-    controller.render_sidebar()
-    controller.render_page()
+
+    if 'controller' not in st.session_state:
+        st.session_state.controller = Controller()
     
-    # st.session_state.selected_module = "1 Embryonale ontwikkeling"
-    # st.session_state.use_mongodb = True
-    # st.session_state.username = 'test_user_6'
-    # st.session_state.openai_client = connect_to_openai()
-    # QualityCheck("1_Embryonale_ontwikkeling").run()
+    st.session_state.controller.render_sidebar()
+    st.session_state.controller.render_page()

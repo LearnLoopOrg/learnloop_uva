@@ -1,5 +1,4 @@
 import streamlit as st
-from .topic_overview import TopicOverview
 from data.data_access_layer import DatabaseAccess
 
 class LectureOverview:
@@ -9,6 +8,7 @@ class LectureOverview:
                 ("2_Machine_Learning", "De fundamentele principes achter machine learning en hoe je die kunt implementern om bedrijfsprocessen te verbeteren."),
                 ("3_Data_analytics", "Hoe je data kunt analyseren en visualiseren om er waardevolle inzichten uit te halen en beslissingen te ondersteunen."),
                 ("4_Data_engineering", "Hoe je data pipelines kunt bouwen om data te verzamelen en te verwerkem van verschillende bronnen op grote schaal.")]
+    
     
     def render_logo(self):
         st.image('src/data/content/images/logo.png', width=100)
@@ -46,7 +46,15 @@ class LectureOverview:
         """
         Sets the selected page and lecture to the one that the student clicked on.
         """
-        st.session_state.selected_phase = 'topics'
+        module_status = self.db_dal.fetch_module_status()
+
+        if module_status == 'corrected':
+            st.session_state.selected_phase = 'insights'
+        elif module_status == 'generated':
+            st.session_state.selected_phase = 'quality_check'
+        else:
+            st.session_state.selected_phase = 'record'
+            
         st.session_state.selected_module = lecture_title
         self.db_dal.update_last_module()
 

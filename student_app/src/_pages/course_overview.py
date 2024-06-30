@@ -1,5 +1,4 @@
 import streamlit as st
-from .lecture_overview import LectureOverview
 from data.data_access_layer import DatabaseAccess
 
 class CoursesOverview:
@@ -9,7 +8,6 @@ class CoursesOverview:
                 ("Business Analytics", "Leer hoe je data kunt analyseren en visualiseren om er waardevolle inzichten uit te halen en beslissingen te ondersteunen."),
                 ("Ethical AI", "Leer over de ethische implicaties van AI en hoe je AI-projecten kunt ontwerpen en implementeren op een ethisch verantwoorde en duurzame manier.")
         ]
-        self.lecture_overview = LectureOverview()
     
     def go_to_course(self, course_name):
         """
