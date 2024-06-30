@@ -19,14 +19,6 @@ st.set_page_config(page_title="LearnLoop", layout="wide")
 load_dotenv()
 
 
-def render_overview_page():
-    """
-    Renders the page that shows all the subjects in a lecture, which gives the 
-    student insight into their progress.
-    """
-    module_title = ' '.join(st.session_state.selected_module.split(' ')[1:])
-    overview_page = QuestionsFeedbackPage(module_title)
-    overview_page.render_page()
 
 class QualityCheck:
     def __init__(self, module):
@@ -54,6 +46,8 @@ class QualityCheck:
 
         for segment_id, segment in enumerate(segments):
             segment_id=str(segment_id)
+            if 'button_state'+segment_id not in st.session_state:
+                st.session_state['button_state'+segment_id] = 'no'
             segment_type = segment["type"]
             if segment_type == "theory":
                 if segment_id not in st.session_state:
@@ -90,7 +84,7 @@ class QualityCheck:
             with st.container(border=True):
                 if segment["image"]:
                     st.image(f'src/data/images/{segment["image"]}')
-                
+
                 if segment_type == "theory":
                     st.markdown(f"**Theorie: {segment["title"]}**")
                     st.text_area( "Theorie", height=200, key=segment_id, on_change=self.utils.save_st_change( "new-"+segment_id, segment_id), label_visibility="collapsed")
@@ -105,7 +99,15 @@ class QualityCheck:
                     elif "answer" in segment:
                         st.markdown("*Antwoord:*")
                         st.text_area( "Antwoord:", height=200, key= segment_id+"-answer", on_change=self.utils.save_st_change("new-"+segment_id+"-answer", segment_id+"-answer"), label_visibility="collapsed")
-            
+
+                col1, col2 = st.columns([0.9, 0.1])
+                with col2:
+                    button_icon = "❌" if st.session_state['button_state'+segment_id]=="no" else "➕"
+                    button_help = "Verwijderen" if st.session_state['button_state'+segment_id]=="no" else "Toevoegen"
+                    if st.button(label=button_icon, key='toggle_button'+segment_id, help=button_help):
+                        self.utils.toggle_button(segment_id)
+                        st.rerun()
+
             if topic_segment_id == len(topics[topic_id]["segment_indexes"])-1:
                 topic_id += 1
                 topic_segment_id = 0
@@ -113,13 +115,11 @@ class QualityCheck:
                 topic_segment_id += 1
 
         if st.button("Opslaan"):
-            self.utils.upload_json(self.module)
+            segments_list = self.utils.preprocessed_segments(self.module)
+            self.utils.upload_modules_json(self.module, segments_list)
+            self.utils.upload_modules_topics_json(self.module, segments_list)
 
 
 if __name__=="__main__":
-    st.session_state.selected_module = "1 Embryonale ontwikkeling"
-    st.session_state.use_mongodb = True
-    st.session_state.username = 'test_user_6'
-    st.session_state.openai_client = connect_to_openai()
-    render_overview_page()
     QualityCheck("1_Embryonale_ontwikkeling").run()
+
