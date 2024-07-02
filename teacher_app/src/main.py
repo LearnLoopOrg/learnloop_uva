@@ -33,11 +33,11 @@ class QualityCheck:
 
         st.write("Controleer de onderstaande gegenereerde oefenmaterialen om er zeker van te zijn dat studenten het juiste leren. Pas de afbeelding, theorie, vraag of het antwoord aan, of verwijder deze indien nodig. Als je klaar bent, kun je de oefenmaterialen direct delen met studenten door op de button onderaan te drukken.")
 
-        with open(f'src/data/modules/{self.module}.json') as f:
-            data_modules = json.load(f)
+        data_modules = self.utils.download_content_from_blob_storage("content", f"modules/{self.module}.json")
+        data_modules = json.loads(data_modules)
 
-        with open(f'src/data/modules/topics/{self.module}_topics.json') as g:
-            data_modules_topics = json.load(g)
+        data_modules_topics = self.utils.download_content_from_blob_storage("content", f"topics/{self.module}.json")
+        data_modules_topics = json.loads(data_modules_topics)
 
         segments = data_modules['segments']
         topics = data_modules_topics['topics']
@@ -83,7 +83,8 @@ class QualityCheck:
             segment_type = segment["type"]
             with st.container(border=True):
                 if segment["image"]:
-                    st.image(f'src/data/images/{segment["image"]}')
+                    image = self.utils.download_image_from_blob_storage("images", f"{segment["image"]}")
+                    st.image(image)
 
                 if segment_type == "theory":
                     st.markdown(f"**Theorie: {segment["title"]}**")

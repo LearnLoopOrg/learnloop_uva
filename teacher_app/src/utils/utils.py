@@ -7,64 +7,55 @@ import certifi
 from pymongo.server_api import ServerApi
 import streamlit as st
 from azure.storage.blob import BlobServiceClient
+from io import BytesIO
+from PIL import Image
 
 load_dotenv()
 
 class Utils:
     def __init__(self):
         self.connection_string = os.getenv('AZURE_BLOB_STORAGE_KEY')
+        self.blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
 
-    def upload_content_to_blob_storage(self, container_name, directory_name, content, blob_name):
+    def upload_content_to_blob_storage(self, container_name, blob_name, content):
         """
         Upload content to a specific directory within a container in Azure Blob Storage.
 
         """
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
-
         try:
-            container_client = blob_service_client.create_container(container_name)
+            container_client = self.blob_service_client.create_container(container_name)
             print(f"Container '{container_name}' created successfully.")
         except Exception as e:
             print(f"Container might already exist: {e}")
 
-        full_blob_name = f"{directory_name}/{blob_name}"
-        blob_client = blob_service_client.get_blob_client(container=container_name, blob=full_blob_name)
+        blob_client = self.blob_service_client.get_blob_client(container=container_name, blob=blob_name)
 
-        blob_client.upload_blob(content)
-        print(f"Content uploaded to '{full_blob_name}' in container '{container_name}'.")
+        blob_client.upload_blob(content, overwrite=True)
+        print(f"Content uploaded to '{blob_name}' in container '{container_name}'.")
 
-    def download_content_from_blob_storage(self, container_name, directory_name, blob_name):
+    def download_content_from_blob_storage(self, container_name, blob_name):
         """
         Download content from a specific directory within a container in Azure Blob Storage.
 
-        Args:
-            connection_string (str): The connection string to the Azure Storage account.
-            container_name (str): The name of the container.
-            directory_name (str): The name of the directory within the container.
-            blob_name (str): The name of the blob to download.
-
-        Returns:
-            bytes: The content of the downloaded blob.
         """
-        # Create a BlobServiceClient
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
-
-        # Construct the full blob name
-        full_blob_name = f"{directory_name}/{blob_name}"
-
         # Get a BlobClient for the blob
-        blob_client = blob_service_client.get_blob_client(container=container_name, blob=full_blob_name)
+        blob_client = self.blob_service_client.get_blob_client(container=container_name, blob=blob_name)
 
         # Download the content of the blob
         try:
             blob_data = blob_client.download_blob().readall()
-            print(f"Content downloaded from '{full_blob_name}' in container '{container_name}'.")
+            print(f"Content downloaded from '{blob_name}' in container '{container_name}'.")
             return blob_data
         except Exception as e:
             print(f"Failed to download blob: {e}")
             return None
+    
+    def download_image_from_blob_storage(self, container_name, blob_name):
+        blob_client = self.blob_service_client.get_blob_client(container=container_name, blob=blob_name)
+        blob_data = blob_client.download_blob().readall()
+        return Image.open(BytesIO(blob_data))
 
     def toggle_button(self, segment_id):
         if st.session_state['button_state'+segment_id] == 'no':
@@ -87,14 +78,14 @@ class Utils:
         return list_output
 
     def original_topics(self, module) -> list:
-        with open(f'src/data/modules/topics/{module}_topics.json') as f:
-            data_modules = json.load(f)
+        data_modules = self.download_content_from_blob_storage( "content", f"topics/{module}.json" )
+        data_modules = json.loads(data_modules)
         topics = data_modules['topics']
         return topics
 
     def original_segments(self, module) -> list:
-        with open(f'src/data/modules/{module}.json') as f:
-            data_modules = json.load(f)
+        data_modules = self.download_content_from_blob_storage( "content", f"modules/{module}.json" )
+        data_modules = json.loads(data_modules)
         segments = data_modules['segments']
         return segments
 
@@ -156,15 +147,14 @@ class Utils:
         
         modules_data["segments"] = modules_segments_list
         json_modules_data = json.dumps(modules_data)
-        self.upload_content_to_blob_storage( container_name="modules", directory_name="blob", content=json_modules_data, blob_name=f"{module}_updated.json")
+        self.upload_content_to_blob_storage( "content-corrected", f"modules/{module}.json", json_modules_data)
     
-
     def upload_modules_topics_json(self, module, segments_list) -> None:
         modules_topics_data = { "module_name": "NAF_1", "updated":"yes"}
         modules_topics_topics_list= []
 
-        with open(f'src/data/modules/topics/{module}_topics.json') as g:
-            data_modules_topics = json.load(g)
+        data_modules_topics = self.download_content_from_blob_storage( "content", f"topics/{module}.json" )
+        data_modules_topics = json.loads(data_modules_topics)
 
         topics = data_modules_topics['topics']
         topic_id = 0
@@ -190,7 +180,7 @@ class Utils:
 
         modules_topics_data["topics"] = modules_topics_topics_list
         json_modules_topics_data = json.dumps(modules_topics_data)
-        self.upload_content_to_blob_storage( container_name="topics", directory_name="blob", content=json_modules_topics_data, blob_name=f"{module}_updated.json")
+        self.upload_content_to_blob_storage( "content-corrected", f"topics/{module}.json", json_modules_topics_data)
 
 
 
