@@ -46,17 +46,23 @@ class LectureOverview:
         """
         Sets the selected page and lecture to the one that the student clicked on.
         """
+        st.session_state.selected_module = lecture_title
+        print(f"Selected module: {st.session_state.selected_module}")
         module_status = self.db_dal.fetch_module_status()
 
+        print(f"Module status: {module_status}")
+        print(f"Phase before: {st.session_state.selected_phase}")
         if module_status == 'corrected':
             st.session_state.selected_phase = 'insights'
         elif module_status == 'generated':
             st.session_state.selected_phase = 'quality_check'
-        else:
+        elif module_status == 'not_recorded':
             st.session_state.selected_phase = 'record'
             
-        st.session_state.selected_module = lecture_title
+        print(f"Phase set to {st.session_state.selected_phase}")
+
         self.db_dal.update_last_module()
+        
 
     def render_page_title(self):
         title_html = open("./src/assets/html/lecture_title.html", "r").read()

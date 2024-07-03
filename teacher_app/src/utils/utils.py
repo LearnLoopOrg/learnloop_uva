@@ -52,7 +52,7 @@ class Utils:
         return list_output
 
     def original_segments_list(self, module):
-        with open(f'src/data/modules/{module}.json') as f:
+        with open(f'src/data/content/modules/{module}.json') as f:
             data_modules = json.load(f)
         segments = data_modules['segments']
         return segments
@@ -106,7 +106,7 @@ class Utils:
         else:
             self.db.content.insert_one(data)
 
-        with open(f"src/data/modules/{module}_updated.json",'w', encoding='utf-8') as f:
+        with open(f"src/data/content/modules/{module}_updated.json",'w', encoding='utf-8') as f:
             json.dump( data , f, ensure_ascii=False, indent=4)
 
 

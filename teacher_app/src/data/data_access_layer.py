@@ -251,4 +251,4 @@ class DatabaseAccess:
         """
         print(f"Fetching module status for {st.session_state.selected_module}")
         print(f"{self.db.content.find_one({'module_name': st.session_state.selected_module})['status']}")
-        # return self.db.content.find_one({"module_name": st.session_state.selected_module})['status']
+        return self.db.content.find_one({'module_name': st.session_state.selected_module})['status']
