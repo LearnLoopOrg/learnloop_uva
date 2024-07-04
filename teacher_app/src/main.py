@@ -1,3 +1,4 @@
+from time import sleep
 from utils.utils import *
 from utils.openai_client import connect_to_openai
 import streamlit as st
@@ -15,17 +16,20 @@ st.set_page_config(page_title="LearnLoop", layout="wide")
 
 load_dotenv()
 
+
 class Controller:
     def __init__(_self):
         _self.initialise_session_states()
         # OpenAI & database
-        st.session_state.openai_client = connect_to_openai(llm_model='gpt-4o')
+        st.session_state.openai_client = connect_to_openai(llm_model="gpt-4o")
         st.session_state.use_mongodb = True
-        st.session_state.db = db_config.connect_db(use_mongodb=st.session_state.use_mongodb)
+        st.session_state.db = db_config.connect_db(
+            use_mongodb=st.session_state.use_mongodb
+        )
 
         # User
-        st.session_state.username = 'test_user_6'
-        
+        st.session_state.username = "test_user_6"
+
         # Data access layer
         _self.db_dal = DatabaseAccess()
         _self.cont_dal = ContentAccess()
@@ -42,34 +46,33 @@ class Controller:
         _self.record_page = Recorder()
 
     def initialise_session_states(self):
-        if 'selected_phase' not in st.session_state:
+        if "selected_phase" not in st.session_state:
             st.session_state.selected_phase = None
-        if 'selected_module' not in st.session_state:
+        if "selected_module" not in st.session_state:
             st.session_state.selected_module = None
-        if 'openai_client' not in st.session_state:
+        if "openai_client" not in st.session_state:
             st.session_state.openai_client = None
-        if 'use_mongodb' not in st.session_state:
+        if "use_mongodb" not in st.session_state:
             st.session_state.use_mongodb = None
-        if 'username' not in st.session_state:
+        if "username" not in st.session_state:
             st.session_state.username = None
-        if 'db' not in st.session_state:
+        if "db" not in st.session_state:
             st.session_state.db = None
 
     def render_page(self):
         """
         Determines what type of page to display based on which module the user selected.
         """
-        if st.session_state.selected_phase == 'courses':
+        if st.session_state.selected_phase == "courses":
             self.courses_page.run()
-        elif st.session_state.selected_phase == 'lectures':
+        elif st.session_state.selected_phase == "lectures":
             self.lectures_page.run()
-        elif st.session_state.selected_phase == 'record':
+        elif st.session_state.selected_phase == "record":
             self.record_page.run()
-        elif st.session_state.selected_phase == 'quality_check':
+        elif st.session_state.selected_phase == "quality_check":
             self.quality_check_page.run()
-        elif st.session_state.selected_phase == 'insights':
+        elif st.session_state.selected_phase == "insights":
             self.insights_page.run()
-
 
     def render_sidebar(self):
         with st.sidebar:
@@ -78,20 +81,38 @@ class Controller:
                 self.render_logo()
 
             st.title("Navigatie")
-            st.button("Vakken", on_click=self.set_selected_phase, args=('courses',), use_container_width=True)
-            st.button("Colleges", on_click=self.set_selected_phase, args=('lectures',), use_container_width=True)
+            st.button(
+                "Vakken",
+                on_click=self.set_selected_phase,
+                args=("courses",),
+                use_container_width=True,
+            )
+            st.button(
+                "Colleges",
+                on_click=self.set_selected_phase,
+                args=("lectures",),
+                use_container_width=True,
+            )
+            # print("SIDE BAR RENDERED")
 
-        
+            # if st.session_state.selected_phase == "quality_check":
+            #     topics = st.session_state["topics"]
+            #     topic_titles = [topic["topic_title"] for topic in topics]
+            #     for topic_title in topic_titles:
+            #         st.html(
+            #             f'<a href="#{topic_title}">Spijsverteringsstelsel</a>',
+            #         )
+
     def render_logo(self):
-        st.image('src/data/content/images/logo.png', width=100)
+        st.image("src/data/content/images/logo.png", width=100)
 
     def set_selected_phase(self, phase):
         st.session_state.selected_phase = phase
 
-if __name__=="__main__":
 
-    if 'controller' not in st.session_state:
+if __name__ == "__main__":
+    if "controller" not in st.session_state:
         st.session_state.controller = Controller()
-    
+
     st.session_state.controller.render_sidebar()
     st.session_state.controller.render_page()

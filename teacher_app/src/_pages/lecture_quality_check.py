@@ -15,9 +15,33 @@ class QualityCheck:
         self.display_header()
         data_modules, data_modules_topics = self.load_module_data()
         segments, topics = data_modules["segments"], data_modules_topics["topics"]
-        self.initialize_session_state(segments)
+        self.initialize_session_state(segments, topics)
+        self.display_sidebar_page_navigation(topics)
         self.display_segments(segments, topics)
         self.display_save_button()
+
+    def display_sidebar_page_navigation(self, topics):
+        # Render the sidebar with links to the topics
+        with st.sidebar:
+            topic_titles = [topic["topic_title"] for topic in topics]
+            # Define CSS styles
+            css_styles = """
+            <style>
+            </style>
+            """
+
+            # Render CSS styles
+            st.markdown(css_styles, unsafe_allow_html=True)
+
+            # Render navigation with heading
+            st.markdown("<h2>Index</h2>", unsafe_allow_html=True)
+            st.markdown('<ul class="navigation">', unsafe_allow_html=True)
+            for i, topic_title in enumerate(topic_titles):
+                st.markdown(
+                    f'<li><a href="#{topic_title}">{i + 1} - {topic_title}</a></li>',
+                    unsafe_allow_html=True,
+                )
+            st.markdown("</ul>", unsafe_allow_html=True)
 
     def display_header(self):
         lecture_number, lecture_name = st.session_state.selected_module.split(" ", 1)
@@ -40,7 +64,7 @@ class QualityCheck:
         data_modules_topics = json.loads(data_modules_topics)
         return data_modules, data_modules_topics
 
-    def initialize_session_state(self, segments):
+    def initialize_session_state(self, segments, topics):
         for segment_id, segment in enumerate(segments):
             segment_id = str(segment_id)
             if f"button_state{segment_id}" not in st.session_state:
@@ -99,7 +123,8 @@ class QualityCheck:
             segment_id_str = str(segment_id)
             if topic_segment_id == 0:
                 st.subheader(
-                    f"Onderwerp {topic_id + 1} / {len(topics) + 1} - {topics[topic_id]["topic_title"]}"
+                    f"Onderwerp {topic_id + 1} / {len(topics)} - {topics[topic_id]["topic_title"]}",
+                    anchor=topics[topic_id]["topic_title"],
                 )
             self.display_segment(segment_id_str, segment)
             topic_id, topic_segment_id = self.update_topic_indices(
