@@ -21,8 +21,7 @@ class QualityCheck:
 
     def display_header(self):
         lecture_number, lecture_name = st.session_state.selected_module.split(" ", 1)
-        st.title(f"Kwaliteitscheck college {lecture_number}:")
-        st.subheader(lecture_name)
+        st.title(f"Kwaliteitscheck {lecture_name}: college {lecture_number}")
         st.write(
             "Controleer de onderstaande gegenereerde oefenmaterialen om er zeker van te zijn dat studenten het juiste leren. "
             "Pas de afbeelding, theorie, vraag of het antwoord aan, of verwijder deze indien nodig. "
@@ -99,7 +98,9 @@ class QualityCheck:
         for segment_id, segment in enumerate(segments):
             segment_id_str = str(segment_id)
             if topic_segment_id == 0:
-                st.subheader(topics[topic_id]["topic_title"])
+                st.subheader(
+                    f"Onderwerp {topic_id + 1} / {len(topics) + 1} - {topics[topic_id]["topic_title"]}"
+                )
             self.display_segment(segment_id_str, segment)
             topic_id, topic_segment_id = self.update_topic_indices(
                 topic_id, topic_segment_id, topics
