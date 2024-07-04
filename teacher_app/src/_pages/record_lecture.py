@@ -77,7 +77,7 @@ class Recorder:
 
         out.release()
 
-        self.utils.upload_file_to_blob_storage( self.container_name_video, temp_filename, self.blob_name_video)
+        self.utils.upload_file_to_blob_storage(self.container_name_video, temp_filename, self.blob_name_video)
         # Optionally, clean up the temporary file
         os.remove(temp_filename)
     
@@ -98,7 +98,8 @@ class Recorder:
         st.session_state['recording'] = False
 
     def run(self):
-        st.title("Screen and Audio Recorder")
+        st.title(f"Record lecture {st.session_state.selected_module}")
+        st.write("This lecture hasn't been recorded yet. Click the button below to start recording.")
 
         if 'recording' not in st.session_state:
             st.session_state['recording'] = False
