@@ -8,7 +8,7 @@ from typing import Literal
 load_dotenv()
 
 
-def connect_to_openai(llm_model: Literal['gpt-4o', 'azure_gpt-4', 'azure_gpt-4_Turbo'] = 'gpt-4o'):
+def connect_to_openai(llm_model: Literal['gpt-4o', 'azure_gpt-4', 'azure_gpt-4_turbo'] = 'gpt-4o'):
     if llm_model == 'gpt-4o':
         print("Using OpenAI GPT-4o")
         st.session_state.openai_model = "gpt-4o"
@@ -23,16 +23,16 @@ def connect_to_openai(llm_model: Literal['gpt-4o', 'azure_gpt-4', 'azure_gpt-4_T
             azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
         )
 
-    elif llm_model == 'azure_gpt-4_Turbo':
-        print("Using Azure GPT-4 Turbo")
+    elif llm_model == 'azure_gpt-4_turbo': 
+
+        #TODO: not working
+        #TODO: ask Gerrit to put key in Azure secrets for deployment
+
         st.session_state.openai_model = "learnloop"
         return AzureOpenAI(
-            # api_key=os.getenv("OPENAI_API_KEY_TURBO"), #TODO: ask Gerrit to put key in Azure secrets
-            api_key=os.getenv("OPENAI_API_KEY"),
+            api_key=os.getenv("OPENAI_API_KEY_TURBO"),
             api_version="2024-03-01-preview",
-            # azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT_TURBO")
-            # TODO: ask Gerrit to put key in Azure secrets
-            azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
+            azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT_TURBO")
         )
 
 

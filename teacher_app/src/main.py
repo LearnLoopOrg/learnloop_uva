@@ -23,7 +23,6 @@ st.set_page_config(page_title="LearnLoop", layout="wide")
 
 load_dotenv()
 
-# @st.cache_resource(show_spinner=False)
 class Controller:
     def __init__(_self):
         _self.initialise_session_states()
@@ -97,7 +96,6 @@ class Controller:
 
     def set_selected_phase(self, phase):
         st.session_state.selected_phase = phase
-  
 
 if __name__=="__main__":
 

@@ -23,6 +23,12 @@ class QualityCheck:
         with open(f'src/data/content/topics/{st.session_state.selected_module.replace(" ", "_")}_topics.json') as g:
             data_modules_topics = json.load(g)
 
+        data_modules = self.utils.download_content_from_blob_storage("content", f"modules/{st.session_state.selected_module}.json")
+        data_modules = json.loads(data_modules)
+
+        data_modules_topics = self.utils.download_content_from_blob_storage("content", f"topics/{st.session_state.selected_module}.json")
+        data_modules_topics = json.loads(data_modules_topics)
+
         segments = data_modules['segments']
         topics = data_modules_topics['topics']
         topic_id = 0
@@ -30,6 +36,8 @@ class QualityCheck:
 
         for segment_id, segment in enumerate(segments):
             segment_id=str(segment_id)
+            if 'button_state'+segment_id not in st.session_state:
+                st.session_state['button_state'+segment_id] = 'no'
             segment_type = segment["type"]
             if segment_type == "theory":
                 if segment_id not in st.session_state:
@@ -57,7 +65,6 @@ class QualityCheck:
                     if "new-"+segment_id+"-answer" not in st.session_state:
                         st.session_state["new-"+segment_id+"-answer"]= ""
 
-
         for segment_id, segment in enumerate(segments):
             if topic_segment_id == 0:
                 st.subheader(topics[topic_id]["topic_title"])
@@ -66,6 +73,9 @@ class QualityCheck:
             with st.container(border=True):
                 if segment["image"]:
                     st.image(f'src/data/images/{segment["image"]}')
+
+                    image = self.utils.download_image_from_blob_storage("images", f"{segment["image"]}")
+                    st.image(image)
                 
                 if segment_type == "theory":
                     st.markdown(f"**Theorie: {segment["title"]}**")
@@ -81,7 +91,15 @@ class QualityCheck:
                     elif "answer" in segment:
                         st.markdown("*Antwoord:*")
                         st.text_area( "Antwoord:", height=200, key= segment_id+"-answer", on_change=self.utils.save_st_change("new-"+segment_id+"-answer", segment_id+"-answer"), label_visibility="collapsed")
-            
+
+                col1, col2 = st.columns([0.9, 0.1])
+                with col2:
+                    button_icon = "❌" if st.session_state['button_state'+segment_id]=="no" else "➕"
+                    button_help = "Verwijderen" if st.session_state['button_state'+segment_id]=="no" else "Toevoegen"
+                    if st.button(label=button_icon, key='toggle_button'+segment_id, help=button_help):
+                        self.utils.toggle_button(segment_id)
+                        st.rerun()
+
             if topic_segment_id == len(topics[topic_id]["segment_indexes"])-1:
                 topic_id += 1
                 topic_segment_id = 0
@@ -90,3 +108,7 @@ class QualityCheck:
 
         if st.button("Opslaan", use_container_width=True):
             self.utils.upload_json(st.session_state.selected_module.replace(" ", "_"))
+
+            segments_list = self.utils.preprocessed_segments(st.session_state.selected_module)
+            self.utils.upload_modules_json(st.session_state.selected_module, segments_list)
+            self.utils.upload_modules_topics_json(st.session_state.selected_module, segments_list)
