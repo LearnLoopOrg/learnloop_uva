@@ -7,26 +7,19 @@ load_dotenv()
 
 class QualityCheck:
     def __init__(self):
-        self.lecture_number, self.lecture_name = st.session_state.selected_module.split(' ', 1)
         self.utils = Utils()
     
     def run(self):
-        print(f"Quality check for lecture {self.lecture_number} started")
-        st.title(f"Kwaliteitscheck college {self.lecture_number}:")
-        st.subheader(self.lecture_name)
+        lecture_number, lecture_name = st.session_state.selected_module.split(' ', 1)
+        st.title(f"Kwaliteitscheck college {lecture_number}:")
+        st.subheader(lecture_name)
 
         st.write("Controleer de onderstaande gegenereerde oefenmaterialen om er zeker van te zijn dat studenten het juiste leren. Pas de afbeelding, theorie, vraag of het antwoord aan, of verwijder deze indien nodig. Als je klaar bent, kun je de oefenmaterialen direct delen met studenten door op de button onderaan te drukken.")
 
-        with open(f'src/data/content/modules/{st.session_state.selected_module.replace(" ", "_")}.json') as f:
-            data_modules = json.load(f)
-
-        with open(f'src/data/content/topics/{st.session_state.selected_module.replace(" ", "_")}_topics.json') as g:
-            data_modules_topics = json.load(g)
-
-        data_modules = self.utils.download_content_from_blob_storage("content", f"modules/{st.session_state.selected_module}.json")
+        data_modules = self.utils.download_content_from_blob_storage("content", f"modules/{st.session_state.selected_module.replace(" ", "_")}.json")
         data_modules = json.loads(data_modules)
 
-        data_modules_topics = self.utils.download_content_from_blob_storage("content", f"topics/{st.session_state.selected_module}.json")
+        data_modules_topics = self.utils.download_content_from_blob_storage("content", f"topics/{st.session_state.selected_module.replace(" ", "_")}.json")
         data_modules_topics = json.loads(data_modules_topics)
 
         segments = data_modules['segments']
@@ -72,8 +65,6 @@ class QualityCheck:
             segment_type = segment["type"]
             with st.container(border=True):
                 if segment["image"]:
-                    st.image(f'src/data/images/{segment["image"]}')
-
                     image = self.utils.download_image_from_blob_storage("images", f"{segment["image"]}")
                     st.image(image)
                 

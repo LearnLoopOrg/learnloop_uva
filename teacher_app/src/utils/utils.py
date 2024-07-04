@@ -18,6 +18,25 @@ class Utils:
         self.blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
 
+    def upload_file_to_blob_storage(self, container_name, source_path, blob_name ):
+        """
+        Upload a file to a specific directory within a container in Azure Blob Storage.
+
+        """
+
+        try:
+            container_client = self.blob_service_client.create_container(container_name)
+            print(f"Container '{container_name}' created successfully.")
+        except Exception as e:
+            print(f"Container might already exist: {e}")
+
+        blob_client = self.blob_service_client.get_blob_client(container=container_name, blob=blob_name)
+
+        with open(source_path, "rb") as data:
+            blob_client.upload_blob(data)
+        print(f"File '{source_path}' uploaded to '{blob_name}' in container '{container_name}'.")
+
+
     def upload_content_to_blob_storage(self, container_name, blob_name, content):
         """
         Upload content to a specific directory within a container in Azure Blob Storage.
@@ -181,9 +200,3 @@ class Utils:
         modules_topics_data["topics"] = modules_topics_topics_list
         json_modules_topics_data = json.dumps(modules_topics_data)
         self.upload_content_to_blob_storage( "content-corrected", f"topics/{module}.json", json_modules_topics_data)
-
-
-
-
-
-

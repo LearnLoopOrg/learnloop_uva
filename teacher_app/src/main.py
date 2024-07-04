@@ -1,22 +1,14 @@
 from utils.utils import *
 from utils.openai_client import connect_to_openai
-import time
-import random
 import streamlit as st
 from dotenv import load_dotenv
-import os
-import json
-from openai import AzureOpenAI
-from openai import OpenAI
-from pymongo import MongoClient
-import base64
 import utils.db_config as db_config
 from data.data_access_layer import DatabaseAccess, ContentAccess
-from datetime import datetime
 from _pages.lecture_overview import LectureOverview
 from _pages.course_overview import CoursesOverview
 from _pages.lecture_student_answers_insights import LectureInsights
 from _pages.lecture_quality_check import QualityCheck
+from _pages.record_lecture import Recorder
 
 # Must be called first
 st.set_page_config(page_title="LearnLoop", layout="wide")
@@ -47,6 +39,7 @@ class Controller:
         _self.courses_page = CoursesOverview()
         _self.insights_page = LectureInsights()
         _self.quality_check_page = QualityCheck()
+        _self.record_page = Recorder()
 
     def initialise_session_states(self):
         if 'selected_phase' not in st.session_state:
@@ -66,14 +59,12 @@ class Controller:
         """
         Determines what type of page to display based on which module the user selected.
         """
-        # Determine what type of page to display
         if st.session_state.selected_phase == 'courses':
             self.courses_page.run()
         elif st.session_state.selected_phase == 'lectures':
             self.lectures_page.run()
-        elif st.session_state.selected_phase == 'record': #TODO: Connect merge and connect record page
-            # self.record_page.run()
-            pass
+        elif st.session_state.selected_phase == 'record':
+            self.record_page.run()
         elif st.session_state.selected_phase == 'quality_check':
             self.quality_check_page.run()
         elif st.session_state.selected_phase == 'insights':

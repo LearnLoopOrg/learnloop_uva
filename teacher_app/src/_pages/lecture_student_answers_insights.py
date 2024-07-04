@@ -19,7 +19,6 @@ class LectureInsights:
         self.db = db_config.connect_db(st.session_state.use_mongodb)
         self.db_dal = DatabaseAccess()
         self.cont_dal = ContentAccess()
-        self.module_title = st.session_state.selected_module
         
     def convert_image_base64(self, image_path):
         """
@@ -50,7 +49,7 @@ class LectureInsights:
         header_cols = container.columns([0.1, 40])
 
         with header_cols[1]:
-            st.title(self.module_title)
+            st.title(st.session_state.selected_module.replace("_", " "))
             st.write("\n")
 
 

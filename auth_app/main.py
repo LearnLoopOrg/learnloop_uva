@@ -80,7 +80,7 @@ def get_info(user_id):
     def fetch_info_from_UVA(user_id):
         #TODO: make call to UVA API
         return {
-            "user_description": "teacher",
+            "user_description": "student",
             "courses": ["course1", "course2", "course3"],
         }
     info = fetch_info_from_UVA(user_id)

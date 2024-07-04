@@ -1,16 +1,20 @@
-# Python version: 3.12.4
+# Python 3.12.4
 
-streamlit-antd-components==0.3.2
 streamlit==1.36.0
+sounddevice==0.4.7
+numpy==1.26.4
+opencv-python==4.10.0.84
+mss==9.0.1
+pyaudio==0.2.14
 python-dotenv==1.0.0
 pymongo==4.6.0
 openai==1.2.4
 streamlit-authenticator==0.2.3
 st_clickable_images==0.0.3
-python-dotenv==1.0.0
 authlib==1.3.0
 matplotlib==3.9.0
 certifi==2023.11.17
 flask==3.0.2
 gunicorn==21.2.0
+streamlit-antd-components==0.3.2
 -e ./learnloop
