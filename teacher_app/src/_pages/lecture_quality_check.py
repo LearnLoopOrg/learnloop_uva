@@ -2,23 +2,25 @@ from utils.utils import Utils
 import streamlit as st
 from dotenv import load_dotenv
 import json
+from PIL import Image
 
 load_dotenv()
+
 
 class QualityCheck:
     def __init__(self):
         self.utils = Utils()
-    
+
     def run(self):
         self.display_header()
         data_modules, data_modules_topics = self.load_module_data()
-        segments, topics = data_modules['segments'], data_modules_topics['topics']
+        segments, topics = data_modules["segments"], data_modules_topics["topics"]
         self.initialize_session_state(segments)
         self.display_segments(segments, topics)
         self.display_save_button()
-        
+
     def display_header(self):
-        lecture_number, lecture_name = st.session_state.selected_module.split(' ', 1)
+        lecture_number, lecture_name = st.session_state.selected_module.split(" ", 1)
         st.title(f"Kwaliteitscheck college {lecture_number}:")
         st.subheader(lecture_name)
         st.write(
@@ -29,17 +31,21 @@ class QualityCheck:
 
     def load_module_data(self):
         module_name = st.session_state.selected_module.replace(" ", "_")
-        data_modules = self.utils.download_content_from_blob_storage("content", f"modules/{module_name}.json")
+        data_modules = self.utils.download_content_from_blob_storage(
+            "content", f"modules/{module_name}.json"
+        )
         data_modules = json.loads(data_modules)
-        data_modules_topics = self.utils.download_content_from_blob_storage("content", f"topics/{module_name}.json")
+        data_modules_topics = self.utils.download_content_from_blob_storage(
+            "content", f"topics/{module_name}.json"
+        )
         data_modules_topics = json.loads(data_modules_topics)
         return data_modules, data_modules_topics
 
     def initialize_session_state(self, segments):
         for segment_id, segment in enumerate(segments):
             segment_id = str(segment_id)
-            if f'button_state{segment_id}' not in st.session_state:
-                st.session_state[f'button_state{segment_id}'] = 'no'
+            if f"button_state{segment_id}" not in st.session_state:
+                st.session_state[f"button_state{segment_id}"] = "no"
             self.initialize_segment_state(segment_id, segment)
 
     def initialize_segment_state(self, segment_id, segment):
@@ -67,10 +73,16 @@ class QualityCheck:
 
     def initialize_answer_state(self, segment_id, answers):
         if f"{segment_id}-answers-correct_answer" not in st.session_state:
-            st.session_state[f"{segment_id}-answers-correct_answer"] = answers["correct_answer"]
+            st.session_state[f"{segment_id}-answers-correct_answer"] = answers[
+                "correct_answer"
+            ]
         if f"{segment_id}-answers-wrong_answers" not in st.session_state:
-            wrong_answers_enumeration = self.utils.list_to_enumeration(answers["wrong_answers"])
-            st.session_state[f"{segment_id}-answers-wrong_answers"] = wrong_answers_enumeration
+            wrong_answers_enumeration = self.utils.list_to_enumeration(
+                answers["wrong_answers"]
+            )
+            st.session_state[f"{segment_id}-answers-wrong_answers"] = (
+                wrong_answers_enumeration
+            )
         if f"new-{segment_id}-answers-correct_answer" not in st.session_state:
             st.session_state[f"new-{segment_id}-answers-correct_answer"] = ""
         if f"new-{segment_id}-answers-wrong_answers" not in st.session_state:
@@ -89,7 +101,9 @@ class QualityCheck:
             if topic_segment_id == 0:
                 st.subheader(topics[topic_id]["topic_title"])
             self.display_segment(segment_id_str, segment)
-            topic_id, topic_segment_id = self.update_topic_indices(topic_id, topic_segment_id, topics)
+            topic_id, topic_segment_id = self.update_topic_indices(
+                topic_id, topic_segment_id, topics
+            )
 
     def display_segment(self, segment_id, segment):
         with st.container(border=True):
@@ -98,9 +112,22 @@ class QualityCheck:
             self.display_segment_content(segment_id, segment)
             self.display_toggle_button(segment_id)
 
+    def resize_image_to_max_height(self, image: Image.Image, max_height):
+        # Calculate the new width maintaining the aspect ratio
+        aspect_ratio = image.width / image.height
+        new_height = max_height
+        new_width = int(new_height * aspect_ratio)
+
+        # Resize the image
+        resized_img = image.resize((new_width, new_height))
+
+        return resized_img
+
     def display_image(self, image_path):
         image = self.utils.download_image_from_blob_storage("images", image_path)
-        st.image(image)
+        resized_image = self.resize_image_to_max_height(image, 300)
+
+        st.image(resized_image, use_column_width="auto")
 
     def display_segment_content(self, segment_id, segment):
         segment_type = segment["type"]
@@ -111,13 +138,21 @@ class QualityCheck:
 
     def display_theory_segment(self, segment_id, segment):
         st.markdown(f"**Theorie: {segment['title']}**")
-        st.text_area("Theorie", height=200, key=segment_id,
-                     on_change=self.utils.save_st_change(f"new-{segment_id}", segment_id), label_visibility="collapsed")
+        st.text_area(
+            "Theorie",
+            key=segment_id,
+            on_change=self.utils.save_st_change(f"new-{segment_id}", segment_id),
+            label_visibility="collapsed",
+        )
 
     def display_question_segment(self, segment_id, segment):
         st.markdown("**Vraag:**")
-        st.text_area("Vraag", height=200, key=segment_id,
-                     on_change=self.utils.save_st_change(f"new-{segment_id}", segment_id), label_visibility="collapsed")
+        st.text_area(
+            "Vraag",
+            key=segment_id,
+            on_change=self.utils.save_st_change(f"new-{segment_id}", segment_id),
+            label_visibility="collapsed",
+        )
         if "answers" in segment:
             self.display_answer_segment(segment_id, segment["answers"])
         elif "answer" in segment:
@@ -125,23 +160,51 @@ class QualityCheck:
 
     def display_answer_segment(self, segment_id, answers):
         st.markdown("*Correct antwoord:*")
-        st.text_area("Correct antwoord:", height=200, key=f"{segment_id}-answers-correct_answer",
-                     on_change=self.utils.save_st_change(f"new-{segment_id}-answers-correct_answer", f"{segment_id}-answers-correct_answer"), label_visibility="collapsed")
+        st.text_area(
+            "Correct antwoord:",
+            key=f"{segment_id}-answers-correct_answer",
+            on_change=self.utils.save_st_change(
+                f"new-{segment_id}-answers-correct_answer",
+                f"{segment_id}-answers-correct_answer",
+            ),
+            label_visibility="collapsed",
+        )
         st.markdown("*Onjuiste antwoorden:*")
-        st.text_area("Onjuiste antwoorden:", height=200, key=f"{segment_id}-answers-wrong_answers",
-                     on_change=self.utils.save_st_change(f"new-{segment_id}-answers-wrong_answers", f"{segment_id}-answers-wrong_answers"), label_visibility="collapsed")
+        st.text_area(
+            "Onjuiste antwoorden:",
+            key=f"{segment_id}-answers-wrong_answers",
+            on_change=self.utils.save_st_change(
+                f"new-{segment_id}-answers-wrong_answers",
+                f"{segment_id}-answers-wrong_answers",
+            ),
+            label_visibility="collapsed",
+        )
 
     def display_single_answer_segment(self, segment_id, answer):
         st.markdown("*Antwoord:*")
-        st.text_area("Antwoord:", height=200, key=f"{segment_id}-answer",
-                     on_change=self.utils.save_st_change(f"new-{segment_id}-answer", f"{segment_id}-answer"), label_visibility="collapsed")
+        st.text_area(
+            "Antwoord:",
+            key=f"{segment_id}-answer",
+            on_change=self.utils.save_st_change(
+                f"new-{segment_id}-answer", f"{segment_id}-answer"
+            ),
+            label_visibility="collapsed",
+        )
 
     def display_toggle_button(self, segment_id):
         col1, col2 = st.columns([0.9, 0.1])
         with col2:
-            button_icon = "❌" if st.session_state[f'button_state{segment_id}'] == "no" else "➕"
-            button_help = "Verwijderen" if st.session_state[f'button_state{segment_id}'] == "no" else "Toevoegen"
-            if st.button(label=button_icon, key=f'toggle_button{segment_id}', help=button_help):
+            button_icon = (
+                "❌" if st.session_state[f"button_state{segment_id}"] == "no" else "➕"
+            )
+            button_help = (
+                "Verwijderen"
+                if st.session_state[f"button_state{segment_id}"] == "no"
+                else "Toevoegen"
+            )
+            if st.button(
+                label=button_icon, key=f"toggle_button{segment_id}", help=button_help
+            ):
                 self.utils.toggle_button(segment_id)
                 st.rerun()
 
@@ -156,9 +219,16 @@ class QualityCheck:
     def display_save_button(self):
         if st.button("Opslaan", use_container_width=True):
             print(f"Selected module: {st.session_state.selected_module}")
-            segments_list = self.utils.preprocessed_segments(st.session_state.selected_module.replace(" ", "_"))
-            self.utils.upload_modules_json(st.session_state.selected_module.replace(" ", "_"), segments_list)
-            self.utils.upload_modules_topics_json(st.session_state.selected_module.replace(" ", "_"), segments_list)
+            segments_list = self.utils.preprocessed_segments(
+                st.session_state.selected_module.replace(" ", "_")
+            )
+            self.utils.upload_modules_json(
+                st.session_state.selected_module.replace(" ", "_"), segments_list
+            )
+            self.utils.upload_modules_topics_json(
+                st.session_state.selected_module.replace(" ", "_"), segments_list
+            )
+
 
 if __name__ == "__main__":
     qc = QualityCheck()
