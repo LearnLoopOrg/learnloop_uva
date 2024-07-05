@@ -5,11 +5,12 @@ import utils.db_config as db_config
 import os
 
 
-class ContentAccess:
+class DatabaseAccess:
     def __init__(self):
         self.db = db_config.connect_db(
             st.session_state.use_mongodb
         )  # database connection
+        self.users_collection_name = "users"
         self.segments_list = None
         self.topics_list = None
         self.segment_index = None
@@ -87,9 +88,10 @@ class ContentAccess:
         return self.segments_list[segment_index].get("answers", None)
 
     def fetch_module_content(self, module):
-        file_name = self.fetch_json_file_name_of_module(module)
-        path = self.generate_json_path(file_name)
-        return self.load_json_content(path)
+        page_content = self.db.content.find_one(
+            {"lecture_name": module.replace(" ", "_")}
+        )
+        return page_content["original_lecturepath_content"]
 
     def fetch_json_file_name_of_module(self, module):
         return module.replace(" ", "_") + ".json"
@@ -161,12 +163,6 @@ class ContentAccess:
         content_json_path = f"src/data/content/modules/{module}.json"
         _self.segments_list = _self.load_json_content(content_json_path)["segments"]
         return _self.segments_list
-
-
-class DatabaseAccess:
-    def __init__(self):
-        self.db = db_config.connect_db(st.session_state.use_mongodb)
-        self.users_collection_name = "users"
 
     def update_if_warned(self, boolean):
         """Callback function for a button that turns of the LLM warning message."""

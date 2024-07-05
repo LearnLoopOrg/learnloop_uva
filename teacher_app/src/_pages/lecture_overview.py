@@ -50,7 +50,6 @@ class LectureOverview:
         Sets the selected page and lecture to the one that the student clicked on.
         """
         st.session_state.selected_module = lecture_title
-        print(f"Selected module: {st.session_state.selected_module}")
         module_status = self.db_dal.fetch_module_status()
 
         print(f"Module status: {module_status}")

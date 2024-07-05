@@ -8,7 +8,7 @@ from openai import OpenAI
 import base64
 from _pages.topic_overview import TopicOverview
 import utils.db_config as db_config
-from data.data_access_layer import DatabaseAccess, ContentAccess
+from data.data_access_layer import DatabaseAccess
 from datetime import datetime
 from _pages.lecture_overview import LectureOverview
 from _pages.course_overview import CoursesOverview
@@ -541,7 +541,7 @@ def initialise_learning_page():
     Sets all session states to correspond with database.
     """
     # Fetch the last segment index from db
-    st.session_state.segment_index = cont_dal.fetch_segment_index()
+    st.session_state.segment_index = db_dal.fetch_segment_index()
 
     if st.session_state.segment_index == -1:  # If user never started this phase
         if st.session_state.selected_module.startswith("Samenvattende"):
@@ -677,7 +677,7 @@ def show_feedback_overview():
     for question in questions:
         st.subheader(
             f"{question['question']}"
-        )  # TODO get question content not from DB but from ContentAccess
+        )  # TODO get question content not from DB but from DatabaseAccess
         if "feedback" in question:
             st.session_state.feedback = question["feedback"]
             st.session_state.student_answer = question["student_answer"]
@@ -748,7 +748,7 @@ def progress_date_tracking_format():
     """
     date = datetime.utcnow().date()
     return {
-        "type": cont_dal.get_segment_type(st.session_state.segment_index),
+        "type": db_dal.get_segment_type(st.session_state.segment_index),
         "entries": [date.isoformat()],
     }
 
@@ -927,7 +927,7 @@ def save_feedback_on_open_question():
     db.users.update_one(user_query, pull_query)
 
     # Prepare the new question data to be pushed
-    # TODO remove question as it should come from ContentAccess
+    # TODO remove question as it should come from DatabaseAccess
     new_question_data = {
         "question": st.session_state.segment_content["question"],
         "student_answer": st.session_state.student_answer,
@@ -968,7 +968,7 @@ def save_feedback_on_mc_question():
     db.users.update_one(user_query, pull_query)
 
     # Prepare the new question data to be pushed
-    # TODO remove question and correct_answer as they should come from ContentAccess
+    # TODO remove question and correct_answer as they should come from DatabaseAccess
     new_question_data = {
         "question": st.session_state.segment_content["question"],
         "student_answer": st.session_state.choosen_answer,
@@ -1030,7 +1030,7 @@ def initialise_practice_page():
     if it's the first time."""
 
     # Fetch the last segment index from db
-    st.session_state.segment_index = cont_dal.fetch_segment_index()
+    st.session_state.segment_index = db_dal.fetch_segment_index()
 
     if st.session_state.segment_index == -1:
         fetch_ordered_segment_sequence()
@@ -1183,7 +1183,7 @@ def render_selected_page():
     """
     Determines what type of page to display based on which module the user selected.
     """
-    st.session_state.page_content = cont_dal.fetch_module_content(
+    st.session_state.page_content = db_dal.fetch_module_content(
         st.session_state.selected_module
     )
 
@@ -1275,8 +1275,8 @@ def render_sidebar():
     """
     Function to render the sidebar with the modules and login module.
     """
-    # st.session_state.courses = cont_dal.fetch_courses()
-    # st.session_state.lectures = cont_dal.fetch_lectures()
+    # st.session_state.courses = db_dal.fetch_courses()
+    # st.session_state.lectures = db_dal.fetch_lectures()
 
     # flat_list = []
 
@@ -1446,7 +1446,7 @@ def create_empty_progress_dict(module):
     """
     empty_dict = {}
 
-    st.session_state.page_content = cont_dal.fetch_module_content(module)
+    st.session_state.page_content = db_dal.fetch_module_content(module)
 
     number_of_segments = len(st.session_state.page_content["segments"])
 
@@ -1563,8 +1563,7 @@ def render_login_page():
 @st.cache_resource(show_spinner=False)
 def initialise_data_access_layer():
     db_dal = DatabaseAccess()
-    cont_dal = ContentAccess()
-    return db_dal, cont_dal
+    return db_dal, db_dal
 
 
 def determine_selected_module():
@@ -1621,7 +1620,7 @@ def initialise_session_states():
         st.session_state.segment_index = 0
 
     if "modules" not in st.session_state:
-        st.session_state.modules = cont_dal.determine_modules()
+        st.session_state.modules = db_dal.determine_modules()
 
     if "selected_module" not in st.session_state:
         st.session_state.selected_module = None
@@ -1709,7 +1708,7 @@ if __name__ == "__main__":
     # page is displayed (referenced to mid_col in functions)
     left_col, mid_col, right_col = st.columns([1, 3, 1])
 
-    db_dal, cont_dal = initialise_data_access_layer()
+    db_dal, db_dal = initialise_data_access_layer()
     db = db_config.connect_db(st.session_state.use_mongodb)
 
     initialise_session_states()
@@ -1729,7 +1728,7 @@ if __name__ == "__main__":
 
     # Login page reners if only if the user is not logged in
     if (
-        no_login_page == False
+        no_login_page is False
         and fetch_nonce_from_query() is None
         and st.session_state.username is None
     ):
@@ -1739,7 +1738,7 @@ if __name__ == "__main__":
     else:
         determine_if_to_initialise_database()
 
-        if st.session_state.warned == None:
+        if st.session_state.warned is None:
             if warned := db_dal.fetch_if_warned() is True:
                 st.session_state.warned = True
             else:

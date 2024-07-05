@@ -244,7 +244,6 @@ class QualityCheck:
 
     def display_save_button(self):
         if st.button("Opslaan", use_container_width=True):
-            print(f"Selected module: {st.session_state.selected_module}")
             segments_list = self.utils.preprocessed_segments(
                 st.session_state.selected_module.replace(" ", "_")
             )

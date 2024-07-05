@@ -5,7 +5,7 @@ import streamlit as st
 import base64
 import json
 import utils.db_config as db_config
-from data.data_access_layer import DatabaseAccess, ContentAccess
+from data.data_access_layer import DatabaseAccess
 from utils.openai_client import openai_call, read_prompt
 from utils.constants import QuestionType
 from streamlit_extras.add_vertical_space import add_vertical_space
@@ -15,7 +15,6 @@ class LectureInsights:
     def __init__(self) -> None:
         self.db = db_config.connect_db(st.session_state.use_mongodb)
         self.db_dal = DatabaseAccess()
-        self.cont_dal = ContentAccess()
         self.module = ""
 
     def convert_image_base64(self, image_path):
@@ -53,7 +52,7 @@ class LectureInsights:
         corresponding to the selected topic.
         """
         # Determine which segment has to be displayed for the selected topic
-        segment_index = self.cont_dal.get_index_first_segment_in_topic(topic_index)
+        segment_index = self.db_dal.get_index_first_segment_in_topic(topic_index)
 
         # Change the segment index to the index corresponding to the selected topic
         self.db.users.update_one(
@@ -75,7 +74,7 @@ class LectureInsights:
         """
         empty_dict = {}
 
-        st.session_state.page_content = self.cont_dal.fetch_module_content(module)
+        st.session_state.page_content = self.db_dal.fetch_module_content(module)
 
         number_of_segments = len(st.session_state.page_content["segments"])
 
@@ -88,7 +87,7 @@ class LectureInsights:
         """
         Checks if the user made all segments for this topic.
         """
-        topic_segment_indexes = self.cont_dal.get_topic_segment_indexes(
+        topic_segment_indexes = self.db_dal.get_topic_segment_indexes(
             module, topic_index
         )
         user_doc = self.db_dal.find_user_doc()
@@ -101,56 +100,56 @@ class LectureInsights:
             return False
 
         for index in topic_segment_indexes:
-            if progress_count.get(str(index), None) == None:
+            if progress_count.get(str(index), None) is None:
                 return False
 
         return True
 
     def get_module_data(_self, module_name_underscored):
-        _self.cont_dal.get_topics_list(module_name_underscored)
+        _self.db_dal.get_topics_list(module_name_underscored)
         topics_data = []
 
-        for topic in _self.cont_dal.topics_list:
+        for topic in _self.db_dal.topics_list:
             topic_data = {
                 "topic_title": topic["topic_title"],
                 "segment_indexes": topic["segment_indexes"],
                 "segments": [],
             }
 
-            _self.cont_dal.get_segments_list(module_name_underscored)
+            _self.db_dal.get_segments_list_from_db(module_name_underscored)
             for segment_index in topic["segment_indexes"]:
-                _self.cont_dal.get_segments_list(module_name_underscored)
-                segment_type = _self.cont_dal.get_segment_type(segment_index)
+                _self.db_dal.get_segments_list_from_db(module_name_underscored)
+                segment_type = _self.db_dal.get_segment_type(segment_index)
                 segment_title = (
-                    _self.cont_dal.get_segment_title(segment_index)
+                    _self.db_dal.get_segment_title(segment_index)
                     if segment_type == "theory"
                     else None
                 )
                 segment_text = (
-                    _self.cont_dal.get_segment_text(segment_index)
+                    _self.db_dal.get_segment_text(segment_index)
                     if segment_type == "theory"
                     else None
                 )
                 segment_question = (
-                    _self.cont_dal.get_segment_question(segment_index)
+                    _self.db_dal.get_segment_question(segment_index)
                     if segment_type == "question"
                     else None
                 )
                 segment_answers = (
-                    _self.cont_dal.get_segment_mc_answers(segment_index)
+                    _self.db_dal.get_segment_mc_answers(segment_index)
                     if segment_type == "question"
                     else None
                 )
                 segment_answer = (
-                    _self.cont_dal.get_segment_answer(segment_index)
+                    _self.db_dal.get_segment_answer(segment_index)
                     if segment_type == "question"
                     else None
                 )
-                segment_image_file_name = _self.cont_dal.get_segment_image_file_name(
+                segment_image_file_name = _self.db_dal.get_segment_image_file_name(
                     segment_index
                 )
                 segment_image_path = (
-                    _self.cont_dal.get_image_path(segment_image_file_name)
+                    _self.db_dal.get_image_path(segment_image_file_name)
                     if segment_image_file_name
                     else None
                 )
@@ -446,7 +445,7 @@ class LectureInsights:
             with col1[0]:
                 st.markdown("<h2>Index</h2>", unsafe_allow_html=True)
                 for i, topic in enumerate(topics):
-                    questions_content = self.cont_dal.get_topic_questions(
+                    questions_content = self.db_dal.get_topic_questions(
                         module, topic["segment_indexes"]
                     )
                     questions_stats = self.get_topic_questions_stats(
@@ -484,7 +483,7 @@ class LectureInsights:
             return question["answer"]
 
     def show_topic_feedback(self, module, topic, topic_index):
-        questions_content = self.cont_dal.get_topic_questions(
+        questions_content = self.db_dal.get_topic_questions(
             module, topic["segment_indexes"]
         )
         questions_stats = self.get_topic_questions_stats(module, questions_content)
@@ -605,8 +604,7 @@ class LectureInsights:
         """
         # Fetch module info to be rendered
         module = st.session_state.selected_module
-        st.session_state.page_content = self.cont_dal.fetch_module_content(module)
-        print(st.session_state.page_content)
+        st.session_state.page_content = self.db_dal.fetch_module_content(module)
 
         self.set_styling()  # for texts
 
@@ -619,8 +617,7 @@ class LectureInsights:
 
         module = st.session_state.selected_module.replace(" ", "_")
 
-        topics = self.cont_dal.get_topics_list(module)
-
+        topics = self.db_dal.get_topics_list(module)
         for topic_index, topic in enumerate(topics):
             if st.session_state.controller.debug and topic_index > 1:
                 break
