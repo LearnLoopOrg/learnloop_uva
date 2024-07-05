@@ -1,17 +1,12 @@
 from matplotlib import pyplot as plt
 import numpy as np
 import streamlit as st
-from PIL import Image
 import base64
-from io import BytesIO
 import json
 import utils.db_config as db_config
 from data.data_access_layer import DatabaseAccess, ContentAccess
 from utils.openai_client import openai_call, read_prompt
 from utils.constants import QuestionType
-
-import pandas as pd
-import altair as alt
 
 
 class LectureInsights:
@@ -45,12 +40,8 @@ class LectureInsights:
 
         
     def render_title(self):
-        container = st.container(border=True)
-        header_cols = container.columns([0.1, 40])
-
-        with header_cols[1]:
-            st.title(st.session_state.selected_module.replace("_", " "))
-            st.write("\n")
+        st.title(self.module)
+        st.write("\n")
 
 
     def start_learning_page(self, topic_index):
@@ -241,7 +232,6 @@ class LectureInsights:
         
         return question_stats
         
-                                
     def get_question_stats(self, module, question_index, question_content):
         mongo_module = module.replace("_", " ")
         results = self.db_dal.fetch_question(mongo_module, question_index)
@@ -285,33 +275,6 @@ class LectureInsights:
         
         response = openai_call(st.session_state.openai_client, system_message, input_json, True)
         return response
-    
-    # def insert_segment_indexes_in_feedback(self):
-    #     users = self.db.users.find()
-    #     for user in users:
-    #         if not "progress" in user:
-    #             continue
-    #         adapted = False
-    #         for module in user["progress"]:
-    #             for module in user["progress"]:
-    #                 if "feedback" in user["progress"][module]:
-    #                     for question in user["progress"][module]["feedback"]["questions"]:
-    #                         segment_index = self.cont_dal.find_segment_index(question["question"], module)
-    #                         question["segment_index"] = segment_index
-    #                         adapted = True
-    #     # print(2)
-    #         if adapted:
-    #             self.db.users.update_one({'_id': user['_id']}, {'$set': user})
-        #loop trough users
-            #loop trough modules
-                #loop trough questions
-                    #segment_index = find_segment_index(question.text, module)
-                    #update this question with segment_index
-                    
-                    
-            
-        
-        pass
     
 
     def plot_scores(self, scores):
@@ -392,11 +355,10 @@ class LectureInsights:
         if question["sub_type"] == QuestionType.OPEN_QUESTION.value:
             return question["answer"]
             
-    def show_topic_feedback(self, module, topic):
-        questions_content = self.cont_dal.get_topic_questions(module, topic["segment_indexes"])
-        questions_stats = self.get_topic_questions_stats(module, questions_content)
+    def show_topic_feedback(self, topic):
+        questions_content = self.cont_dal.get_topic_questions(self.module, topic["segment_indexes"])
+        questions_stats = self.get_topic_questions_stats(self.module, questions_content)
 
-        
         feedback_analyses = self.analyse_feedback(questions_content, questions_stats)
         
         with st.container():
@@ -426,11 +388,6 @@ class LectureInsights:
                         self.plot_scores(question_stats['scores'])
 
     def run(self):
-        """
-        Renders the overview page with the lecture title and the topics from the 
-        lecture in seperate containers that allow the user to look at the contents
-        and to select the topics they want to learn.
-        """
         # Fetch module info to be rendered
         module = st.session_state.selected_module
         st.session_state.page_content = self.cont_dal.fetch_module_content(module)
@@ -441,7 +398,7 @@ class LectureInsights:
         # Spacing
         st.write("\n")
         
-        module = st.session_state.selected_module.replace(" ", "_")
+        self.module = st.session_state.selected_module.replace(" ", "_")
         
         topics = self.cont_dal.get_topics_list(module)
         for topic_index, topic in enumerate(topics):
