@@ -13,6 +13,7 @@ import os
 
 load_dotenv()
 
+
 class Recorder:
     def __init__(self):
         self.container_name_video = "video"
@@ -26,14 +27,16 @@ class Recorder:
         channels = 2
         rate = 44100
         chunk = duration * rate
-        
+
         p = pyaudio.PyAudio()
 
-        stream = p.open(format=format,
-                        channels=channels,
-                        rate=rate,
-                        input=True,
-                        frames_per_buffer=chunk)
+        stream = p.open(
+            format=format,
+            channels=channels,
+            rate=rate,
+            input=True,
+            frames_per_buffer=chunk,
+        )
 
         frames = []
 
@@ -44,9 +47,9 @@ class Recorder:
         stream.close()
         p.terminate()
 
-        audio_data = b''.join(frames)
+        audio_data = b"".join(frames)
         audio_io = io.BytesIO()
-        wf = wave.open(audio_io, 'wb')
+        wf = wave.open(audio_io, "wb")
         wf.setnchannels(channels)
         wf.setsampwidth(p.get_sample_size(format))
         wf.setframerate(rate)
@@ -55,7 +58,9 @@ class Recorder:
 
         # Seek to the beginning of the BytesIO object before reading it for upload
         audio_io.seek(0)
-        self.utils.upload_content_to_blob_storage( self.container_name_audio, self.blob_name_audio, audio_io )
+        self.utils.upload_content_to_blob_storage(
+            self.container_name_audio, self.blob_name_audio, audio_io
+        )
 
     def record_screen(self, duration, fps=15):
         sct = mss.mss()
@@ -64,10 +69,12 @@ class Recorder:
         fourcc = cv2.VideoWriter_fourcc(*"XVID")
 
         video_io = io.BytesIO()
-        
+
         # Temporarily save to a local file (necessary for cv2.VideoWriter)
-        temp_filename = 'temp_video.avi'
-        out = cv2.VideoWriter(temp_filename, fourcc, fps, (monitor["width"], monitor["height"]))
+        temp_filename = "temp_video.avi"
+        out = cv2.VideoWriter(
+            temp_filename, fourcc, fps, (monitor["width"], monitor["height"])
+        )
 
         start_time = time.time()
         while time.time() - start_time < duration:
@@ -77,40 +84,83 @@ class Recorder:
 
         out.release()
 
-        self.utils.upload_file_to_blob_storage(self.container_name_video, temp_filename, self.blob_name_video)
+        self.utils.upload_file_to_blob_storage(
+            self.container_name_video, temp_filename, self.blob_name_video
+        )
         # Optionally, clean up the temporary file
         os.remove(temp_filename)
-    
+
     def start_recording(self, duration):
         # Start audio and screen recording in separate threads
-        audio_thread = threading.Thread(target=self.record_audio, args=( duration, ))
-        screen_thread = threading.Thread(target=self.record_screen, args=( duration, ))
-        
+        audio_thread = threading.Thread(target=self.record_audio, args=(duration,))
+        screen_thread = threading.Thread(target=self.record_screen, args=(duration,))
+
         audio_thread.start()
         screen_thread.start()
 
         audio_thread.join()
         screen_thread.join()
-        
-        st.session_state['recording'] = False
+
+        st.session_state["recording"] = False
 
     def stop_recording():
-        st.session_state['recording'] = False
+        st.session_state["recording"] = False
 
     def run(self):
-        st.title(f"Record lecture {st.session_state.selected_module}")
-        st.write("This lecture hasn't been recorded yet. Click the button below to start recording.")
+        st.title(
+            f"Genereren leermateriaal voor college {st.session_state.selected_module}"
+        )
+        st.subheader("Neem een college op")
+        st.write(
+            "Dit college is nog niet opgenomen. Klik op de knop hieronder om te starten met opnemen."
+        )
 
-        if 'recording' not in st.session_state:
-            st.session_state['recording'] = False
+        if "recording" not in st.session_state:
+            st.session_state["recording"] = False
 
-        duration_minutes = st.slider("Select duration (minutes)", min_value=1, max_value=120, value=60)
+        duration_minutes = st.slider(
+            "Select duration (minutes)", min_value=1, max_value=120, value=60
+        )
         duration_seconds = 60 * duration_minutes
 
-        if st.button("Start recording"):
-            st.session_state['recording'] = True
+        if st.button("Begin opname"):
+            st.session_state["recording"] = True
             self.start_recording(duration_seconds)
+
+        st.subheader("Of, kies een opgenomen college")
+        user = st.session_state.username
+
+        # TODO - List actual recordings from blob storage for Demo
+        recordings_listing = [
+            {
+                "id": "1",
+                "title": f"{user}'s opname",
+                "description": "Opgenomen op 5 juli 2024 om 9:00",
+            },
+            {
+                "id": "2",
+                "title": f"{user}'s opname",
+                "description": "Opgenomen op 2 juli 2024 om 9:00",
+            },
+            {
+                "id": "3",
+                "title": f"{user}'s opname",
+                "description": "Opgenomen op 29 juni 2024 om 13:00",
+            },
+        ]
+        for recording in recordings_listing:
+            container = st.container(border=True)
+            cols = container.columns([14, 6, 1])
+
+            with cols[0]:
+                st.subheader(recording["title"])
+                st.write(recording["description"])
+
+            with cols[1]:
+                st.button(  # TODO: Invoke Cloud Function / API to generate practice materials
+                    "Genereer oefenmaterialen voor studenten", key=recording["id"]
+                )
 
 
 if __name__ == "__main__":
-    Recorder("video", "video_output.avi", "audio", "audio_output.mp3" ).run()
+    Recorder("video", "video_output.avi", "audio", "audio_output.mp3").run()
