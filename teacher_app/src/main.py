@@ -4,7 +4,7 @@ from utils.openai_client import connect_to_openai
 import streamlit as st
 from dotenv import load_dotenv
 import utils.db_config as db_config
-from data.data_access_layer import DatabaseAccess, ContentAccess
+from data.data_access_layer import DatabaseAccess
 from _pages.lecture_overview import LectureOverview
 from _pages.course_overview import CoursesOverview
 from _pages.lecture_student_answers_insights import LectureInsights
@@ -32,7 +32,6 @@ class Controller:
 
         # Data access layer
         _self.db_dal = DatabaseAccess()
-        _self.cont_dal = ContentAccess()
 
         # Fetch were user left off
         st.session_state.selected_module = _self.db_dal.fetch_last_module()
