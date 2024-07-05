@@ -278,6 +278,7 @@ class LectureInsights:
 
         return question_stats
 
+    @st.cache_data(ttl=timedelta(hours=1), show_spinner=False)
     def get_question_stats(self, module, question_index, question_content):
         mongo_module = module.replace("_", " ")
         results = self.db_dal.fetch_question(mongo_module, question_index)
@@ -288,10 +289,11 @@ class LectureInsights:
         if question_content["sub_type"] == QuestionType.OPEN_QUESTION.value:
             return self.get_open_question_stats(mongo_module, question_index, results)
 
-    def get_topic_questions_stats(self, module, questions_content):
+    @st.cache_data(ttl=timedelta(hours=1), show_spinner=False)
+    def get_topic_questions_stats(_self, module, questions_content):
         questions_stats = {}
         for question_index, question_content in questions_content.items():
-            question_stats = self.get_question_stats(
+            question_stats = _self.get_question_stats(
                 module, question_index, question_content
             )
             questions_stats[question_index] = question_stats
@@ -414,6 +416,54 @@ class LectureInsights:
         st.pyplot(fig, use_container_width=True)
         pass
 
+    def display_sidebar_page_navigation(self, module, topics):
+        # Render the sidebar with links to the topics
+        with st.sidebar:
+            # Define CSS styles
+            css_styles = """
+            <style>
+            </style>
+            """
+
+            # Render CSS styles
+            st.markdown(css_styles, unsafe_allow_html=True)
+
+            # Render navigation with heading
+            st.markdown("<h2>Index</h2>", unsafe_allow_html=True)
+            st.markdown('<ul class="navigation">', unsafe_allow_html=True)
+            for i, topic in enumerate(topics):
+                questions_content = self.cont_dal.get_topic_questions(
+                    module, topic["segment_indexes"]
+                )
+                questions_stats = self.get_topic_questions_stats(
+                    module, questions_content
+                )
+                topic_title = topic["topic_title"]
+
+                all_scores = []
+                total_achieved_score = 0
+                total_score = 0
+                for question_index, stats_for_question in questions_stats.items():
+                    for score in stats_for_question["scores"]:
+                        total_achieved_score += float(score.split("/")[0])
+                        total_score += float(score.split("/")[1])
+                    all_scores.extend(
+                        stats_for_question["scores"]
+                    )  # Assuming 'scores' is always present
+                percentage_correct_topic = total_achieved_score / total_score
+                # i want a red, orange or green color based on the percentage correct
+                if percentage_correct_topic < 0.5:
+                    icon = "🔴"
+                elif percentage_correct_topic < 0.8:
+                    icon = "🟠"
+                else:
+                    icon = "🟢"
+                st.markdown(
+                    f'<li><a href="#{topic_title}">{icon} {i + 1} - {topic_title}</a></li>',
+                    unsafe_allow_html=True,
+                )
+            st.markdown("</ul>", unsafe_allow_html=True)
+
     def get_correct_answer(self, question):
         if question["sub_type"] == QuestionType.MULTIPLE_CHOICE_QUESTION.value:
             return question["answers"]["correct_answer"]
@@ -447,7 +497,7 @@ class LectureInsights:
             icon = "🟢"
 
         with st.container():
-            st.header(f"{icon} {topic["topic_title"]}")
+            st.header(f"{icon} {topic["topic_title"]}", anchor=topic["topic_title"])
 
             st.markdown(
                 f"<span style='color: gray;'>Gemaakt door {len(all_scores)} studenten: {percentage_correct_topic * 100:.0f}% correct</span>",
@@ -479,8 +529,6 @@ class LectureInsights:
                         st.markdown(
                             f"{question_icon} **{question_content["question"]}**"
                         )
-                        print("total_achieved_score", total_achieved_score)
-                        print("total_score", total_score)
                         st.markdown(
                             f"<span style='color: gray;'>Gemaakt door {len(scores_for_question)} studenten met gemiddeld {((total_achieved_score/total_score) * max_score):.1f}/{max_score} punten</span>",
                             unsafe_allow_html=True,
@@ -488,11 +536,17 @@ class LectureInsights:
                     else:
                         st.markdown(f"**{question_content['question']}**")
 
-                    st.html(f"""
-<div style="border-radius: 0.5rem; padding: 1rem;padding-bottom:0.1rem; background-color: #FFFCED;">
-    <strong>{feedback_analyses[str(question_index)]["title"]}</strong>
-    <p>{feedback_analyses[str(question_index)]["text"]}</p>
-</div>""")
+                    if "title" in feedback_analyses[str(question_index)]:
+                        st.html(f"""
+    <div style="border-radius: 0.5rem; padding: 1rem;padding-bottom:0.1rem; background-color: #FFFCED;">
+        <strong>{feedback_analyses[str(question_index)]["title"]}</strong>
+        <p>{feedback_analyses[str(question_index)]["text"]}</p>
+    </div>""")
+                    else:
+                        st.markdown(
+                            f"<span style='color: gray;'>{feedback_analyses[str(question_index)]}</span>",
+                            unsafe_allow_html=True,
+                        )
 
                     st.markdown(
                         '<span style="color: gray;">**Antwoordmodel**</span>',
@@ -527,8 +581,11 @@ class LectureInsights:
         module = st.session_state.selected_module.replace(" ", "_")
 
         topics = self.cont_dal.get_topics_list(module)
+
         for topic_index, topic in enumerate(topics):
             if st.session_state.controller.debug and topic_index > 1:
                 break
 
             self.show_topic_feedback(module, topic, topic_index)
+
+        self.display_sidebar_page_navigation(module, topics)
