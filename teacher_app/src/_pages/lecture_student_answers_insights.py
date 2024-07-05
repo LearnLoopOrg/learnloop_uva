@@ -1,8 +1,10 @@
+from datetime import datetime, timedelta
 from matplotlib import pyplot as plt
 import numpy as np
 import streamlit as st
 import base64
 import json
+from teacher_app.src.models.question_stats import QuestionStats
 import utils.db_config as db_config
 from data.data_access_layer import DatabaseAccess, ContentAccess
 from utils.openai_client import openai_call, read_prompt
@@ -320,8 +322,9 @@ class LectureInsights:
 
         return input_prompt
 
-    def analyse_feedback(self, questions_content, questions_stats):
-        input_dict = self.format_for_analyse_prompt(questions_content, questions_stats)
+    @st.cache_data(ttl=timedelta(hours=1), show_spinner=False)
+    def analyse_feedback(_self, questions_content, questions_stats):
+        input_dict = _self.format_for_analyse_prompt(questions_content, questions_stats)
         input_json = json.dumps(input_dict)
 
         system_message = read_prompt("analyse_feedback")
@@ -423,40 +426,54 @@ class LectureInsights:
         questions_stats = self.get_topic_questions_stats(module, questions_content)
 
         feedback_analyses = self.analyse_feedback(questions_content, questions_stats)
+        all_scores = []
+        total_achieved_score = 0
+        total_score = 0
+        for question_index, stats_for_question in questions_stats.items():
+            for score in stats_for_question["scores"]:
+                total_achieved_score += float(score.split("/")[0])
+                total_score += float(score.split("/")[1])
+            all_scores.extend(
+                stats_for_question["scores"]
+            )  # Assuming 'scores' is always present
+        percentage_correct = total_achieved_score / total_score
+        # i want a red, orange or green color based on the percentage correct
+        if percentage_correct < 0.5:
+            icon = "🔴"
+        elif percentage_correct < 0.8:
+            icon = "🟠"
+        else:
+            icon = "🟢"
 
         with st.container():
-            col1, col2 = st.columns(2)
-            with col1:
-                st.title(topic["topic_title"])
-            with col2:
-                all_scores = []
-                for question_index, stats in questions_stats.items():
-                    all_scores.extend(
-                        stats["scores"]
-                    )  # Assuming 'scores' is always present
-                self.plot_scores(all_scores)
+            st.header(f"{icon} {topic["topic_title"]}")
 
-            st.write(feedback_analyses["analysis"])
+            st.markdown(
+                f"<span style='color: gray;'>Gemaakt door {len(all_scores)} studenten: {percentage_correct * 100:.0f}% correct</span>",
+                unsafe_allow_html=True,
+            )
             with st.expander("Analyse per vraag"):
                 for question_index, question_content in questions_content.items():
                     question_stats = questions_stats[question_index]
+                    print(question_stats)
 
-                    print(question_content["question"])
+                    st.markdown(f"**{question_content["question"]}**")
 
-                    col1, col2 = st.columns(2)
-                    with col1:
-                        st.markdown(f"**{question_content["question"]}**")
-                        st.write(self.get_correct_answer(question_content))
+                    st.html(f"""
+<div style="border-radius: 0.5rem; padding: 1rem;padding-bottom:0.1rem; background-color: #FFFCED;">
+    <strong>{feedback_analyses[str(question_index)]["title"]}</strong>
+    <p>{feedback_analyses[str(question_index)]["text"]}</p>
+</div>""")
 
-                    print(feedback_analyses[str(question_index)]["title"])
-
-                    with col2:
-                        # st.header(question_stats['scores'])
-                        st.markdown(
-                            f"**{feedback_analyses[str(question_index)]["title"]}**"
-                        )
-                        st.write(feedback_analyses[str(question_index)]["text"])
-                        self.plot_scores(question_stats["scores"])
+                    st.markdown(
+                        '<span style="color: gray;">**Antwoordmodel**</span>',
+                        unsafe_allow_html=True,
+                    )
+                    st.markdown(
+                        f"""<span style="color: gray;">{self.get_correct_answer(question_content)}
+                        </span>""",
+                        unsafe_allow_html=True,
+                    )
 
     def run(self):
         """
@@ -479,6 +496,7 @@ class LectureInsights:
 
         topics = self.cont_dal.get_topics_list(module)
         for topic_index, topic in enumerate(topics):
-            self.show_topic_feedback(module, topic)
-            if topic_index > 2:
+            if st.session_state.controller.debug and topic_index > 1:
                 break
+
+            self.show_topic_feedback(module, topic)

@@ -19,7 +19,7 @@ st.set_page_config(page_title="LearnLoop", layout="wide")
 load_dotenv()
 
 
-def connect_to_openai():
+def connect_to_openai() -> OpenAI:
     if llm_model == "gpt-4o":
         print("Using OpenAI GPT-4o")
         st.session_state.openai_model = "gpt-4o"
@@ -46,6 +46,8 @@ def connect_to_openai():
                 "AZURE_OPENAI_ENDPOINT"
             ),  # TODO: ask Gerrit to put key in Azure secrets
         )
+    else:
+        raise ValueError("Invalid LLM model")
 
 
 def upload_progress():
