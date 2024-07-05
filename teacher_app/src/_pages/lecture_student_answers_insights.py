@@ -572,22 +572,13 @@ class LectureInsights:
 
                     with columns[0]:
                         st.markdown(
-                            '<span style="color: gray;">**Antwoordmodel**</span>',
+                            '<span style="color: gray; padding-left: 1rem;">**Antwoordmodel**</span>',
                             unsafe_allow_html=True,
                         )
                         st.markdown(
-                            f"""<span style="color: gray;">{self.get_correct_answer(question_content)}
-                            </span>""",
+                            f'<span style="color: gray; padding-left: 1rem;">{self.get_correct_answer(question_content)}</span>',
                             unsafe_allow_html=True,
                         )
-                        # st.markdown(
-                        #     '<span style="color: gray; padding-left: 1rem;">**Antwoordmodel**</span>',
-                        #     unsafe_allow_html=True,
-                        # )
-                        # st.markdown(
-                        #     f'<span style="color: gray; padding-left: 1rem;">{self.get_correct_answer(question_content)}</span>',
-                        #     unsafe_allow_html=True,
-                        # )
 
                     with columns[1]:
                         st.markdown(
