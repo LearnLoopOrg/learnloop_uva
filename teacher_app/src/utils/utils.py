@@ -63,13 +63,13 @@ class Utils:
         print(f"Content uploaded to '{blob_name}' in container '{container_name}'.")
 
     @st.cache_data(ttl=timedelta(hours=4))
-    def download_content_from_blob_storage(self, container_name, blob_name):
+    def download_content_from_blob_storage(_self, container_name, blob_name):
         """
         Download content from a specific directory within a container in Azure Blob Storage.
 
         """
         # Get a BlobClient for the blob
-        blob_client = self.blob_service_client.get_blob_client(
+        blob_client = _self.blob_service_client.get_blob_client(
             container=container_name, blob=blob_name
         )
 
@@ -86,9 +86,9 @@ class Utils:
 
     @st.cache_data(ttl=timedelta(hours=4))
     def download_image_from_blob_storage(
-        self, container_name, blob_name
+        _self, container_name, blob_name
     ) -> Image.Image:
-        blob_client = self.blob_service_client.get_blob_client(
+        blob_client = _self.blob_service_client.get_blob_client(
             container=container_name, blob=blob_name
         )
         blob_data = blob_client.download_blob().readall()
