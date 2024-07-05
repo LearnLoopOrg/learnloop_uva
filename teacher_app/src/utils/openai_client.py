@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 import os
 from openai import AzureOpenAI, OpenAI
 from dotenv import load_dotenv
@@ -37,7 +38,7 @@ def connect_to_openai(
         )
 
 
-@st.cache_data(ttl=3600, show_spinner=False)
+@st.cache_data(ttl=timedelta(hours=4), show_spinner=False)
 def openai_call(_client, system_message, user_message, json_response=False):
     messages = [
         {"role": "system", "content": system_message},
@@ -68,7 +69,7 @@ def openai_call(_client, system_message, user_message, json_response=False):
     return content
 
 
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=timedelta(hours=4))
 def read_prompt(prompt_name):
     prompt_path = f"./src/prompts/{prompt_name}.txt"
     with open(prompt_path, "r") as f:

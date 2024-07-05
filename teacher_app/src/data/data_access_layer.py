@@ -97,7 +97,7 @@ class ContentAccess:
     def generate_json_path(self, json_name):
         return f"src/data/content/modules/{json_name}"
 
-    @st.cache_data(ttl=datetime.timedelta(hours=1))
+    @st.cache_data(ttl=datetime.timedelta(hours=4))
     def load_json_content(
         _self, path
     ):  # TODO: This might result in a lot of memory usage, which is costly and slow
@@ -140,7 +140,7 @@ class ContentAccess:
 
         return question_segments
 
-    @st.cache_data(ttl=datetime.timedelta(hours=1))
+    @st.cache_data(ttl=datetime.timedelta(hours=4))
     def get_topics_list(_self, module):
         """
         Each module has two types of jsons. One with the content segments and
@@ -151,7 +151,7 @@ class ContentAccess:
         _self.topics_list = _self.load_json_content(topics_json_path)["topics"]
         return _self.topics_list
 
-    @st.cache_data(ttl=datetime.timedelta(hours=1))
+    @st.cache_data(ttl=datetime.timedelta(hours=4))
     def get_segments_list(_self, module):
         """
         Each module has two types of jsons. One with the content segments and

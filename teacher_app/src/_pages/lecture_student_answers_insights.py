@@ -278,18 +278,18 @@ class LectureInsights:
 
         return question_stats
 
-    @st.cache_data(ttl=timedelta(hours=1), show_spinner=False)
-    def get_question_stats(self, module, question_index, question_content):
+    @st.cache_data(ttl=timedelta(hours=4), show_spinner=False)
+    def get_question_stats(_self, module, question_index, question_content):
         mongo_module = module.replace("_", " ")
-        results = self.db_dal.fetch_question(mongo_module, question_index)
+        results = _self.db_dal.fetch_question(mongo_module, question_index)
 
         if question_content["sub_type"] == QuestionType.MULTIPLE_CHOICE_QUESTION.value:
-            return self.get_mc_question_stats(mongo_module, question_index, results)
+            return _self.get_mc_question_stats(mongo_module, question_index, results)
 
         if question_content["sub_type"] == QuestionType.OPEN_QUESTION.value:
-            return self.get_open_question_stats(mongo_module, question_index, results)
+            return _self.get_open_question_stats(mongo_module, question_index, results)
 
-    @st.cache_data(ttl=timedelta(hours=1), show_spinner=False)
+    @st.cache_data(ttl=timedelta(hours=4), show_spinner=False)
     def get_topic_questions_stats(_self, module, questions_content):
         questions_stats = {}
         for question_index, question_content in questions_content.items():
@@ -325,7 +325,7 @@ class LectureInsights:
 
         return input_prompt
 
-    @st.cache_data(ttl=timedelta(hours=1), show_spinner=False)
+    @st.cache_data(ttl=timedelta(hours=4), show_spinner=False)
     def analyse_feedback(_self, questions_content, questions_stats):
         input_dict = _self.format_for_analyse_prompt(questions_content, questions_stats)
         input_json = json.dumps(input_dict)
@@ -463,6 +463,7 @@ class LectureInsights:
                     unsafe_allow_html=True,
                 )
             st.markdown("</ul>", unsafe_allow_html=True)
+            st.link_button("Terug naar boven", "#top")
 
     def get_correct_answer(self, question):
         if question["sub_type"] == QuestionType.MULTIPLE_CHOICE_QUESTION.value:
@@ -499,8 +500,18 @@ class LectureInsights:
         with st.container():
             st.header(f"{icon} {topic["topic_title"]}", anchor=topic["topic_title"])
 
+            # st.markdown(
+            #     f"<span style='color: gray;'>Gemaakt door {len(all_scores)} studenten: {percentage_correct_topic * 100:.0f}% correct</span>",
+            #     unsafe_allow_html=True,
+            # )
+            # st.markdown(f"👥 Studenten: {len(all_scores)}")
+            # st.markdown(f"✅ Gemiddelde: {percentage_correct_topic * 100:.0f}% correct")
             st.markdown(
-                f"<span style='color: gray;'>Gemaakt door {len(all_scores)} studenten: {percentage_correct_topic * 100:.0f}% correct</span>",
+                f'<span style="color: gray;">👥 Studenten: {len(all_scores)}</span>',
+                unsafe_allow_html=True,
+            )
+            st.markdown(
+                f'<span style="color: gray;">📊 Gemiddelde: {percentage_correct_topic * 100:.0f}% correct</span>',
                 unsafe_allow_html=True,
             )
             with st.expander(
@@ -529,34 +540,51 @@ class LectureInsights:
                         st.markdown(
                             f"{question_icon} **{question_content["question"]}**"
                         )
-                        st.markdown(
-                            f"<span style='color: gray;'>Gemaakt door {len(scores_for_question)} studenten met gemiddeld {((total_achieved_score/total_score) * max_score):.1f}/{max_score} punten</span>",
-                            unsafe_allow_html=True,
-                        )
+                        # st.markdown(
+                        #     f"<span style='color: gray;'>Gemaakt door {len(scores_for_question)} studenten met gemiddeld {((total_achieved_score/total_score) * max_score):.1f}/{max_score} punten</span>",
+                        #     unsafe_allow_html=True,
+                        # )
+
                     else:
                         st.markdown(f"**{question_content['question']}**")
 
                     if "title" in feedback_analyses[str(question_index)]:
                         st.html(f"""
-    <div style="border-radius: 0.5rem; padding: 1rem;padding-bottom:0.1rem; background-color: #FFFCED;">
-        <strong>{feedback_analyses[str(question_index)]["title"]}</strong>
-        <p>{feedback_analyses[str(question_index)]["text"]}</p>
-    </div>""")
+        <div style="border-radius: 0.5rem; padding: 1rem;padding-bottom:0.1rem; background-color: #FFFCED;">
+            <strong>{feedback_analyses[str(question_index)]["title"]}</strong>
+            <p>{feedback_analyses[str(question_index)]["text"]}</p>
+        </div>""")
+
                     else:
                         st.markdown(
                             f"<span style='color: gray;'>{feedback_analyses[str(question_index)]}</span>",
                             unsafe_allow_html=True,
                         )
+                    columns = st.columns([5, 2])
 
-                    st.markdown(
-                        '<span style="color: gray;">**Antwoordmodel**</span>',
-                        unsafe_allow_html=True,
-                    )
-                    st.markdown(
-                        f"""<span style="color: gray;">{self.get_correct_answer(question_content)}
-                        </span>""",
-                        unsafe_allow_html=True,
-                    )
+                    with columns[0]:
+                        st.markdown(
+                            '<span style="color: gray;">**Antwoordmodel**</span>',
+                            unsafe_allow_html=True,
+                        )
+                        st.markdown(
+                            f"""<span style="color: gray;">{self.get_correct_answer(question_content)}
+                            </span>""",
+                            unsafe_allow_html=True,
+                        )
+                    with columns[1]:
+                        st.markdown(
+                            '<span style="color: gray;">**Statistieken**</span>',
+                            unsafe_allow_html=True,
+                        )
+                        st.markdown(
+                            f'<span style="color: gray;">👥 Studenten: {len(scores_for_question)}</span>',
+                            unsafe_allow_html=True,
+                        )
+                        st.markdown(
+                            f'<span style="color: gray;">📊 Gemiddelde: {((total_achieved_score/total_score) * max_score):.1f}/{max_score} punten</span>',
+                            unsafe_allow_html=True,
+                        )
                     if j < len(questions_content) - 1:
                         add_vertical_space(2)
                     j += 1

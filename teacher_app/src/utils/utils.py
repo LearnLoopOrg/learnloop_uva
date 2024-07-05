@@ -1,3 +1,4 @@
+from datetime import timedelta
 import json
 import streamlit as st
 from pymongo import MongoClient
@@ -61,6 +62,7 @@ class Utils:
         blob_client.upload_blob(content, overwrite=True)
         print(f"Content uploaded to '{blob_name}' in container '{container_name}'.")
 
+    @st.cache_data(ttl=timedelta(hours=4))
     def download_content_from_blob_storage(self, container_name, blob_name):
         """
         Download content from a specific directory within a container in Azure Blob Storage.
@@ -82,6 +84,7 @@ class Utils:
             print(f"Failed to download blob: {e}")
             return None
 
+    @st.cache_data(ttl=timedelta(hours=4))
     def download_image_from_blob_storage(
         self, container_name, blob_name
     ) -> Image.Image:
@@ -111,6 +114,7 @@ class Utils:
         list_output = [x.split(")", 1)[1].strip() for x in list_output if x != ""]
         return list_output
 
+    @st.cache_data(ttl=timedelta(hours=4))
     def original_topics(self, module) -> list:
         data_modules = self.download_content_from_blob_storage(
             "content", f"topics/{module}.json"
@@ -119,6 +123,7 @@ class Utils:
         topics = data_modules["topics"]
         return topics
 
+    @st.cache_data(ttl=timedelta(hours=4))
     def original_segments(self, module) -> list:
         data_modules = self.download_content_from_blob_storage(
             "content", f"modules/{module}.json"
@@ -130,6 +135,7 @@ class Utils:
     def key_func(self, k):
         return k["segment_id"]
 
+    @st.cache_data(ttl=timedelta(hours=4))
     def preprocessed_segments(self, module) -> list:
         # outputs a list of dictionaries with detele:yes or delete:no tags.
         original_segments_list = self.original_segments(module)
