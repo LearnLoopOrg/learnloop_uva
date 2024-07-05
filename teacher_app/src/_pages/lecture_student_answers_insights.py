@@ -538,12 +538,9 @@ class LectureInsights:
                             question_icon = "🟢"
 
                         st.markdown(
-                            f"{question_icon} **{question_content["question"]}**"
+                            f'<span style="font-size: 1.2em;">{question_icon} **{question_content["question"]}**</span>',
+                            unsafe_allow_html=True,
                         )
-                        # st.markdown(
-                        #     f"<span style='color: gray;'>Gemaakt door {len(scores_for_question)} studenten met gemiddeld {((total_achieved_score/total_score) * max_score):.1f}/{max_score} punten</span>",
-                        #     unsafe_allow_html=True,
-                        # )
 
                     else:
                         st.markdown(f"**{question_content['question']}**")
