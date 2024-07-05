@@ -24,23 +24,11 @@ class LectureOverview:
             ),
         ]
 
-    def render_logo(self):
-        st.image("src/data/content/images/logo.png", width=100)
-
     def render_sidebar(self):
         """
         Renders the contents of the sidebar, including the course buttons and login info.
         """
         with st.sidebar:
-            image_col = st.columns([0.4, 1])
-            with image_col[1]:
-                self.render_logo()
-
-            # Spacing
-            st.write("\n\n")
-            st.write("\n\n")
-            st.write("\n\n")
-
             # Display available courses as buttons
             st.header("Vakken")
             for course in st.session_state.courses:
@@ -52,7 +40,9 @@ class LectureOverview:
             st.write("\n\n")
 
             # Login info & logout button
-            st.write(f"**Luc Mahieu**")  # TODO: HARDCODED: replace with actual username
+            st.write(
+                f"{st.session_state.controller.username}"
+            )  # TODO: HARDCODED: replace with actual username
             st.button("Uitloggen", use_container_width=True)
 
     def go_to_lecture(self, lecture_title):

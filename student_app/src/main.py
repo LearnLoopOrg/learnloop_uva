@@ -19,7 +19,7 @@ st.set_page_config(page_title="LearnLoop", layout="wide")
 load_dotenv()
 
 
-def connect_to_openai():
+def connect_to_openai() -> OpenAI:
     if llm_model == "gpt-4o":
         print("Using OpenAI GPT-4o")
         st.session_state.openai_model = "gpt-4o"
@@ -46,6 +46,8 @@ def connect_to_openai():
                 "AZURE_OPENAI_ENDPOINT"
             ),  # TODO: ask Gerrit to put key in Azure secrets
         )
+    else:
+        raise ValueError("Invalid LLM model")
 
 
 def upload_progress():
@@ -1200,10 +1202,6 @@ def render_selected_page():
         render_practice_page()
 
 
-def render_logo():
-    st.image("src/data/content/images/logo.png", width=100)
-
-
 def upload_feedback():
     """Uploads feedback to the database."""
     db.feedback.insert_one({"feedback": st.session_state.feedback_box})
@@ -1333,10 +1331,6 @@ def render_sidebar():
     # print(st.session_state.selected_phase)
 
     with st.sidebar:
-        spacer, image_col = st.columns([0.4, 1])
-        with image_col:
-            render_logo()
-
         st.title("Navigatie")
         st.button(
             "Vakken",

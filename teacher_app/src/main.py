@@ -1,5 +1,3 @@
-from time import sleep
-from utils.utils import *
 from utils.openai_client import connect_to_openai
 import streamlit as st
 from dotenv import load_dotenv
@@ -10,6 +8,7 @@ from _pages.course_overview import CoursesOverview
 from _pages.lecture_student_answers_insights import LectureInsights
 from _pages.lecture_quality_check import QualityCheck
 from _pages.record_lecture import Recorder
+import os
 
 # Must be called first
 st.set_page_config(page_title="LearnLoop", layout="wide")
@@ -26,6 +25,8 @@ class Controller:
         st.session_state.db = db_config.connect_db(
             use_mongodb=st.session_state.use_mongodb
         )
+
+        _self.debug = True if os.getenv("DEBUG") == "True" else False
 
         # User
         st.session_state.username = "test_user_6"
@@ -76,10 +77,6 @@ class Controller:
 
     def render_sidebar(self):
         with st.sidebar:
-            spacer, image_col = st.columns([0.4, 1])
-            with image_col:
-                self.render_logo()
-
             st.title("Navigatie")
             st.button(
                 "Vakken",
@@ -102,9 +99,6 @@ class Controller:
             #         st.html(
             #             f'<a href="#{topic_title}">Spijsverteringsstelsel</a>',
             #         )
-
-    def render_logo(self):
-        st.image("src/data/content/images/logo.png", width=100)
 
     def set_selected_phase(self, phase):
         st.session_state.selected_phase = phase

@@ -1,3 +1,4 @@
+from datetime import timedelta
 from matplotlib import pyplot as plt
 import numpy as np
 import streamlit as st
@@ -7,6 +8,7 @@ import utils.db_config as db_config
 from data.data_access_layer import DatabaseAccess, ContentAccess
 from utils.openai_client import openai_call, read_prompt
 from utils.constants import QuestionType
+from streamlit_extras.add_vertical_space import add_vertical_space
 
 
 class LectureInsights:
@@ -14,6 +16,7 @@ class LectureInsights:
         self.db = db_config.connect_db(st.session_state.use_mongodb)
         self.db_dal = DatabaseAccess()
         self.cont_dal = ContentAccess()
+        self.module = ""
 
     def convert_image_base64(self, image_path):
         """
@@ -40,8 +43,8 @@ class LectureInsights:
             unsafe_allow_html=True,
         )
 
-    def render_title(self):
-        st.title(self.module)
+    def render_title(self, module_number, module):
+        st.title(f"College {module_number} — {module}")
         st.write("\n")
 
     def start_learning_page(self, topic_index):
@@ -274,20 +277,22 @@ class LectureInsights:
 
         return question_stats
 
-    def get_question_stats(self, module, question_index, question_content):
+    @st.cache_data(ttl=timedelta(hours=4), show_spinner=False)
+    def get_question_stats(_self, module, question_index, question_content):
         mongo_module = module.replace("_", " ")
-        results = self.db_dal.fetch_question(mongo_module, question_index)
+        results = _self.db_dal.fetch_question(mongo_module, question_index)
 
         if question_content["sub_type"] == QuestionType.MULTIPLE_CHOICE_QUESTION.value:
-            return self.get_mc_question_stats(mongo_module, question_index, results)
+            return _self.get_mc_question_stats(mongo_module, question_index, results)
 
         if question_content["sub_type"] == QuestionType.OPEN_QUESTION.value:
-            return self.get_open_question_stats(mongo_module, question_index, results)
+            return _self.get_open_question_stats(mongo_module, question_index, results)
 
-    def get_topic_questions_stats(self, module, questions_content):
+    @st.cache_data(ttl=timedelta(hours=4), show_spinner=False)
+    def get_topic_questions_stats(_self, module, questions_content):
         questions_stats = {}
         for question_index, question_content in questions_content.items():
-            question_stats = self.get_question_stats(
+            question_stats = _self.get_question_stats(
                 module, question_index, question_content
             )
             questions_stats[question_index] = question_stats
@@ -319,8 +324,9 @@ class LectureInsights:
 
         return input_prompt
 
-    def analyse_feedback(self, questions_content, questions_stats):
-        input_dict = self.format_for_analyse_prompt(questions_content, questions_stats)
+    @st.cache_data(ttl=timedelta(hours=4))
+    def analyse_feedback(_self, questions_content, questions_stats):
+        input_dict = _self.format_for_analyse_prompt(questions_content, questions_stats)
         input_json = json.dumps(input_dict)
 
         system_message = read_prompt("analyse_feedback")
@@ -355,7 +361,6 @@ class LectureInsights:
 
         # Categorize the scores
         categories = categorize_scores(int_scores)
-        total_scores = sum(categories.values())
         category_names = ["Niet gemaakt", "Onvoldoende", "Voldoende", "Goed"]
         data = np.array(
             [
@@ -384,7 +389,7 @@ class LectureInsights:
             for i, (colname, color) in enumerate(zip(category_names, category_colors)):
                 widths = data[:, i]
                 starts = data_cum[:, i] - widths
-                rects = ax.barh(
+                ax.barh(
                     labels, widths, left=starts, height=10, label=colname, color=color
                 )
                 ax.set_yticklabels([])  # Remove y-axis labels
@@ -409,53 +414,188 @@ class LectureInsights:
         st.pyplot(fig, use_container_width=True)
         pass
 
+    def display_sidebar_page_navigation(self, module, topics):
+        # Render the sidebar with links to the topics
+        with st.sidebar:
+            # Define CSS styles
+            css_styles = """
+            <style>
+            </style>
+            """
+
+            # Render CSS styles
+            st.markdown(css_styles, unsafe_allow_html=True)
+
+            # Render navigation with heading
+            st.html(
+                """<div style="display: flex; justify-content: flex-start; gap: 0rem;">"""
+            )
+
+            st.markdown(
+                """
+    <style>
+    [data-testid=column]:nth-of-type(1) [data-testid=stVerticalBlock]{
+        gap: 0rem;
+    }
+    </style>
+    """,
+                unsafe_allow_html=True,
+            )
+
+            col1 = st.columns(1)
+            with col1[0]:
+                st.markdown("<h2>Index</h2>", unsafe_allow_html=True)
+                for i, topic in enumerate(topics):
+                    questions_content = self.cont_dal.get_topic_questions(
+                        module, topic["segment_indexes"]
+                    )
+                    questions_stats = self.get_topic_questions_stats(
+                        module, questions_content
+                    )
+
+                    all_scores = []
+                    total_achieved_score = 0
+                    total_score = 0
+                    for _, stats_for_question in questions_stats.items():
+                        for score in stats_for_question["scores"]:
+                            total_achieved_score += float(score.split("/")[0])
+                            total_score += float(score.split("/")[1])
+                        all_scores.extend(
+                            stats_for_question["scores"]
+                        )  # Assuming 'scores' is always present
+                    percentage_correct_topic = total_achieved_score / total_score
+                    # i want a red, orange or green color based on the percentage correct
+                    if percentage_correct_topic < 0.5:
+                        icon = "🔴"
+                    elif percentage_correct_topic < 0.8:
+                        icon = "🟠"
+                    else:
+                        icon = "🟢"
+
+                    st.html(f"""<div style="display: inline-block; color: white; padding: 10px 0px; margin:0px; gap: 0rem; text-align: left; text-decoration: none; border-radius: 5px; transition: background-color 0.3s;">
+            <a href="#{topic["topic_title"]}" style="color: black; text-decoration: none;">{icon} {i + 1} - {topic["topic_title"]}</a>
+        </div>""")
+                    st.html("</div>")
+
     def get_correct_answer(self, question):
         if question["sub_type"] == QuestionType.MULTIPLE_CHOICE_QUESTION.value:
             return question["answers"]["correct_answer"]
         if question["sub_type"] == QuestionType.OPEN_QUESTION.value:
             return question["answer"]
 
-    def show_topic_feedback(self, module, topic):
+    def show_topic_feedback(self, module, topic, topic_index):
         questions_content = self.cont_dal.get_topic_questions(
             module, topic["segment_indexes"]
         )
         questions_stats = self.get_topic_questions_stats(module, questions_content)
 
         feedback_analyses = self.analyse_feedback(questions_content, questions_stats)
+        all_scores = []
+        total_achieved_score = 0
+        total_score = 0
+        for question_index, stats_for_question in questions_stats.items():
+            for score in stats_for_question["scores"]:
+                total_achieved_score += float(score.split("/")[0])
+                total_score += float(score.split("/")[1])
+            all_scores.extend(
+                stats_for_question["scores"]
+            )  # Assuming 'scores' is always present
+        percentage_correct_topic = total_achieved_score / total_score
+        # i want a red, orange or green color based on the percentage correct
+        if percentage_correct_topic < 0.5:
+            icon = "🔴"
+        elif percentage_correct_topic < 0.8:
+            icon = "🟠"
+        else:
+            icon = "🟢"
 
         with st.container():
-            col1, col2 = st.columns(2)
-            with col1:
-                st.title(topic["topic_title"])
-            with col2:
-                all_scores = []
-                for question_index, stats in questions_stats.items():
-                    all_scores.extend(
-                        stats["scores"]
-                    )  # Assuming 'scores' is always present
-                self.plot_scores(all_scores)
+            st.header(f"{icon} {topic["topic_title"]}", anchor=topic["topic_title"])
 
-            st.write(feedback_analyses["analysis"])
-            with st.expander("Analyse per vraag"):
-                for question_index, question_content in questions_content.items():
+            # st.markdown(
+            #     f"<span style='color: gray;'>Gemaakt door {len(all_scores)} studenten: {percentage_correct_topic * 100:.0f}% correct</span>",
+            #     unsafe_allow_html=True,
+            # )
+            # st.markdown(f"👥 Studenten: {len(all_scores)}")
+            # st.markdown(f"✅ Gemiddelde: {percentage_correct_topic * 100:.0f}% correct")
+            st.markdown(
+                f'<span style="color: gray;">👥 Studenten: {len(all_scores)}</span>',
+                unsafe_allow_html=True,
+            )
+            st.markdown(
+                f'<span style="color: gray;">📊 Gemiddelde: {percentage_correct_topic * 100:.0f}% correct</span>',
+                unsafe_allow_html=True,
+            )
+            with st.expander(
+                "Analyse per vraag", expanded=True if topic_index == 0 else False
+            ):
+                for j, (question_index, question_content) in enumerate(
+                    questions_content.items()
+                ):
                     question_stats = questions_stats[question_index]
+                    scores_for_question = question_stats["scores"]
+                    for score in scores_for_question:
+                        total_achieved_score += float(score.split("/")[0])
+                        max_score = float(score.split("/")[1])
+                        total_score += max_score
 
-                    print(question_content["question"])
+                    percentage_correct_question = total_achieved_score / total_score
+                    # i want a red, orange or green color based on the percentage correct
+                    if len(questions_stats) > 0:
+                        if percentage_correct_question < 0.5:
+                            question_icon = "🔴"
+                        elif percentage_correct_question < 0.8:
+                            question_icon = "🟠"
+                        else:
+                            question_icon = "🟢"
 
-                    col1, col2 = st.columns(2)
-                    with col1:
-                        st.markdown(f"**{question_content["question"]}**")
-                        st.write(self.get_correct_answer(question_content))
-
-                    print(feedback_analyses[str(question_index)]["title"])
-
-                    with col2:
-                        # st.header(question_stats['scores'])
                         st.markdown(
-                            f"**{feedback_analyses[str(question_index)]["title"]}**"
+                            f'<span style="font-size: 1.2em;">{question_icon} **{question_content["question"]}**</span>',
+                            unsafe_allow_html=True,
                         )
-                        st.write(feedback_analyses[str(question_index)]["text"])
-                        self.plot_scores(question_stats["scores"])
+
+                    else:
+                        st.markdown(f"**{question_content['question']}**")
+                    if (
+                        feedback_analyses is not None
+                        and "title" in feedback_analyses[str(question_index)]
+                    ):
+                        st.html(f"""
+        <div style="border-radius: 0.5rem; padding: 1rem;padding-bottom:0.1rem; background-color: #FFFCED;">
+            <strong>{feedback_analyses[str(question_index)]["title"]}</strong>
+            <p>{feedback_analyses[str(question_index)]["text"]}</p>
+        </div>""")
+                    else:
+                        st.error("Feedback analyse kon niet worden geladen")
+
+                    columns = st.columns([5, 2])
+
+                    with columns[0]:
+                        st.markdown(
+                            '<span style="color: gray; padding-left: 1rem;">**Antwoordmodel**</span>',
+                            unsafe_allow_html=True,
+                        )
+                        st.markdown(
+                            f'<span style="color: gray; padding-left: 1rem;">{self.get_correct_answer(question_content)}</span>',
+                            unsafe_allow_html=True,
+                        )
+
+                    with columns[1]:
+                        st.markdown(
+                            '<span style="color: gray;">**Statistieken**</span>',
+                            unsafe_allow_html=True,
+                        )
+                        st.markdown(
+                            f'<span style="color: gray;">👥 Studenten: {len(scores_for_question)}</span>',
+                            unsafe_allow_html=True,
+                        )
+                        st.markdown(
+                            f'<span style="color: gray;">📊 Gemiddelde: {((total_achieved_score/total_score) * max_score):.1f}/{max_score} punten</span>',
+                            unsafe_allow_html=True,
+                        )
+                    if j < len(questions_content) - 1:
+                        add_vertical_space(2)
+                    j += 1
 
     def run(self):
         """
@@ -466,17 +606,25 @@ class LectureInsights:
         # Fetch module info to be rendered
         module = st.session_state.selected_module
         st.session_state.page_content = self.cont_dal.fetch_module_content(module)
+        print(st.session_state.page_content)
 
         self.set_styling()  # for texts
 
-        self.render_title()
+        self.module = st.session_state.selected_module
+        module_number = self.module.split(" ")[0]
+        module = " ".join(self.module.split(" ")[1:])
+        self.render_title(module_number, module)
         # Spacing
         st.write("\n")
 
         module = st.session_state.selected_module.replace(" ", "_")
 
         topics = self.cont_dal.get_topics_list(module)
+
         for topic_index, topic in enumerate(topics):
-            self.show_topic_feedback(module, topic)
-            if topic_index > 2:
+            if st.session_state.controller.debug and topic_index > 1:
                 break
+
+            self.show_topic_feedback(module, topic, topic_index)
+
+        self.display_sidebar_page_navigation(module, topics)

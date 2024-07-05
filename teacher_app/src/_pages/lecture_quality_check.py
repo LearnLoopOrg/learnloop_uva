@@ -34,14 +34,14 @@ class QualityCheck:
             st.markdown(css_styles, unsafe_allow_html=True)
 
             # Render navigation with heading
-            st.markdown("<h2>Index</h2>", unsafe_allow_html=True)
-            st.markdown('<ul class="navigation">', unsafe_allow_html=True)
-            for i, topic_title in enumerate(topic_titles):
-                st.markdown(
-                    f'<li><a href="#{topic_title}">{i + 1} - {topic_title}</a></li>',
-                    unsafe_allow_html=True,
-                )
-            st.markdown("</ul>", unsafe_allow_html=True)
+            col = st.columns(1)
+            with col[0]:
+                st.markdown("<h2>Index</h2>", unsafe_allow_html=True)
+                for i, topic_title in enumerate(topic_titles):
+                    st.html(f"""<div style="display: inline-block; color: white; padding: 10px 0px; margin:0px; gap: 0rem; text-align: left; text-decoration: none; border-radius: 5px; transition: background-color 0.3s;">
+            <a href="#{topic_title}" style="color: black; text-decoration: none;">{i + 1} - {topic_title}</a>
+        </div>""")
+                st.html("</div>")
 
     def display_header(self):
         lecture_number, lecture_name = st.session_state.selected_module.split(" ", 1)
