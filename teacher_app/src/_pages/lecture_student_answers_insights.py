@@ -437,11 +437,11 @@ class LectureInsights:
             all_scores.extend(
                 stats_for_question["scores"]
             )  # Assuming 'scores' is always present
-        percentage_correct = total_achieved_score / total_score
+        percentage_correct_topic = total_achieved_score / total_score
         # i want a red, orange or green color based on the percentage correct
-        if percentage_correct < 0.5:
+        if percentage_correct_topic < 0.5:
             icon = "🔴"
-        elif percentage_correct < 0.8:
+        elif percentage_correct_topic < 0.8:
             icon = "🟠"
         else:
             icon = "🟢"
@@ -450,7 +450,7 @@ class LectureInsights:
             st.header(f"{icon} {topic["topic_title"]}")
 
             st.markdown(
-                f"<span style='color: gray;'>Gemaakt door {len(all_scores)} studenten: {percentage_correct * 100:.0f}% correct</span>",
+                f"<span style='color: gray;'>Gemaakt door {len(all_scores)} studenten: {percentage_correct_topic * 100:.0f}% correct</span>",
                 unsafe_allow_html=True,
             )
             with st.expander(
@@ -460,9 +460,33 @@ class LectureInsights:
                     questions_content.items()
                 ):
                     question_stats = questions_stats[question_index]
-                    print(question_stats)
+                    scores_for_question = question_stats["scores"]
+                    for score in scores_for_question:
+                        total_achieved_score += float(score.split("/")[0])
+                        max_score = float(score.split("/")[1])
+                        total_score += max_score
 
-                    st.markdown(f"**{question_content["question"]}**")
+                    percentage_correct_question = total_achieved_score / total_score
+                    # i want a red, orange or green color based on the percentage correct
+                    if len(questions_stats) > 0:
+                        if percentage_correct_question < 0.5:
+                            question_icon = "🔴"
+                        elif percentage_correct_question < 0.8:
+                            question_icon = "🟠"
+                        else:
+                            question_icon = "🟢"
+
+                        st.markdown(
+                            f"{question_icon} **{question_content["question"]}**"
+                        )
+                        print("total_achieved_score", total_achieved_score)
+                        print("total_score", total_score)
+                        st.markdown(
+                            f"<span style='color: gray;'>Gemaakt door {len(scores_for_question)} studenten met gemiddeld {((total_achieved_score/total_score) * max_score):.1f}/{max_score} punten</span>",
+                            unsafe_allow_html=True,
+                        )
+                    else:
+                        st.markdown(f"**{question_content['question']}**")
 
                     st.html(f"""
 <div style="border-radius: 0.5rem; padding: 1rem;padding-bottom:0.1rem; background-color: #FFFCED;">
