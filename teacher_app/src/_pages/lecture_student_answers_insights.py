@@ -9,6 +9,7 @@ import utils.db_config as db_config
 from data.data_access_layer import DatabaseAccess, ContentAccess
 from utils.openai_client import openai_call, read_prompt
 from utils.constants import QuestionType
+from streamlit_extras.add_vertical_space import add_vertical_space
 
 
 class LectureInsights:
@@ -419,7 +420,7 @@ class LectureInsights:
         if question["sub_type"] == QuestionType.OPEN_QUESTION.value:
             return question["answer"]
 
-    def show_topic_feedback(self, module, topic):
+    def show_topic_feedback(self, module, topic, topic_index):
         questions_content = self.cont_dal.get_topic_questions(
             module, topic["segment_indexes"]
         )
@@ -452,8 +453,12 @@ class LectureInsights:
                 f"<span style='color: gray;'>Gemaakt door {len(all_scores)} studenten: {percentage_correct * 100:.0f}% correct</span>",
                 unsafe_allow_html=True,
             )
-            with st.expander("Analyse per vraag"):
-                for question_index, question_content in questions_content.items():
+            with st.expander(
+                "Analyse per vraag", expanded=True if topic_index == 0 else False
+            ):
+                for j, (question_index, question_content) in enumerate(
+                    questions_content.items()
+                ):
                     question_stats = questions_stats[question_index]
                     print(question_stats)
 
@@ -474,6 +479,9 @@ class LectureInsights:
                         </span>""",
                         unsafe_allow_html=True,
                     )
+                    if j < len(questions_content) - 1:
+                        add_vertical_space(2)
+                    j += 1
 
     def run(self):
         """
@@ -499,4 +507,4 @@ class LectureInsights:
             if st.session_state.controller.debug and topic_index > 1:
                 break
 
-            self.show_topic_feedback(module, topic)
+            self.show_topic_feedback(module, topic, topic_index)
