@@ -1202,10 +1202,6 @@ def render_selected_page():
         render_practice_page()
 
 
-def render_logo():
-    st.image("src/data/content/images/logo.png", width=100)
-
-
 def upload_feedback():
     """Uploads feedback to the database."""
     db.feedback.insert_one({"feedback": st.session_state.feedback_box})
@@ -1335,10 +1331,6 @@ def render_sidebar():
     # print(st.session_state.selected_phase)
 
     with st.sidebar:
-        spacer, image_col = st.columns([0.4, 1])
-        with image_col:
-            render_logo()
-
         st.title("Navigatie")
         st.button(
             "Vakken",

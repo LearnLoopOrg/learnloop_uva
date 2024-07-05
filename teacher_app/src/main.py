@@ -77,10 +77,6 @@ class Controller:
 
     def render_sidebar(self):
         with st.sidebar:
-            spacer, image_col = st.columns([0.4, 1])
-            with image_col:
-                self.render_logo()
-
             st.title("Navigatie")
             st.button(
                 "Vakken",
@@ -103,9 +99,6 @@ class Controller:
             #         st.html(
             #             f'<a href="#{topic_title}">Spijsverteringsstelsel</a>',
             #         )
-
-    def render_logo(self):
-        st.image("src/data/content/images/logo.png", width=100)
 
     def set_selected_phase(self, phase):
         st.session_state.selected_phase = phase
