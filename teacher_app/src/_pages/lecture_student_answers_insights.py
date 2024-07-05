@@ -14,6 +14,7 @@ class LectureInsights:
         self.db = db_config.connect_db(st.session_state.use_mongodb)
         self.db_dal = DatabaseAccess()
         self.cont_dal = ContentAccess()
+        self.module = ""
 
     def convert_image_base64(self, image_path):
         """
@@ -469,6 +470,7 @@ class LectureInsights:
 
         self.set_styling()  # for texts
 
+        self.module = st.session_state.selected_module
         self.render_title()
         # Spacing
         st.write("\n")
