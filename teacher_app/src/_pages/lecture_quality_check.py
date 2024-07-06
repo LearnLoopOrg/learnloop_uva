@@ -45,7 +45,7 @@ class QualityCheck:
 
     def display_header(self):
         lecture_number, lecture_name = st.session_state.selected_module.split(" ", 1)
-        st.title(f"Kwaliteitscheck College {lecture_number} — {lecture_name}")
+        st.title(f"Kwaliteitscheck: College {lecture_number} — {lecture_name}")
         st.write(
             "Controleer de onderstaande gegenereerde oefenmaterialen om er zeker van te zijn dat studenten het juiste leren. "
             "Pas de afbeelding, theorie, vraag of het antwoord aan, of verwijder deze indien nodig. "

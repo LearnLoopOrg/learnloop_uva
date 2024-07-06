@@ -29,7 +29,7 @@ class Controller:
         _self.debug = True if os.getenv("DEBUG") == "True" else False
 
         # User
-        st.session_state.username = "Francesco Balocco"
+        st.session_state.username = "Luc Mahieu"
 
         # Data access layer
         _self.db_dal = DatabaseAccess()

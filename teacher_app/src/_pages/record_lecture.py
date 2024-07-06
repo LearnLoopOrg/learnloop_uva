@@ -108,7 +108,7 @@ class Recorder:
 
     def run(self):
         st.title(
-            f"College {st.session_state.selected_module} — Genereren leermateriaal"
+            f"Leermateriaal genereren: College — {st.session_state.selected_module}"
         )
         st.subheader("Kies een opgenomen college")
         st.write(
