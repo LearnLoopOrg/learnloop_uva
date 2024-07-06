@@ -1,3 +1,4 @@
+from typing import Any
 from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
@@ -7,19 +8,24 @@ import streamlit as st
 
 load_dotenv()
 
+
 @st.cache_resource(show_spinner=False)
-def connect_db(use_mongodb):
+def connect_db(use_mongodb: bool = True):
     """
     Connect to either MongoDB or CosmosDB and ping to check connection.
     """
     if not use_mongodb:
-        COSMOS_URI = os.getenv('COSMOS_URI')
-        db_client = MongoClient(COSMOS_URI, tlsCAFile=certifi.where())
+        COSMOS_URI = os.getenv("COSMOS_URI")
+        db_client: MongoClient[dict[str, Any]] = MongoClient(
+            COSMOS_URI, tlsCAFile=certifi.where()
+        )
     else:
-        MONGO_URI = os.getenv('MONGO_DB')
-        db_client = MongoClient(MONGO_URI, server_api=ServerApi('1'), tlsCAFile=certifi.where())
+        MONGO_URI = os.getenv("MONGO_DB")
+        db_client: MongoClient[dict[str, Any]] = MongoClient(
+            MONGO_URI, server_api=ServerApi("1"), tlsCAFile=certifi.where()
+        )
 
-    db = db_client.UvA_NAF
+    db = db_client.get_database("UvA_NAF")
 
     # Ping database to check if it's connected
     try:

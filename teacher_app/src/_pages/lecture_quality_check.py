@@ -1,3 +1,5 @@
+from api.module import ModuleRepository
+from utils.db_config import connect_db
 from utils.utils import Utils
 import streamlit as st
 from dotenv import load_dotenv
@@ -10,6 +12,9 @@ load_dotenv()
 class QualityCheck:
     def __init__(self):
         self.utils = Utils()
+        self.module_repository = ModuleRepository(
+            connect_db(use_mongodb=st.session_state.use_mongodb)
+        )
 
     def run(self):
         self.display_header()
@@ -244,15 +249,16 @@ class QualityCheck:
 
     def display_save_button(self):
         if st.button("Opslaan", use_container_width=True):
-            segments_list = self.utils.preprocessed_segments(
-                st.session_state.selected_module.replace(" ", "_")
+            module_db_name = st.session_state.selected_module.replace(" ", "_")
+            segments_list_with_delete = self.utils.preprocessed_segments(module_db_name)
+            self.module_repository.update_correct_lecture_path_content(
+                module=module_db_name,
+                segments_list_with_delete=segments_list_with_delete,
             )
-            self.utils.upload_modules_json(
-                st.session_state.selected_module.replace(" ", "_"), segments_list
+            self.module_repository.upload_modules_topics_json(
+                module=module_db_name, segments_with_delete=segments_list_with_delete
             )
-            self.utils.upload_modules_topics_json(
-                st.session_state.selected_module.replace(" ", "_"), segments_list
-            )
+            # TODO: update status
 
 
 if __name__ == "__main__":
