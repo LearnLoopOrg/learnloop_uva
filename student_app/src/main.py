@@ -350,15 +350,10 @@ def render_navigation_buttons():
 
     with source_col:
         with st.popover("Bron", use_container_width=True):
-            source_book = "**Boek:** " + st.session_state.segment_content.get(
-                "source_book", ""
+            slides: list[int] = st.session_state.segment_content.get("slides", [])
+            st.markdown(
+                "**Relevante slides:** " + ", ".join([str(slide) for slide in slides])
             )
-            st.markdown(source_book)
-
-            source_slide = "**Side:** " + st.session_state.segment_content.get(
-                "source_slide", ""
-            )
-            st.markdown(source_slide)
 
     with next_col:
         st.button(
