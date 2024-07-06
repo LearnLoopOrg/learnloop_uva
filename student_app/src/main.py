@@ -1692,7 +1692,7 @@ if __name__ == "__main__":
     use_dummy_openai_calls = False
 
     # Give the name of the test user when giving one. !! If not using a test username, set to None
-    test_username = "test_user_6"
+    test_username = "Francesco Balocco"
 
     # Use the Azure Openai API or the Openai API (GPT-4o) for the feedback
     models = ["gpt-4o", "azure_gpt-4", "azure_gpt-4_Turbo"]

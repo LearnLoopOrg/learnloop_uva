@@ -52,16 +52,12 @@ class LectureOverview:
         st.session_state.selected_module = lecture_title
         module_status = self.db_dal.fetch_module_status()
 
-        print(f"Module status: {module_status}")
-        print(f"Phase before: {st.session_state.selected_phase}")
         if module_status == "corrected":
             st.session_state.selected_phase = "insights"
         elif module_status == "generated":
             st.session_state.selected_phase = "quality_check"
         elif module_status == "not_recorded":
             st.session_state.selected_phase = "record"
-
-        print(f"Phase set to {st.session_state.selected_phase}")
 
         self.db_dal.update_last_module()
 

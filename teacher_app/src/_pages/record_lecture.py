@@ -108,7 +108,7 @@ class Recorder:
 
     def run(self):
         st.title(
-            f"Genereren leermateriaal voor college {st.session_state.selected_module}"
+            f"Genereer leermateriaal voor college {st.session_state.selected_module.replace('_', ' ')}"
         )
         st.subheader("Neem een college op")
         st.write(

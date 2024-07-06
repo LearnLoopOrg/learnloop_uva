@@ -204,7 +204,7 @@ class Utils:
         return new_segments_list
 
     def upload_modules_json(self, module, segments_list) -> None:
-        modules_data = {"module_name": "NAF_1", "updated": "yes"}
+        modules_data = {"lecture_name": "NAF_1", "updated": "yes"}
         modules_segments_list = []
 
         for segment in segments_list:
@@ -220,7 +220,7 @@ class Utils:
         )
 
     def upload_modules_topics_json(self, module, segments_list) -> None:
-        modules_topics_data = {"module_name": "NAF_1", "updated": "yes"}
+        modules_topics_data = {"lecture_name": "NAF_1", "updated": "yes"}
         modules_topics_topics_list = []
 
         data_modules_topics = self.download_content_from_blob_storage(

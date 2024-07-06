@@ -283,9 +283,10 @@ class LectureInsights:
 
         if question_content["sub_type"] == QuestionType.MULTIPLE_CHOICE_QUESTION.value:
             return _self.get_mc_question_stats(mongo_module, question_index, results)
-
-        if question_content["sub_type"] == QuestionType.OPEN_QUESTION.value:
+        elif question_content["sub_type"] == QuestionType.OPEN_QUESTION.value:
             return _self.get_open_question_stats(mongo_module, question_index, results)
+        else:
+            raise ValueError("Invalid question type")
 
     @st.cache_data(ttl=timedelta(hours=4), show_spinner=False)
     def get_topic_questions_stats(_self, module, questions_content):

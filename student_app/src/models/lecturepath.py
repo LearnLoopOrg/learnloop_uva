@@ -5,12 +5,12 @@ from typing import Union
 
 @dataclass
 class LecturePath:
-    module_name: str
+    lecture_name: str
     segments: list[Union[TheorySegment, QuestionSegment, MCQuestionSegment]]
 
     @staticmethod
     def from_dict(data: dict) -> "LecturePath":
-        lecture_path = LecturePath(module_name=data.get("module_name"), segments=[])
+        lecture_path = LecturePath(lecture_name=data.get("lecture_name"), segments=[])
         segments = data.get("segments")
         for segment in segments:
             if segment["type"] == "theory":

@@ -1,6 +1,5 @@
 import streamlit as st
 import base64
-from models.lecturepath import LecturePath
 import utils.db_config as db_config
 from data.data_access_layer import DatabaseAccess
 
