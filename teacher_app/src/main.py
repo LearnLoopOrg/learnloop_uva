@@ -47,7 +47,7 @@ class Controller:
 
     def initialise_session_states(self):
         if "selected_phase" not in st.session_state:
-            st.session_state.selected_phase = None
+            st.session_state.selected_phase = "courses"
         if "selected_module" not in st.session_state:
             st.session_state.selected_module = None
         if "openai_client" not in st.session_state:
@@ -63,16 +63,19 @@ class Controller:
         """
         Determines what type of page to display based on which module the user selected.
         """
-        if st.session_state.selected_phase == "courses":
-            self.courses_page.run()
-        elif st.session_state.selected_phase == "lectures":
-            self.lectures_page.run()
-        elif st.session_state.selected_phase == "record":
-            self.record_page.run()
-        elif st.session_state.selected_phase == "quality_check":
-            self.quality_check_page.run()
-        elif st.session_state.selected_phase == "insights":
-            self.insights_page.run()
+        match st.session_state.selected_phase:
+            case "courses":
+                self.courses_page.run()
+            case "lectures":
+                self.lectures_page.run()
+            case "record":
+                self.record_page.run()
+            case "quality_check":
+                self.quality_check_page.run()
+            case "insights":
+                self.insights_page.run()
+            case _:  # Show courses by default
+                self.courses_page.run()
 
     def render_sidebar(self):
         with st.sidebar:
