@@ -108,26 +108,13 @@ class Recorder:
 
     def run(self):
         st.title(
-            f"Genereren leermateriaal voor college {st.session_state.selected_module}"
+            f"College {st.session_state.selected_module} — Genereren leermateriaal"
         )
-        st.subheader("Neem een college op")
+        st.subheader("Kies een opgenomen college")
         st.write(
-            "Dit college is nog niet opgenomen. Klik op de knop hieronder om te starten met opnemen."
+            "Er is nog geen leermateriaal voor dit college gegenereerd. Kies een opname om de leermaterialen te genereren."
         )
 
-        if "recording" not in st.session_state:
-            st.session_state["recording"] = False
-
-        duration_minutes = st.slider(
-            "Select duration (minutes)", min_value=1, max_value=120, value=60
-        )
-        duration_seconds = 60 * duration_minutes
-
-        if st.button("Begin opname"):
-            st.session_state["recording"] = True
-            self.start_recording(duration_seconds)
-
-        st.subheader("Of, kies een opgenomen college")
         user = st.session_state.username
 
         # TODO - List actual recordings from blob storage for Demo
@@ -158,7 +145,7 @@ class Recorder:
 
             with cols[1]:
                 st.button(  # TODO: Invoke Cloud Function / API to generate practice materials
-                    "Genereer oefenmaterialen voor studenten", key=recording["id"]
+                    "Genereer leermaterialen voor studenten", key=recording["id"]
                 )
 
 
