@@ -12,6 +12,7 @@ from data.data_access_layer import DatabaseAccess
 from datetime import datetime
 from _pages.lecture_overview import LectureOverview
 from _pages.course_overview import CoursesOverview
+from _pages.theory_overview import TheoryOverview
 
 # Must be called first
 st.set_page_config(page_title="LearnLoop", layout="wide")
@@ -188,10 +189,12 @@ def render_feedback():
     result_html = f"""
     <h1 style='font-size: 20px; margin: 25px 0 10px 10px; padding: 0;'>Feedback:</h1>
     {feedback_html}
-    <div style='background-color: {color}; padding: 10px; margin-bottom: 15px; margin-top: 28px; border-radius: 7px; display: flex; align-items: center;'> <!-- Verhoogd naar 50px voor meer ruimte -->
+    <div style='background-color: {color}; padding: 10px; margin-bottom: 0px; margin-top: 28px; border-radius: 7px; display: flex; align-items: center;'> <!-- Verhoogd naar 50px voor meer ruimte -->
         <h1 style='font-size: 20px; margin: 8px 0 8px 10px; padding: 0;'>Score: {st.session_state.score}</h1>
-        <p style='margin: -20px; padding: 0;'>⚠️ Kan afwijken</p>
     </div>
+    <span style="font-size: 0.9em; color: darkgray;">LearnLoop kan fouten maken. Check het antwoordmodel als je twijfelt.</span>
+    <br>
+    <br>
     """
     st.markdown(result_html, unsafe_allow_html=True)
 
@@ -347,15 +350,10 @@ def render_navigation_buttons():
 
     with source_col:
         with st.popover("Bron", use_container_width=True):
-            source_book = "**Boek:** " + st.session_state.segment_content.get(
-                "source_book", ""
+            slides: list[int] = st.session_state.segment_content.get("slides", [])
+            st.markdown(
+                "**Relevante slides:** " + ", ".join([str(slide) for slide in slides])
             )
-            st.markdown(source_book)
-
-            source_slide = "**Side:** " + st.session_state.segment_content.get(
-                "source_slide", ""
-            )
-            st.markdown(source_slide)
 
     with next_col:
         st.button(
@@ -364,6 +362,14 @@ def render_navigation_buttons():
             args=(1,),
             use_container_width=True,
         )
+
+    temp_state = st.session_state.questions_only
+    st.session_state.questions_only = st.toggle(
+        "Toon geen theorie, alleen vragen", key="theory_questions"
+    )
+
+    if temp_state != st.session_state.questions_only:
+        st.rerun()
 
 
 def set_submitted_true():
@@ -1179,6 +1185,14 @@ def render_courses_page():
     courses_page.run()
 
 
+def render_theory_overview_page():
+    """
+    Renders the page that shows the theory overview of the course.
+    """
+    theory_overview_page = TheoryOverview()
+    theory_overview_page.run()
+
+
 def render_selected_page():
     """
     Determines what type of page to display based on which module the user selected.
@@ -1200,6 +1214,8 @@ def render_selected_page():
         render_learning_page()
     elif st.session_state.selected_phase == "practice":
         render_practice_page()
+    elif st.session_state.selected_phase == "theory-overview":
+        render_theory_overview_page()
 
 
 def upload_feedback():
@@ -1228,7 +1244,7 @@ def render_feedback_form():
 
 def render_info_page():
     """Renders the info page that contains the explanation of the learning and practice phases."""
-    with open("./uitleg_llms.txt", "r") as f:
+    with open("./src/data/uitleg_llms_voor_student.txt", "r") as f:
         info_page = f.read()
     with mid_col:
         st.markdown(info_page, unsafe_allow_html=True)
@@ -1348,7 +1364,7 @@ def render_sidebar():
         st.title("Colleges")
 
         # Toggle to show only questions during learning phase
-        st.session_state.questions_only = st.toggle("Alleen vragen tonen")
+        # st.session_state.questions_only = st.toggle("Alleen vragen tonen")
 
         practice_exam_count = 0
         # Display the modules in expanders in the sidebar
@@ -1362,29 +1378,32 @@ def render_sidebar():
                     # Display buttons for the two types of phases per module
                     render_page_button("Leren 📖", module, phase="topics")
                     render_page_button("Herhalen 🔄", module, phase="practice")
+                    render_page_button(
+                        "Overzicht theorie 📚", module, phase="theory-overview"
+                    )
 
             elif module.startswith(st.session_state.practice_exam_name.split(" ")[0]):
                 practice_exam_count += 1
 
-        st.title(st.session_state.practice_exam_name)
+        # st.title(st.session_state.practice_exam_name)
 
-        # Render the practice exam buttons
-        for i in range(practice_exam_count):
-            practice_exam_name = st.session_state.practice_exam_name
-            # render_page_button(f'{practice_exam_name} {i + 1} ✍🏽', f'{practice_exam_name} {i + 1}', 'learning')
-            render_page_button(
-                f"{practice_exam_name} ✍🏽", f"{practice_exam_name}", "learning"
-            )
+        # # Render the practice exam buttons
+        # for i in range(practice_exam_count):
+        #     practice_exam_name = st.session_state.practice_exam_name
+        #     # render_page_button(f'{practice_exam_name} {i + 1} ✍🏽', f'{practice_exam_name} {i + 1}', 'learning')
+        #     render_page_button(
+        #         f"{practice_exam_name} ✍🏽", f"{practice_exam_name}", "learning"
+        #     )
 
-        render_feedback_form()  # So users can give feedback
+        # render_feedback_form()  # So users can give feedback TODO: on for DEMO
 
-        st.subheader("Extra Info")
-        st.button(
-            "Uitleg mogelijkheden & limitaties LLM's",
-            on_click=set_info_page_true,
-            use_container_width=True,
-            key="info_button_sidebar",
-        )
+        # st.subheader("Extra Info")
+        # st.button(
+        #     "Uitleg mogelijkheden & limitaties LLM's",
+        #     on_click=set_info_page_true,
+        #     use_container_width=True,
+        #     key="info_button_sidebar",
+        # )
 
 
 def initialise_database():
