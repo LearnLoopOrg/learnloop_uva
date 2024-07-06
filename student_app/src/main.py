@@ -1228,7 +1228,7 @@ def render_feedback_form():
 
 def render_info_page():
     """Renders the info page that contains the explanation of the learning and practice phases."""
-    with open("./uitleg_llms.txt", "r") as f:
+    with open("./src/data/uitleg_llms_voor_student.txt", "r") as f:
         info_page = f.read()
     with mid_col:
         st.markdown(info_page, unsafe_allow_html=True)

@@ -1,7 +1,7 @@
+from datetime import timedelta
 import json
 import streamlit as st
 import utils.db_config as db_config
-import os
 
 
 class DatabaseAccess:
@@ -14,14 +14,15 @@ class DatabaseAccess:
         self.topics_list = None
         self.segment_index = None
 
-    def determine_modules(self):
+    @st.cache_data(ttl=timedelta(hours=4))
+    def determine_modules(_self):
         """
         Function to determine which names of modules to display in the sidebar
         based on the JSON module files.
         """
         # Read the modules from the modules directory
         modules = []
-        lectures = self.db.content.find()
+        lectures = _self.db.content.find()
         for lecture in lectures:
             try:
                 modules.append(lecture["lecture_name"])
@@ -79,12 +80,6 @@ class DatabaseAccess:
     def get_segment_answer(self, segment_index):
         return self.segments_list[segment_index].get("answer", None)
 
-    def get_segment_title(self, segment_index):
-        return self.segments_list[segment_index]["title"]
-
-    def get_segment_text(self, segment_index):
-        return self.segments_list[segment_index]["text"]
-
     def get_segment_image_file_name(self, segment_index):
         return self.segments_list[segment_index].get("image", None)
 
@@ -106,6 +101,7 @@ class DatabaseAccess:
     def generate_json_path(self, json_name):
         return f"src/data/content/modules/{json_name}"
 
+    @st.cache_data(ttl=timedelta(hours=4))
     def load_json_content(
         self, path
     ):  # TODO: This might result in a lot of memory usage, which is costly and slow
@@ -113,9 +109,10 @@ class DatabaseAccess:
         with open(path, "r") as f:
             return json.load(f)
 
-    def get_topic_segment_indexes(self, module, topic_index):
-        return self.get_topics_list_from_db(module)[topic_index]["segment_indexes"]
+    def get_topic_segment_indexes(_self, module, topic_index):
+        return _self.get_topics_list_from_db(module)[topic_index]["segment_indexes"]
 
+    @st.cache_data(ttl=timedelta(hours=4))
     def fetch_courses(self):
         """
         Determines which courses are available for this student by querying
@@ -137,7 +134,8 @@ class DatabaseAccess:
             ),
         ]
 
-    def fetch_lectures(self):
+    @st.cache_data(ttl=timedelta(hours=4))
+    def fetch_lectures(_self):
         """
         Determines which lectures are available for this student for the given course
         by querying the database of the university.
@@ -162,27 +160,30 @@ class DatabaseAccess:
             ),
         ]
 
-    def get_segments_list_from_db(self, module):
+    @st.cache_data(ttl=timedelta(hours=4))
+    def get_segments_list_from_db(_self, module):
         query = {"lecture_name": module.replace(" ", "_")}
-        doc = self.db.content.find_one(query)
+        doc = _self.db.content.find_one(query)
+
+        print("\n\nDocument keys:", doc.keys(), "\n\n")
 
         if doc and "original_lecturepath_content" in doc:
-            self.segments_list = doc["original_lecturepath_content"]["segments"]
+            _self.segments_list = doc["original_lecturepath_content"]["segments"]
         else:
-            self.segments_list = None
+            _self.segments_list = None
 
-        return self.segments_list
+        return _self.segments_list
 
-    def get_topics_list_from_db(self, module):
+    def get_topics_list_from_db(_self, module):
         query = {"lecture_name": module.replace(" ", "_")}
-        doc = self.db.content.find_one(query)
+        doc = _self.db.content.find_one(query)
 
         if doc and "original_lecturepath_topics" in doc:
-            self.topics_list = doc["original_lecturepath_topics"]["topics"]
+            _self.topics_list = doc["original_lecturepath_topics"]["topics"]
         else:
-            self.topics_list = None
+            _self.topics_list = None
 
-        return self.topics_list
+        return _self.topics_list
 
     def update_if_warned(self, boolean):
         """Callback function for a button that turns of the LLM warning message."""

@@ -116,35 +116,37 @@ class TopicOverview:
 
             _self.db_dal.get_segments_list_from_db(module_name_underscored)
             for segment_index in topic["segment_indexes"]:
-                _self.db_dal.get_segments_list_from_db(module_name_underscored)
+                segments_list = _self.db_dal.get_segments_list_from_db(
+                    module_name_underscored
+                )
                 segment_type = _self.db_dal.get_segment_type(segment_index)
                 segment_title = (
-                    _self.db_dal.get_segment_title(segment_index)
+                    segments_list[segment_index]["title"]
                     if segment_type == "theory"
                     else None
                 )
                 segment_text = (
-                    _self.db_dal.get_segment_text(segment_index)
+                    segments_list[segment_index]["text"]
                     if segment_type == "theory"
                     else None
                 )
                 segment_question = (
-                    _self.db_dal.get_segment_question(segment_index)
+                    segments_list[segment_index].get("question", None)
                     if segment_type == "question"
                     else None
                 )
                 segment_answers = (
-                    _self.db_dal.get_segment_mc_answers(segment_index)
+                    segments_list[segment_index].get("answers", None)
                     if segment_type == "question"
                     else None
                 )
                 segment_answer = (
-                    _self.db_dal.get_segment_answer(segment_index)
+                    segments_list[segment_index].get("answer", None)
                     if segment_type == "question"
                     else None
                 )
-                segment_image_file_name = _self.db_dal.get_segment_image_file_name(
-                    segment_index
+                segment_image_file_name = segments_list[segment_index].get(
+                    "image", None
                 )
                 segment_image_path = (
                     _self.db_dal.get_image_path(segment_image_file_name)
