@@ -188,10 +188,12 @@ def render_feedback():
     result_html = f"""
     <h1 style='font-size: 20px; margin: 25px 0 10px 10px; padding: 0;'>Feedback:</h1>
     {feedback_html}
-    <div style='background-color: {color}; padding: 10px; margin-bottom: 15px; margin-top: 28px; border-radius: 7px; display: flex; align-items: center;'> <!-- Verhoogd naar 50px voor meer ruimte -->
+    <div style='background-color: {color}; padding: 10px; margin-bottom: 0px; margin-top: 28px; border-radius: 7px; display: flex; align-items: center;'> <!-- Verhoogd naar 50px voor meer ruimte -->
         <h1 style='font-size: 20px; margin: 8px 0 8px 10px; padding: 0;'>Score: {st.session_state.score}</h1>
-        <p style='margin: -20px; padding: 0;'>⚠️ Kan afwijken</p>
     </div>
+    <span style="font-size: 0.9em; color: darkgray;">LearnLoop kan fouten maken. Check het antwoordmodel als je twijfelt.</span>
+    <br>
+    <br>
     """
     st.markdown(result_html, unsafe_allow_html=True)
 
