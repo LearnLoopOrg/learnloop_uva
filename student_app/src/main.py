@@ -12,6 +12,7 @@ from data.data_access_layer import DatabaseAccess
 from datetime import datetime
 from _pages.lecture_overview import LectureOverview
 from _pages.course_overview import CoursesOverview
+from _pages.theory_overview import TheoryOverview
 
 # Must be called first
 st.set_page_config(page_title="LearnLoop", layout="wide")
@@ -1189,6 +1190,14 @@ def render_courses_page():
     courses_page.run()
 
 
+def render_theory_overview_page():
+    """
+    Renders the page that shows the theory overview of the course.
+    """
+    theory_overview_page = TheoryOverview()
+    theory_overview_page.run()
+
+
 def render_selected_page():
     """
     Determines what type of page to display based on which module the user selected.
@@ -1210,6 +1219,8 @@ def render_selected_page():
         render_learning_page()
     elif st.session_state.selected_phase == "practice":
         render_practice_page()
+    elif st.session_state.selected_phase == "theory-overview":
+        render_theory_overview_page()
 
 
 def upload_feedback():
@@ -1372,6 +1383,9 @@ def render_sidebar():
                     # Display buttons for the two types of phases per module
                     render_page_button("Leren 📖", module, phase="topics")
                     render_page_button("Herhalen 🔄", module, phase="practice")
+                    render_page_button(
+                        "Overzicht theorie 📚", module, phase="theory-overview"
+                    )
 
             elif module.startswith(st.session_state.practice_exam_name.split(" ")[0]):
                 practice_exam_count += 1
