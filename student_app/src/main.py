@@ -367,6 +367,14 @@ def render_navigation_buttons():
             use_container_width=True,
         )
 
+    temp_state = st.session_state.questions_only
+    st.session_state.questions_only = st.toggle(
+        "Toon geen theorie, alleen vragen", key="theory_questions"
+    )
+
+    if temp_state != st.session_state.questions_only:
+        st.rerun()
+
 
 def set_submitted_true():
     """Whithout this helper function the user will have to press "check" button twice before submitting"""
@@ -1350,7 +1358,7 @@ def render_sidebar():
         st.title("Colleges")
 
         # Toggle to show only questions during learning phase
-        st.session_state.questions_only = st.toggle("Alleen vragen tonen")
+        # st.session_state.questions_only = st.toggle("Alleen vragen tonen")
 
         practice_exam_count = 0
         # Display the modules in expanders in the sidebar
@@ -1368,25 +1376,25 @@ def render_sidebar():
             elif module.startswith(st.session_state.practice_exam_name.split(" ")[0]):
                 practice_exam_count += 1
 
-        st.title(st.session_state.practice_exam_name)
+        # st.title(st.session_state.practice_exam_name)
 
-        # Render the practice exam buttons
-        for i in range(practice_exam_count):
-            practice_exam_name = st.session_state.practice_exam_name
-            # render_page_button(f'{practice_exam_name} {i + 1} ✍🏽', f'{practice_exam_name} {i + 1}', 'learning')
-            render_page_button(
-                f"{practice_exam_name} ✍🏽", f"{practice_exam_name}", "learning"
-            )
+        # # Render the practice exam buttons
+        # for i in range(practice_exam_count):
+        #     practice_exam_name = st.session_state.practice_exam_name
+        #     # render_page_button(f'{practice_exam_name} {i + 1} ✍🏽', f'{practice_exam_name} {i + 1}', 'learning')
+        #     render_page_button(
+        #         f"{practice_exam_name} ✍🏽", f"{practice_exam_name}", "learning"
+        #     )
 
-        render_feedback_form()  # So users can give feedback
+        # render_feedback_form()  # So users can give feedback TODO: on for DEMO
 
-        st.subheader("Extra Info")
-        st.button(
-            "Uitleg mogelijkheden & limitaties LLM's",
-            on_click=set_info_page_true,
-            use_container_width=True,
-            key="info_button_sidebar",
-        )
+        # st.subheader("Extra Info")
+        # st.button(
+        #     "Uitleg mogelijkheden & limitaties LLM's",
+        #     on_click=set_info_page_true,
+        #     use_container_width=True,
+        #     key="info_button_sidebar",
+        # )
 
 
 def initialise_database():
