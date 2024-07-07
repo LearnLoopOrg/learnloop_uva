@@ -1,4 +1,5 @@
-from utils.utils import Utils
+from data.data_access_layer import DatabaseAccess
+from utils.utils import ImageHandler, Utils
 import streamlit as st
 from dotenv import load_dotenv
 import json
@@ -10,11 +11,15 @@ load_dotenv()
 class QualityCheck:
     def __init__(self):
         self.utils = Utils()
+        self.db_dal = DatabaseAccess()
+        self.image_handler = ImageHandler()
 
     def run(self):
         self.display_header()
-        data_modules, data_modules_topics = self.load_module_data()
-        segments, topics = data_modules["segments"], data_modules_topics["topics"]
+        module_name = st.session_state.selected_module.replace(" ", "_")
+        data_module = self.db_dal.fetch_module_content(module_name)
+        data_module_topics = self.db_dal.fetch_module_topics(module_name)
+        segments, topics = data_module["segments"], data_module_topics["topics"]
         self.initialize_session_state(segments, topics)
         self.display_sidebar_page_navigation(topics)
         self.display_segments(segments, topics)
@@ -52,17 +57,17 @@ class QualityCheck:
             "Als je klaar bent, kun je de oefenmaterialen direct delen met studenten door op de button onderaan te drukken."
         )
 
-    def load_module_data(self):
-        module_name = st.session_state.selected_module.replace(" ", "_")
-        data_modules = self.utils.download_content_from_blob_storage(
-            "content", f"modules/{module_name}.json"
-        )
-        data_modules = json.loads(data_modules)
-        data_modules_topics = self.utils.download_content_from_blob_storage(
-            "content", f"topics/{module_name}.json"
-        )
-        data_modules_topics = json.loads(data_modules_topics)
-        return data_modules, data_modules_topics
+    # def load_module_data(self):
+    #     module_name = st.session_state.selected_module.replace(" ", "_")
+    #     data_module = self.utils.download_content_from_blob_storage(
+    #         "content", f"modules/{module_name}.json"
+    #     )
+    #     data_module = json.loads(data_module)
+    #     data_module_topics = self.utils.download_content_from_blob_storage(
+    #         "content", f"topics/{module_name}.json"
+    #     )
+    #     data_module_topics = json.loads(data_module_topics)
+    #     return data_module, data_module_topics
 
     def initialize_session_state(self, segments, topics):
         for segment_id, segment in enumerate(segments):
@@ -134,23 +139,14 @@ class QualityCheck:
     def display_segment(self, segment_id, segment):
         with st.container(border=True):
             if segment.get("image"):
-                self.display_image(segment["image"])
+                self.image_handler.render_image(segment)
             self.display_segment_content(segment_id, segment)
             self.display_toggle_button(segment_id)
 
-    def resize_image_to_max_height(self, image: Image.Image, max_height):
-        # Calculate the new width maintaining the aspect ratio
-        aspect_ratio = image.width / image.height
-        new_height = max_height
-        new_width = int(new_height * aspect_ratio)
-
-        # Resize the image
-        resized_img = image.resize((new_width, new_height))
-
-        return resized_img
-
     def display_image(self, image_path):
-        image = self.utils.download_image_from_blob_storage("images", image_path)
+        image = self.utils.download_image_from_blob_storage(
+            st.session_state.university_code, image_path
+        )
         resized_image = self.resize_image_to_max_height(image, 300)
 
         st.image(resized_image, use_column_width="auto")

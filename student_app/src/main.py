@@ -7,9 +7,10 @@ from openai import AzureOpenAI
 from openai import OpenAI
 import base64
 from _pages.topic_overview import TopicOverview
+from utils.utils import ImageHandler
 import utils.db_config as db_config
 from data.data_access_layer import DatabaseAccess
-from datetime import datetime
+from datetime import datetime, timedelta
 from _pages.lecture_overview import LectureOverview
 from _pages.course_overview import CoursesOverview
 from _pages.theory_overview import TheoryOverview
@@ -20,6 +21,7 @@ st.set_page_config(page_title="LearnLoop", layout="wide")
 load_dotenv()
 
 
+@st.cache_resource(ttl=timedelta(hours=4))
 def connect_to_openai() -> OpenAI:
     if llm_model == "gpt-4o":
         print("Using OpenAI GPT-4o")
@@ -87,7 +89,7 @@ def evaluate_answer():
         ) as f:
             role_prompt = f.read()
 
-        stream = openai_client.chat.completions.create(
+        stream = st.session_state.openai_client.chat.completions.create(
             model=st.session_state.openai_model,
             messages=[
                 {"role": "system", "content": role_prompt},
@@ -363,18 +365,30 @@ def render_navigation_buttons():
             use_container_width=True,
         )
 
-    temp_state = st.session_state.questions_only
-    st.session_state.questions_only = st.toggle(
-        "Toon geen theorie, alleen vragen", key="theory_questions"
-    )
+    if st.session_state.selected_phase == "learning":
+        temp_state = st.session_state.questions_only
+        st.session_state.questions_only = st.toggle(
+            "Toon geen theorie, alleen vragen", key="theory_questions"
+        )
 
-    if temp_state != st.session_state.questions_only:
-        st.rerun()
+        if temp_state != st.session_state.questions_only:
+            st.rerun()
 
 
 def set_submitted_true():
     """Whithout this helper function the user will have to press "check" button twice before submitting"""
     st.session_state.submitted = True
+
+
+def show_toggle_if_practice_page():
+    if st.session_state.selected_phase == "learning":
+        temp_state = st.session_state.questions_only
+        st.session_state.questions_only = st.toggle(
+            "Toon geen theorie, alleen vragen", key="theory_questions"
+        )
+
+        if temp_state != st.session_state.questions_only:
+            st.rerun()
 
 
 def render_check_and_nav_buttons():
@@ -398,6 +412,8 @@ def render_check_and_nav_buttons():
             args=(1,),
         )
 
+    show_toggle_if_practice_page()
+
 
 def render_image(image_path):
     image_base64 = convert_image_base64(image_path)
@@ -408,21 +424,10 @@ def render_image(image_path):
     st.markdown(image_html, unsafe_allow_html=True)
 
 
-def fetch_image_path():
-    if "image" in st.session_state.segment_content:
-        image_path = st.session_state.segment_content["image"]
-        if image_path is None:
-            return None
-        else:
-            return f"src/data/content/images/{image_path}"
-
-
 def render_info():
     """Renders the info segment with title and text."""
     # if the image directory is present in the JSON for this segment, then display the image
-    image_path = fetch_image_path()
-    if image_path:
-        render_image(image_path)
+    image_handler.render_image(st.session_state.segment_content)
 
     st.subheader(st.session_state.segment_content["title"])
     st.write(st.session_state.segment_content["text"])
@@ -780,6 +785,12 @@ def add_date_to_progress_counter():
     db_dal.update_progress_counter_for_segment(module, segment_progress_count)
 
 
+def render_image_if_available():
+    segment = st.session_state.segment_content
+    if segment.get("image"):
+        image_handler.render_image(segment)
+
+
 def render_learning_page():
     """
     Renders the page that takes the student through the concepts of the lecture
@@ -813,17 +824,17 @@ def render_learning_page():
         ):
             if st.session_state.submitted:
                 # Render image if present in the feedback
-                image_path = fetch_image_path()
-                if image_path:
-                    render_image(image_path)
+                render_image_if_available()
 
                 render_question()
 
                 # Spinner that displays during evaluating answer
-                with st.spinner(f"Een large language model (LLM) checkt je antwoord met het antwoordmodel. \
+                with st.spinner(
+                    "Een large language model (LLM) checkt je antwoord met het antwoordmodel. \
                                 Check zelf het antwoordmodel als je twijfelt. \n\n Leer meer over het gebruik \
                                 van LLM's op de pagina **'Uitleg mogelijkheden & limitaties LLM's'** onder \
-                                het kopje 'Extra info' in de sidebar."):
+                                het kopje 'Extra info' in de sidebar."
+                ):
                     render_student_answer()
                     evaluate_answer()
                     add_date_to_progress_counter()
@@ -834,9 +845,7 @@ def render_learning_page():
                 render_explanation()
                 render_navigation_buttons()
             else:
-                image_path = fetch_image_path()
-                if image_path:
-                    render_image(image_path)
+                render_image_if_available()
 
                 render_question()
 
@@ -1083,16 +1092,17 @@ def render_practice_page():
             and "answer" in st.session_state.segment_content
         ):
             # Render image if present in the feedback
-            image_path = fetch_image_path()
-            if image_path:
-                render_image(image_path)
+            render_image_if_available()
+
             render_question()
             if st.session_state.submitted:
                 # Spinner that displays during evaluating answer
-                with st.spinner(f"Een large language model (LLM) checkt je antwoord met het antwoordmodel. \
+                with st.spinner(
+                    "Een large language model (LLM) checkt je antwoord met het antwoordmodel. \
                                 Check zelf het antwoordmodel als je twijfelt. \n\n Leer meer over het gebruik \
                                 van LLM's op de pagina **'Uitleg mogelijkheden & limitaties LLM's'** onder \
-                                het kopje 'Extra info' in de sidebar."):
+                                het kopje 'Extra info' in de sidebar."
+                ):
                     render_student_answer()
                     evaluate_answer()
 
@@ -1101,7 +1111,7 @@ def render_practice_page():
                 render_explanation()
                 render_SR_nav_buttons()
             else:
-                if st.session_state.warned == False:
+                if st.session_state.warned is False:
                     render_warning()
                 else:
                     render_answerbox()
@@ -1673,6 +1683,11 @@ def fetch_nonce_from_query():
     return st.query_params.get("nonce", None)
 
 
+@st.cache_resource(ttl=timedelta(hours=4))
+def initialise_image_handler():
+    return ImageHandler()
+
+
 def determine_username_from_nonce():
     """
     Fetches the username from the database using the nonce in the query parameters.
@@ -1731,6 +1746,8 @@ if __name__ == "__main__":
     db = db_config.connect_db(st.session_state.use_mongodb)
 
     initialise_session_states()
+
+    image_handler = initialise_image_handler()
 
     openai_client = connect_to_openai()
 
