@@ -58,6 +58,8 @@ class Controller:
             st.session_state.username = None
         if "db" not in st.session_state:
             st.session_state.db = None
+        if "university_code" not in st.session_state:
+            st.session_state.university_code = "uva-celbiologie"
 
     def render_page(self):
         """

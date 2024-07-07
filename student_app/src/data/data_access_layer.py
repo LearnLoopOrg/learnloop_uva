@@ -43,6 +43,8 @@ class DatabaseAccess:
 
         st.session_state.modules = modules
 
+        print(f"\n\nmodules: {modules}\n\n")
+
         return modules
 
     def get_segment_type(self, segment_index):
@@ -83,9 +85,6 @@ class DatabaseAccess:
     def get_segment_image_file_name(self, segment_index):
         return self.segments_list[segment_index].get("image", None)
 
-    def get_image_path(self, image_file_name):
-        return f"src/data/content/images/{image_file_name}"
-
     def get_segment_mc_answers(self, segment_index):
         return self.segments_list[segment_index].get("answers", None)
 
@@ -93,7 +92,16 @@ class DatabaseAccess:
         page_content = self.db.content.find_one(
             {"lecture_name": module.replace(" ", "_")}
         )
-        return page_content["original_lecturepath_content"]
+        return page_content["corrected_lecturepath_content"]
+
+    def fetch_module_topics(self, module):
+        page_content = self.db.content.find_one(
+            {"lecture_name": module.replace(" ", "_")}
+        )
+        return page_content["corrected_lecturepath_topics"]
+
+    def get_image_path(self, image_file_name):
+        return f"src/data/content/images/{image_file_name}"
 
     def fetch_json_file_name_of_module(self, module):
         return module.replace(" ", "_") + ".json"
@@ -167,8 +175,8 @@ class DatabaseAccess:
 
         print("\n\nDocument keys:", doc.keys(), "\n\n")
 
-        if doc and "original_lecturepath_content" in doc:
-            _self.segments_list = doc["original_lecturepath_content"]["segments"]
+        if doc and "corrected_lecturepath_content" in doc:
+            _self.segments_list = doc["corrected_lecturepath_content"]["segments"]
         else:
             _self.segments_list = None
 
@@ -178,8 +186,8 @@ class DatabaseAccess:
         query = {"lecture_name": module.replace(" ", "_")}
         doc = _self.db.content.find_one(query)
 
-        if doc and "original_lecturepath_topics" in doc:
-            _self.topics_list = doc["original_lecturepath_topics"]["topics"]
+        if doc and "corrected_lecturepath_topics" in doc:
+            _self.topics_list = doc["corrected_lecturepath_topics"]["topics"]
         else:
             _self.topics_list = None
 

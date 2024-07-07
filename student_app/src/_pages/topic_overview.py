@@ -8,7 +8,9 @@ class TopicOverview:
     def __init__(self) -> None:
         self.db = db_config.connect_db(st.session_state.use_mongodb)
         self.db_dal = DatabaseAccess()
-        self.module_title = self.db_dal.fetch_last_module()[1:]
+        self.module_name = st.session_state.selected_module.replace(" ", "_")
+        self.module_title = " ".join(self.module_name.split("_")[1:])
+        self.module_number = self.module_name.split("_")[0]
 
     def convert_image_base64(self, image_path):
         """
@@ -40,7 +42,7 @@ class TopicOverview:
         header_cols = container.columns([0.1, 40])
 
         with header_cols[1]:
-            st.title(self.module_title)
+            st.title(f"College {self.module_number} — {self.module_title}")
             st.write("\n")
 
     def start_learning_page(self, topic_index):
