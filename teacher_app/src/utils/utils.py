@@ -195,64 +195,6 @@ class Utils:
             ]
         return new_segments_list
 
-    def upload_modules_json(self, module, segments_list) -> None:
-        modules_data = {"lecture_name": "NAF_1", "updated": "yes"}
-        modules_segments_list = []
-
-        for segment in segments_list:
-            if segment["delete"] == "no":
-                modules_segment = segment.copy()
-                del modules_segment["delete"]
-                modules_segments_list.append(modules_segment)
-
-        modules_data["segments"] = modules_segments_list
-        json_modules_data = json.dumps(modules_data)
-
-        # TODO: upload to mongodb
-        self.upload_content_to_blob_storage(
-            "content-corrected", f"modules/{module}.json", json_modules_data
-        )
-
-    def upload_modules_topics_json(self, module, segments_list) -> None:
-        modules_topics_data = {"lecture_name": "NAF_1", "updated": "yes"}
-        modules_topics_topics_list = []
-
-        data_modules_topics = self.download_content_from_blob_storage(
-            "content", f"topics/{module}.json"
-        )
-        data_modules_topics = json.loads(data_modules_topics)
-
-        topics = data_modules_topics["topics"]
-        topic_id = 0
-        topic_segment_id = 0
-        topic_segment_id_new = 0
-        topic_segment_id_list = []
-
-        for segment in segments_list:
-            topic_title = topics[topic_id]["topic_title"]
-            if segment["delete"] == "no":
-                topic_segment_id_list.append(topic_segment_id_new)
-                topic_segment_id_new += 1
-
-            if topic_segment_id == len(topics[topic_id]["segment_indexes"]) - 1:
-                modules_topics_topics_list.append(
-                    {
-                        "topic_title": topic_title,
-                        "segment_indexes": topic_segment_id_list,
-                    }
-                )
-                topic_id += 1
-                topic_segment_id = 0
-                topic_segment_id_list = []
-            else:
-                topic_segment_id += 1
-
-        modules_topics_data["topics"] = modules_topics_topics_list
-        json_modules_topics_data = json.dumps(modules_topics_data)
-        self.upload_content_to_blob_storage(
-            "content-corrected", f"topics/{module}.json", json_modules_topics_data
-        )
-
 
 class ImageHandler:
     def __init__(self):

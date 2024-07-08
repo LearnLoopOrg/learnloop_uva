@@ -8,10 +8,6 @@ class ModuleRepository:
     def __init__(self, db: Database[dict[str, Any]]):
         self.db = db
 
-    # TODO: update state on correction
-    def update_status(self, module, status) -> None:
-        pass
-
     def save_correction(self, module, segments_list):
         try:
             self._update_correct_lecture_path_content(module, segments_list)
