@@ -295,4 +295,4 @@ class ImageHandler:
 
             st.image(image)
         except:
-            st.warning("No image found for this segment.")
+            st.error("No image found for this segment.")

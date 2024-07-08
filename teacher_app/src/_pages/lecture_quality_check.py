@@ -20,6 +20,7 @@ class QualityCheck:
         self.image_handler = ImageHandler()
 
     def run(self):
+        self.db_dal.update_last_phase("quality_check")
         self.display_header()
         module_name = st.session_state.selected_module.replace(" ", "_")
         data_module = self.db_dal.fetch_original_module_content(module_name)
@@ -136,10 +137,12 @@ class QualityCheck:
                     f"Onderwerp {topic_id + 1} / {len(topics)} - {topics[topic_id]["topic_title"]}",
                     anchor=topics[topic_id]["topic_title"],
                 )
-            self.display_segment(segment_id_str, segment)
             topic_id, topic_segment_id = self.update_topic_indices(
                 topic_id, topic_segment_id, topics
             )
+            if st.session_state[f"button_state{segment_id_str}"] == "yes":
+                continue
+            self.display_segment(segment_id_str, segment)
 
     def display_segment(self, segment_id, segment):
         with st.container(border=True):
@@ -168,7 +171,7 @@ class QualityCheck:
 
             st.image(resized_image, use_column_width="auto")
         except:
-            st.warning("Afbeelding niet gevonden")
+            st.error("Afbeelding niet gevonden")
 
     def display_segment_content(self, segment_id, segment):
         segment_type = segment["type"]
@@ -258,17 +261,30 @@ class QualityCheck:
         return topic_id, topic_segment_id
 
     def display_save_button(self):
-        if st.button("Opslaan", use_container_width=True):
-            module_db_name = st.session_state.selected_module.replace(" ", "_")
-            segments_list_with_delete = self.utils.preprocessed_segments(module_db_name)
-            self.module_repository.update_correct_lecture_path_content(
-                module=module_db_name,
-                segments_list_with_delete=segments_list_with_delete,
-            )
-            self.module_repository.upload_modules_topics_json(
-                module=module_db_name, segments_with_delete=segments_list_with_delete
-            )
-            # TODO: update status
+        # TODO: navigeer een pagina terug
+        st.session_state.selected_phase = "quality_check"
+        print("selected_phase", st.session_state.selected_phase)
+        st.button(
+            "Opslaan",
+            use_container_width=True,
+            on_click=self.go_to_lecture,
+            args=(
+                st.session_state.selected_module.replace(" ", "_").replace("_", " "),
+            ),
+        )
+
+    def go_to_lecture(self, lecture_title):
+        """
+        Sets the selected page and lecture to the one that the student clicked on.
+        """
+        module_db_name = st.session_state.selected_module.replace(" ", "_")
+        segments_list_with_delete = self.utils.preprocessed_segments(module_db_name)
+        self.module_repository.save_correction(
+            module=module_db_name, segments_list=segments_list_with_delete
+        )
+        st.session_state.selected_module = lecture_title
+        st.session_state.selected_phase = "lectures"
+        self.db_dal.update_last_module()
 
 
 if __name__ == "__main__":
