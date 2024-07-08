@@ -13,6 +13,7 @@ from PIL import Image
 
 from api.module import ModuleRepository
 from utils.db_config import connect_db
+import base64
 
 load_dotenv()
 
@@ -89,16 +90,6 @@ class Utils:
         except Exception as e:
             print(f"Failed to download blob: {e}")
             return None
-
-    @st.cache_data(ttl=timedelta(hours=4))
-    def download_image_from_blob_storage(
-        _self, container_name, blob_name
-    ) -> Image.Image:
-        blob_client = _self.blob_service_client.get_blob_client(
-            container=container_name, blob=blob_name
-        )
-        blob_data = blob_client.download_blob().readall()
-        return Image.open(BytesIO(blob_data))
 
     def toggle_button(self, segment_id):
         if st.session_state["button_state" + segment_id] == "no":
@@ -204,61 +195,101 @@ class Utils:
             ]
         return new_segments_list
 
-    # def upload_modules_json(self, module, segments_list) -> None:
-    #     modules_data = {"module_name": module, "updated": "yes"}
-    #     modules_segments_list = []
+    def upload_modules_json(self, module, segments_list) -> None:
+        modules_data = {"lecture_name": "NAF_1", "updated": "yes"}
+        modules_segments_list = []
 
-    #     for segment in segments_list:
-    #         if segment["delete"] == "no":
-    #             modules_segment = segment.copy()
-    #             del modules_segment["delete"]
-    #             modules_segments_list.append(modules_segment)
+        for segment in segments_list:
+            if segment["delete"] == "no":
+                modules_segment = segment.copy()
+                del modules_segment["delete"]
+                modules_segments_list.append(modules_segment)
 
-    #     modules_data["segments"] = modules_segments_list
-    #     json_modules_data = json.dumps(modules_data)
+        modules_data["segments"] = modules_segments_list
+        json_modules_data = json.dumps(modules_data)
 
-    #     # TODO: upload to mongodb
-    #     self.upload_content_to_blob_storage(
-    #         "content-corrected", f"modules/{module}.json", json_modules_data
-    #     )
+        # TODO: upload to mongodb
+        self.upload_content_to_blob_storage(
+            "content-corrected", f"modules/{module}.json", json_modules_data
+        )
 
-    # def upload_modules_topics_json(self, module, segments_list) -> None:
-    #     modules_topics_data = {"module_name": "NAF_1", "updated": "yes"}
-    #     # return  # TODO: make this upload to mongodb
-    #     modules_topics_topics_list = []
+    def upload_modules_topics_json(self, module, segments_list) -> None:
+        modules_topics_data = {"lecture_name": "NAF_1", "updated": "yes"}
+        modules_topics_topics_list = []
 
-    #     data_modules_topics = self.download_content_from_blob_storage(
-    #         "content", f"topics/{module}.json"
-    #     )
-    #     data_modules_topics = json.loads(data_modules_topics)
+        data_modules_topics = self.download_content_from_blob_storage(
+            "content", f"topics/{module}.json"
+        )
+        data_modules_topics = json.loads(data_modules_topics)
 
-    #     topics = data_modules_topics["topics"]
-    #     topic_id = 0
-    #     topic_segment_id = 0
-    #     topic_segment_id_new = 0
-    #     topic_segment_id_list = []
+        topics = data_modules_topics["topics"]
+        topic_id = 0
+        topic_segment_id = 0
+        topic_segment_id_new = 0
+        topic_segment_id_list = []
 
-    #     for segment in segments_list:
-    #         topic_title = topics[topic_id]["topic_title"]
-    #         if segment["delete"] == "no":
-    #             topic_segment_id_list.append(topic_segment_id_new)
-    #             topic_segment_id_new += 1
+        for segment in segments_list:
+            topic_title = topics[topic_id]["topic_title"]
+            if segment["delete"] == "no":
+                topic_segment_id_list.append(topic_segment_id_new)
+                topic_segment_id_new += 1
 
-    #         if topic_segment_id == len(topics[topic_id]["segment_indexes"]) - 1:
-    #             modules_topics_topics_list.append(
-    #                 {
-    #                     "topic_title": topic_title,
-    #                     "segment_indexes": topic_segment_id_list,
-    #                 }
-    #             )
-    #             topic_id += 1
-    #             topic_segment_id = 0
-    #             topic_segment_id_list = []
-    #         else:
-    #             topic_segment_id += 1
+            if topic_segment_id == len(topics[topic_id]["segment_indexes"]) - 1:
+                modules_topics_topics_list.append(
+                    {
+                        "topic_title": topic_title,
+                        "segment_indexes": topic_segment_id_list,
+                    }
+                )
+                topic_id += 1
+                topic_segment_id = 0
+                topic_segment_id_list = []
+            else:
+                topic_segment_id += 1
 
-    #     modules_topics_data["topics"] = modules_topics_topics_list
-    #     json_modules_topics_data = json.dumps(modules_topics_data)
-    #     self.upload_content_to_blob_storage(
-    #         "content-corrected", f"topics/{module}.json", json_modules_topics_data
-    #     )
+        modules_topics_data["topics"] = modules_topics_topics_list
+        json_modules_topics_data = json.dumps(modules_topics_data)
+        self.upload_content_to_blob_storage(
+            "content-corrected", f"topics/{module}.json", json_modules_topics_data
+        )
+
+
+class ImageHandler:
+    def __init__(self):
+        self.connection_string = os.getenv("AZURE_BLOB_STORAGE_CONNECTION_STRING")
+        self.blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
+        self.container_name = None
+        self.blob_name = None
+
+    @st.cache_data(ttl=timedelta(hours=4))
+    def download_image_from_blob_storage(_self) -> Image.Image:
+        blob_client = _self.blob_service_client.get_blob_client(
+            container=_self.container_name, blob=_self.blob_name
+        )
+        blob_data = blob_client.download_blob().readall()
+        return Image.open(BytesIO(blob_data))
+
+    def get_image_url(self, segment):
+        self.container_name = "uva-celbiologie"
+        self.blob_name = segment.get("image", {}).get("url")
+
+    def resize_image_to_max_height(self, image: Image.Image, max_height):
+        # Calculate the new width maintaining the aspect ratio
+        aspect_ratio = image.width / image.height
+        new_height = max_height
+        new_width = int(new_height * aspect_ratio)
+
+        # Resize the image
+        resized_img = image.resize((new_width, new_height))
+
+        return resized_img
+
+    def render_image(self, segment, max_height=None):
+        self.get_image_url(segment)
+        image = self.download_image_from_blob_storage()
+        if max_height:
+            image = self.resize_image_to_max_height(image, max_height)
+
+        st.image(image)

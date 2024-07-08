@@ -91,7 +91,13 @@ class DatabaseAccess:
         page_content = self.db.content.find_one(
             {"lecture_name": module.replace(" ", "_")}
         )
-        return page_content["original_lecturepath_content"]
+        return page_content["corrected_lecturepath_content"]
+
+    def fetch_module_topics(self, module):
+        page_content = self.db.content.find_one(
+            {"lecture_name": module.replace(" ", "_")}
+        )
+        return page_content["corrected_lecturepath_topics"]
 
     def fetch_json_file_name_of_module(self, module):
         return module.replace(" ", "_") + ".json"
