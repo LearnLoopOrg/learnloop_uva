@@ -22,8 +22,8 @@ class QualityCheck:
     def run(self):
         self.display_header()
         module_name = st.session_state.selected_module.replace(" ", "_")
-        data_module = self.db_dal.fetch_module_content(module_name)
-        data_module_topics = self.db_dal.fetch_module_topics(module_name)
+        data_module = self.db_dal.fetch_original_module_content(module_name)
+        data_module_topics = self.db_dal.fetch_original_module_topics(module_name)
         segments, topics = data_module["segments"], data_module_topics["topics"]
         self.initialize_session_state(segments, topics)
         self.display_sidebar_page_navigation(topics)
@@ -160,12 +160,15 @@ class QualityCheck:
         return resized_img
 
     def display_image(self, image_path):
-        image = self.utils.download_image_from_blob_storage(
-            st.session_state.university_code, image_path
-        )
-        resized_image = self.resize_image_to_max_height(image, 300)
+        try:
+            image = self.image_handler.download_image_from_blob_storage(  # TODO: Luc, dit werkt niet is mijn vermoeden
+                st.session_state.university_code, image_path
+            )
+            resized_image = self.resize_image_to_max_height(image, 300)
 
-        st.image(resized_image, use_column_width="auto")
+            st.image(resized_image, use_column_width="auto")
+        except:
+            st.warning("Afbeelding niet gevonden")
 
     def display_segment_content(self, segment_id, segment):
         segment_type = segment["type"]

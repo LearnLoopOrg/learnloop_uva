@@ -74,7 +74,9 @@ class LectureInsights:
         """
         empty_dict = {}
 
-        st.session_state.page_content = self.db_dal.fetch_module_content(module)
+        st.session_state.page_content = self.db_dal.fetch_corrected_module_content(
+            module
+        )
 
         number_of_segments = len(st.session_state.page_content["segments"])
 
@@ -605,7 +607,9 @@ class LectureInsights:
         """
         # Fetch module info to be rendered
         module = st.session_state.selected_module
-        st.session_state.page_content = self.db_dal.fetch_module_content(module)
+        st.session_state.page_content = self.db_dal.fetch_original_module_content(
+            module
+        )
 
         self.set_styling()  # for texts
 
