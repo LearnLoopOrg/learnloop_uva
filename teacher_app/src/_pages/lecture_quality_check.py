@@ -164,9 +164,7 @@ class QualityCheck:
 
     def display_image(self, image_path):
         try:
-            image = self.image_handler.download_image_from_blob_storage(  # TODO: Luc, dit werkt niet is mijn vermoeden
-                st.session_state.university_code, image_path
-            )
+            image = self.image_handler.download_image_from_blob_storage()
             resized_image = self.resize_image_to_max_height(image, 300)
 
             st.image(resized_image, use_column_width="auto")
