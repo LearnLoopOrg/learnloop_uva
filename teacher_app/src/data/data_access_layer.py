@@ -87,13 +87,25 @@ class DatabaseAccess:
     def get_segment_mc_answers(self, segment_index):
         return self.segments_list[segment_index].get("answers", None)
 
-    def fetch_module_content(self, module):
+    def fetch_original_module_content(self, module):
+        page_content = self.db.content.find_one(
+            {"lecture_name": module.replace(" ", "_")}
+        )
+        return page_content["original_lecturepath_content"]
+
+    def fetch_corrected_module_content(self, module):
         page_content = self.db.content.find_one(
             {"lecture_name": module.replace(" ", "_")}
         )
         return page_content["corrected_lecturepath_content"]
 
-    def fetch_module_topics(self, module):
+    def fetch_original_module_topics(self, module):
+        page_content = self.db.content.find_one(
+            {"lecture_name": module.replace(" ", "_")}
+        )
+        return page_content["original_lecturepath_topics"]
+
+    def fetch_corrected_module_topics(self, module):
         page_content = self.db.content.find_one(
             {"lecture_name": module.replace(" ", "_")}
         )

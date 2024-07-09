@@ -10,6 +10,9 @@ import streamlit as st
 from azure.storage.blob import BlobServiceClient
 from io import BytesIO
 from PIL import Image
+
+from api.module import ModuleRepository
+from utils.db_config import connect_db
 import base64
 
 load_dotenv()
@@ -20,6 +23,9 @@ class Utils:
         self.connection_string = os.getenv("AZURE_BLOB_STORAGE_CONNECTION_STRING")
         self.blob_service_client = BlobServiceClient.from_connection_string(
             self.connection_string
+        )
+        self.module_repository = ModuleRepository(
+            connect_db(st.session_state.use_mongodb)
         )
 
     def upload_file_to_blob_storage(self, container_name, source_path, blob_name):
@@ -115,25 +121,20 @@ class Utils:
         return topics
 
     @st.cache_data(ttl=timedelta(hours=4))
-    def original_segments(self, module) -> list:
-        data_modules = self.download_content_from_blob_storage(
-            "content", f"modules/{module}.json"
-        )
-        data_modules = json.loads(data_modules)
-        segments = data_modules["segments"]
-        return segments
+    def original_segments(_self, module) -> list:
+        data_modules = _self.module_repository.get_content_from_db(module)
+        return data_modules["original_lecturepath_content"]["segments"]
 
     def key_func(self, k):
         return k["segment_id"]
 
-    @st.cache_data(ttl=timedelta(hours=4))
     def preprocessed_segments(self, module) -> list:
         # outputs a list of dictionaries with detele:yes or delete:no tags.
         original_segments_list = self.original_segments(module)
         segments_list = []
         session_state_dict = {k: v for k, v in st.session_state.items()}
         for key, value in session_state_dict.items():
-            composite_key = key.split("-")
+            composite_key = str(key).split("-")
             if composite_key[0] == "new":
                 segment_id = int(composite_key[1])
                 segment = {}
@@ -194,62 +195,6 @@ class Utils:
             ]
         return new_segments_list
 
-    def upload_modules_json(self, module, segments_list) -> None:
-        modules_data = {"lecture_name": "NAF_1", "updated": "yes"}
-        modules_segments_list = []
-
-        for segment in segments_list:
-            if segment["delete"] == "no":
-                modules_segment = segment.copy()
-                del modules_segment["delete"]
-                modules_segments_list.append(modules_segment)
-
-        modules_data["segments"] = modules_segments_list
-        json_modules_data = json.dumps(modules_data)
-        self.upload_content_to_blob_storage(
-            "content-corrected", f"modules/{module}.json", json_modules_data
-        )
-
-    def upload_modules_topics_json(self, module, segments_list) -> None:
-        modules_topics_data = {"lecture_name": "NAF_1", "updated": "yes"}
-        modules_topics_topics_list = []
-
-        data_modules_topics = self.download_content_from_blob_storage(
-            "content", f"topics/{module}.json"
-        )
-        data_modules_topics = json.loads(data_modules_topics)
-
-        topics = data_modules_topics["topics"]
-        topic_id = 0
-        topic_segment_id = 0
-        topic_segment_id_new = 0
-        topic_segment_id_list = []
-
-        for segment in segments_list:
-            topic_title = topics[topic_id]["topic_title"]
-            if segment["delete"] == "no":
-                topic_segment_id_list.append(topic_segment_id_new)
-                topic_segment_id_new += 1
-
-            if topic_segment_id == len(topics[topic_id]["segment_indexes"]) - 1:
-                modules_topics_topics_list.append(
-                    {
-                        "topic_title": topic_title,
-                        "segment_indexes": topic_segment_id_list,
-                    }
-                )
-                topic_id += 1
-                topic_segment_id = 0
-                topic_segment_id_list = []
-            else:
-                topic_segment_id += 1
-
-        modules_topics_data["topics"] = modules_topics_topics_list
-        json_modules_topics_data = json.dumps(modules_topics_data)
-        self.upload_content_to_blob_storage(
-            "content-corrected", f"topics/{module}.json", json_modules_topics_data
-        )
-
 
 class ImageHandler:
     def __init__(self):
@@ -284,9 +229,12 @@ class ImageHandler:
         return resized_img
 
     def render_image(self, segment, max_height=None):
-        self.get_image_url(segment)
-        image = self.download_image_from_blob_storage()
-        if max_height:
-            image = self.resize_image_to_max_height(image, max_height)
+        try:
+            self.get_image_url(segment)
+            image = self.download_image_from_blob_storage()
+            if max_height:
+                image = self.resize_image_to_max_height(image, max_height)
 
-        st.image(image)
+            st.image(image)
+        except:
+            st.error("No image found for this segment.")

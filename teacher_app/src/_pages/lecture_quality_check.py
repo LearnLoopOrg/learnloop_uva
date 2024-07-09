@@ -1,3 +1,5 @@
+from api.module import ModuleRepository
+from utils.db_config import connect_db
 from data.data_access_layer import DatabaseAccess
 from utils.utils import ImageHandler, Utils
 import streamlit as st
@@ -11,14 +13,18 @@ load_dotenv()
 class QualityCheck:
     def __init__(self):
         self.utils = Utils()
+        self.module_repository = ModuleRepository(
+            connect_db(use_mongodb=st.session_state.use_mongodb)
+        )
         self.db_dal = DatabaseAccess()
         self.image_handler = ImageHandler()
 
     def run(self):
+        self.db_dal.update_last_phase("quality_check")
         self.display_header()
         module_name = st.session_state.selected_module.replace(" ", "_")
-        data_module = self.db_dal.fetch_module_content(module_name)
-        data_module_topics = self.db_dal.fetch_module_topics(module_name)
+        data_module = self.db_dal.fetch_original_module_content(module_name)
+        data_module_topics = self.db_dal.fetch_original_module_topics(module_name)
         segments, topics = data_module["segments"], data_module_topics["topics"]
         self.initialize_session_state(segments, topics)
         self.display_sidebar_page_navigation(topics)
@@ -131,10 +137,12 @@ class QualityCheck:
                     f"Onderwerp {topic_id + 1} / {len(topics)} - {topics[topic_id]["topic_title"]}",
                     anchor=topics[topic_id]["topic_title"],
                 )
-            self.display_segment(segment_id_str, segment)
             topic_id, topic_segment_id = self.update_topic_indices(
                 topic_id, topic_segment_id, topics
             )
+            if st.session_state[f"button_state{segment_id_str}"] == "yes":
+                continue
+            self.display_segment(segment_id_str, segment)
 
     def display_segment(self, segment_id, segment):
         with st.container(border=True):
@@ -143,13 +151,25 @@ class QualityCheck:
             self.display_segment_content(segment_id, segment)
             self.display_toggle_button(segment_id)
 
-    def display_image(self, image_path):
-        image = self.utils.download_image_from_blob_storage(
-            st.session_state.university_code, image_path
-        )
-        resized_image = self.resize_image_to_max_height(image, 300)
+    def resize_image_to_max_height(self, image: Image.Image, max_height):
+        # Calculate the new width maintaining the aspect ratio
+        aspect_ratio = image.width / image.height
+        new_height = max_height
+        new_width = int(new_height * aspect_ratio)
 
-        st.image(resized_image, use_column_width="auto")
+        # Resize the image
+        resized_img = image.resize((new_width, new_height))
+
+        return resized_img
+
+    def display_image(self, image_path):
+        try:
+            image = self.image_handler.download_image_from_blob_storage()
+            resized_image = self.resize_image_to_max_height(image, 300)
+
+            st.image(resized_image, use_column_width="auto")
+        except:
+            st.error("Afbeelding niet gevonden")
 
     def display_segment_content(self, segment_id, segment):
         segment_type = segment["type"]
@@ -239,16 +259,30 @@ class QualityCheck:
         return topic_id, topic_segment_id
 
     def display_save_button(self):
-        if st.button("Opslaan", use_container_width=True):
-            segments_list = self.utils.preprocessed_segments(
-                st.session_state.selected_module.replace(" ", "_")
-            )
-            self.utils.upload_modules_json(
-                st.session_state.selected_module.replace(" ", "_"), segments_list
-            )
-            self.utils.upload_modules_topics_json(
-                st.session_state.selected_module.replace(" ", "_"), segments_list
-            )
+        # TODO: navigeer een pagina terug
+        st.session_state.selected_phase = "quality_check"
+        print("selected_phase", st.session_state.selected_phase)
+        st.button(
+            "Opslaan",
+            use_container_width=True,
+            on_click=self.go_to_lecture,
+            args=(
+                st.session_state.selected_module.replace(" ", "_").replace("_", " "),
+            ),
+        )
+
+    def go_to_lecture(self, lecture_title):
+        """
+        Sets the selected page and lecture to the one that the student clicked on.
+        """
+        module_db_name = st.session_state.selected_module.replace(" ", "_")
+        segments_list_with_delete = self.utils.preprocessed_segments(module_db_name)
+        self.module_repository.save_correction(
+            module=module_db_name, segments_list=segments_list_with_delete
+        )
+        st.session_state.selected_module = lecture_title
+        st.session_state.selected_phase = "lectures"
+        self.db_dal.update_last_module()
 
 
 if __name__ == "__main__":
