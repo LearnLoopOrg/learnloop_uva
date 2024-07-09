@@ -33,7 +33,6 @@ class DatabaseAccess:
         # Remove the json extension and replace the underscores with spaces
         modules = [module.replace("_", " ") for module in modules]
 
-        print(f"\n\nmodules: {modules}\n\n")
         # Sort the modules based on the number in the name except for the practice exams
         modules.sort(
             key=lambda module: int(module.split(" ")[0])
@@ -42,8 +41,6 @@ class DatabaseAccess:
         )
 
         st.session_state.modules = modules
-
-        print(f"\n\nmodules: {modules}\n\n")
 
         return modules
 
@@ -172,8 +169,6 @@ class DatabaseAccess:
     def get_segments_list_from_db(_self, module):
         query = {"lecture_name": module.replace(" ", "_")}
         doc = _self.db.content.find_one(query)
-
-        print("\n\nDocument keys:", doc.keys(), "\n\n")
 
         if doc and "corrected_lecturepath_content" in doc:
             _self.segments_list = doc["corrected_lecturepath_content"]["segments"]

@@ -146,8 +146,9 @@ class QualityCheck:
 
     def display_segment(self, segment_id, segment):
         with st.container(border=True):
+            print(f"\n\nSegment: {segment}\n\n")
             if segment.get("image"):
-                self.image_handler.render_image(segment)
+                self.image_handler.render_image(segment, max_height=300)
             self.display_segment_content(segment_id, segment)
             self.display_toggle_button(segment_id)
 
@@ -261,7 +262,7 @@ class QualityCheck:
     def display_save_button(self):
         # TODO: navigeer een pagina terug
         st.session_state.selected_phase = "quality_check"
-        print("selected_phase", st.session_state.selected_phase)
+
         st.button(
             "Opslaan",
             use_container_width=True,

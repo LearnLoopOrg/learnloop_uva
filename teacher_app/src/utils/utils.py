@@ -205,7 +205,7 @@ class ImageHandler:
         self.container_name = None
         self.blob_name = None
 
-    @st.cache_data(ttl=timedelta(hours=4))
+    # @st.cache_data(ttl=timedelta(hours=4))
     def download_image_from_blob_storage(_self) -> Image.Image:
         blob_client = _self.blob_service_client.get_blob_client(
             container=_self.container_name, blob=_self.blob_name
@@ -236,5 +236,5 @@ class ImageHandler:
                 image = self.resize_image_to_max_height(image, max_height)
 
             st.image(image)
-        except:
+        except Exception:
             st.error("No image found for this segment.")
