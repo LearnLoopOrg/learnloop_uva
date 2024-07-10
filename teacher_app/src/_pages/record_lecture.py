@@ -158,18 +158,17 @@ class Recorder:
 
     def show_spinner_till_generated(self):
         with st.spinner("Oefenmaterialen worden gegenereerd..."):
-            while True:
+            while st.session_state.generated is False:
                 # TODO: Implement this instead of hardcoded
-                # status = self.db_dal.fetch_module_status()
-                # if status == "generated":
-                #     st.session_state.generated = True
-                #     break
-                # time.sleep(1)  # Sleep to avoid overwhelming the database with requests
+                status = self.db_dal.fetch_module_status()
+                if status == "generated":
+                    st.session_state.generated = True
+                time.sleep(1)  # Sleep to avoid overwhelming the database with requests
 
-                time.sleep(30)
-                self.db_dal.update_module_status("generated")
-                st.session_state.generated = True
-                break
+                # time.sleep(30)
+                # self.db_dal.update_module_status("generated")
+                # st.session_state.generated = True
+                # break
 
     def generate_materials(self):
         self.show_spinner_till_generated()

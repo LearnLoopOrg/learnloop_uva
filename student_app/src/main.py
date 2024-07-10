@@ -415,15 +415,6 @@ def render_check_and_nav_buttons():
     show_toggle_if_practice_page()
 
 
-def render_image(image_path):
-    image_base64 = convert_image_base64(image_path)
-    image_html = f"""
-    <div style='text-align: center; margin: 10px;'>
-        <img src='data:image/png;base64,{image_base64}' alt='image can't load' style='max-width: 100%; max-height: 500px'>
-    </div>"""
-    st.markdown(image_html, unsafe_allow_html=True)
-
-
 def render_info():
     """Renders the info segment with title and text."""
     # if the image directory is present in the JSON for this segment, then display the image
@@ -789,7 +780,7 @@ def add_date_to_progress_counter():
 def render_image_if_available():
     segment = st.session_state.segment_content
     if segment.get("image"):
-        image_handler.render_image(segment)
+        image_handler.render_image(segment, max_height=600)
 
 
 def render_learning_page():
