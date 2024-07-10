@@ -427,10 +427,11 @@ def render_image(image_path):
 def render_info():
     """Renders the info segment with title and text."""
     # if the image directory is present in the JSON for this segment, then display the image
-    image_handler.render_image(st.session_state.segment_content)
+    render_image_if_available()
 
-    st.subheader(st.session_state.segment_content["title"])
-    st.write(st.session_state.segment_content["text"])
+    segment = st.session_state.segment_content
+    st.subheader(segment["title"])
+    st.write(segment["text"])
 
 
 def render_answerbox():
@@ -1540,9 +1541,11 @@ def determine_if_to_initialise_database():
         if module not in user_doc["progress"]:
             initialise_module_in_database(module)
 
+        user_doc = db_dal.find_user_doc()
         if "practice" not in user_doc["progress"][module]:
             initialise_practice_in_database(module)
 
+        user_doc = db_dal.find_user_doc()
         if "learning" not in user_doc["progress"][module]:
             initialise_learning_in_database(module)
 

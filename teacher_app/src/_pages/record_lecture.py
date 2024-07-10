@@ -1,6 +1,5 @@
-from utils.utils import *
+from utils.utils import Utils
 import streamlit as st
-import sounddevice as sd
 import numpy as np
 import cv2
 import mss
@@ -10,6 +9,8 @@ import time
 import pyaudio
 import io
 import os
+from dotenv import load_dotenv
+from data.data_access_layer import DatabaseAccess
 
 load_dotenv()
 
@@ -21,6 +22,7 @@ class Recorder:
         self.container_name_audio = "audio"
         self.blob_name_audio = "video_output.mp3"
         self.utils = Utils()
+        self.db_dal = DatabaseAccess()
 
     def record_audio(self, duration):
         format = pyaudio.paInt16
@@ -107,6 +109,8 @@ class Recorder:
         st.session_state["recording"] = False
 
     def run(self):
+        self.db_dal.update_last_phase("record_lecture")
+
         st.title(
             f"Leermateriaal genereren: College — {st.session_state.selected_module}"
         )
@@ -121,17 +125,17 @@ class Recorder:
         recordings_listing = [
             {
                 "id": "1",
-                "title": f"{user}'s opname",
+                "title": f"{user}'s opname 1",
                 "description": "Opgenomen op 5 juli 2024 om 9:00",
             },
             {
                 "id": "2",
-                "title": f"{user}'s opname",
+                "title": f"{user}'s opname 2",
                 "description": "Opgenomen op 2 juli 2024 om 9:00",
             },
             {
                 "id": "3",
-                "title": f"{user}'s opname",
+                "title": f"{user}'s opname 3",
                 "description": "Opgenomen op 29 juni 2024 om 13:00",
             },
         ]
@@ -145,8 +149,37 @@ class Recorder:
 
             with cols[1]:
                 st.button(  # TODO: Invoke Cloud Function / API to generate practice materials
-                    "Genereer leermaterialen voor studenten", key=recording["id"]
+                    "Genereer leermaterialen voor studenten",
+                    key=recording["id"],
+                    on_click=self.generate_materials,
                 )
+
+        self.rerun_if_generated()
+
+    def show_spinner_till_generated(self):
+        with st.spinner("Oefenmaterialen worden gegenereerd..."):
+            while True:
+                # TODO: Implement this instead of hardcoded
+                # status = self.db_dal.fetch_module_status()
+                # if status == "generated":
+                #     st.session_state.generated = True
+                #     break
+                # time.sleep(1)  # Sleep to avoid overwhelming the database with requests
+
+                time.sleep(30)
+                self.db_dal.update_module_status("generated")
+                st.session_state.generated = True
+                break
+
+    def generate_materials(self):
+        self.show_spinner_till_generated()
+
+    def rerun_if_generated(self):
+        # Rerun necessary to render the correct page, namely quality check
+        if st.session_state.generated:
+            st.session_state.generated = False
+            st.session_state.selected_phase = "quality_check"
+            st.rerun()
 
 
 if __name__ == "__main__":

@@ -126,8 +126,8 @@ class DatabaseAccess:
         # TODO: This is a placeholder for the actual implementation
         return [
             (
-                "AI & Data Science",
-                "Leer over de toepassing van AI in bedrijfsstrategieën en -operaties en verdiep je in de fundamenten van AI. ",
+                "Embryonale Biologie",
+                "Leer over hoe een embryo zich ontwikkelt van bevruchting tot geboorte en de invloed van externe factoren.",
             ),
             (
                 "Business Analytics",
@@ -152,16 +152,8 @@ class DatabaseAccess:
                 "De ontwikkeling van een embryo van bevruchting tot geboorte en de invloed van externe factoren.",
             ),
             (
-                "2_Machine_Learning",
-                "De fundamentele principes achter machine learning en hoe je die kunt implementern om bedrijfsprocessen te verbeteren.",
-            ),
-            (
-                "3_Data_analytics",
+                "2_Eiwittransport",
                 "Hoe je data kunt analyseren en visualiseren om er waardevolle inzichten uit te halen en beslissingen te ondersteunen.",
-            ),
-            (
-                "4_Data_engineering",
-                "Hoe je data pipelines kunt bouwen om data te verzamelen en te verwerkem van verschillende bronnen op grote schaal.",
             ),
         ]
 

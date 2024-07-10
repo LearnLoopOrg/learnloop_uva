@@ -4,7 +4,6 @@ from data.data_access_layer import DatabaseAccess
 from utils.utils import ImageHandler, Utils
 import streamlit as st
 from dotenv import load_dotenv
-import json
 from PIL import Image
 
 load_dotenv()
@@ -146,7 +145,6 @@ class QualityCheck:
 
     def display_segment(self, segment_id, segment):
         with st.container(border=True):
-            print(f"\n\nSegment: {segment}\n\n")
             if segment.get("image"):
                 self.image_handler.render_image(segment, max_height=300)
             self.display_segment_content(segment_id, segment)
@@ -162,15 +160,6 @@ class QualityCheck:
         resized_img = image.resize((new_width, new_height))
 
         return resized_img
-
-    def display_image(self, image_path):
-        try:
-            image = self.image_handler.download_image_from_blob_storage()
-            resized_image = self.resize_image_to_max_height(image, 300)
-
-            st.image(resized_image, use_column_width="auto")
-        except:
-            st.error("Afbeelding niet gevonden")
 
     def display_segment_content(self, segment_id, segment):
         segment_type = segment["type"]

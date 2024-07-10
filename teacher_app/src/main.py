@@ -58,6 +58,8 @@ class Controller:
             st.session_state.username = None
         if "db" not in st.session_state:
             st.session_state.db = None
+        if "generated" not in st.session_state:
+            st.session_state.generated = False
 
     def render_page(self):
         """

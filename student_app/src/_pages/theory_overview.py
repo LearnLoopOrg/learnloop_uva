@@ -38,7 +38,7 @@ class TheoryOverview:
         )
         st.write("\n")
 
-    @st.cache_resource(ttl=timedelta(hours=4))
+    # @st.cache_resource(ttl=timedelta(hours=4))
     def render_theory_for_topic(_self):
         for segment in _self.content["segments"]:
             content_container = st.container()

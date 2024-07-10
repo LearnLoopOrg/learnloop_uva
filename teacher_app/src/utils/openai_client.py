@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 import os
 from openai import AzureOpenAI, OpenAI
 from dotenv import load_dotenv

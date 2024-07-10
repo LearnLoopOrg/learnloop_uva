@@ -512,7 +512,7 @@ class LectureInsights:
             icon = "🟢"
 
         with st.container():
-            st.header(f"{icon} {topic["topic_title"]}", anchor=topic["topic_title"])
+            st.header(f"{icon} {topic['topic_title']}", anchor=topic["topic_title"])
 
             # st.markdown(
             #     f"<span style='color: gray;'>Gemaakt door {len(all_scores)} studenten: {percentage_correct_topic * 100:.0f}% correct</span>",

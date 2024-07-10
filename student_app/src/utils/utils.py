@@ -20,7 +20,7 @@ class ImageHandler:
         self.container_name = None
         self.blob_name = None
 
-    @st.cache_data(ttl=timedelta(hours=4))
+    # @st.cache_data(ttl=timedelta(hours=4)) #TODO: cache messes up the image rendering, only rendering the first image.
     def download_image_from_blob_storage(_self) -> Image.Image:
         blob_client = _self.blob_service_client.get_blob_client(
             container=_self.container_name, blob=_self.blob_name

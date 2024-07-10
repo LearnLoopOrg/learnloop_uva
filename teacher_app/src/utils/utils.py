@@ -1,19 +1,14 @@
 from datetime import timedelta
 import json
 import streamlit as st
-from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
-import certifi
-from pymongo.server_api import ServerApi
-import streamlit as st
 from azure.storage.blob import BlobServiceClient
 from io import BytesIO
 from PIL import Image
 
 from api.module import ModuleRepository
 from utils.db_config import connect_db
-import base64
 
 load_dotenv()
 
@@ -27,6 +22,7 @@ class Utils:
         self.module_repository = ModuleRepository(
             connect_db(st.session_state.use_mongodb)
         )
+        self.db_client = connect_db(st.session_state.use_mongodb)
 
     def upload_file_to_blob_storage(self, container_name, source_path, blob_name):
         """

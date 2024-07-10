@@ -11,16 +11,8 @@ class LectureOverview:
                 "De ontwikkeling van een embryo van bevruchting tot geboorte en de invloed van externe factoren.",
             ),
             (
-                "2_Machine_Learning",
-                "De fundamentele principes achter machine learning en hoe je die kunt implementern om bedrijfsprocessen te verbeteren.",
-            ),
-            (
-                "3_Data_analytics",
+                "2_Eiwittransport",
                 "Hoe je data kunt analyseren en visualiseren om er waardevolle inzichten uit te halen en beslissingen te ondersteunen.",
-            ),
-            (
-                "4_Data_engineering",
-                "Hoe je data pipelines kunt bouwen om data te verzamelen en te verwerkem van verschillende bronnen op grote schaal.",
             ),
         ]
 
@@ -59,11 +51,12 @@ class LectureOverview:
         self.db_dal.update_last_module()
 
     def render_page_title(self):
-        title_html = open("./src/assets/html/lecture_title.html", "r").read()
-        title_css = open("./src/assets/css/lecture_title.css", "r").read()
+        st.title("Collegeoverzicht")
+        # title_html = open("./src/assets/html/lecture_title.html", "r").read()
+        # title_css = open("./src/assets/css/lecture_title.css", "r").read()
 
-        st.markdown(f"<style>{title_css}</style>", unsafe_allow_html=True)
-        st.markdown(title_html, unsafe_allow_html=True)
+        # st.markdown(f"<style>{title_css}</style>", unsafe_allow_html=True)
+        # st.markdown(title_html, unsafe_allow_html=True)
 
     def render_page(self):
         """
