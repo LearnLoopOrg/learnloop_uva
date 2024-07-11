@@ -334,7 +334,11 @@ class LectureInsights:
         system_message = read_prompt("analyse_feedback")
 
         response = openai_call(
-            st.session_state.openai_client, system_message, input_json, True
+            st.session_state.openai_client,
+            system_message,
+            input_json,
+            True,
+            max_tokens=4096,
         )
         return response
 
