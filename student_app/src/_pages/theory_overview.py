@@ -38,9 +38,9 @@ class TheoryOverview:
         )
         st.write("\n")
 
-    # @st.cache_resource(ttl=timedelta(hours=4))
-    def render_theory_for_topic(_self):
-        for segment in _self.content["segments"]:
+    def render_theory_for_segments(_self, segment_indices: list[int]):
+        for i in segment_indices:
+            segment = _self.content["segments"][i]
             content_container = st.container()
             content_cols = content_container.columns([1, 1])
 
@@ -91,7 +91,8 @@ class TheoryOverview:
 
         for topic in self.topics["topics"]:
             st.header(topic["topic_title"])
-            self.render_theory_for_topic()
+            segment_indices: list[int] = topic["segment_indexes"]
+            self.render_theory_for_segments(segment_indices)
 
         # Spacing
         st.write("\n")
