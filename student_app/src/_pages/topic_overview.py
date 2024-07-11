@@ -107,7 +107,6 @@ class TopicOverview:
     def get_module_data(_self, module_name_underscored):
         _self.db_dal.get_topics_list_from_db(module_name_underscored)
         topics_data = []
-        print(f"\n\nModule name: {module_name_underscored}\n\n")
 
         for topic in _self.db_dal.topics_list:
             topic_data = {

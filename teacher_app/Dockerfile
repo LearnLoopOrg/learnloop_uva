@@ -2,10 +2,8 @@ FROM python:3.12-slim
 
 WORKDIR /teacher_app
 
-COPY ./learnloop ./learnloop
-
 # Copy the requirements file first
-COPY ./teacher_app .
+COPY . .
 
 RUN pip install --no-cache-dir -r requirements.txt
 

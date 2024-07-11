@@ -340,7 +340,21 @@ def change_segment_index(step_direction):
 
 def render_navigation_buttons():
     """Render the navigation buttons that allows users to move between segments."""
-    prev_col, source_col, next_col = st.columns(3)
+    sources = False  # TODO: add sources to the json in content pipeline to turn this on
+
+    # Create two or three columns, depending on whether sources is turned on
+    if sources is True:
+        prev_col, source_col, next_col = st.columns(3)
+        with source_col:
+            with st.popover("Bron", use_container_width=True):
+                slides: list[int] = st.session_state.segment_content.get("slides", [])
+                st.markdown(
+                    "**Relevante slides:** "
+                    + ", ".join([str(slide) for slide in slides])
+                )
+    else:
+        prev_col, next_col = st.columns([1, 1])
+
     if st.session_state.segment_index != 0:
         with prev_col:
             st.button(
@@ -348,13 +362,6 @@ def render_navigation_buttons():
                 on_click=change_segment_index,
                 args=(-1,),
                 use_container_width=True,
-            )
-
-    with source_col:
-        with st.popover("Bron", use_container_width=True):
-            slides: list[int] = st.session_state.segment_content.get("slides", [])
-            st.markdown(
-                "**Relevante slides:** " + ", ".join([str(slide) for slide in slides])
             )
 
     with next_col:
@@ -515,12 +522,12 @@ def render_learning_explanation():
     the current phase."""
     with mid_col:
         st.markdown(
-            '<p style="font-size: 30px;"><strong>Leren 📖</strong></p>',
+            '<p style="font-size: 30px;"><strong>📖 Leren</strong></p>',
             unsafe_allow_html=True,
         )
         # st.write("The learning phase **guides you through the concepts of a lecture** in an interactive way with **personalized feedback**. Incorrectly answered questions are automatically added to the practice phase.")
         st.write(
-            "In de leerfase word je op een interactieve manier door de concepten van een college heen geleid en krijg je **direct persoonlijke feedback** op open vragen. Vragen die je niet goed hebt, komen automatisch terug in 'Herhalen' 🔄."
+            "In de leerfase word je op een interactieve manier door de concepten van een college heen geleid en krijg je **direct persoonlijke feedback** op open vragen. Vragen die je niet goed hebt, komen automatisch terug in 🔄 'Herhalen'."
         )
         render_start_button()
     exit()
@@ -529,7 +536,7 @@ def render_learning_explanation():
 def render_practice_exam_explanation():
     with mid_col:
         st.markdown(
-            '<p style="font-size: 30px;"><strong>Samenvattende vragen ✍🏽</strong></p>',
+            '<p style="font-size: 30px;"><strong>✍🏽 Samenvattende vragen</strong></p>',
             unsafe_allow_html=True,
         )
         st.write(
@@ -1016,7 +1023,7 @@ def render_practice_explanation():
     this phase in this module."""
     with mid_col:
         st.markdown(
-            '<p style="font-size: 30px;"><strong>Herhalen 🔄</strong></p>',
+            '<p style="font-size: 30px;"><strong>🔄 Herhalen</strong></p>',
             unsafe_allow_html=True,
         )
         # st.write("The practice phase is where you can practice the concepts you've learned in the learning phase. It uses **spaced repetition** to reinforce your memory and **improve retention.**")
@@ -1195,6 +1202,44 @@ def render_theory_overview_page():
     theory_overview_page.run()
 
 
+def render_not_recorded_page():
+    """
+    Renders the page that shows the student that the lecture is not recorded.
+    """
+    st.title("Nog niet opgenomen")
+    st.write("Dit college is (nog) niet opgenomen. Hopelijk binnenkort wel!")
+
+
+def render_generated_page():
+    """
+    Renders the page that shows the student that the lecture is not recorded.
+    """
+    lecture_number, lecture_name = st.session_state.selected_module.replace(
+        " ", "_"
+    ).split("_", 1)
+
+    st.title(f"College {lecture_number} — {lecture_name}")
+    st.write("De docent moet dit college nog nakijken voordat je kunt oefenen.\n\n")
+    st.subheader("Stuur herinnering")
+    st.write("Herinner de docent met een anonieme mail hieronder.")
+    st.session_state.mail_to_teacher = f"""Beste docent, \n\n Ik zou heel graag het college willen oefenen. Zou u de oefenmaterialen voor het college {" ".join(st.session_state.selected_module.replace(" ", "_").split("_")[1:])} willen controleren? \n\n Alvast heel erg bedankt!"""
+
+    st.text_area(
+        "Mailtje aan docent",
+        key="mail_to_teacher",
+        height=150,
+        label_visibility="hidden",
+    )
+
+    st.button("Stuur mailtje", on_click=send_mail_to_teacher, use_container_width=True)
+
+
+def send_mail_to_teacher():
+    # Dummy function to send mail to teacher
+    st.success("Het mailtje is verstuurd!")
+    return
+
+
 def render_selected_page():
     """
     Determines what type of page to display based on which module the user selected.
@@ -1203,21 +1248,25 @@ def render_selected_page():
         st.session_state.selected_module
     )
 
-    # Determine what type of page to display
-    if st.session_state.info_page:
-        render_info_page()
-    elif st.session_state.selected_phase == "courses":
-        render_courses_page()
-    elif st.session_state.selected_phase == "lectures":
-        render_lectures_page()
-    elif st.session_state.selected_phase == "topics":
-        render_topics_page()
-    elif st.session_state.selected_phase == "learning":
-        render_learning_page()
-    elif st.session_state.selected_phase == "practice":
-        render_practice_page()
-    elif st.session_state.selected_phase == "theory-overview":
-        render_theory_overview_page()
+    match st.session_state.selected_phase:
+        case "courses":
+            render_courses_page()
+        case "lectures":
+            render_lectures_page()
+        case "topics":
+            render_topics_page()
+        case "learning":
+            render_learning_page()
+        case "practice":
+            render_practice_page()
+        case "theory-overview":
+            render_theory_overview_page()
+        case "not_recorded":
+            render_not_recorded_page()
+        case "generated":
+            render_generated_page()
+        case _:  # Show courses page if no phase is selected
+            render_courses_page()
 
 
 def upload_feedback():
@@ -1270,17 +1319,43 @@ def track_visits():
     )
 
 
+def set_phase_to_match_lecture_status(phase):
+    """
+    Determines which lecture page to display based on the selected lecture status,
+    which indicates if a lecture is recorded, generated or corrected.
+    """
+    if db.content.find_one(
+        {"lecture_name": st.session_state.selected_module.replace(" ", "_")}
+    ):
+        status = db_dal.fetch_module_status()
+        print(
+            f"\n\nSelected lecture name: {st.session_state.selected_module.replace(" ", "_")}\n\n"
+        )
+        print(f"\n\nStatus: {status}\n\n")
+        if status == "generated":
+            st.session_state.selected_phase = "generated"
+        elif status == "corrected":
+            st.session_state.selected_phase = phase
+    else:
+        st.session_state.selected_phase = "not_recorded"
+
+    print(f"\n\nPhase after setting: {st.session_state.selected_phase}\n\n")
+
+
 def render_page_button(page_title, module, phase):
     """
-    Renders the buttons that the users clicks to go to a certain page.
+    Renders the buttons that the users clicks to go to a certain lecture learning experience.
     """
-    if st.button(page_title, key=f"{module} {phase}", use_container_width=True):
-        st.session_state.selected_module = module
 
-        # If the state is changed, then the feedback will be reset
+    if st.button(page_title, key=f"{module} {phase}", use_container_width=True):
+        # If the page is changed, then the feedback will be reset
         if st.session_state.selected_phase != phase and phase == "practice":
             reset_feedback()
-        st.session_state.selected_phase = phase
+
+        st.session_state.selected_module = module
+        print(f"\n\nSelected module: {module}, phase: {phase}\n\n")
+        set_phase_to_match_lecture_status(phase)
+
         st.session_state.info_page = False
         track_visits()
 
@@ -1378,8 +1453,8 @@ def render_sidebar():
                     f"{i + 1}.{zero_width_space} " + " ".join(module.split(" ")[1:])
                 ):
                     # Display buttons for the two types of phases per module
-                    render_page_button("Leren 📖", module, phase="topics")
-                    render_page_button("Herhalen 🔄", module, phase="practice")
+                    render_page_button("📖 Leren", module, phase="topics")
+                    render_page_button("🔄 Herhalen", module, phase="practice")
                     render_page_button(
                         "Overzicht theorie 📚", module, phase="theory-overview"
                     )
