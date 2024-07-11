@@ -271,3 +271,20 @@ class DatabaseAccess:
         self.db.users.update_one(
             {"username": st.session_state.username}, {"$set": {"last_phase": phase}}
         )
+
+    def update_module_status(self, status):
+        """
+        Update the status of the module, such as 'not_recorded', 'generated', 'corrected' etc.
+        """
+        self.db.content.update_one(
+            {"lecture_name": st.session_state.selected_module.replace(" ", "_")},
+            {"$set": {"status": status}},
+        )
+
+    def fetch_module_status(self):
+        """
+        Fetches if the module has been generated and checked on quality by teacher.
+        """
+        return self.db.content.find_one(
+            {"lecture_name": st.session_state.selected_module.replace(" ", "_")}
+        )["status"]

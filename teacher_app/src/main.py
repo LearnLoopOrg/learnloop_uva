@@ -94,15 +94,11 @@ class Controller:
                 args=("lectures",),
                 use_container_width=True,
             )
-            # print("SIDE BAR RENDERED")
-
-            # if st.session_state.selected_phase == "quality_check":
-            #     topics = st.session_state["topics"]
-            #     topic_titles = [topic["topic_title"] for topic in topics]
-            #     for topic_title in topic_titles:
-            #         st.html(
-            #             f'<a href="#{topic_title}">Spijsverteringsstelsel</a>',
-            #         )
+            name_col, profile_col = st.columns([1, 3])
+            with name_col:
+                st.write(st.session_state.username)
+            with profile_col:
+                st.write("👤")
 
     def set_selected_phase(self, phase):
         st.session_state.selected_phase = phase

@@ -3,10 +3,8 @@ FROM python:3.12-slim
 
 WORKDIR /auth_app
 
-COPY ./learnloop ./learnloop
-
 # Copy the requirements file first
-COPY ./auth_app .
+COPY . .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
@@ -14,7 +12,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 ENV PYTHONUNBUFFERED=1
 
 # # Copy modified nginx configuration
-COPY ./auth_app/server.conf /etc/nginx/conf.d/server.conf
+COPY ./server.conf /etc/nginx/conf.d/server.conf
 
 # Use 4 workers for gunicorn and make the app accessible from outside the container with 0.0.0.0:3000
 CMD ["gunicorn", "-w 4", "-b 0.0.0.0:3000", "main:app"]
