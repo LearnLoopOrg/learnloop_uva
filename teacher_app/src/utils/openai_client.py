@@ -39,7 +39,9 @@ def connect_to_openai(
 
 
 @st.cache_data(ttl=timedelta(hours=4), show_spinner=False)
-def openai_call(_client, system_message, user_message, json_response=False):
+def openai_call(
+    _client, system_message, user_message, json_response=False, max_tokens=1024
+):
     messages = [
         {"role": "system", "content": system_message},
         {"role": "user", "content": user_message},
@@ -50,7 +52,7 @@ def openai_call(_client, system_message, user_message, json_response=False):
             model="gpt-4o",
             temperature=0.2,
             response_format={"type": "json_object"},
-            max_tokens=1024,
+            max_tokens=max_tokens,
             messages=messages,
         )
     else:
@@ -64,7 +66,9 @@ def openai_call(_client, system_message, user_message, json_response=False):
             return json.loads(content)
         except json.JSONDecodeError:
             # Should be handled in caller
-            st.error("Fout bij het decoderen van JSON respons.")
+            with open("error.json", "w") as f:
+                f.write(content)
+            st.error(f"Fout bij het decoderen van JSON respons.{content}")
             return None
     return content
 
