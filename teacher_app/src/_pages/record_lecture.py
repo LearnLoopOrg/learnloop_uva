@@ -9,6 +9,7 @@ import time
 import pyaudio
 import io
 import os
+import requests
 from dotenv import load_dotenv
 from data.data_access_layer import DatabaseAccess
 
@@ -126,17 +127,17 @@ class Recorder:
             {
                 "id": "1",
                 "title": f"{user}'s opname 1",
-                "description": "Opgenomen op 5 juli 2024 om 9:00",
+                "description": "Opgenomen on 5 juli 2024 om 9:00",
             },
             {
                 "id": "2",
                 "title": f"{user}'s opname 2",
-                "description": "Opgenomen op 2 juli 2024 om 9:00",
+                "description": "Opgenomen on 2 juli 2023 om 9:00",
             },
             {
                 "id": "3",
                 "title": f"{user}'s opname 3",
-                "description": "Opgenomen op 29 juni 2024 om 13:00",
+                "description": "Opgenomen op 29 juni 2022 om 13:00",
             },
         ]
         for recording in recordings_listing:
@@ -158,17 +159,15 @@ class Recorder:
 
     def show_spinner_till_generated(self):
         with st.spinner("Oefenmaterialen worden gegenereerd..."):
+            url = "http://localhost:7071/api/ContentPipeline"
+            print(f"Sending http request to: {url}")
+            params = {"lecture": "celbio_3", "run_full_pipeline": "true"}
+            requests.get(url, params=params)
             while st.session_state.generated is False:
-                # TODO: Implement this instead of hardcoded
                 status = self.db_dal.fetch_module_status()
                 if status == "generated":
                     st.session_state.generated = True
                 time.sleep(1)  # Sleep to avoid overwhelming the database with requests
-
-                # time.sleep(30)
-                # self.db_dal.update_module_status("generated")
-                # st.session_state.generated = True
-                # break
 
     def generate_materials(self):
         self.show_spinner_till_generated()
