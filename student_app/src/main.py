@@ -14,6 +14,7 @@ from datetime import datetime, timedelta
 from _pages.lecture_overview import LectureOverview
 from _pages.course_overview import CoursesOverview
 from _pages.theory_overview import TheoryOverview
+from utils.utils import Utils
 
 # Must be called first
 st.set_page_config(page_title="LearnLoop", layout="wide")
@@ -1215,13 +1216,15 @@ def render_generated_page():
     Renders the page that shows the student that the lecture is not recorded.
     """
     lecture_number, lecture_name = st.session_state.selected_module.replace(
-        " ", "_"
-    ).split("_", 1)
+        "_", " "
+    ).split(" ", 1)
 
     st.title(f"College {lecture_number} — {lecture_name}")
-    st.write("De docent moet dit college nog nakijken voordat je kunt oefenen.\n\n")
-    st.subheader("Stuur herinnering")
-    st.write("Herinner de docent met een anonieme mail hieronder.")
+    utils.add_spacing(2)
+    st.subheader("Nog niet opgenomen")
+    st.write(
+        "De docent moet dit college nog nakijken voordat je kunt oefenen. Herinner de docent met een anonieme mail hieronder."
+    )
     st.session_state.mail_to_teacher = f"""Beste docent, \n\n Ik zou heel graag het college willen oefenen. Zou u de oefenmaterialen voor het college {" ".join(st.session_state.selected_module.replace(" ", "_").split("_")[1:])} willen controleren? \n\n Alvast heel erg bedankt!"""
 
     st.text_area(
@@ -1319,29 +1322,6 @@ def track_visits():
     )
 
 
-def set_phase_to_match_lecture_status(phase):
-    """
-    Determines which lecture page to display based on the selected lecture status,
-    which indicates if a lecture is recorded, generated or corrected.
-    """
-    if db.content.find_one(
-        {"lecture_name": st.session_state.selected_module.replace(" ", "_")}
-    ):
-        status = db_dal.fetch_module_status()
-        print(
-            f"\n\nSelected lecture name: {st.session_state.selected_module.replace(" ", "_")}\n\n"
-        )
-        print(f"\n\nStatus: {status}\n\n")
-        if status == "generated":
-            st.session_state.selected_phase = "generated"
-        elif status == "corrected":
-            st.session_state.selected_phase = phase
-    else:
-        st.session_state.selected_phase = "not_recorded"
-
-    print(f"\n\nPhase after setting: {st.session_state.selected_phase}\n\n")
-
-
 def render_page_button(page_title, module, phase):
     """
     Renders the buttons that the users clicks to go to a certain lecture learning experience.
@@ -1353,8 +1333,7 @@ def render_page_button(page_title, module, phase):
             reset_feedback()
 
         st.session_state.selected_module = module
-        print(f"\n\nSelected module: {module}, phase: {phase}\n\n")
-        set_phase_to_match_lecture_status(phase)
+        utils.set_phase_to_match_lecture_status(phase)
 
         st.session_state.info_page = False
         track_visits()
@@ -1424,19 +1403,19 @@ def render_sidebar():
     # print(st.session_state.selected_phase)
 
     with st.sidebar:
-        st.title("Navigatie")
+        st.title("Vakken")
         st.button(
-            "Vakken",
+            "Vakkenoverzicht",
             on_click=set_selected_phase,
             args=("courses",),
             use_container_width=True,
         )
-        st.button(
-            "Colleges",
-            on_click=set_selected_phase,
-            args=("lectures",),
-            use_container_width=True,
-        )
+        # st.button(
+        #     "Colleges",
+        #     on_click=set_selected_phase,
+        #     args=("lectures",),
+        #     use_container_width=True,
+        # )
 
         st.title("Colleges")
 
@@ -1450,7 +1429,8 @@ def render_sidebar():
             if not module.startswith(st.session_state.practice_exam_name.split(" ")[0]):
                 zero_width_space = "\u200b"
                 with st.expander(
-                    f"{i + 1}.{zero_width_space} " + " ".join(module.split(" ")[1:])
+                    f"{i + 1}.{zero_width_space} "
+                    + " ".join(module.replace("_", " ").split(" ")[1:])
                 ):
                     # Display buttons for the two types of phases per module
                     render_page_button("📖 Leren", module, phase="topics")
@@ -1462,6 +1442,9 @@ def render_sidebar():
             elif module.startswith(st.session_state.practice_exam_name.split(" ")[0]):
                 practice_exam_count += 1
 
+        # --------------------------------------------------------------
+        # DO NOT DELETE! This is the code for the practice exams
+        # --------------------------------------------------------------
         # st.title(st.session_state.practice_exam_name)
 
         # # Render the practice exam buttons
@@ -1481,6 +1464,7 @@ def render_sidebar():
         #     use_container_width=True,
         #     key="info_button_sidebar",
         # )
+        # --------------------------------------------------------------
 
 
 def initialise_database():
@@ -1670,14 +1654,14 @@ def determine_selected_module():
         st.session_state.selected_module = st.session_state.modules[0]
 
 
-# def determine_selected_phase():
-#     if st.session_state.selected_module.startswith(st.session_state.practice_exam_name.split(' ')[0]):
-#         st.session_state.selected_phase = 'learning'
-#     else:
-#         st.session_state.selected_phase = 'topics'
-
-
 def initialise_session_states():
+    if "db" not in st.session_state:
+        st.session_state.db = db_config.connect_db(
+            use_mongodb=st.session_state.use_mongodb
+        )
+    if "selected_course" not in st.session_state:
+        st.session_state.selected_course = None
+
     if "openai_model" not in st.session_state:
         st.session_state.openai_model = "gpt-4o"
 
@@ -1718,7 +1702,7 @@ def initialise_session_states():
         st.session_state.segment_index = 0
 
     if "modules" not in st.session_state:
-        st.session_state.modules = db_dal.determine_modules()
+        st.session_state.modules = db_dal.initialise_modules()
 
     if "selected_module" not in st.session_state:
         st.session_state.selected_module = None
@@ -1817,6 +1801,7 @@ if __name__ == "__main__":
     initialise_session_states()
 
     image_handler = initialise_image_handler()
+    utils = Utils()
 
     openai_client = connect_to_openai()
 

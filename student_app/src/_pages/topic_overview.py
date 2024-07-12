@@ -2,12 +2,14 @@ import streamlit as st
 import base64
 import utils.db_config as db_config
 from data.data_access_layer import DatabaseAccess
+from utils.utils import Utils
 
 
 class TopicOverview:
     def __init__(self) -> None:
         self.db = db_config.connect_db(st.session_state.use_mongodb)
         self.db_dal = DatabaseAccess()
+        self.utils = Utils()
         self.module_name = st.session_state.selected_module.replace(" ", "_")
         self.module_title = " ".join(self.module_name.split("_")[1:])
         self.module_number = self.module_name.split("_")[0]
@@ -38,12 +40,13 @@ class TopicOverview:
         )
 
     def render_title(self):
-        container = st.container(border=True)
-        header_cols = container.columns([0.1, 40])
+        # container = st.container(border=True)
+        # header_cols = container.columns([0.1, 40])
 
-        with header_cols[1]:
-            st.title(f"College {self.module_number} — {self.module_title}")
-            st.write("\n")
+        # with header_cols[1]:
+        #     st.title(f"College {self.module_number} — {self.module_title}")
+        #     st.write("\n")
+        st.title(f"College {self.module_number} — {self.module_title}")
 
     def start_learning_page(self, topic_index):
         """
@@ -105,7 +108,10 @@ class TopicOverview:
         return True
 
     def get_module_data(_self, module_name_underscored):
-        _self.db_dal.get_topics_list_from_db(module_name_underscored)
+        _self.db_dal.topics_list = _self.db_dal.get_topics_list_from_db(
+            module_name_underscored
+        )
+
         topics_data = []
 
         for topic in _self.db_dal.topics_list:
@@ -213,7 +219,6 @@ class TopicOverview:
         self.db_dal.update_last_phase("topics")
 
         self.render_title()
-        # Spacing
-        st.write("\n")
+        self.utils.add_spacing(2)
 
         self.render_topic_containers()  # Module given for

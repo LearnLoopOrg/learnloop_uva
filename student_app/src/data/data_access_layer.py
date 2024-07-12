@@ -2,6 +2,8 @@ from datetime import timedelta
 import json
 import streamlit as st
 import utils.db_config as db_config
+from typing import List, Optional
+from models.uni_database import Course, CourseCatalog, Lecture
 
 
 class DatabaseAccess:
@@ -18,7 +20,7 @@ class DatabaseAccess:
     def determine_modules(_self):
         """
         Function to determine which names of modules to display in the sidebar
-        based on the JSON module files.
+        based on the names in the database of the university.
         """
         # Read the modules from the modules directory
         modules = []
@@ -43,6 +45,55 @@ class DatabaseAccess:
         st.session_state.modules = modules
 
         return modules
+
+    def initialise_modules(self):
+        """
+        Loads lectures from the database into the session state.
+        """
+        course_catalog = self.get_course_catalog()
+        if st.session_state.selected_course is None:
+            st.session_state.selected_course = course_catalog.courses[0].title
+
+        return [
+            module.title
+            for module in self.get_lectures_for_course(
+                st.session_state.selected_course, course_catalog
+            )
+        ]
+
+    def get_course_catalog(
+        self, file_path: str = "./src/data/uva_dummy_db.json"
+    ) -> CourseCatalog:
+        """
+        Load the course catalog from the (dummy) university database.
+        """
+        # TODO: Change dummy database to real database
+        with open(file_path, "r") as file:
+            data = json.load(file)
+
+        courses = [
+            Course(
+                title=course["title"],
+                description=course["description"],
+                lectures=[
+                    Lecture(title=lecture["title"], description=lecture["description"])
+                    for lecture in course["lectures"]
+                ],
+            )
+            for course in data["courses"]
+        ]
+
+        return CourseCatalog(courses=courses)
+
+    def get_lectures_for_course(
+        self, selected_course: str, catalog: CourseCatalog
+    ) -> List[Lecture]:
+        """
+        Get the lectures for a given course from the course catalog.
+        """
+        for course in catalog.courses:
+            if course.title == selected_course:
+                return course.lectures
 
     def get_segment_type(self, segment_index):
         return self.get_segments_list_from_db(self.get_module_name_underscored())[
@@ -118,46 +169,6 @@ class DatabaseAccess:
         return _self.get_topics_list_from_db(module)[topic_index]["segment_indexes"]
 
     @st.cache_data(ttl=timedelta(hours=4))
-    def fetch_courses(self):
-        """
-        Determines which courses are available for this student by querying
-        the database of the university.
-        """
-        # TODO: This is a placeholder for the actual implementation
-        return [
-            (
-                "Embryonale Biologie",
-                "Leer over hoe een embryo zich ontwikkelt van bevruchting tot geboorte en de invloed van externe factoren.",
-            ),
-            (
-                "Business Analytics",
-                "Leer hoe je data kunt analyseren en visualiseren om er waardevolle inzichten uit te halen en beslissingen te ondersteunen.",
-            ),
-            (
-                "Ethical AI",
-                "Leer over de ethische implicaties van AI en hoe je AI-projecten kunt ontwerpen en implementeren op een ethisch verantwoorde en duurzame manier.",
-            ),
-        ]
-
-    @st.cache_data(ttl=timedelta(hours=4))
-    def fetch_lectures(_self):
-        """
-        Determines which lectures are available for this student for the given course
-        by querying the database of the university.
-        """
-        # TODO: This is a placeholder for the actual implementation
-        return [
-            (
-                "1_Embryonale_ontwikkeling",
-                "De ontwikkeling van een embryo van bevruchting tot geboorte en de invloed van externe factoren.",
-            ),
-            (
-                "2_Eiwittransport",
-                "Hoe je data kunt analyseren en visualiseren om er waardevolle inzichten uit te halen en beslissingen te ondersteunen.",
-            ),
-        ]
-
-    @st.cache_data(ttl=timedelta(hours=4))
     def get_segments_list_from_db(_self, module):
         query = {"lecture_name": module.replace(" ", "_")}
         doc = _self.db.content.find_one(query)
@@ -169,6 +180,7 @@ class DatabaseAccess:
 
         return _self.segments_list
 
+    @st.cache_data(ttl=timedelta(hours=4))
     def get_topics_list_from_db(_self, module):
         query = {"lecture_name": module.replace(" ", "_")}
         doc = _self.db.content.find_one(query)

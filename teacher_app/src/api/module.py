@@ -56,7 +56,6 @@ class ModuleRepository:
         return doc
 
     def _upload_modules_topics_json(self, module, segments_list) -> None:
-        # modules_topics_data = {"lecture_name": "NAF_1", "updated": "yes"}
         modules_topics_topics_list = []
 
         module_content = self.get_content_from_db(module)

@@ -94,11 +94,12 @@ class Controller:
                 args=("lectures",),
                 use_container_width=True,
             )
-            name_col, profile_col = st.columns([1, 3])
-            with name_col:
-                st.write(st.session_state.username)
-            with profile_col:
-                st.write("👤")
+
+            # Spacing
+            for i in range(26):
+                st.write("\n\n")
+
+            st.subheader(f"👤 {st.session_state.username}")
 
     def set_selected_phase(self, phase):
         st.session_state.selected_phase = phase

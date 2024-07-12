@@ -4,11 +4,33 @@ from PIL import Image
 from io import BytesIO
 from azure.storage.blob import BlobServiceClient
 import os
+from data.data_access_layer import DatabaseAccess
 
 
 class Utils:
     def __init__(self):
-        pass
+        self.db_dal = DatabaseAccess()
+
+    def add_spacing(self, count):
+        for _ in range(count):
+            st.write("\n\n")
+
+    def set_phase_to_match_lecture_status(self, phase):
+        """
+        Determines which lecture page to display based on the selected lecture status,
+        which indicates if a lecture is recorded, generated or corrected.
+        """
+        if st.session_state.db.content.find_one(
+            {"lecture_name": st.session_state.selected_module.replace(" ", "_")}
+        ):
+            status = self.db_dal.fetch_module_status()
+
+            if status == "generated":
+                st.session_state.selected_phase = "generated"
+            elif status == "corrected":
+                st.session_state.selected_phase = phase
+        else:
+            st.session_state.selected_phase = "not_recorded"
 
 
 class ImageHandler:

@@ -12,7 +12,7 @@ class LectureOverview:
             ),
             (
                 "2_Eiwittransport",
-                "Hoe je data kunt analyseren en visualiseren om er waardevolle inzichten uit te halen en beslissingen te ondersteunen.",
+                "De processen en mechanismen die betrokken zijn bij het transport van eiwitten binnen cellen en tussen cellen.",
             ),
         ]
 

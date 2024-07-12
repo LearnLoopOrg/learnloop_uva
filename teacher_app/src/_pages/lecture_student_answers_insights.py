@@ -7,7 +7,6 @@ import json
 import utils.db_config as db_config
 from data.data_access_layer import DatabaseAccess
 from utils.openai_client import openai_call, read_prompt
-from utils.constants import QuestionType
 from streamlit_extras.add_vertical_space import add_vertical_space
 
 
@@ -108,7 +107,7 @@ class LectureInsights:
         return True
 
     def get_module_data(_self, module_name_underscored):
-        _self.db_dal.get_topics_list(module_name_underscored)
+        _self.db_dal.get_topics_list_from_db(module_name_underscored)
         topics_data = []
 
         for topic in _self.db_dal.topics_list:
@@ -283,9 +282,9 @@ class LectureInsights:
         mongo_module = module.replace("_", " ")
         results = _self.db_dal.fetch_question(mongo_module, question_index)
 
-        if question_content["sub_type"] == QuestionType.MULTIPLE_CHOICE_QUESTION.value:
+        if "answers" in question_content:
             return _self.get_mc_question_stats(mongo_module, question_index, results)
-        elif question_content["sub_type"] == QuestionType.OPEN_QUESTION.value:
+        elif "answer" in question_content:
             return _self.get_open_question_stats(mongo_module, question_index, results)
         else:
             raise ValueError("Invalid question type")
@@ -301,22 +300,19 @@ class LectureInsights:
         return questions_stats
 
     def format_for_analyse_prompt(self, questions_content, questions_stats):
-        # Input format prompt
-        # {2: {sub_type: "open_question", "feedback_per_student": ["Feedback student 1", "Feedback student 2"]},
-        # {4: {sub_type: "multiple_choice_question", correct_answer: "", "student_answers": ["", ""]}}
-        # }
         input_prompt = {}
         for question_index, question_content in questions_content.items():
             input_prompt[question_index] = {}
-            input_prompt[question_index]["sub_type"] = question_content["sub_type"]
-            if question_content["sub_type"] == QuestionType.OPEN_QUESTION.value:
+            input_prompt[question_index]["sub_type"] = (
+                "multiple_choice_question"
+                if "answers" in question_content
+                else "open_question"
+            )
+            if "answer" in question_content:
                 input_prompt[question_index]["feedback_per_student"] = questions_stats[
                     question_index
                 ]["feedback_per_student"]
-            elif (
-                question_content["sub_type"]
-                == QuestionType.MULTIPLE_CHOICE_QUESTION.value
-            ):
+            elif "answers" in question_content:
                 input_prompt[question_index]["student_answers"] = questions_stats[
                     question_index
                 ]["student_answers"]
@@ -484,9 +480,9 @@ class LectureInsights:
                     st.html("</div>")
 
     def get_correct_answer(self, question):
-        if question["sub_type"] == QuestionType.MULTIPLE_CHOICE_QUESTION.value:
+        if "answers" in question:
             return question["answers"]["correct_answer"]
-        if question["sub_type"] == QuestionType.OPEN_QUESTION.value:
+        if "answer" in question:
             return question["answer"]
 
     def show_topic_feedback(self, module, topic, topic_index):
@@ -500,6 +496,8 @@ class LectureInsights:
         total_achieved_score = 0
         total_score = 0
         for question_index, stats_for_question in questions_stats.items():
+            print(f"\n\nQuestion index: {question_index}\n\n")
+            print(f"\n\nStats for question: {stats_for_question}\n\n")
             for score in stats_for_question["scores"]:
                 total_achieved_score += float(score.split("/")[0])
                 total_score += float(score.split("/")[1])
@@ -540,6 +538,7 @@ class LectureInsights:
                 ):
                     question_stats = questions_stats[question_index]
                     scores_for_question = question_stats["scores"]
+                    max_score = 0
                     for score in scores_for_question:
                         total_achieved_score += float(score.split("/")[0])
                         max_score = float(score.split("/")[1])
@@ -626,7 +625,7 @@ class LectureInsights:
 
         module = st.session_state.selected_module.replace(" ", "_")
 
-        topics = self.db_dal.get_topics_list(module)
+        topics = self.db_dal.get_topics_list_from_db(module)
         for topic_index, topic in enumerate(topics):
             if st.session_state.controller.debug and topic_index > 1:
                 break

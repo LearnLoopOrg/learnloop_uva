@@ -1,0 +1,48 @@
+{
+    "university_name": "Universiteit van Amsterdam",
+    "university_code": "UVA",
+    "courses": [
+        {
+            "title": "Embryonale Biologie",
+            "description": "Leer over hoe een embryo zich ontwikkelt van bevruchting tot geboorte en de invloed van externe factoren.",
+            "lectures": [
+                {
+                    "title": "1_Embryonale_ontwikkeling",
+                    "description": "De ontwikkeling van een embryo van bevruchting tot geboorte en de invloed van externe factoren."
+                },
+                {
+                    "title": "2_Eiwittransport",
+                    "description": "De processen en mechanismen die betrokken zijn bij het transport van eiwitten binnen cellen en tussen cellen."
+                }
+            ]
+        },
+        {
+            "title": "Business Analytics",
+            "description": "Leer hoe je data kunt analyseren en visualiseren om er waardevolle inzichten uit te halen en beslissingen te ondersteunen.",
+            "lectures": [
+                {
+                    "title": "1_Data_Visualisatie",
+                    "description": "Technieken en tools voor het visualiseren van data om inzichten effectief over te brengen."
+                },
+                {
+                    "title": "2_Voorspellende_Analyse",
+                    "description": "Gebruik van statistische modellen en machine learning om toekomstige trends en gebeurtenissen te voorspellen."
+                }
+            ]
+        },
+        {
+            "title": "Ethical AI",
+            "description": "Leer over de ethische implicaties van AI en hoe je AI-projecten ethisch en duurzaam kunt realiseren.",
+            "lectures": [
+                {
+                    "title": "1_Ethiek_in_AI",
+                    "description": "Onderzoek naar de ethische kwesties en uitdagingen bij het gebruik van kunstmatige intelligentie."
+                },
+                {
+                    "title": "2_Verantwoordelijke_AI_Ontwikkeling",
+                    "description": "Praktische richtlijnen en strategieën voor het ontwikkelen van AI-systemen die ethisch en maatschappelijk verantwoord zijn."
+                }
+            ]
+        }
+    ]
+}

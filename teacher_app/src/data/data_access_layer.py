@@ -38,7 +38,7 @@ class DatabaseAccess:
         return modules
 
     def get_segment_type(self, segment_index):
-        return self.get_segments_list(self.get_module_name_underscored())[
+        return self.get_segments_list_from_db(self.get_module_name_underscored())[
             segment_index
         ].get("type", None)
 
@@ -51,7 +51,7 @@ class DatabaseAccess:
         segments that belong to that topic.
         """
         module = st.session_state.selected_module.replace(" ", "_")
-        topics = self.get_topics_list(module)
+        topics = self.get_topics_list_from_db(module)
         return topics[topic_index]["segment_indexes"][0]
 
     def fetch_segment_index(self):
@@ -126,10 +126,10 @@ class DatabaseAccess:
             return json.load(f)
 
     def get_topic_segment_indexes(self, module, topic_index):
-        return self.get_topics_list(module)[topic_index]["segment_indexes"]
+        return self.get_topics_list_from_db(module)[topic_index]["segment_indexes"]
 
     def find_segment_index(self, question_text, module_name):
-        segments = self.get_segments_list(module_name.replace(" ", "_"))
+        segments = self.get_segments_list_from_db(module_name.replace(" ", "_"))
 
         for segment_index, segment in enumerate(segments):
             if segment.get("question") == question_text:
@@ -151,7 +151,7 @@ class DatabaseAccess:
             dict: A dictionary containing the question segments, where the keys are the segment indexes and the values are the segment data.
 
         """
-        content_segments = self.get_segments_list(module)
+        content_segments = self.get_segments_list_from_db(module)
         question_segments = {}
 
         for index in topic_segment_indexes:
@@ -161,26 +161,60 @@ class DatabaseAccess:
         return question_segments
 
     @st.cache_data(ttl=datetime.timedelta(hours=4))
-    def get_topics_list(_self, module):
-        """
-        Each module has two types of jsons. One with the content segments and
-        one that stores how the segments are divided into topics. This function
-        gets the last (topics) one.
-        """
-        topics_json_path = f"src/data/content/topics/{module}_topics.json"
-        _self.topics_list = _self.load_json_content(topics_json_path)["topics"]
-        return _self.topics_list
-
-    @st.cache_data(ttl=datetime.timedelta(hours=4))
-    def get_segments_list(_self, module):
+    def get_segments_list_from_db(_self, module):
         """
         Each module has two types of jsons. One with the content segments and
         one that stores how the segments are divided into topics. This function
         gets the first (content segments) one.
         """
-        content_json_path = f"src/data/content/modules/{module}.json"
-        _self.segments_list = _self.load_json_content(content_json_path)["segments"]
+        query = {"lecture_name": module.replace(" ", "_")}
+        doc = _self.db.content.find_one(query)
+
+        if doc and "corrected_lecturepath_content" in doc:
+            _self.segments_list = doc["corrected_lecturepath_content"]["segments"]
+        else:
+            _self.segments_list = None
+
         return _self.segments_list
+
+    @st.cache_data(ttl=datetime.timedelta(hours=4))
+    def get_topics_list_from_db(_self, module):
+        """
+        Each module has two types of jsons. One with the content segments and
+        one that stores how the segments are divided into topics. This function
+        gets the last (topics) one.
+        """
+        query = {"lecture_name": module.replace(" ", "_")}
+        doc = _self.db.content.find_one(query)
+
+        if doc and "corrected_lecturepath_topics" in doc:
+            _self.topics_list = doc["corrected_lecturepath_topics"]["topics"]
+        else:
+            _self.topics_list = None
+
+        return _self.topics_list
+
+    # @st.cache_data(ttl=datetime.timedelta(hours=4))
+    # def get_topics_list_from_db(_self, module):
+    #     """
+    #     Each module has two types of jsons. One with the content segments and
+    #     one that stores how the segments are divided into topics. This function
+    #     gets the last (topics) one.
+    #     """
+    #     topics_json_path = f"src/data/content/topics/{module}_topics.json"
+    #     _self.topics_list = _self.load_json_content(topics_json_path)["topics"]
+    #     return _self.topics_list
+
+    # @st.cache_data(ttl=datetime.timedelta(hours=4))
+    # def get_segments_list_from_db(_self, module):
+    #     """
+    #     Each module has two types of jsons. One with the content segments and
+    #     one that stores how the segments are divided into topics. This function
+    #     gets the first (content segments) one.
+    #     """
+    #     content_json_path = f"src/data/content/modules/{module}.json"
+    #     _self.segments_list = _self.load_json_content(content_json_path)["segments"]
+    #     return _self.segments_list
 
     def update_if_warned(self, boolean):
         """Callback function for a button that turns of the LLM warning message."""
