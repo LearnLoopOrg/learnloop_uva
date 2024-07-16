@@ -1221,7 +1221,7 @@ def render_generated_page():
 
     st.title(f"College {lecture_number} — {lecture_name}")
     utils.add_spacing(2)
-    st.subheader("Nog niet opgenomen")
+    st.subheader("Nog niet nagekeken door docent")
     st.write(
         "De docent moet dit college nog nakijken voordat je kunt oefenen. Herinner de docent met een anonieme mail hieronder."
     )
