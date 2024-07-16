@@ -140,7 +140,7 @@ class DatabaseAccess:
         page_content = self.db.content.find_one(
             {"lecture_name": module.replace(" ", "_")}
         )
-        return page_content["corrected_lecturepath_content"]
+        return page_content["corrected_lecturepath_content"] if page_content else None
 
     def fetch_module_topics(self, module):
         page_content = self.db.content.find_one(
