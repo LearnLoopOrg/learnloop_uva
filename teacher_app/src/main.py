@@ -96,10 +96,10 @@ class Controller:
             )
 
             # Spacing
-            for i in range(26):
-                st.write("\n\n")
+            # for i in range(26):
+            #     st.write("\n\n")
 
-            st.subheader(f"👤 {st.session_state.username}")
+            # st.subheader(f"👤 {st.session_state.username}")
 
     def set_selected_phase(self, phase):
         st.session_state.selected_phase = phase

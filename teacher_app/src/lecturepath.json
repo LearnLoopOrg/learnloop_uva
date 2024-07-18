@@ -1,0 +1,753 @@
+{
+  "module_name": "celbio_7",
+  "segments": [
+    {
+      "type": "theory",
+      "title": "GTP Proteins and the Actin Cytoskeleton",
+      "text": "Small monomeric GTP proteins such as **Rho, Rac, and Cdc42** are important for regulating changes in the cell's **actin cytoskeleton**. The cytoskeleton is heavily involved in **cell movement, division, and shape**, enabling cell migration and facilitating **cell-cell communication**. These small monomeric proteins function as **molecular switches** for these processes.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/rho-rac-cdc42.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "What role do GTP proteins such as Rho, Rac, and Cdc42 play in the actin cytoskeleton?",
+      "answers": {
+        "correct_answer": "They regulate changes in the actin cytoskeleton",
+        "wrong_answers": [
+          "They synthesize actin in the cytoskeleton",
+          "They degrade actin in the cytoskeleton",
+          "They store actin in the cytoskeleton"
+        ]
+      },
+      "image": null
+    },
+    {
+      "type": "theory",
+      "title": "Phospholipase C Signaling Pathway",
+      "text": "The **phospholipase C signaling pathway** is one of the three main pathways for transmitting signals within cells. This pathway is activated by **G-protein-coupled receptors**, which activate the **phospholipase C** enzyme via **heterotrimeric G proteins**. Phospholipase C then converts the phospholipid **PIP2** into two second messengers, **IP3** and **diacylglycerol (DAG)**. IP3 stimulates the release of calcium from the endoplasmic reticulum by binding to IP3 receptor-dependent calcium channels, while DAG remains in the membrane and activates **protein kinase C (PKC)**.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/fosfolipase_c_signaaltransductieroute.png"
+      }
+    },
+    {
+      "type": "theory",
+      "title": "Phospholipase C and the Plasma Membrane",
+      "text": "Phospholipase C is an **enzyme** that induces significant changes in the plasma membrane and **creates two second messengers**, namely **inositol trisphosphate (IP3)** and **diacylglycerol (DAG)**.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/fosfolipase_c_red_box.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "What role does phospholipase C play in the plasma membrane?",
+      "answers": {
+        "correct_answer": "It creates two second messengers",
+        "wrong_answers": [
+          "It destroys a second messenger",
+          "It produces one second messenger",
+          "It hides two second messengers"
+        ]
+      },
+      "image": null
+    },
+    {
+      "type": "theory",
+      "title": "G-Protein-Coupled Receptors",
+      "text": "**G-protein-coupled receptors** are cell surface molecules that transmit signals from outside the cell to the inside by activating **enzymes** such as phospholipase C. When these receptors receive a signal, they can activate **phospholipase C**, leading to a cascade of signal transduction within the cell.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/gpcr_fosfolipase_c_red_box.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "What is the role of G-protein-coupled receptors in relation to phospholipase C?",
+      "answers": {
+        "correct_answer": "They activate phospholipase C",
+        "wrong_answers": [
+          "They inhibit phospholipase C",
+          "They degrade phospholipase C",
+          "They produce phospholipase C"
+        ]
+      },
+      "image": null
+    },
+    {
+      "type": "theory",
+      "title": "PIP2 Conversion by Phospholipase C",
+      "text": "Phospholipase C is responsible for converting **PIP2** (phosphatidylinositol 4,5-bisphosphate), a phospholipid located in the plasma membrane, into two major secondary messengers: **IP3** (inositol 1,4,5-trisphosphate) and **diacylglycerol (DAG)**.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/hydrolyse_fosfolipase_c.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "What are the products of PIP2 conversion by phospholipase C?",
+      "answers": {
+        "correct_answer": "IP3 and diacylglycerol (DAG)",
+        "wrong_answers": [
+          "IP2 and triacylglycerol (TAG)",
+          "IP4 and monoglycerol (MG)",
+          "IP5 and diglycerol (DG)"
+        ]
+      },
+      "image": null
+    },
+    {
+      "type": "theory",
+      "title": "Inositol Trisphosphate (IP3)",
+      "text": "Inositol trisphosphate, or IP3, is a **signaling molecule** and **not a protein** that is produced by the activity of the enzyme phospholipase C. IP3 plays a crucial role in calcium signal transduction by diffusing through the cytoplasm and binding to **IP3 receptors** in the **endoplasmic reticulum (ER)**, leading to the **release of calcium ions** in the cell.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/hydrolyse_fosfolipase_c_ip3.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "What is the function of IP3 in the cell?",
+      "answers": {
+        "correct_answer": "It binds to calcium channels in the ER",
+        "wrong_answers": [
+          "It binds to phospholipase C",
+          "It binds to diacylglycerol (DAG)",
+          "It binds to G-protein-coupled receptors"
+        ]
+      },
+      "image": null
+    },
+    {
+      "type": "theory",
+      "title": "Diacylglycerol (DAG)",
+      "text": "Diacylglycerol, or DAG, is another **signaling molecule** produced by the action of phospholipase C. Unlike IP3, DAG remains in the **plasma membrane** where it plays a role in activating **protein kinase C (PKC)**, an enzyme involved in various cellular functions.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/hydrolyse_fosfolipase_c_dag.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "What is the function of DAG in the cell?",
+      "answers": {
+        "correct_answer": "It activates protein kinase C (PKC)",
+        "wrong_answers": [
+          "It activates phospholipase C",
+          "It activates IP3",
+          "It activates G-protein-coupled receptors"
+        ]
+      },
+      "image": null
+    },
+    {
+      "type": "theory",
+      "title": "Phospholipase C Pathway",
+      "text": "In summary, the **phospholipase C pathway** is one of the three main signal transduction pathways involved in transmitting signals within cells. This pathway is activated by **G-protein-coupled receptors**, leading to the activation of the enzyme phospholipase C. Once activated, phospholipase C converts the membrane phospholipid PIP2 into two secondary messengers: **inositol trisphosphate (IP3)** and **diacylglycerol (DAG)**. IP3 induces the release of calcium ions from the endoplasmic reticulum, while DAG remains active in the membrane and activates **protein kinase C (PKC)**.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/fosfolipase_c_signaaltransductieroute.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "Briefly describe the steps in the phospholipase C pathway.",
+      "answer": "Phospholipase C is activated by G-protein-coupled receptors (1 point) and converts PIP2 into IP3 (1 point), which induces calcium release (1 point), and DAG (1 point), which activates PKC (1 point).",
+      "image": null
+    },
+    {
+      "type": "theory",
+      "title": "Isoforms of Phospholipase C",
+      "text": "There are different **isoforms of phospholipase C**, each activated by different types of receptors. For example, **PLC-beta 1** is activated by **G-protein-coupled receptors**, while **PLC-gamma 2** is activated by **receptor tyrosine kinases**. These isoforms enable cells to respond to various signals.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/dual_signalling_pathway.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "What are two isoforms of phospholipase C?",
+      "answers": {
+        "correct_answer": "PLC-beta 1 and PLC-gamma 2",
+        "wrong_answers": [
+          "PLC-alpha and PLC-delta",
+          "PLC-beta 1 and PLC-zeta",
+          "PLC-omega and PLC-gamma 2"
+        ]
+      },
+      "image": null
+    },
+    {
+      "type": "theory",
+      "title": "PLC-beta 1 and G-Protein-Coupled Receptors",
+      "text": "The isoform **PLC-beta 1** is activated by **G-protein-coupled receptors**. Activation of these receptors by external signals leads to the activation of PLC-beta 1 and subsequent signal transduction processes.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/dual_signalling_pathway.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "By which type of receptor is PLC-beta 1 activated?",
+      "answers": {
+        "correct_answer": "G-protein-coupled receptors",
+        "wrong_answers": [
+          "Receptor tyrosine kinases",
+          "Ion channels",
+          "Enzymatic receptors"
+        ]
+      },
+      "image": null
+    },
+    {
+      "type": "theory",
+      "title": "PLC-gamma 2 and Receptor Tyrosine Kinases",
+      "text": "**PLC-gamma 2** is specifically **activated by receptor tyrosine kinases (RTKs)**. When an RTK binds a ligand, it undergoes a conformational change that stimulates **kinase activity**, ultimately leading to the activation of PLC-gamma 2.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/dual_signalling_pathway.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "How is PLC-gamma 2 activated?",
+      "answers": {
+        "correct_answer": "By receptor tyrosine kinases",
+        "wrong_answers": [
+          "By G-protein-coupled receptors",
+          "By ion channels",
+          "By enzymatic receptors"
+        ]
+      },
+      "image": null
+    },
+    {
+      "type": "question",
+      "question": "What are the isoforms of phospholipase C and how do they differ in activation?",
+      "answer": "The isoforms of phospholipase C are PLC-beta 1 and PLC-gamma 2 (1 point). PLC-beta 1 is activated by G-protein-coupled receptors (1 point), while PLC-gamma 2 is activated by receptor tyrosine kinases (1 point)."
+    },
+    {
+      "type": "theory",
+      "title": "Biosensors in Signal Transduction",
+      "text": "In the study of signal transduction, **biosensors** are used to **detect the activity** of specific enzymes like phospholipase C. A biosensor consists of a **protein domain** that binds to a specific **signaling molecule**, coupled with a **fluorescent protein (GFP)**. This allows the location of the signaling molecule to be visualized under a microscope. Researchers can track the presence and **disappearance of signaling molecules** like **PIP2**, providing insight into the progression of signal transduction processes within the cell.",
+      "image": null
+    },
+    {
+      "type": "question",
+      "question": "What is the function of biosensors in signal transduction?",
+      "answers": {
+        "correct_answer": "They detect activity of specific enzymes",
+        "wrong_answers": [
+          "They produce specific signaling molecules",
+          "They record the temperature of the cell",
+          "They hide specific signaling molecules"
+        ]
+      },
+      "image": null
+    },
+    {
+      "type": "theory",
+      "title": "Calcium as a Signaling Molecule",
+      "text": "Calcium ions (**Ca2+**) are extremely important signaling molecules in cellular processes. They can affect proteins in the cell by **causing conformational changes** due to altering the charge of a protein. Therefore, the **calcium concentration** in the cell is **strictly regulated**.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/calcium_opslag_release_cytosol.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "What is the effect of calcium ions on proteins in the cell?",
+      "answers": {
+        "correct_answer": "They cause conformational changes",
+        "wrong_answers": [
+          "They increase the temperature of the cell",
+          "They lower the pH of the cell",
+          "They cause protein degradation"
+        ]
+      },
+      "image": null
+    },
+    {
+      "type": "theory",
+      "title": "Regulation of Calcium Concentration",
+      "text": "The concentration of calcium outside the cell is about 10,000 times higher than in the cytoplasm. This is important for the proper functioning of enzymes in the cell. The concentration of calcium in the cytoplasm is kept as low as possible by **active transport** through **calcium channels** and **pumps**. These are responsible for transporting calcium ions in and out of the cell and to the ER or mitochondria.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/natrium_kalium_pomp_calcium.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "How is the calcium concentration in the cell regulated?",
+      "answers": {
+        "correct_answer": "By active transport via calcium channels and pumps",
+        "wrong_answers": [
+          "By passive transport via calcium channels and pumps",
+          "By active transport via sodium-calcium channels and pumps",
+          "By passive transport via sodium-calcium channels and pumps"
+        ]
+      },
+      "image": null
+    },
+    {
+      "type": "theory",
+      "title": "Calcium Signaling in Muscle Cells",
+      "text": "In muscle cells, calcium signaling is triggered by an **action potential** or a specific **ligand**, such as acetylcholine. This leads to the **release of calcium ions** in the cell, which then causes **contraction** of myosin fibrils in the muscle cell.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/ryanodine_calcium_spiercel_ip3.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "What triggers contraction of myosin fibrils in the muscle cell?",
+      "answers": {
+        "correct_answer": "An action potential or a specific ligand that induces calcium ion release",
+        "wrong_answers": [
+          "A specific ligand that induces calcium ion uptake",
+          "An action potential that induces calcium ion synthesis",
+          "An action potential or a specific ligand that induces calcium ion degradation"
+        ]
+      },
+      "image": null
+    },
+    {
+      "type": "theory",
+      "title": "Ryanodine Receptor Abnormalities",
+      "text": "The ryanodine receptor is responsible for the release of calcium in the muscle cell. A leaky ryanodine receptor can lead to **calcium overload** in the cell, which can result in **paralysis**. On the other hand, an overly responsive ryanodine receptor can lead to **uncontrollable calcium release**, which can cause **muscle cramps**.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/muscle_contraction_leaky_highly-responsive.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "What are the consequences of a leaky ryanodine receptor and an overly responsive ryanodine receptor?",
+      "answer": "A leaky ryanodine receptor can lead to **paralysis** (1 point), while an overly responsive ryanodine receptor can lead to **muscle cramps** (1 point).",
+      "image": null
+    },
+    {
+      "type": "theory",
+      "title": "Calcium Waves in the Cell",
+      "text": "In cells, **calcium waves** can arise from the **release of calcium ions** from intracellular stores such as the endoplasmic reticulum. These waves can spread through the cell and cause a **cascade of calcium signals**. A small amount of calcium triggers a **positive feedback** cycle leading to a larger calcium wave, while a large amount of calcium triggers a **negative feedback** cycle, closing the channels and stopping the wave.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/calcium_golven.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "How does calcium concentration affect the formation of calcium waves in the cell?",
+      "answers": {
+        "correct_answer": "A small amount of calcium triggers a positive feedback cycle leading to a larger calcium wave, while a large amount of calcium closes the channels and stops the wave",
+        "wrong_answers": [
+          "A small amount of calcium triggers a negative feedback cycle leading to a smaller calcium wave, while a large amount of calcium opens the channels and strengthens the wave",
+          "A small amount of calcium triggers a positive feedback cycle leading to a smaller calcium wave, while a large amount of calcium opens the channels and strengthens the wave"
+        ]
+      }
+    },
+    {
+      "type": "theory",
+      "title": "Vasopressin and Calcium Signaling",
+      "text": "Vasopressin is a hormone that affects **calcium signaling** in cells. It regulates calcium signaling by varying the **frequency of calcium release** in the cells. If vasopressin increases calcium release, there will be **more calcium spikes** in the cell. Note that the height of the spikes does not change, only the frequency.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/vasopressine_frequentie_spikes.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "How does vasopressin affect calcium signaling?",
+      "answers": {
+        "correct_answer": "It regulates the frequency of calcium release",
+        "wrong_answers": [
+          "It increases the calcium concentration",
+          "It decreases the calcium concentration",
+          "It increases the frequency of calcium uptake"
+        ]
+      },
+      "image": null
+    },
+    {
+      "type": "theory",
+      "title": "Calmodulin and Calmodulin-Dependent Protein Kinase",
+      "text": "**Calmodulin** (CaM) is a calcium-binding protein that, when it binds calcium ions, is able to activate other proteins such as **calmodulin-dependent protein kinase** (CaMK) by altering their shape.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/cam_camk.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "What does calmodulin do?",
+      "answers": {
+        "correct_answer": "It activates calmodulin-dependent protein kinase",
+        "wrong_answers": [
+          "It inactivates calmodulin-dependent protein kinase",
+          "It degrades calmodulin-dependent protein kinase",
+          "It transports calmodulin-dependent protein kinase"
+        ]
+      },
+      "image": null
+    },
+    {
+      "type": "theory",
+      "title": "CaMKII Activation",
+      "text": "**After dissociation of calcium ions, CaMKII remains active** and can phosphorylate other proteins. This process is important for regulating various cellular processes and cognitive functions such as learning and memory.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/cam_camk_activatie.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "What happens after dissociation of calcium ions from CaMKII?",
+      "answers": {
+        "correct_answer": "It remains active and can phosphorylate other proteins",
+        "wrong_answers": [
+          "It becomes inactive and can no longer phosphorylate other proteins",
+          "It degrades and can no longer phosphorylate other proteins",
+          "It undergoes a conformational change and can no longer phosphorylate other proteins"
+        ]
+      }
+    },
+    {
+      "type": "theory",
+      "title": "Calcium and Cell Death",
+      "text": "**Too much calcium in the cell** can lead to **cell death**, a process known as **apoptosis**. This occurs because excessive calcium concentrations can damage various cellular structures, including mitochondria and enzymes, ultimately leading to cell death.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/calcium_overlading_celdood.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "What is the consequence of too much calcium in the cell?",
+      "answers": {
+        "correct_answer": "Cell death",
+        "wrong_answers": [
+          "Cell division",
+          "Cell growth",
+          "Cell proliferation"
+        ]
+      },
+      "image": null
+    },
+    {
+      "type": "theory",
+      "title": "Convergent Signaling",
+      "text": "Convergent signaling is a process where **different signals** received by the cell, through different pathways, converge in the **nucleus**. This allows the cell to produce a **coordinated response** to multiple signals simultaneously, often resulting in adjustments to gene expression and other important cellular activities.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/convergente_signalering.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "What is convergent signaling?",
+      "answers": {
+        "correct_answer": "Different signals received by the cell, through different pathways, converge in the nucleus",
+        "wrong_answers": [
+          "Different signals received by the cell, through the same pathway, converge in the nucleus",
+          "The same type of signals received by the cell, through different pathways, converge in the cell membrane",
+          "The same type of signals received by the cell, through the same pathway, converge in the cell membrane"
+        ]
+      },
+      "image": null
+    },
+    {
+      "type": "theory",
+      "title": "Enzyme-Linked Receptors",
+      "text": "Enzyme-linked receptors are a class of proteins in the cell membrane that a **signaling molecule**, such as a hormone or growth factor, can bind to. This can lead to **phosphorylation** of the receptor, making it active and initiating a **signal transduction pathway**.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/enzym_coupled_receptors_dimeer.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "What are enzyme-linked receptors and how do they play a role in cell communication?",
+      "answers": {
+        "correct_answer": "Proteins in the cell membrane that undergo phosphorylation and activate a signal transduction pathway",
+        "wrong_answers": [
+          "Proteins in the nucleus that undergo phosphorylation and activate a signal transduction pathway",
+          "Proteins in the cell membrane that undergo degradation and activate a signal transduction pathway",
+          "Proteins in the nucleus that undergo degradation and activate a signal transduction pathway"
+        ]
+      },
+      "image": null
+    },
+    {
+      "type": "theory",
+      "title": "Dimerization",
+      "text": "Dimerization is a process where two proteins bind together to form a **dimer**. There are two types of dimers: **homodimers**, consisting of two identical protein monomers, and **heterodimers**, consisting of two different protein monomers. Phosphorylation, the addition of a phosphate group, is often required to **activate** these receptors, after which dimerization occurs.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/enzym_coupled_receptors_dimeer.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "What is dimerization and how is it related to receptor activation?",
+      "answer": "Dimerization is the binding of two proteins to form a dimer (1 point), and it can lead to receptor activation through phosphorylation (1 point).",
+      "image": null
+    },
+    {
+      "type": "theory",
+      "title": "Protein Kinase",
+      "text": "Protein kinase activity refers to the function of enzymes that phosphorylate other proteins by adding a phosphate group. **Tyrosine kinases** are a specific group of protein kinases that phosphorylate **tyrosine residues** on proteins.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/RTK_activation.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "What is the function of tyrosine kinases?",
+      "answers": {
+        "correct_answer": "They phosphorylate tyrosine residues on proteins",
+        "wrong_answers": [
+          "They degrade tyrosine residues on proteins",
+          "They phosphorylate tyrosine on proteins",
+          "They hide tyrosine residues on proteins"
+        ]
+      },
+      "image": null
+    },
+    {
+      "type": "theory",
+      "title": "Activation of Receptor Tyrosine Kinases (RTK)",
+      "text": "Receptor tyrosine kinases (RTKs) are inactive in their monomer form and are activated by binding of a **signal protein**. This binding causes **dimerization** and **trans-autophosphorylation**. Once activated, RTKs provide phosphorylation sites for various intracellular signaling proteins, which further activate downstream signaling pathways.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/RTK_activation.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "What initiates the activation of receptor tyrosine kinases?",
+      "answers": {
+        "correct_answer": "Binding of a signal protein leads to dimerization and autophosphorylation of RTKs",
+        "wrong_answers": [
+          "Binding of a signal protein leads to degradation of RTKs",
+          "Dissociation of a signal protein leads to activation of RTKs",
+          "Binding of a signal protein reduces the phosphorylation activity of RTKs"
+        ]
+      },
+      "image": null
+    },
+    {
+      "type": "question",
+      "question": "What is the function of trans-autophosphorylation in the activation of RTKs?",
+      "answers": {
+        "correct_answer": "It creates binding sites for signaling proteins and initiates downstream signal transduction",
+        "wrong_answers": [
+          "It inactivates the kinase activity of RTKs and stops signal transduction",
+          "It prevents dimerization of RTKs and signal transduction",
+          "It shields the receptor from further signal protein binding"
+        ]
+      },
+      "image": null
+    },
+    {
+      "type": "theory",
+      "title": "Ras GTPase Activation by RTK",
+      "text": "The activation of the intracellular monomer Ras GTPase is initiated by **Receptor Tyrosine Kinase (RTK)** via **adaptor proteins** such as Grb2 and the guanine nucleotide exchange factor (GEF) called Sos. This process converts the transduction of extracellular signals into intracellular actions through **Ras GTPase**, which triggers the **MAPKinase signaling pathway**.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/RTK_activation_MAPkinase.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "Explain how the activation of RTK leads to signals reaching the nucleus?",
+      "answer": "The activation of RTK leads to the activation of Ras GTPase (1 point) via adaptor proteins (1 point), which activates the MAPKinase signaling pathway and sends signals to the nucleus (1 point)."
+    },
+    {
+      "type": "theory",
+      "title": "MAPKinase Pathway and Cancer",
+      "text": "The MAPKinase signaling pathway is essential for the **regulation of cell division**. Mutations in the Ras gene can lead to a form of Ras that is resistant to GTPase-activating proteins (GAPs), resulting in **continuously active Ras**. This causes **continuous activation of the MAPKinase pathway**, leading to **uncontrolled cell division** and potentially cancer.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/ongereguleerde_celdeling_mapkinase.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "What can a mutation in the Ras gene lead to?",
+      "answers": {
+        "correct_answer": "Continuously active Ras and uncontrolled cell division",
+        "wrong_answers": [
+          "Inactive Ras and uncontrolled cell division",
+          "Continuously active Ras and regulated cell division",
+          "Inactive Ras and regulated cell division"
+        ]
+      }
+    },
+    {
+      "type": "theory",
+      "title": "MAPKinase Signaling Pathway",
+      "text": "The activation of the **MAPKinase signaling pathway** begins with a **growth factor** that activates Ras protein, which in turn activates **MAP kinase kinase kinase (Raf)**. Raf then activates **MAP kinase kinase (Mek)**, which activates **MAP kinase (Erk)**. These kinases **phosphorylate specific target proteins** in the cell, leading to **cell division** and other cellular responses.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/mapkkk_route.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "What are the steps in the MAPKinase signaling pathway?",
+      "answer": "Ras activates MAP kinase kinase kinase or Raf (1 point), Raf activates MAP kinase kinase or Mek (1 point), Mek activates MAP kinase or Erk (1 point), which leads to phosphorylation of target proteins in the cell (1 point)."
+    },
+    {
+      "type": "theory",
+      "title": "Scaffolding of Signaling Pathways",
+      "text": "Scaffolding proteins **organize proteins** such as MAPKinases in the MAPKinase signaling pathway. They act as a sort of **skeleton** on which the various proteins can bind and interact, thereby increasing the efficiency of signal transduction.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/scaffold_proteine_kinase.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "What is the function of scaffolding proteins in signal transduction?",
+      "answers": {
+        "correct_answer": "They organize proteins in signaling pathways and increase the efficiency of signal transduction",
+        "wrong_answers": [
+          "They degrade proteins in signaling pathways and decrease the efficiency of signal transduction",
+          "They transport proteins in signaling pathways and increase the efficiency of signal transduction",
+          "They isolate proteins in signaling pathways and decrease the efficiency of signal transduction"
+        ]
+      }
+    },
+    {
+      "type": "theory",
+      "title": "PI3-Kinase Pathway",
+      "text": "The **PI3-kinase pathway** is another signal transduction mechanism that plays a role in cell survival. This pathway helps **inhibit apoptosis**, or programmed cell death, and **promotes cell survival**.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/pi3kinase_signaleringsroute_geen_rood.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "What is the function of the PI3-kinase pathway?",
+      "answers": {
+        "correct_answer": "It inhibits apoptosis and promotes cell survival",
+        "wrong_answers": [
+          "It promotes apoptosis and inhibits cell survival",
+          "It inhibits apoptosis and inhibits cell survival",
+          "It promotes apoptosis and promotes cell survival"
+        ]
+      },
+      "image": null
+    },
+    {
+      "type": "theory",
+      "title": "PI3-Kinase Pathway",
+      "text": "The PI3-Kinase pathway begins with the activation of a **receptor tyrosine kinase** (RTK), which then activates **PI3-kinase**. PI3-kinase **phosphorylates PI(4,5)P2 to PI(3,4,5)P3**. This leads to the activation of **Akt**, which **phosphorylates BAD** and releases an apoptosis-inhibiting protein.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/pi3_kinase_route.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "What are the steps in the PI3-kinase pathway?",
+      "answer": "RTK activates PI3-kinase (1 point), PI3-kinase phosphorylates PI(4,5)P2 to PI(3,4,5)P3 (1 point), which leads to the activation of Akt (1 point), which phosphorylates BAD (1 point) and releases an apoptosis-inhibiting protein (1 point)."
+    },
+    {
+      "type": "theory",
+      "title": "Direct Nuclear Signaling by JAK-STAT Pathway",
+      "text": "The JAK-STAT pathway is an example of **direct nuclear signaling** that occurs when **cytokine receptors** interact with their **ligands**. This pathway is **more efficient** compared to indirect signaling pathways like the MAPK pathway because it **directly activates transcription factors** that move to the nucleus to regulate gene expression. The JAK-STAT signaling pathway is particularly important in the immune response against viruses, such as in COVID-19.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/jak_tat_systeem.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "Why is the JAK-STAT pathway considered a form of direct nuclear signaling?",
+      "answers": {
+        "correct_answer": "Because receptor activation directly leads to activation of transcription factors",
+        "wrong_answers": [
+          "Because it transmits signals through multiple intermediates before reaching the nucleus",
+          "Because it avoids the nucleus and only works in the cytosol to transduce signals",
+          "Because it uses G-proteins to transfer signals to the nucleus"
+        ]
+      },
+      "image": null
+    },
+    {
+      "type": "theory",
+      "title": "The Role of JAK and STAT Proteins",
+      "text": "In the JAK-STAT pathway, a cytokine receptor recognizes its cytokine, leading to dimerization and trans-autophosphorylation. This process activates JAK (Janus kinase), an enzyme linked to the receptor, which in turn phosphorylates STAT (signal transducers and activators of transcription) proteins. These STAT proteins then form homo- or heterodimers and move to the nucleus to regulate gene expression, resulting in various cellular responses such as cell division or the production of more cytokines.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/jak_tat_systeem.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "What happens to STAT proteins after they are phosphorylated by JAK proteins?",
+      "answers": {
+        "correct_answer": "They form dimers and move to the nucleus to regulate gene expression",
+        "wrong_answers": [
+          "They remain in the cytoplasm to deactivate the JAK protein",
+          "They are secreted from the cell to function as cytokines",
+          "They bind to the cell membrane to serve as receptors"
+        ]
+      },
+      "image": null
+    },
+    {
+      "type": "theory",
+      "title": "Overview of Signal Transduction Pathways",
+      "text": "This image summarizes the main mechanisms by which cells interpret and convert external signals into functional responses. Two primary pathways are highlighted: the G-protein coupled receptor pathway (GPCR) and the receptor tyrosine kinase (RTK) pathway. These pathways use second messengers to transmit signals, which in turn activate a series of kinases. This activation cascade influences gene expression and induces a variety of cellular responses and behaviors.",
+      "image": {
+        "description": "placeholder description",
+        "source": "placeholder source",
+        "url": "celbio_7/images/alle_protein_kinase_routes.png"
+      }
+    },
+    {
+      "type": "question",
+      "question": "Give an example of a signal transduction pathway where the four main components: receptor, enzyme, second messenger(s), and kinase(s) are clearly present.",
+      "answer": "The answer should include a specific pathway (1 point), such as the G-protein coupled receptor pathway (GPCR). Name the receptor, such as a GPCR (1 point), the enzyme, such as phospholipase C (1 point), the second messenger, such as IP3 (1 point), and the kinase, such as protein kinase C (1 point)."
+    }
+  ]
+}

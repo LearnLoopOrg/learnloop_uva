@@ -13,6 +13,10 @@
                 {
                     "title": "2_Eiwittransport",
                     "description": "De processen en mechanismen die betrokken zijn bij het transport van eiwitten binnen cellen en tussen cellen."
+                },
+                {
+                    "title": "3_Signaaltransductie",
+                    "description": "De mechanismen die horen bij het doorgeven van signalen binnen en tussen cellen."
                 }
             ]
         },
