@@ -1815,7 +1815,7 @@ if __name__ == "__main__":
     image_handler = initialise_image_handler()
     utils = Utils()
 
-    openai_client = connect_to_openai()
+    st.session_state.openai_client = connect_to_openai()
 
     # Directly after logging in via SURF, the nonce is fetched from the query parameters
     if fetch_nonce_from_query() is not None:
