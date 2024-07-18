@@ -100,14 +100,43 @@ class DatabaseAccess:
             segment_index
         ].get("type", None)
 
-    def get_index_first_segment_in_topic(self, topic_index):
+    def get_index_last_visited_segment_in_topic(self, topic_index: int) -> int:
         """
         Takes in the json index of a topic and extracts the first segment in the list of
         segments that belong to that topic.
         """
         module = st.session_state.selected_module
         topics = self.get_topics_list_from_db(module)
-        return topics[topic_index]["segment_indexes"][0]
+        user_doc = self.find_user_doc()
+        segment_indices: int | None = (
+            user_doc.get("progress", {})
+            .get(module, {})
+            .get("learning", {})
+            .get("last_visited_segment_index_per_topic_index", [])
+        )
+
+        if not segment_indices:
+            print("topic indix", topic_index)
+            self.db.users.update_one(
+                {"username": st.session_state.username},
+                {
+                    "$set": {
+                        f"progress.{st.session_state.selected_module}.learning.last_visited_segment_index_per_topic_index": [
+                            topics[i]["segment_indexes"][0]
+                            for i, _ in enumerate(topics)
+                        ]
+                    }
+                },
+            )
+            return topics[topic_index]["segment_indexes"][0]
+        else:
+            print("topic index when segments exist", topic_index)
+            print("segment_indices[topic_index]", segment_indices[topic_index])
+            return (
+                segment_indices[topic_index]
+                if len(segment_indices) > topic_index
+                else 0
+            )
 
     def fetch_segment_index(self):
         """Fetch the last segment index from db"""

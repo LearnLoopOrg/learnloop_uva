@@ -1,5 +1,6 @@
 import streamlit as st
 import base64
+from student_app.src.models import segment
 import utils.db_config as db_config
 from data.data_access_layer import DatabaseAccess
 from utils.utils import Utils
@@ -48,23 +49,17 @@ class TopicOverview:
         #     st.write("\n")
         st.title(f"College {self.module_number} — {self.module_title}")
 
-    def start_learning_page(self, topic_index):
+    def start_learning_page(self, topic_index: int):
         """
         Updates the segment index and calls the function to render the correct page
         corresponding to the selected topic.
         """
         # Determine which segment has to be displayed for the selected topic
-        segment_index = self.db_dal.get_index_first_segment_in_topic(topic_index)
-
-        # Change the segment index to the index corresponding to the selected topic
-        self.db.users.update_one(
-            {"username": st.session_state.username},
-            {
-                "$set": {
-                    f"progress.{st.session_state.selected_module}.learning.segment_index": segment_index
-                }
-            },
+        st.session_state.topic_index = topic_index
+        st.session_state.segment_index = (
+            self.db_dal.get_index_last_visited_segment_in_topic(topic_index)
         )
+
         # Change the 'phase' from overview to learning to render the learning page
         st.session_state.selected_phase = "learning"
 

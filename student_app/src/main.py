@@ -59,19 +59,41 @@ def upload_progress():
     Uploads the progress of the user in the current phase to the database.
     """
     # Store path and data in variables for clarity
-    path = (
+    topics = db_dal.fetch_module_topics(st.session_state.selected_module)["topics"]
+    topic = topics[st.session_state.topic_index]
+    segment_indices = topic["segment_indexes"]
+    segment_index_to_save_progress_for_topic = st.session_state.segment_index
+    if st.session_state.segment_index not in segment_indices:
+        segment_index_to_save_progress_for_topic = segment_indices[0]
+
+    learning_path = {
+        f"progress.{st.session_state.selected_module}.{st.session_state.selected_phase}.last_visited_segment_index_per_topic_index.{st.session_state.topic_index}": segment_index_to_save_progress_for_topic
+    }
+
+    practice_path = (
         f"progress.{st.session_state.selected_module}.{st.session_state.selected_phase}"
     )
-    data = {f"{path}.segment_index": st.session_state.segment_index}
+    practice_data = {f"{practice_path}.segment_index": st.session_state.segment_index}
 
     # Also upload the ordered_segment_sequence if the practice session if active
     if st.session_state.selected_phase == "practice":
-        data[f"{path}.ordered_segment_sequence"] = (
+        practice_data[f"{practice_path}.ordered_segment_sequence"] = (
             st.session_state.ordered_segment_sequence
         )
 
     # The data dict contains the paths and data
-    db.users.update_one({"username": st.session_state.username}, {"$set": data})
+    db.users.update_one(
+        {"username": st.session_state.username}, {"$set": learning_path}
+    )
+    print(
+        "Updating progress for topic",
+        st.session_state.topic_index,
+        "to",
+        st.session_state.segment_index,
+    )
+    db.users.update_one(
+        {"username": st.session_state.username}, {"$set": practice_data}
+    )
 
 
 def evaluate_answer():
@@ -551,8 +573,6 @@ def initialise_learning_page():
     """
     Sets all session states to correspond with database.
     """
-    # Fetch the last segment index from db
-    st.session_state.segment_index = db_dal.fetch_segment_index()
 
     if st.session_state.segment_index == -1:  # If user never started this phase
         if st.session_state.selected_module.startswith("Samenvattende"):
@@ -1597,8 +1617,6 @@ def determine_if_to_initialise_database():
             initialise_module_in_database(module)
 
         user_doc = db_dal.find_user_doc()
-        print("user doc", user_doc["progress"][module])
-        print("module", module)
         if "practice" not in user_doc["progress"][module]:
             initialise_practice_in_database(module)
 
