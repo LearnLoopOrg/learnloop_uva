@@ -1436,7 +1436,7 @@ def render_sidebar():
                     render_page_button("📖 Leren", module, phase="topics")
                     render_page_button("🔄 Herhalen", module, phase="practice")
                     render_page_button(
-                        "Overzicht theorie 📚", module, phase="theory-overview"
+                        "📚 Overzicht theorie", module, phase="theory-overview"
                     )
 
             elif module.startswith(st.session_state.practice_exam_name.split(" ")[0]):
