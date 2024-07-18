@@ -1526,9 +1526,14 @@ def create_empty_progress_dict(module):
     """
     empty_dict = {}
 
+    print("Module", module)
     st.session_state.page_content = db_dal.fetch_module_content(module)
 
-    number_of_segments = len(st.session_state.page_content["segments"])
+    number_of_segments = (
+        len(st.session_state.page_content["segments"])
+        if st.session_state.page_content
+        else 0
+    )
 
     # Create a dictionary with indexes (strings) as key and None as value
     empty_dict = {str(i): None for i in range(number_of_segments)}
