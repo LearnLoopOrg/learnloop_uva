@@ -46,6 +46,8 @@ class Controller:
         _self.record_page = Recorder()
 
     def initialise_session_states(self):
+        if "selected_course" not in st.session_state:
+            st.session_state.selected_course = None
         if "selected_phase" not in st.session_state:
             st.session_state.selected_phase = "courses"
         if "selected_module" not in st.session_state:
@@ -96,10 +98,10 @@ class Controller:
             )
 
             # Spacing
-            for i in range(26):
-                st.write("\n\n")
+            # for i in range(26):
+            #     st.write("\n\n")
 
-            st.subheader(f"👤 {st.session_state.username}")
+            # st.subheader(f"👤 {st.session_state.username}")
 
     def set_selected_phase(self, phase):
         st.session_state.selected_phase = phase

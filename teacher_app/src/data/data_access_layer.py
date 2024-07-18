@@ -3,6 +3,8 @@ import json
 import streamlit as st
 import utils.db_config as db_config
 import os
+from typing import List
+from models.uni_database import Course, CourseCatalog, Lecture
 
 
 class DatabaseAccess:
@@ -14,6 +16,40 @@ class DatabaseAccess:
         self.segments_list = None
         self.topics_list = None
         self.segment_index = None
+
+    def get_course_catalog(
+        self, file_path: str = "./src/data/uva_dummy_db.json"
+    ) -> CourseCatalog:
+        """
+        Load the course catalog from the (dummy) university database.
+        """
+        # TODO: Change dummy database to real database
+        with open(file_path, "r") as file:
+            data = json.load(file)
+
+        courses = [
+            Course(
+                title=course["title"],
+                description=course["description"],
+                lectures=[
+                    Lecture(title=lecture["title"], description=lecture["description"])
+                    for lecture in course["lectures"]
+                ],
+            )
+            for course in data["courses"]
+        ]
+
+        return CourseCatalog(courses=courses)
+
+    def get_lectures_for_course(
+        self, selected_course: str, catalog: CourseCatalog
+    ) -> List[Lecture]:
+        """
+        Get the lectures for a given course from the course catalog.
+        """
+        for course in catalog.courses:
+            if course.title == selected_course:
+                return course.lectures
 
     def determine_modules(self):
         """
@@ -330,6 +366,7 @@ class DatabaseAccess:
         """
         Fetches if the module has been generated and checked on quality by teacher.
         """
+        print(st.session_state.selected_module.replace(" ", "_"))
         return self.db.content.find_one(
             {"lecture_name": st.session_state.selected_module.replace(" ", "_")}
         )["status"]

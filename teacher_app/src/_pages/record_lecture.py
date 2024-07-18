@@ -159,9 +159,10 @@ class Recorder:
 
     def show_spinner_till_generated(self):
         with st.spinner("Oefenmaterialen worden gegenereerd..."):
-            url = "http://localhost:7071/api/ContentPipeline"
+            url = "https://contentpipeline.azurewebsites.net/api/contentpipeline?code=YxHEt2ZBmN6YX912nsC_i9KVpof7RVlr3k1yMSmZXlajAzFu_xvH1w=="
             print(f"Sending http request to: {url}")
-            params = {"lecture": "celbio_3", "run_full_pipeline": "true"}
+            # params = {"lecture": "celbio_3", "run_full_pipeline": "true"}
+            params = {}
             requests.get(url, params=params)
             while st.session_state.generated is False:
                 status = self.db_dal.fetch_module_status()

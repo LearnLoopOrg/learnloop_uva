@@ -6,9 +6,9 @@ import os
 from azure.storage.blob import BlobServiceClient
 from io import BytesIO
 from PIL import Image
-
 from api.module import ModuleRepository
 from utils.db_config import connect_db
+from data.data_access_layer import DatabaseAccess
 
 load_dotenv()
 
@@ -23,13 +23,34 @@ class Utils:
             connect_db(st.session_state.use_mongodb)
         )
         self.db_client = connect_db(st.session_state.use_mongodb)
+        self.db_dal = DatabaseAccess()
+
+    def set_phase_to_match_lecture_status(self, phase):
+        """
+        Determines which lecture page to display based on the selected lecture status,
+        which indicates if a lecture is recorded, generated or corrected.
+        """
+        if st.session_state.db.content.find_one(
+            {"lecture_name": st.session_state.selected_module.replace(" ", "_")}
+        ):
+            status = self.db_dal.fetch_module_status()
+
+            if status == "generated":
+                st.session_state.selected_phase = "generated"
+            elif status == "corrected":
+                st.session_state.selected_phase = phase
+        else:
+            st.session_state.selected_phase = "not_recorded"
+
+    def add_spacing(self, count):
+        for _ in range(count):
+            st.write("\n\n")
 
     def upload_file_to_blob_storage(self, container_name, source_path, blob_name):
         """
         Upload a file to a specific directory within a container in Azure Blob Storage.
 
         """
-
         try:
             container_client = self.blob_service_client.create_container(container_name)
             print(f"Container '{container_name}' created successfully.")
@@ -232,5 +253,6 @@ class ImageHandler:
                 image = self.resize_image_to_max_height(image, max_height)
 
             st.image(image)
-        except Exception:
+        except Exception as e:
             st.error("No image found for this segment.")
+            print(e)

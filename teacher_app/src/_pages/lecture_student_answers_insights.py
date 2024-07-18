@@ -42,7 +42,7 @@ class LectureInsights:
         )
 
     def render_title(self, module_number, module):
-        st.title(f"College {module_number} — {module}")
+        st.title(f"Inzichten: College {module_number} — {module}")
         st.write("\n")
 
     def start_learning_page(self, topic_index):
