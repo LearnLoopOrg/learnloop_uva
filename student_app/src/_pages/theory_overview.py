@@ -11,7 +11,7 @@ class TheoryOverview:
         self.db_dal = DatabaseAccess()
         self.utils = Utils()
         self.image_handler = ImageHandler()
-        self.module_name = st.session_state.selected_module.replace(" ", "_")
+        self.module_name = st.session_state.selected_module
         self.module_title = " ".join(self.module_name.split("_")[1:])
         self.module_number = self.module_name.split("_")[0]
 

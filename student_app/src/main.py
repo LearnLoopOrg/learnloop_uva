@@ -59,19 +59,41 @@ def upload_progress():
     Uploads the progress of the user in the current phase to the database.
     """
     # Store path and data in variables for clarity
-    path = (
+    topics = db_dal.fetch_module_topics(st.session_state.selected_module)["topics"]
+    topic = topics[st.session_state.topic_index]
+    segment_indices = topic["segment_indexes"]
+    segment_index_to_save_progress_for_topic = st.session_state.segment_index
+    if st.session_state.segment_index not in segment_indices:
+        segment_index_to_save_progress_for_topic = segment_indices[0]
+
+    learning_path = {
+        f"progress.{st.session_state.selected_module}.{st.session_state.selected_phase}.last_visited_segment_index_per_topic_index.{st.session_state.topic_index}": segment_index_to_save_progress_for_topic
+    }
+
+    practice_path = (
         f"progress.{st.session_state.selected_module}.{st.session_state.selected_phase}"
     )
-    data = {f"{path}.segment_index": st.session_state.segment_index}
+    practice_data = {f"{practice_path}.segment_index": st.session_state.segment_index}
 
     # Also upload the ordered_segment_sequence if the practice session if active
     if st.session_state.selected_phase == "practice":
-        data[f"{path}.ordered_segment_sequence"] = (
+        practice_data[f"{practice_path}.ordered_segment_sequence"] = (
             st.session_state.ordered_segment_sequence
         )
 
     # The data dict contains the paths and data
-    db.users.update_one({"username": st.session_state.username}, {"$set": data})
+    db.users.update_one(
+        {"username": st.session_state.username}, {"$set": learning_path}
+    )
+    print(
+        "Updating progress for topic",
+        st.session_state.topic_index,
+        "to",
+        st.session_state.segment_index,
+    )
+    db.users.update_one(
+        {"username": st.session_state.username}, {"$set": practice_data}
+    )
 
 
 def evaluate_answer():
@@ -551,8 +573,6 @@ def initialise_learning_page():
     """
     Sets all session states to correspond with database.
     """
-    # Fetch the last segment index from db
-    st.session_state.segment_index = db_dal.fetch_segment_index()
 
     if st.session_state.segment_index == -1:  # If user never started this phase
         if st.session_state.selected_module.startswith("Samenvattende"):
@@ -771,12 +791,13 @@ def add_date_to_progress_counter():
     module = st.session_state.selected_module.replace("_", " ")
     user_doc = db_dal.find_user_doc()
 
-    segment_progress_count = db_dal.fetch_progress_counter(module, user_doc)[
-        str(st.session_state.segment_index)
-    ]
+    print("module fetch progress counter", module)
+    progress_counter = db_dal.get_progress_counter(module, user_doc)
+
+    segment_progress_count = progress_counter.get(str(st.session_state.segment_index))
 
     # Initialise or update date format
-    if segment_progress_count is None:
+    if not segment_progress_count:
         segment_progress_count = progress_date_tracking_format()
     else:
         date = datetime.utcnow().date()
@@ -1221,7 +1242,7 @@ def render_generated_page():
 
     st.title(f"College {lecture_number} — {lecture_name}")
     utils.add_spacing(2)
-    st.subheader("Nog niet opgenomen")
+    st.subheader("Nog niet nagekeken door docent")
     st.write(
         "De docent moet dit college nog nakijken voordat je kunt oefenen. Herinner de docent met een anonieme mail hieronder."
     )
@@ -1436,7 +1457,7 @@ def render_sidebar():
                     render_page_button("📖 Leren", module, phase="topics")
                     render_page_button("🔄 Herhalen", module, phase="practice")
                     render_page_button(
-                        "Overzicht theorie 📚", module, phase="theory-overview"
+                        "📚 Overzicht theorie", module, phase="theory-overview"
                     )
 
             elif module.startswith(st.session_state.practice_exam_name.split(" ")[0]):
@@ -1528,7 +1549,11 @@ def create_empty_progress_dict(module):
 
     st.session_state.page_content = db_dal.fetch_module_content(module)
 
-    number_of_segments = len(st.session_state.page_content["segments"])
+    number_of_segments = (
+        len(st.session_state.page_content["segments"])
+        if st.session_state.page_content
+        else 0
+    )
 
     # Create a dictionary with indexes (strings) as key and None as value
     empty_dict = {str(i): None for i in range(number_of_segments)}
@@ -1602,7 +1627,12 @@ def determine_if_to_initialise_database():
         # Check if the user doc contains the dict in which the
         # is saved how many times a question is made by user
         user_doc = db_dal.find_user_doc()
-        progress_counter = db_dal.fetch_progress_counter(module, user_doc)
+        if "progress_counter" not in user_doc["progress"][module]["learning"]:
+            empty_dict = create_empty_progress_dict(module)
+            db_dal.add_progress_counter(module, empty_dict)
+
+        user_doc = db_dal.find_user_doc()
+        progress_counter = db_dal.get_progress_counter(module, user_doc)
         if progress_counter is None:
             empty_dict = create_empty_progress_dict(module)
             db_dal.add_progress_counter(module, empty_dict)
@@ -1803,7 +1833,7 @@ if __name__ == "__main__":
     image_handler = initialise_image_handler()
     utils = Utils()
 
-    openai_client = connect_to_openai()
+    st.session_state.openai_client = connect_to_openai()
 
     # Directly after logging in via SURF, the nonce is fetched from the query parameters
     if fetch_nonce_from_query() is not None:

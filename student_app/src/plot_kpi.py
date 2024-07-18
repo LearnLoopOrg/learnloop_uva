@@ -92,7 +92,7 @@ class PlotUsage:
         for user_doc in documents:
             progress_data = []
             for module in st.session_state.modules:
-                progress_counter = self.db_dal.fetch_progress_counter(module, user_doc)
+                progress_counter = self.db_dal.get_progress_counter(module, user_doc)
                 if progress_counter is not None:
                     progress_data.append(progress_counter)
 
