@@ -10,7 +10,7 @@ class TopicOverview:
         self.db = db_config.connect_db(st.session_state.use_mongodb)
         self.db_dal = DatabaseAccess()
         self.utils = Utils()
-        self.module_name = st.session_state.selected_module.replace(" ", "_")
+        self.module_name = st.session_state.selected_module
         self.module_title = " ".join(self.module_name.split("_")[1:])
         self.module_number = self.module_name.split("_")[0]
 
@@ -93,7 +93,7 @@ class TopicOverview:
             module, topic_index
         )
         user_doc = self.db_dal.find_user_doc()
-        progress_count = self.db_dal.fetch_progress_counter(module, user_doc)
+        progress_count = self.db_dal.get_progress_counter(module, user_doc)
 
         # If the progress_count is None, then it needs to be added
         if progress_count is None:
@@ -182,7 +182,7 @@ class TopicOverview:
         Renders the container that contains the topic title, start button,
         and theory and questions for one topic of the lecture.
         """
-        module_name_underscored = st.session_state.selected_module.replace(" ", "_")
+        module_name_underscored = st.session_state.selected_module
         topics_data = self.get_module_data(module_name_underscored)
 
         for topic_index, topic in enumerate(topics_data):

@@ -771,12 +771,13 @@ def add_date_to_progress_counter():
     module = st.session_state.selected_module.replace("_", " ")
     user_doc = db_dal.find_user_doc()
 
-    segment_progress_count = db_dal.fetch_progress_counter(module, user_doc)[
-        str(st.session_state.segment_index)
-    ]
+    print("module fetch progress counter", module)
+    progress_counter = db_dal.get_progress_counter(module, user_doc)
+
+    segment_progress_count = progress_counter.get(str(st.session_state.segment_index))
 
     # Initialise or update date format
-    if segment_progress_count is None:
+    if not segment_progress_count:
         segment_progress_count = progress_date_tracking_format()
     else:
         date = datetime.utcnow().date()
@@ -1526,7 +1527,6 @@ def create_empty_progress_dict(module):
     """
     empty_dict = {}
 
-    print("Module", module)
     st.session_state.page_content = db_dal.fetch_module_content(module)
 
     number_of_segments = (
@@ -1597,6 +1597,8 @@ def determine_if_to_initialise_database():
             initialise_module_in_database(module)
 
         user_doc = db_dal.find_user_doc()
+        print("user doc", user_doc["progress"][module])
+        print("module", module)
         if "practice" not in user_doc["progress"][module]:
             initialise_practice_in_database(module)
 
@@ -1607,7 +1609,12 @@ def determine_if_to_initialise_database():
         # Check if the user doc contains the dict in which the
         # is saved how many times a question is made by user
         user_doc = db_dal.find_user_doc()
-        progress_counter = db_dal.fetch_progress_counter(module, user_doc)
+        if "progress_counter" not in user_doc["progress"][module]["learning"]:
+            empty_dict = create_empty_progress_dict(module)
+            db_dal.add_progress_counter(module, empty_dict)
+
+        user_doc = db_dal.find_user_doc()
+        progress_counter = db_dal.get_progress_counter(module, user_doc)
         if progress_counter is None:
             empty_dict = create_empty_progress_dict(module)
             db_dal.add_progress_counter(module, empty_dict)

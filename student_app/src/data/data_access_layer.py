@@ -33,12 +33,12 @@ class DatabaseAccess:
                 continue
 
         # Remove the json extension and replace the underscores with spaces
-        modules = [module.replace("_", " ") for module in modules]
+        modules = [module for module in modules]
 
         # Sort the modules based on the number in the name except for the practice exams
         modules.sort(
-            key=lambda module: int(module.split(" ")[0])
-            if module.split(" ")[0].isdigit()
+            key=lambda module: int(module.split("_")[0])
+            if module.split("_")[0].isdigit()
             else 1000
         )
 
@@ -96,19 +96,16 @@ class DatabaseAccess:
                 return course.lectures
 
     def get_segment_type(self, segment_index):
-        return self.get_segments_list_from_db(self.get_module_name_underscored())[
+        return self.get_segments_list_from_db(st.session_state.selected_module)[
             segment_index
         ].get("type", None)
-
-    def get_module_name_underscored(self):
-        return st.session_state.selected_module.replace(" ", "_")
 
     def get_index_first_segment_in_topic(self, topic_index):
         """
         Takes in the json index of a topic and extracts the first segment in the list of
         segments that belong to that topic.
         """
-        module = st.session_state.selected_module.replace(" ", "_")
+        module = st.session_state.selected_module
         topics = self.get_topics_list_from_db(module)
         return topics[topic_index]["segment_indexes"][0]
 
@@ -137,22 +134,15 @@ class DatabaseAccess:
         return self.segments_list[segment_index].get("answers", None)
 
     def fetch_module_content(self, module):
-        page_content = self.db.content.find_one(
-            {"lecture_name": module.replace(" ", "_")}
-        )
+        page_content = self.db.content.find_one({"lecture_name": module})
         return page_content["corrected_lecturepath_content"] if page_content else None
 
     def fetch_module_topics(self, module):
-        page_content = self.db.content.find_one(
-            {"lecture_name": module.replace(" ", "_")}
-        )
+        page_content = self.db.content.find_one({"lecture_name": module})
         return page_content["corrected_lecturepath_topics"]
 
     def get_image_path(self, image_file_name):
         return f"src/data/content/images/{image_file_name}"
-
-    def fetch_json_file_name_of_module(self, module):
-        return module.replace(" ", "_") + ".json"
 
     def generate_json_path(self, json_name):
         return f"src/data/content/modules/{json_name}"
@@ -170,7 +160,7 @@ class DatabaseAccess:
 
     @st.cache_data(ttl=timedelta(hours=4))
     def get_segments_list_from_db(_self, module):
-        query = {"lecture_name": module.replace(" ", "_")}
+        query = {"lecture_name": module}
         doc = _self.db.content.find_one(query)
 
         if doc and "corrected_lecturepath_content" in doc:
@@ -182,7 +172,7 @@ class DatabaseAccess:
 
     @st.cache_data(ttl=timedelta(hours=4))
     def get_topics_list_from_db(_self, module):
-        query = {"lecture_name": module.replace(" ", "_")}
+        query = {"lecture_name": module}
         doc = _self.db.content.find_one(query)
 
         if doc and "corrected_lecturepath_topics" in doc:
@@ -239,15 +229,14 @@ class DatabaseAccess:
     def find_user_doc(self):
         return self.db.users.find_one({"username": st.session_state.username})
 
-    def fetch_progress_counter(self, module, user_doc):
-        module = module.replace("_", " ")
+    def get_progress_counter(self, module, user_doc) -> dict:
         progress_counter = (
             user_doc.get("progress", {})
             .get(module, {})
             .get("learning", {})
             .get("progress_counter", None)
         )
-        return progress_counter
+        return progress_counter if progress_counter is not None else {}
 
     def update_progress_counter_for_segment(self, module, new_progress_count):
         self.db.users.update_one(
@@ -289,7 +278,7 @@ class DatabaseAccess:
         Update the status of the module, such as 'not_recorded', 'generated', 'corrected' etc.
         """
         self.db.content.update_one(
-            {"lecture_name": st.session_state.selected_module.replace(" ", "_")},
+            {"lecture_name": st.session_state.selected_module},
             {"$set": {"status": status}},
         )
 
@@ -298,5 +287,5 @@ class DatabaseAccess:
         Fetches if the module has been generated and checked on quality by teacher.
         """
         return self.db.content.find_one(
-            {"lecture_name": st.session_state.selected_module.replace(" ", "_")}
+            {"lecture_name": st.session_state.selected_module}
         )["status"]

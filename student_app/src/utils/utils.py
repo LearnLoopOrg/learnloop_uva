@@ -21,7 +21,7 @@ class Utils:
         which indicates if a lecture is recorded, generated or corrected.
         """
         if st.session_state.db.content.find_one(
-            {"lecture_name": st.session_state.selected_module.replace(" ", "_")}
+            {"lecture_name": st.session_state.selected_module}
         ):
             status = self.db_dal.fetch_module_status()
 

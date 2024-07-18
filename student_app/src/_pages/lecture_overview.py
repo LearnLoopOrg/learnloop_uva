@@ -42,7 +42,7 @@ class LectureOverview:
                     "Leerstof bekijken",
                     key=lecture_title,
                     on_click=self.go_to_lecture,
-                    args=(lecture_title.replace("_", " "),),
+                    args=(lecture_title,),
                     use_container_width=True,
                 )
             with cols[0]:
