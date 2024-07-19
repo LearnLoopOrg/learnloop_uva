@@ -507,8 +507,8 @@ class LectureInsights:
             module, topic["segment_indexes"]
         )
         questions_stats = self.get_topic_questions_stats(module, questions_content)
+        print(f"question stats: {questions_stats}")
 
-        feedback_analyses = self.analyse_feedback(questions_content, questions_stats)
         all_scores = []
         total_achieved_score = 0
         total_score = 0
@@ -547,6 +547,9 @@ class LectureInsights:
             with st.expander(
                 "Analyse per vraag", expanded=True if topic_index == 0 else False
             ):
+                feedback_analyses = self.analyse_feedback(
+                    questions_content, questions_stats
+                )
                 for j, (question_index, question_content) in enumerate(
                     questions_content.items()
                 ):
@@ -560,6 +563,7 @@ class LectureInsights:
 
                     percentage_correct_question = total_achieved_score / total_score
                     # i want a red, orange or green color based on the percentage correct
+
                     if len(questions_stats) > 0:
                         st.markdown(
                             f'<span style="font-size: 1.2em;">{self._get_icon_based_on_percentage(percentage_correct_question)} **{question_content["question"]}**</span>',
