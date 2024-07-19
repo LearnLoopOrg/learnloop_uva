@@ -116,7 +116,6 @@ class DatabaseAccess:
         )
 
         if not segment_indices:
-            print("topic indix", topic_index)
             self.db.users.update_one(
                 {"username": st.session_state.username},
                 {
@@ -130,8 +129,6 @@ class DatabaseAccess:
             )
             return topics[topic_index]["segment_indexes"][0]
         else:
-            print("topic index when segments exist", topic_index)
-            print("segment_indices[topic_index]", segment_indices[topic_index])
             return (
                 segment_indices[topic_index]
                 if len(segment_indices) > topic_index

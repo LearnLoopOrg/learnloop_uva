@@ -146,7 +146,7 @@ class Utils:
         return k["segment_id"]
 
     def preprocessed_segments(self, module) -> list:
-        # outputs a list of dictionaries with detele:yes or delete:no tags.
+        # outputs a list of dictionaries with delete:yes or delete:no tags.
         original_segments_list = self.original_segments(module)
         segments_list = []
         session_state_dict = {k: v for k, v in st.session_state.items()}
@@ -155,6 +155,11 @@ class Utils:
             if composite_key[0] == "new":
                 segment_id = int(composite_key[1])
                 segment = {}
+                print(f"\n\nsegment_id: {segment_id}\n\n")
+                print(
+                    f"\n\nlength of original_segments_list: {len(original_segments_list)}\n\n"
+                )
+                print(f"original_segments_list: {original_segments_list}\n\n")
                 segment["segment_id"] = segment_id
                 static_segment = original_segments_list[segment_id]
                 if static_segment["type"] == "theory":

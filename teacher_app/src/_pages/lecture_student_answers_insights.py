@@ -513,8 +513,6 @@ class LectureInsights:
         total_achieved_score = 0
         total_score = 0
         for question_index, stats_for_question in questions_stats.items():
-            print(f"\n\nQuestion index: {question_index}\n\n")
-            print(f"\n\nStats for question: {stats_for_question}\n\n")
             for score in stats_for_question["scores"]:
                 total_achieved_score += float(score.split("/")[0])
                 total_score += float(score.split("/")[1])

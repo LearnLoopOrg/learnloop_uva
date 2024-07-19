@@ -49,9 +49,6 @@ class LectureOverview:
         st.session_state.selected_module = lecture_title
         module_status = self.db_dal.fetch_module_status()
 
-        print(f"\n\nModule status: {module_status}\n\n")
-        print(f"\n\nSelected module: {st.session_state.selected_module}\n\n")
-
         if module_status == "corrected":
             st.session_state.selected_phase = "insights"
         elif module_status == "generated":

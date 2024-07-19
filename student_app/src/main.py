@@ -791,7 +791,6 @@ def add_date_to_progress_counter():
     module = st.session_state.selected_module.replace("_", " ")
     user_doc = db_dal.find_user_doc()
 
-    print("module fetch progress counter", module)
     progress_counter = db_dal.get_progress_counter(module, user_doc)
 
     segment_progress_count = progress_counter.get(str(st.session_state.segment_index))

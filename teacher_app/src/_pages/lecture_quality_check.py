@@ -54,7 +54,6 @@ class QualityCheck:
                 st.html("</div>")
 
     def display_header(self):
-        print(f"\n\n{st.session_state.selected_module}\n\n")
         lecture_number, lecture_name = st.session_state.selected_module.replace(
             "_", " "
         ).split(" ", 1)
