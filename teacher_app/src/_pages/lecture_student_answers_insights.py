@@ -465,17 +465,13 @@ class LectureInsights:
                         all_scores.extend(
                             stats_for_question["scores"]
                         )  # Assuming 'scores' is always present
-                    percentage_correct_topic = total_achieved_score / total_score
+                    percentage_correct_topic = (
+                        total_achieved_score / total_score if total_score > 0 else -1
+                    )
                     # i want a red, orange or green color based on the percentage correct
-                    if percentage_correct_topic < 0.5:
-                        icon = "🔴"
-                    elif percentage_correct_topic < 0.8:
-                        icon = "🟠"
-                    else:
-                        icon = "🟢"
 
                     st.html(f"""<div style="display: inline-block; color: white; padding: 10px 0px; margin:0px; gap: 0rem; text-align: left; text-decoration: none; border-radius: 5px; transition: background-color 0.3s;">
-            <a href="#{topic["topic_title"]}" style="color: black; text-decoration: none;">{icon} {i + 1} - {topic["topic_title"]}</a>
+            <a href="#{topic["topic_title"]}" style="color: black; text-decoration: none;">{self._get_icon_based_on_percentage(percentage_correct_topic)} {i + 1} - {topic["topic_title"]}</a>
         </div>""")
                     st.html("</div>")
 
@@ -484,6 +480,27 @@ class LectureInsights:
             return question["answers"]["correct_answer"]
         if "answer" in question:
             return question["answer"]
+
+    def _get_icon_based_on_percentage(self, percentage: float) -> str:
+        """
+        Returns an icon based on the given percentage.
+
+        Args:
+            percentage (float): The percentage value.
+
+        Returns:
+            str: The icon corresponding to the percentage. If the percentage is less than 0, the icon is a white circle.
+
+        """
+        if percentage < 0:
+            icon = "⚪️"
+        elif percentage < 0.5:
+            icon = "🔴"
+        elif percentage < 0.8:
+            icon = "🟠"
+        else:
+            icon = "🟢"
+        return icon
 
     def show_topic_feedback(self, module, topic, topic_index):
         questions_content = self.db_dal.get_topic_questions(
@@ -504,24 +521,23 @@ class LectureInsights:
             all_scores.extend(
                 stats_for_question["scores"]
             )  # Assuming 'scores' is always present
-        percentage_correct_topic = total_achieved_score / total_score
-        # i want a red, orange or green color based on the percentage correct
-        if percentage_correct_topic < 0.5:
-            icon = "🔴"
-        elif percentage_correct_topic < 0.8:
-            icon = "🟠"
-        else:
-            icon = "🟢"
 
         with st.container():
-            st.header(f"{icon} {topic['topic_title']}", anchor=topic["topic_title"])
+            percentage_correct_topic = (
+                total_achieved_score / total_score if total_score > 0 else -1
+            )
+            icon = self._get_icon_based_on_percentage(percentage_correct_topic)
+            st.header(
+                f"{icon} {topic['topic_title']}",
+                anchor=topic["topic_title"],
+            )
+            if total_score == 0:
+                st.markdown(
+                    '<span style="color: gray;">Nog geen studenten hebben deze vragen gemaakt.</span>',
+                    unsafe_allow_html=True,
+                )
+                return
 
-            # st.markdown(
-            #     f"<span style='color: gray;'>Gemaakt door {len(all_scores)} studenten: {percentage_correct_topic * 100:.0f}% correct</span>",
-            #     unsafe_allow_html=True,
-            # )
-            # st.markdown(f"👥 Studenten: {len(all_scores)}")
-            # st.markdown(f"✅ Gemiddelde: {percentage_correct_topic * 100:.0f}% correct")
             st.markdown(
                 f'<span style="color: gray;">👥 Studenten: {len(all_scores)}</span>',
                 unsafe_allow_html=True,
@@ -547,15 +563,8 @@ class LectureInsights:
                     percentage_correct_question = total_achieved_score / total_score
                     # i want a red, orange or green color based on the percentage correct
                     if len(questions_stats) > 0:
-                        if percentage_correct_question < 0.5:
-                            question_icon = "🔴"
-                        elif percentage_correct_question < 0.8:
-                            question_icon = "🟠"
-                        else:
-                            question_icon = "🟢"
-
                         st.markdown(
-                            f'<span style="font-size: 1.2em;">{question_icon} **{question_content["question"]}**</span>',
+                            f'<span style="font-size: 1.2em;">{self._get_icon_based_on_percentage(percentage_correct_question)} **{question_content["question"]}**</span>',
                             unsafe_allow_html=True,
                         )
 
