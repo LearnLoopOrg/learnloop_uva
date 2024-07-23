@@ -24,10 +24,14 @@ load_dotenv()
 
 @st.cache_resource(ttl=timedelta(hours=4))
 def connect_to_openai() -> OpenAI:
-    if llm_model == "gpt-4o":
-        print("Using OpenAI GPT-4o")
-        st.session_state.openai_model = "gpt-4o"
-        return OpenAI(api_key=os.getenv("OPENAI_API_KEY_2"))
+    if llm_model == "LLgpt-4o":
+        print("Using LearnLoop Azure instance of OpenAI GPT-4o")
+        st.session_state.openai_model = "LLgpt-4o"
+        return AzureOpenAI(
+            api_key=os.getenv("LL_AZURE_OPENAI_API_KEY"),
+            api_version="2024-04-01-preview",
+            azure_endpoint=os.getenv("LL_AZURE_OPENAI_API_ENDPOINT"),
+        )
 
     elif llm_model == "azure_gpt-4":
         print("Using Azure GPT-4")
@@ -1811,7 +1815,7 @@ if __name__ == "__main__":
     test_username = "Luc Mahieu"
 
     # Use the Azure Openai API or the Openai API (GPT-4o) for the feedback
-    models = ["gpt-4o", "azure_gpt-4", "azure_gpt-4_Turbo"]
+    models = ["LLgpt-4o", "azure_gpt-4", "azure_gpt-4_Turbo"]
     llm_model = models[0]
 
     # Bypass authentication when testing so flask app doesnt have to run
