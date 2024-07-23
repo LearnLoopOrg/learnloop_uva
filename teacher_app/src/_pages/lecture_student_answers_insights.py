@@ -335,6 +335,7 @@ class LectureInsights:
             input_json,
             True,
             max_tokens=4096,
+            model=st.session_state.openai_model,
         )
         return response
 

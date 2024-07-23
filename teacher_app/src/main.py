@@ -20,7 +20,7 @@ class Controller:
     def __init__(_self):
         _self.initialise_session_states()
         # OpenAI & database
-        st.session_state.openai_client = connect_to_openai(llm_model="gpt-4o")
+        st.session_state.openai_client = connect_to_openai(llm_model="LLgpt-4o")
         st.session_state.use_mongodb = True
         st.session_state.db = db_config.connect_db(
             use_mongodb=st.session_state.use_mongodb

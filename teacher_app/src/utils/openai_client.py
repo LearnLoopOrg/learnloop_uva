@@ -1,6 +1,6 @@
 from datetime import timedelta
 import os
-from openai import AzureOpenAI, OpenAI
+from openai import AzureOpenAI
 from dotenv import load_dotenv
 import json
 import streamlit as st
@@ -10,12 +10,16 @@ load_dotenv()
 
 
 def connect_to_openai(
-    llm_model: Literal["gpt-4o", "azure_gpt-4", "azure_gpt-4_turbo"] = "gpt-4o",
+    llm_model: Literal["LLgpt-4o", "azure_gpt-4", "azure_gpt-4_turbo"] = "gpt-4o",
 ):
-    if llm_model == "gpt-4o":
-        print("Using OpenAI GPT-4o")
-        st.session_state.openai_model = "gpt-4o"
-        return OpenAI(api_key=os.getenv("OPENAI_API_KEY_2"))
+    if llm_model == "LLgpt-4o":
+        print("Using LearnLoop Azure instance of OpenAI GPT-4o")
+        st.session_state.openai_model = "LLgpt-4o"
+        return AzureOpenAI(
+            api_key=os.getenv("LL_AZURE_OPENAI_API_KEY"),
+            api_version="2024-04-01-preview",
+            azure_endpoint=os.getenv("LL_AZURE_OPENAI_API_ENDPOINT"),
+        )
 
     elif llm_model == "azure_gpt-4":
         print("Using Azure GPT-4")
@@ -40,7 +44,12 @@ def connect_to_openai(
 
 @st.cache_data(ttl=timedelta(hours=4), show_spinner=False)
 def openai_call(
-    _client, system_message, user_message, json_response=False, max_tokens=1024
+    _client,
+    system_message,
+    user_message,
+    json_response=False,
+    max_tokens=1024,
+    model="LLgpt-4o",
 ):
     messages = [
         {"role": "system", "content": system_message},
@@ -49,7 +58,7 @@ def openai_call(
     response = None
     if json_response:
         response = _client.chat.completions.create(
-            model="gpt-4o",
+            model=model,
             temperature=0.2,
             response_format={"type": "json_object"},
             max_tokens=max_tokens,
@@ -57,10 +66,11 @@ def openai_call(
         )
     else:
         response = _client.chat.completions.create(
-            model="gpt-4o", temperature=0.2, messages=messages
+            model=model, temperature=0.2, messages=messages
         )
 
     content = response.choices[0].message.content
+
     if json_response:
         try:
             return json.loads(content)
