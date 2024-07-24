@@ -7,19 +7,24 @@ import streamlit as st
 
 load_dotenv()
 
+
 @st.cache_resource(show_spinner=False)
 def connect_db(use_mongodb):
     """
     Connect to either MongoDB or CosmosDB and ping to check connection.
     """
+
     if not use_mongodb:
-        COSMOS_URI = os.getenv('COSMOS_URI')
+        COSMOS_URI = os.getenv("COSMOS_URI")
         db_client = MongoClient(COSMOS_URI, tlsCAFile=certifi.where())
     else:
-        MONGO_URI = os.getenv('MONGO_DB')
-        db_client = MongoClient(MONGO_URI, server_api=ServerApi('1'), tlsCAFile=certifi.where())
+        # TODO keyvault
+        MONGO_URI = os.getenv("MONGO_DB")
+        db_client = MongoClient(
+            MONGO_URI, server_api=ServerApi("1"), tlsCAFile=certifi.where()
+        )
 
-    db = db_client.UvA_NAF
+    db = db_client.demo
 
     # Ping database to check if it's connected
     try:

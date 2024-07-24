@@ -1,6 +1,5 @@
 import streamlit as st
 import base64
-from student_app.src.models import segment
 import utils.db_config as db_config
 from data.data_access_layer import DatabaseAccess
 from utils.utils import Utils

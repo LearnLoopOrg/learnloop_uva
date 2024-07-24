@@ -27,10 +27,13 @@ def connect_to_openai() -> OpenAI:
     if llm_model == "LLgpt-4o":
         print("Using LearnLoop Azure instance of OpenAI GPT-4o")
         st.session_state.openai_model = "LLgpt-4o"
+        # TODO keyvault
+        LL_AZURE_OPENAI_API_KEY = os.getenv("LL_AZURE_OPENAI_API_KEY")
+        LL_AZURE_OPENAI_API_ENDPOINT = os.getenv("LL_AZURE_OPENAI_API_ENDPOINT")
         return AzureOpenAI(
-            api_key=os.getenv("LL_AZURE_OPENAI_API_KEY"),
+            api_key=LL_AZURE_OPENAI_API_KEY,
             api_version="2024-04-01-preview",
-            azure_endpoint=os.getenv("LL_AZURE_OPENAI_API_ENDPOINT"),
+            azure_endpoint=LL_AZURE_OPENAI_API_ENDPOINT,
         )
 
     elif llm_model == "azure_gpt-4":
@@ -1807,6 +1810,8 @@ if __name__ == "__main__":
 
     # Your current IP has to be accepted by Gerrit to use CosmosDB (Gerrit controls this)
     st.session_state.use_mongodb = True
+
+    st.session_state.use_keyvault = True
 
     # Use dummy LLM feedback as response to save openai costs and time during testing
     use_dummy_openai_calls = False

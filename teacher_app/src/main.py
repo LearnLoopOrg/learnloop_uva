@@ -26,8 +26,6 @@ class Controller:
             use_mongodb=st.session_state.use_mongodb
         )
 
-        _self.debug = True if os.getenv("DEBUG") == "True" else False
-
         # User
         st.session_state.username = "Luc Mahieu"
 

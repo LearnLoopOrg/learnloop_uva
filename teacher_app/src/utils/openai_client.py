@@ -15,10 +15,12 @@ def connect_to_openai(
     if llm_model == "LLgpt-4o":
         print("Using LearnLoop Azure instance of OpenAI GPT-4o")
         st.session_state.openai_model = "LLgpt-4o"
+        LL_AZURE_OPENAI_API_KEY = os.getenv("LL_AZURE_OPENAI_API_KEY")
+        LL_AZURE_OPENAI_API_ENDPOINT = os.getenv("LL_AZURE_OPENAI_API_ENDPOINT")
         return AzureOpenAI(
-            api_key=os.getenv("LL_AZURE_OPENAI_API_KEY"),
+            api_key=LL_AZURE_OPENAI_API_KEY,
             api_version="2024-04-01-preview",
-            azure_endpoint=os.getenv("LL_AZURE_OPENAI_API_ENDPOINT"),
+            azure_endpoint=LL_AZURE_OPENAI_API_ENDPOINT,
         )
 
     elif llm_model == "azure_gpt-4":

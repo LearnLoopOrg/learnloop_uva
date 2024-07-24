@@ -9,13 +9,19 @@ from PIL import Image
 from api.module import ModuleRepository
 from utils.db_config import connect_db
 from data.data_access_layer import DatabaseAccess
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
 
 load_dotenv()
 
 
 class Utils:
     def __init__(self):
-        self.connection_string = os.getenv("AZURE_BLOB_STORAGE_CONNECTION_STRING")
+        # TODO keyvault
+        AZURE_BLOB_STORAGE_CONNECTION_STRING = os.getenv(
+            "AZURE_BLOB_STORAGE_CONNECTION_STRING"
+        )
+        self.connection_string = AZURE_BLOB_STORAGE_CONNECTION_STRING
         self.blob_service_client = BlobServiceClient.from_connection_string(
             self.connection_string
         )
@@ -261,3 +267,20 @@ class ImageHandler:
         except Exception as e:
             st.error("No image found for this segment.")
             print(e)
+
+
+class AzureUtils:
+    @staticmethod
+    def get_secret(secret_name: str, key_vault_name: str) -> str:
+        """
+        Returns a secret from Azure Key Vault.
+        """
+        key_vault_uri = f"https://{key_vault_name}.vault.azure.net"
+
+        credential = DefaultAzureCredential()
+
+        client = SecretClient(vault_url=key_vault_uri, credential=credential)
+
+        retrieved_secret = client.get_secret(secret_name)
+
+        return retrieved_secret.value

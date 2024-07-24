@@ -1,10 +1,11 @@
-from datetime import timedelta
 import streamlit as st
 from PIL import Image
 from io import BytesIO
 from azure.storage.blob import BlobServiceClient
 import os
 from data.data_access_layer import DatabaseAccess
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
 
 
 class Utils:
@@ -35,6 +36,7 @@ class Utils:
 
 class ImageHandler:
     def __init__(self):
+        # TODO keyvault
         self.connection_string = os.getenv("AZURE_BLOB_STORAGE_CONNECTION_STRING")
         self.blob_service_client = BlobServiceClient.from_connection_string(
             self.connection_string
@@ -72,3 +74,20 @@ class ImageHandler:
             image = self.resize_image_to_max_height(image, max_height)
 
         st.image(image)
+
+
+class AzureUtils:
+    @staticmethod
+    def get_secret(secret_name: str, key_vault_name: str) -> str:
+        """
+        Returns a secret from Azure Key Vault.
+        """
+        key_vault_uri = f"https://{key_vault_name}.vault.azure.net"
+
+        credential = DefaultAzureCredential()
+
+        client = SecretClient(vault_url=key_vault_uri, credential=credential)
+
+        retrieved_secret = client.get_secret(secret_name)
+
+        return retrieved_secret.value
