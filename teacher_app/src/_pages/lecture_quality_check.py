@@ -12,9 +12,7 @@ load_dotenv()
 class QualityCheck:
     def __init__(self):
         self.utils = Utils()
-        self.module_repository = ModuleRepository(
-            connect_db(use_mongodb=st.session_state.use_mongodb)
-        )
+        self.module_repository = ModuleRepository(st.session_state.db)
         self.db_dal = DatabaseAccess()
         self.image_handler = ImageHandler()
 

@@ -11,7 +11,7 @@ properties:
             cpu: 1
             memoryInGb: 1.5
         ports:
-          - port: 8051
+          - port: 8501
     - name: teacher-app-demo
       properties:
         image: llcontainerregistry.azurecr.io/teacher-app-demo:latest
@@ -20,16 +20,16 @@ properties:
             cpu: 1
             memoryInGb: 1.5
         ports:
-          - port: 8052
+          - port: 8502
   osType: Linux
   ipAddress:
     type: Public
     dnsNameLabel: demo-uni-app-aci
     ports:
       - protocol: tcp
-        port: 8051
+        port: 8501
       - protocol: tcp
-        port: 8052
+        port: 8502
   imageRegistryCredentials:
     - server: llcontainerregistry.azurecr.io
       username: LLcontainerregistry

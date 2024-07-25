@@ -8,10 +8,10 @@ from models.uni_database import Course, CourseCatalog, Lecture
 
 
 class DatabaseAccess:
-    def __init__(self):
-        self.db = db_config.connect_db(
-            st.session_state.use_mongodb
-        )  # database connection
+    def __init__(
+        self,
+    ):
+        self.db = st.session_state.db
         self.users_collection_name = "users"
         self.segments_list = None
         self.topics_list = None

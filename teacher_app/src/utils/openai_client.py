@@ -1,5 +1,4 @@
 from datetime import timedelta
-import os
 from openai import AzureOpenAI
 from dotenv import load_dotenv
 import json
@@ -10,38 +9,17 @@ load_dotenv()
 
 
 def connect_to_openai(
+    OpenAI_API_key,
+    OpenAI_API_endpoint,
     llm_model: Literal["LLgpt-4o", "azure_gpt-4", "azure_gpt-4_turbo"] = "gpt-4o",
 ):
-    if llm_model == "LLgpt-4o":
-        print("Using LearnLoop Azure instance of OpenAI GPT-4o")
-        st.session_state.openai_model = "LLgpt-4o"
-        LL_AZURE_OPENAI_API_KEY = os.getenv("LL_AZURE_OPENAI_API_KEY")
-        LL_AZURE_OPENAI_API_ENDPOINT = os.getenv("LL_AZURE_OPENAI_API_ENDPOINT")
-        return AzureOpenAI(
-            api_key=LL_AZURE_OPENAI_API_KEY,
-            api_version="2024-04-01-preview",
-            azure_endpoint=LL_AZURE_OPENAI_API_ENDPOINT,
-        )
+    st.session_state.openai_model = "LLgpt-4o"
 
-    elif llm_model == "azure_gpt-4":
-        print("Using Azure GPT-4")
-        st.session_state.openai_model = "learnloop"
-        return AzureOpenAI(
-            api_key=os.getenv("OPENAI_API_KEY"),
-            api_version="2024-03-01-preview",
-            azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
-        )
-
-    elif llm_model == "azure_gpt-4_turbo":
-        # TODO: not working
-        # TODO: ask Gerrit to put key in Azure secrets for deployment
-
-        st.session_state.openai_model = "learnloop"
-        return AzureOpenAI(
-            api_key=os.getenv("OPENAI_API_KEY_TURBO"),
-            api_version="2024-03-01-preview",
-            azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT_TURBO"),
-        )
+    return AzureOpenAI(
+        api_key=OpenAI_API_key,
+        api_version="2024-04-01-preview",
+        azure_endpoint=OpenAI_API_endpoint,
+    )
 
 
 @st.cache_data(ttl=timedelta(hours=4), show_spinner=False)

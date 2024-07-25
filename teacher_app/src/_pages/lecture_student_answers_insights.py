@@ -12,7 +12,7 @@ from streamlit_extras.add_vertical_space import add_vertical_space
 
 class LectureInsights:
     def __init__(self) -> None:
-        self.db = db_config.connect_db(st.session_state.use_mongodb)
+        self.db = st.session_state.db
         self.db_dal = DatabaseAccess()
         self.module = ""
 

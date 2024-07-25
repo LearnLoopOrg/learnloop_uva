@@ -4,6 +4,7 @@ import os
 import certifi
 from pymongo.server_api import ServerApi
 import streamlit as st
+from utils.utils import AzureUtils
 
 load_dotenv()
 
@@ -18,8 +19,10 @@ def connect_db(use_mongodb):
         COSMOS_URI = os.getenv("COSMOS_URI")
         db_client = MongoClient(COSMOS_URI, tlsCAFile=certifi.where())
     else:
-        # TODO keyvault
-        MONGO_URI = os.getenv("MONGO_DB")
+        if st.session_state.use_keyvault:
+            MONGO_URI = AzureUtils.get_secret("MONGO-URI", "lluniappkv")
+        else:
+            MONGO_URI = os.getenv("MONGO_DB")
         db_client = MongoClient(
             MONGO_URI, server_api=ServerApi("1"), tlsCAFile=certifi.where()
         )

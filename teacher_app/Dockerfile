@@ -6,13 +6,7 @@ WORKDIR /teacher_app
 COPY . .
 
 # Install build dependencies for pyaudio package
-RUN apt-get update && \
-    apt-get install -y gnupg && \
-    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 0E98404D386FA1D9 && \
-    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 648ACFD622F3D138 && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y \
     build-essential \
     portaudio19-dev \
     python3-dev \

@@ -36,8 +36,12 @@ class Utils:
 
 class ImageHandler:
     def __init__(self):
-        # TODO keyvault
-        self.connection_string = os.getenv("AZURE_BLOB_STORAGE_CONNECTION_STRING")
+        if st.session_state.use_keyvault:
+            self.connection_string = AzureUtils.get_secret(
+                "AZURE-BLOB-STORAGE-CONNECTION-STRING", "lluniappkv"
+            )
+        else:
+            self.connection_string = os.getenv("AZURE_BLOB_STORAGE_CONNECTION_STRING")
         self.blob_service_client = BlobServiceClient.from_connection_string(
             self.connection_string
         )

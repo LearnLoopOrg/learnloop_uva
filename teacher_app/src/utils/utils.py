@@ -17,18 +17,20 @@ load_dotenv()
 
 class Utils:
     def __init__(self):
-        # TODO keyvault
-        AZURE_BLOB_STORAGE_CONNECTION_STRING = os.getenv(
-            "AZURE_BLOB_STORAGE_CONNECTION_STRING"
-        )
+        if st.session_state.use_keyvault:
+            AZURE_BLOB_STORAGE_CONNECTION_STRING = AzureUtils.get_secret(
+                "AZURE-BLOB-STORAGE-CONNECTION-STRING", "lluniappkv"
+            )
+        else:
+            AZURE_BLOB_STORAGE_CONNECTION_STRING = os.getenv(
+                "AZURE_BLOB_STORAGE_CONNECTION_STRING"
+            )
         self.connection_string = AZURE_BLOB_STORAGE_CONNECTION_STRING
         self.blob_service_client = BlobServiceClient.from_connection_string(
             self.connection_string
         )
-        self.module_repository = ModuleRepository(
-            connect_db(st.session_state.use_mongodb)
-        )
-        self.db_client = connect_db(st.session_state.use_mongodb)
+        self.module_repository = ModuleRepository(st.session_state.db)
+        self.db_client = st.session_state.db
         self.db_dal = DatabaseAccess()
 
     def set_phase_to_match_lecture_status(self, phase):
@@ -58,7 +60,6 @@ class Utils:
 
         """
         try:
-            container_client = self.blob_service_client.create_container(container_name)
             print(f"Container '{container_name}' created successfully.")
         except Exception as e:
             print(f"Container might already exist: {e}")
@@ -80,7 +81,6 @@ class Utils:
         """
 
         try:
-            container_client = self.blob_service_client.create_container(container_name)
             print(f"Container '{container_name}' created successfully.")
         except Exception as e:
             print(f"Container might already exist: {e}")
@@ -226,7 +226,16 @@ class Utils:
 
 class ImageHandler:
     def __init__(self):
-        self.connection_string = os.getenv("AZURE_BLOB_STORAGE_CONNECTION_STRING")
+        if st.session_state.use_keyvault:
+            AZURE_BLOB_STORAGE_CONNECTION_STRING = AzureUtils.get_secret(
+                "AZURE-BLOB-STORAGE-CONNECTION-STRING", "lluniappkv"
+            )
+        else:
+            AZURE_BLOB_STORAGE_CONNECTION_STRING = os.getenv(
+                "AZURE_BLOB_STORAGE_CONNECTION_STRING"
+            )
+        self.connection_string = AZURE_BLOB_STORAGE_CONNECTION_STRING
+
         self.blob_service_client = BlobServiceClient.from_connection_string(
             self.connection_string
         )

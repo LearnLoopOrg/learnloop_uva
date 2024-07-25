@@ -1,4 +1,5 @@
 from utils.openai_client import connect_to_openai
+from utils.utils import AzureUtils
 import streamlit as st
 from dotenv import load_dotenv
 import utils.db_config as db_config
@@ -19,12 +20,32 @@ load_dotenv()
 class Controller:
     def __init__(_self):
         _self.initialise_session_states()
-        # OpenAI & database
-        st.session_state.openai_client = connect_to_openai(llm_model="LLgpt-4o")
-        st.session_state.use_mongodb = True
-        st.session_state.db = db_config.connect_db(
-            use_mongodb=st.session_state.use_mongodb
+
+        # DEMO: Use Azure KeyVault
+        st.session_state.use_keyvault = True
+
+        # Get keys from the keyvault
+        if st.session_state.use_keyvault:
+            LL_AZURE_OPENAI_API_KEY = AzureUtils.get_secret(
+                "LL-AZURE-OPENAI-API-KEY", "lluniappkv"
+            )
+            LL_AZURE_OPENAI_API_ENDPOINT = AzureUtils.get_secret(
+                "LL-AZURE-OPENAI-API-ENDPOINT", "lluniappkv"
+            )
+            MONGO_URI = AzureUtils.get_secret("MONGO-URI", "lluniappkv")
+        else:
+            LL_AZURE_OPENAI_API_KEY = os.getenv("LL_AZURE_OPENAI_API_KEY")
+            LL_AZURE_OPENAI_API_ENDPOINT = os.getenv("LL_AZURE_OPENAI_API_ENDPOINT")
+            MONGO_URI = os.getenv("MONGO_URI")
+
+        st.session_state.openai_client = connect_to_openai(
+            LL_AZURE_OPENAI_API_KEY, LL_AZURE_OPENAI_API_ENDPOINT, llm_model="LLgpt-4o"
         )
+
+        st.session_state.use_mongodb = True
+        st.session_state.db = db_config.connect_db(MONGO_URI)
+
+        _self.debug = True if os.getenv("DEBUG") == "True" else False
 
         # User
         st.session_state.username = "Luc Mahieu"
@@ -60,6 +81,8 @@ class Controller:
             st.session_state.db = None
         if "generated" not in st.session_state:
             st.session_state.generated = False
+        if "use_keyvault" not in st.session_state:
+            st.session_state.use_keyvault = False
 
     def render_page(self):
         """

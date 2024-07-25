@@ -1,7 +1,6 @@
 from typing import Any
 from pymongo import MongoClient
 from dotenv import load_dotenv
-import os
 import certifi
 from pymongo.server_api import ServerApi
 import streamlit as st
@@ -9,21 +8,15 @@ import streamlit as st
 load_dotenv()
 
 
-@st.cache_resource(show_spinner=False)
-def connect_db(use_mongodb: bool = True):
+# @st.cache_resource(show_spinner=False)
+def connect_db(MONGO_URI):
     """
-    Connect to either MongoDB or CosmosDB and ping to check connection.
+    Connect to demo database of MongoDB
     """
-    if not use_mongodb:
-        COSMOS_URI = os.getenv("COSMOS_URI")
-        db_client: MongoClient[dict[str, Any]] = MongoClient(
-            COSMOS_URI, tlsCAFile=certifi.where()
-        )
-    else:
-        MONGO_URI = os.getenv("MONGO_DB")
-        db_client: MongoClient[dict[str, Any]] = MongoClient(
-            MONGO_URI, server_api=ServerApi("1"), tlsCAFile=certifi.where()
-        )
+
+    db_client: MongoClient[dict[str, Any]] = MongoClient(
+        MONGO_URI, server_api=ServerApi("1"), tlsCAFile=certifi.where()
+    )
 
     db = db_client.get_database("demo")
 

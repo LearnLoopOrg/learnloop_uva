@@ -15,6 +15,7 @@ from _pages.lecture_overview import LectureOverview
 from _pages.course_overview import CoursesOverview
 from _pages.theory_overview import TheoryOverview
 from utils.utils import Utils
+from utils.utils import AzureUtils
 
 # Must be called first
 st.set_page_config(page_title="LearnLoop", layout="wide")
@@ -24,41 +25,22 @@ load_dotenv()
 
 @st.cache_resource(ttl=timedelta(hours=4))
 def connect_to_openai() -> OpenAI:
-    if llm_model == "LLgpt-4o":
-        print("Using LearnLoop Azure instance of OpenAI GPT-4o")
-        st.session_state.openai_model = "LLgpt-4o"
-        # TODO keyvault
-        LL_AZURE_OPENAI_API_KEY = os.getenv("LL_AZURE_OPENAI_API_KEY")
-        LL_AZURE_OPENAI_API_ENDPOINT = os.getenv("LL_AZURE_OPENAI_API_ENDPOINT")
-        return AzureOpenAI(
-            api_key=LL_AZURE_OPENAI_API_KEY,
-            api_version="2024-04-01-preview",
-            azure_endpoint=LL_AZURE_OPENAI_API_ENDPOINT,
+    print("Using LearnLoop Azure instance of OpenAI GPT-4o")
+    if st.session_state.use_keyvault:
+        LL_AZURE_OPENAI_API_KEY = AzureUtils.get_secret(
+            "LL-AZURE-OPENAI-API-KEY", "lluniappkv"
         )
-
-    elif llm_model == "azure_gpt-4":
-        print("Using Azure GPT-4")
-        st.session_state.openai_model = "learnloop"
-        return AzureOpenAI(
-            api_key=os.getenv("OPENAI_API_KEY"),
-            api_version="2024-03-01-preview",
-            azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
-        )
-
-    elif llm_model == "azure_gpt-4_Turbo":
-        print("Using Azure GPT-4 Turbo")
-        st.session_state.openai_model = "learnloop"
-        return AzureOpenAI(
-            # api_key=os.getenv("OPENAI_API_KEY_TURBO"), #TODO: ask Gerrit to put key in Azure secrets
-            api_key=os.getenv("OPENAI_API_KEY"),
-            api_version="2024-03-01-preview",
-            # azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT_TURBO")
-            azure_endpoint=os.getenv(
-                "AZURE_OPENAI_ENDPOINT"
-            ),  # TODO: ask Gerrit to put key in Azure secrets
+        LL_AZURE_OPENAI_API_ENDPOINT = AzureUtils.get_secret(
+            "LL-AZURE-OPENAI-API-ENDPOINT", "lluniappkv"
         )
     else:
-        raise ValueError("Invalid LLM model")
+        LL_AZURE_OPENAI_API_KEY = os.getenv("LL_AZURE_OPENAI_API_KEY")
+        LL_AZURE_OPENAI_API_ENDPOINT = os.getenv("LL_AZURE_OPENAI_API_ENDPOINT")
+    return AzureOpenAI(
+        api_key=LL_AZURE_OPENAI_API_KEY,
+        api_version="2024-04-01-preview",
+        azure_endpoint=LL_AZURE_OPENAI_API_ENDPOINT,
+    )
 
 
 def upload_progress():
@@ -1699,7 +1681,7 @@ def initialise_session_states():
         st.session_state.selected_course = None
 
     if "openai_model" not in st.session_state:
-        st.session_state.openai_model = "gpt-4o"
+        st.session_state.openai_model = "LLgpt-4o"
 
     if "practice_exam_name" not in st.session_state:
         st.session_state.practice_exam_name = "Samenvattende vragen"
@@ -1767,6 +1749,9 @@ def initialise_session_states():
     if "questions_only" not in st.session_state:
         st.session_state.questions_only = False
 
+    if "use_keyvault" not in st.session_state:
+        st.session_state.use_keyvault = False
+
 
 def fetch_nonce_from_query():
     return st.query_params.get("nonce", None)
@@ -1819,9 +1804,7 @@ if __name__ == "__main__":
     # Give the name of the test user when giving one. !! If not using a test username, set to None
     test_username = "Luc Mahieu"
 
-    # Use the Azure Openai API or the Openai API (GPT-4o) for the feedback
-    models = ["LLgpt-4o", "azure_gpt-4", "azure_gpt-4_Turbo"]
-    llm_model = models[0]
+    st.session_state.openai_model = "LLgpt-4o"
 
     # Bypass authentication when testing so flask app doesnt have to run
     st.session_state.skip_authentication = True
