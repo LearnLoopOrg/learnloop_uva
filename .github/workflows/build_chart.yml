@@ -34,11 +34,8 @@ jobs:
       - name: Package Helm Charts
         shell: bash
         run: |
-          find charts/learnloop -type f -name 'Chart.yaml' | sed -r 's|/[^/]+$||' | sort | uniq | xargs -L 1 helm dep up
-          for d in charts/learnloop/*/ ; do
-              echo "$d"
-              helm package "$d" -u -d dest
-          done
+          helm dep up charts/learnloop
+          helm package charts/learnloop -u -d dest
 
       - name: Push New Files
         shell: bash
