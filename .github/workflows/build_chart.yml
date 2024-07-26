@@ -31,6 +31,27 @@ jobs:
       - name: Install Helm
         uses: azure/setup-helm@v3
 
+      - name: Package Helm Charts
+        shell: bash
+        run: |
+          find src/charts/ -type f -name 'Chart.yaml' | sed -r 's|/[^/]+$||' | sort | uniq | xargs -L 1 helm dep up
+          for d in src/charts/*/ ; do
+              echo "$d"
+              helm package "$d" -u -d dest
+          done
+
+      - name: Push New Files
+        shell: bash
+        working-directory: dest
+        run: |
+          helm repo index . --url https://learnlooporg.github.io/learnloop_uva/
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git add $(git ls-files -o --exclude-standard)
+          git add index.yaml
+          git commit -m "Updated from ref: $GITHUB_SHA"
+          git push
+
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.6.0
         env:
