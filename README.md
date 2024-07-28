@@ -189,3 +189,103 @@ Now learnloop is installed as a module and you can "from learnloop import somde_
     ```
 
 Follow these steps for each app as needed to set up and run the applications.
+
+## Starting the demo in the Azure portal
+
+### Steps
+1. Navigate to the Azure Portal:
+    Go to the Azure Portal and log in with your Azure account.
+
+2. Locate the Resource Group:
+    In the left-hand navigation pane, click on "Resource groups" and select the LLUniAppRG resource group.
+
+3. Select the Container Instance:
+    Within the resource group, locate and click on your container instance, demo-uni-app-aci. 
+
+4. Start the container group by pressing the Start button:
+    ![Azure portal 3](docs/images/azure_portal_3.png)
+
+5. Check for the notification that the container group has started running:
+    ![Azure portal notification 1](docs/images/azure_portal_notification_1.png)
+
+6. The student app can now be accessed at http://demo-uni-app-aci.westeurope.azurecontainer.io:8501/app/ and the teacher app can at http://demo-uni-app-aci.westeurope.azurecontainer.io:8502/app/.
+
+7. Stop the container instance by pressing the stop button:
+    ![Azure portal 1](docs/images/azure_portal_1.png)
+    And wait for the notification:
+    ![Azure portal notification 2](docs/images/azure_portal_notification_2.png)
+
+
+## Deploying a new version of the demo in Azure Container Instances
+
+### Prerequisites
+
+1. Install Docker on your local machine. (https://www.docker.com/get-started/)
+
+2. Install Azure CLI. (https://learn.microsoft.com/en-us/cli/azure/install-azure-cli)
+
+3. Ensure with the LearnLoop admin that your account has access to the Azure Container Registry (ACR) and necessary permissions to push images and manage container instances.
+
+### Steps
+1. Log in to your Azure account using the Azure CLI:
+    ```
+    az login
+    ```
+    Follow the instructions in the browser to complete the authentication process.
+
+2. Log in to Azure Container Registry (ACR):
+    ```
+    az acr login -n llcontainerregistry
+    ```
+
+3. Build and push Docker images
+    Student app docker image:
+    Navigate to the `student_app` folder:
+    ```
+    cd student_app
+    ```
+    Build the Docker image:
+    ```
+    docker buildx build --platform linux/amd64 -t <yourdockerregistry>/student-app-demo:latest . --load && \
+    docker tag <yourdockerregistry>/student-app-demo:latest <YourACRName>.azurecr.io/student-app-demo:latest && \
+    docker push <YourACRName>.azurecr.io/student-app-demo:latest
+    ```
+    Teacher App Docker Image:
+    Navigate to the `teacher_app` folder:
+    ```
+    cd teacher_app
+    ```
+    Build the Docker image:
+    ```
+    docker buildx build --platform linux/amd64 -t <yourlocaldockerregistry>/teacher-app-demo:latest . --load && \
+    docker tag <yourlocaldockerregistry>/teacher-app-demo:latest llcontainerregistry.azurecr.io/teacher-app-demo:latest && \
+    docker push llcontainerregistry.azurecr.io/teacher-app-demo:latest
+    ```
+
+4. Update the Azure Container Instance (ACI) deployment
+    To update the existing deployment, use the following command. Note that although the command says `create`, it will update the existing resources if they already exist:
+    ```
+    az container create --resource-group LLUniAppRG --file azure_deployment/deploy-aci.yaml
+    ```
+
+5. Verify deployment in Azure portal
+    1. Navigate to the Azure Portal:
+    Go to the Azure Portal and log in with your Azure account.
+
+    2. Locate the Resource Group:
+    In the left-hand navigation pane, click on "Resource groups" and select the LLUniAppRG resource group.
+
+    3. Select the Container Instance:
+    Within the resource group, locate and click on your container instance, demo-uni-app-aci. 
+    
+    4. Check if the container app is running:
+    ![Azure portal 1](docs/images/azure_portal_1.png)
+    ![Azure portal notification 1](docs/images/azure_portal_notification_1.png)
+    ![Azure portal 2 ](docs/images/azure_portal_2.png)
+
+    5. The student app can now be accessed at http://demo-uni-app-aci.westeurope.azurecontainer.io:8501/app/ and the teacher app can at http://demo-uni-app-aci.westeurope.azurecontainer.io:8502/app/.
+
+    6. Stop the container instance by pressing the stop button:
+    ![Azure portal 1](docs/images/azure_portal_1.png)
+    And wait for the notification:
+    ![Azure portal notification 2](docs/images/azure_portal_notification_2.png)
