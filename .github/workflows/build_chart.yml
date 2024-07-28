@@ -1,4 +1,6 @@
-name: build and release chart
+name: build and release helm chart
+
+concurrency: release-helm
 
 on:
   workflow_run:
@@ -21,6 +23,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          path: "dest"
+          ref: "gh-pages"
           fetch-depth: 0
 
       - name: Configure Git
