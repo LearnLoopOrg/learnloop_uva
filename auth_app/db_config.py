@@ -6,16 +6,19 @@ from pymongo.server_api import ServerApi
 
 load_dotenv()
 
+
 def connect_db(use_mongodb):
     """
     Connect to either MongoDB or CosmosDB and ping to check connection.
     """
     if not use_mongodb:
-        COSMOS_URI = os.getenv('COSMOS_URI')
+        COSMOS_URI = os.getenv("COSMOS_URI")
         db_client = MongoClient(COSMOS_URI, tlsCAFile=certifi.where())
     else:
-        MONGO_URI = os.getenv('MONGO_DB')
-        db_client = MongoClient(MONGO_URI, server_api=ServerApi('1'), tlsCAFile=certifi.where())
+        MONGO_URI = os.getenv("MONGO_URI")
+        db_client = MongoClient(
+            MONGO_URI, server_api=ServerApi("1"), tlsCAFile=certifi.where()
+        )
 
     db = db_client.UvA_NAF
 

@@ -17,7 +17,7 @@ def connect_db(use_mongodb):
         COSMOS_URI = os.getenv("COSMOS_URI")
         db_client = MongoClient(COSMOS_URI, tlsCAFile=certifi.where())
     else:
-        MONGO_URI = os.getenv("MONGO_DB")
+        MONGO_URI = os.getenv("MONGO_URI")
         db_client = MongoClient(MONGO_URI, tlsCAFile=certifi.where())
 
     db = db_client.UvA_NAF
