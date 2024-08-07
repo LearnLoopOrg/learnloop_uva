@@ -60,7 +60,7 @@ Ask LearnLoop admin for the project’s sensitive information. In the root direc
 OPENAI_API_KEY=<learnloops-api-key>
 AZURE_OPENAI_ENDPOINT=<learnloops-azure-openai-endpoint>
 COSMOS_URI=<learnloops-cosmos-uri>
-MONGO_DB=<learnloops-mongo-db>
+MONGO_URI=<learnloops-mongo-db>
 SURFCONEXT_CLIENT_SECRET=<learnloops-surfconext-client-secret>
 FLASK_SECRET=<choose-one-yourself>
 SURFCONEXT_CLIENT_ID=<learnloops-surfconext-client-id>
