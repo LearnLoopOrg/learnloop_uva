@@ -277,7 +277,7 @@ class LectureInsights:
 
         return question_stats
 
-    @st.cache_data(ttl=timedelta(hours=4), show_spinner=False)
+    # @st.cache_data(ttl=timedelta(hours=4), show_spinner=False)
     def get_question_stats(_self, module, question_index, question_content):
         mongo_module = module.replace("_", " ")
         results = _self.db_dal.fetch_question(mongo_module, question_index)
@@ -289,7 +289,7 @@ class LectureInsights:
         else:
             raise ValueError("Invalid question type")
 
-    @st.cache_data(ttl=timedelta(hours=4), show_spinner=False)
+    # @st.cache_data(ttl=timedelta(hours=4), show_spinner=False)
     def get_topic_questions_stats(_self, module, questions_content):
         questions_stats = {}
         for question_index, question_content in questions_content.items():
@@ -508,7 +508,6 @@ class LectureInsights:
             module, topic["segment_indexes"]
         )
         questions_stats = self.get_topic_questions_stats(module, questions_content)
-        print(f"question stats: {questions_stats}")
 
         all_scores = []
         total_achieved_score = 0
@@ -567,7 +566,7 @@ class LectureInsights:
 
                     if len(questions_stats) > 0:
                         st.markdown(
-                            f'<span style="font-size: 1.2em;">{self._get_icon_based_on_percentage(percentage_correct_question)} **{question_content["question"]}**</span>',
+                            f'<span style="font-size: 1.2em;">{self._get_icon_based_on_percentage(percentage_correct_question)} **{question_content["question"].encode("utf-8").decode("unicode_escape")}**</span>',
                             unsafe_allow_html=True,
                         )
 

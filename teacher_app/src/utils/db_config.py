@@ -2,8 +2,6 @@ from typing import Any
 from pymongo import MongoClient
 from dotenv import load_dotenv
 import certifi
-from pymongo.server_api import ServerApi
-import streamlit as st
 
 load_dotenv()
 
@@ -15,7 +13,7 @@ def connect_db(MONGO_URI):
     """
 
     db_client: MongoClient[dict[str, Any]] = MongoClient(
-        MONGO_URI, server_api=ServerApi("1"), tlsCAFile=certifi.where()
+        MONGO_URI, tlsCAFile=certifi.where()
     )
 
     db = db_client.get_database("demo")
