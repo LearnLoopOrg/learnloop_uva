@@ -3,8 +3,8 @@
     "university_code": "UVA",
     "courses": [
         {
-            "title": "Embryonale Biologie",
-            "description": "Leer over hoe een embryo zich ontwikkelt van bevruchting tot geboorte en de invloed van externe factoren.",
+            "title": "Moleculaire genetica",
+            "description": "Leer chemische basisprincipes, watereigenschappen, biomoleculen, en zuur/base reacties voor biologen.",
             "lectures": [
                 {
                     "title": "1_Embryonale_ontwikkeling",
@@ -17,34 +17,56 @@
                 {
                     "title": "3_Eiwittransport",
                     "description": "De processen en mechanismen die betrokken zijn bij het transport van eiwitten binnen cellen en tussen cellen."
+                },
+                {
+                    "title": "4_Structuur_en_functie_van_DNA",
+                    "description": "Behandelt de chemische en fysieke eigenschappen van DNA, de dubbele helix, en de organisatie van erfelijk materiaal."
+                },
+                {
+                    "title": "5_DNA_replicatie_en_reparatie",
+                    "description": "Gaat in op de mechanismen van DNA-replicatie, DNA-schade, en de reparatiesystemen die genetische integriteit handhaven."
+                },
+                {
+                    "title": "6_Mutatie_en_transpositie",
+                    "description": "Bestudeert de oorzaken en gevolgen van mutaties en de rol van transposons in genoomdiversiteit."
+                },
+                {
+                    "title": "7_Transcriptie_en_translatie",
+                    "description": "Richt zich op de processen waarbij DNA wordt omgezet in RNA (transcriptie) en RNA in eiwit (translatie)."
+                },
+                {
+                    "title": "8_Regulatie_van_genexpressie",
+                    "description": "Onderzoekt hoe genexpressie wordt gereguleerd in prokaryoten en eukaryoten, inclusief epigenetische controlemechanismen."
                 }
             ]
         },
         {
-            "title": "Business Analytics",
-            "description": "Leer hoe je data kunt analyseren en visualiseren om er waardevolle inzichten uit te halen.",
+            "title": "Chemie van het leven",
+            "description": "Leer structuur van erfelijk materiaal, DNA-replicatie, mutaties, en genetische modificatie.",
             "lectures": [
                 {
-                    "title": "1_Data_Visualisatie",
-                    "description": "Technieken en tools voor het visualiseren van data om inzichten effectief over te brengen."
-                },
-                {
-                    "title": "2_Voorspellende_Analyse",
-                    "description": "Gebruik van statistische modellen en machine learning om toekomstige trends en gebeurtenissen te voorspellen."
+                    "title": "1_Embryonale_ontwikkeling",
+                    "description": "De ontwikkeling van een embryo van bevruchting tot geboorte en de invloed van externe factoren."
                 }
             ]
         },
         {
-            "title": "Ethical AI",
-            "description": "Leer over de ethische implicaties van AI en hoe je AI-projecten ethisch en duurzaam kunt realiseren.",
+            "title": "Celfysiologie I",
+            "description": "Leer fysische en chemische processen in cellen, inclusief membraan- en actiepotentialen.",
             "lectures": [
                 {
-                    "title": "1_Ethiek_in_AI",
-                    "description": "Onderzoek naar de ethische kwesties en uitdagingen bij het gebruik van kunstmatige intelligentie."
-                },
+                    "title": "1_Embryonale_ontwikkeling",
+                    "description": "De ontwikkeling van een embryo van bevruchting tot geboorte en de invloed van externe factoren."
+                }
+            ]
+        },
+        {
+            "title": "Celfysiologie II",
+            "description": "Leer energietoevoerprocessen, zoals fotosynthese, respiratie, en metabole routes voor engineering.",
+            "lectures": [
                 {
-                    "title": "2_Verantwoordelijke_AI_Ontwikkeling",
-                    "description": "Praktische richtlijnen en strategieën voor het ontwikkelen van AI-systemen die ethisch en maatschappelijk verantwoord zijn."
+                    "title": "1_Embryonale_ontwikkeling",
+                    "description": "De ontwikkeling van een embryo van bevruchting tot geboorte en de invloed van externe factoren."
                 }
             ]
         }
