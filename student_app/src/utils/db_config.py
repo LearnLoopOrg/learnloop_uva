@@ -2,7 +2,6 @@ from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
 import certifi
-from pymongo.server_api import ServerApi
 import streamlit as st
 from utils.utils import AzureUtils
 
@@ -23,9 +22,7 @@ def connect_db(use_mongodb):
             MONGO_URI = AzureUtils.get_secret("MONGO-URI", "lluniappkv")
         else:
             MONGO_URI = os.getenv("MONGO_DB")
-        db_client = MongoClient(
-            MONGO_URI, server_api=ServerApi("1"), tlsCAFile=certifi.where()
-        )
+        db_client = MongoClient(MONGO_URI, tlsCAFile=certifi.where())
 
     db = db_client.demo
 
