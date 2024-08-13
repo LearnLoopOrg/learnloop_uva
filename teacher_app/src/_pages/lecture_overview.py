@@ -10,7 +10,7 @@ class LectureOverview:
 
     def display_courses(self):
         """Displays available courses as buttons."""
-        st.header("Vakken")
+        st.header("Mijn vakken")
         for course in st.session_state.courses:
             st.button(course, use_container_width=True)
 
