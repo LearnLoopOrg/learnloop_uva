@@ -1352,7 +1352,6 @@ def set_selected_phase(phase):
     st.session_state.selected_phase = phase
     # update the selected phase in the database
     db_dal.update_last_phase(phase)
-    print(f"Last phase: {db_dal.fetch_last_phase}")
 
 
 def render_sidebar():
