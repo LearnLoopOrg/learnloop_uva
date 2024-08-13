@@ -1350,6 +1350,9 @@ def render_page_button(page_title, module, phase):
 
 def set_selected_phase(phase):
     st.session_state.selected_phase = phase
+    # update the selected phase in the database
+    db_dal.update_last_phase(phase)
+    print(f"Last phase: {db_dal.fetch_last_phase}")
 
 
 def render_sidebar():
@@ -1412,44 +1415,74 @@ def render_sidebar():
     # print(st.session_state.selected_phase)
 
     with st.sidebar:
-        st.title("Vakken")
+        st.image(
+            "src/data/content/images/logo_universiteit_leiden.png",
+            use_column_width=False,
+            width=150,
+        )
+
+        st.markdown(
+            """
+            <style>
+                .closer-line {
+                    margin-top: -5px;
+                }
+            </style>
+
+            <h1> 
+                <strong>Welkom student</strong>
+            </h1>
+            <hr class="closer-line">
+        """,
+            unsafe_allow_html=True,
+        )
         st.button(
-            "Vakkenoverzicht",
+            "📚 Mijn vakken",
             on_click=set_selected_phase,
             args=("courses",),
             use_container_width=True,
         )
+        st.button(
+            "⚙️ Instellingen",
+            on_click=set_selected_phase,
+            args=("courses",),
+            use_container_width=True,
+        )
+        st.button(
+            "💬 Ondersteuning",
+            on_click=set_selected_phase,
+            args=("courses",),
+            use_container_width=True,
+        )
+        # st.title("Vakken")
         # st.button(
-        #     "Colleges",
+        #     "Vakkenoverzicht",
         #     on_click=set_selected_phase,
-        #     args=("lectures",),
+        #     args=("courses",),
         #     use_container_width=True,
         # )
 
-        st.title("Colleges")
+        # st.title("Colleges")
 
-        # Toggle to show only questions during learning phase
-        # st.session_state.questions_only = st.toggle("Alleen vragen tonen")
+        # practice_exam_count = 0
+        # # Display the modules in expanders in the sidebar
+        # for i, module in enumerate(st.session_state.modules):
+        #     # If the module is not a Oefententamen, then skip it
+        #     if not module.startswith(st.session_state.practice_exam_name.split(" ")[0]):
+        #         zero_width_space = "\u200b"
+        #         with st.expander(
+        #             f"{i + 1}.{zero_width_space} "
+        #             + " ".join(module.replace("_", " ").split(" ")[1:])
+        #         ):
+        #             # Display buttons for the two types of phases per module
+        #             render_page_button("📖 Leren", module, phase="topics")
+        #             render_page_button("🔄 Herhalen", module, phase="practice")
+        #             render_page_button(
+        #                 "📚 Overzicht theorie", module, phase="theory-overview"
+        #             )
 
-        practice_exam_count = 0
-        # Display the modules in expanders in the sidebar
-        for i, module in enumerate(st.session_state.modules):
-            # If the module is not a Oefententamen, then skip it
-            if not module.startswith(st.session_state.practice_exam_name.split(" ")[0]):
-                zero_width_space = "\u200b"
-                with st.expander(
-                    f"{i + 1}.{zero_width_space} "
-                    + " ".join(module.replace("_", " ").split(" ")[1:])
-                ):
-                    # Display buttons for the two types of phases per module
-                    render_page_button("📖 Leren", module, phase="topics")
-                    render_page_button("🔄 Herhalen", module, phase="practice")
-                    render_page_button(
-                        "📚 Overzicht theorie", module, phase="theory-overview"
-                    )
-
-            elif module.startswith(st.session_state.practice_exam_name.split(" ")[0]):
-                practice_exam_count += 1
+        #     elif module.startswith(st.session_state.practice_exam_name.split(" ")[0]):
+        #         practice_exam_count += 1
 
         # --------------------------------------------------------------
         # DO NOT DELETE! This is the code for the practice exams
@@ -1861,7 +1894,7 @@ if __name__ == "__main__":
             determine_selected_module()
 
         if st.session_state.selected_phase is None:
-            st.session_state.selected_phase = db_dal.fetch_last_phase()
+            st.session_state.selected_phase = "courses"
 
         render_sidebar()
         render_selected_page()

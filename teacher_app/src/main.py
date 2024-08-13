@@ -105,18 +105,6 @@ class Controller:
 
     def render_sidebar(self):
         with st.sidebar:
-            # selected = option_menu(
-            #     "Welkom Remko",
-            #     ["Mijn vakken", "Instellingen", "Help"],
-            #     icons=["journals", "gear", "question-circle"],
-            #     menu_icon="person",
-            #     default_index=0,
-            # )
-
-            # st.markdown("""
-            # # Welkom Remko
-            # ___
-            # """)
             st.image(
                 "src/data/images/logo_universiteit_leiden.png",
                 use_column_width=False,
