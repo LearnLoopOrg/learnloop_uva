@@ -51,7 +51,7 @@ class CoursesOverview:
         # Ensure this page is ran from the main controller and last visited page is displayed when user returns
         self.db_dal.update_last_phase("lectures")
 
-        st.title("Vakken")
+        st.title("Mijn vakken")
         self.utils.add_spacing(1)
 
         st.session_state.courses = self.db_dal.get_course_catalog().courses
