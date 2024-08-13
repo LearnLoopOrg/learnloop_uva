@@ -89,13 +89,14 @@ class QualityCheck:
             self.initialize_question_state(segment_id, segment)
 
     def initialize_theory_state(self, segment_id, segment):
-        if segment_id not in st.session_state:
+        if segment_id not in st.session_state or st.session_state[segment_id] is False:
             st.session_state[segment_id] = segment["text"]
         if f"new-{segment_id}" not in st.session_state:
             st.session_state[f"new-{segment_id}"] = ""
 
     def initialize_question_state(self, segment_id, segment):
-        if segment_id not in st.session_state:
+        # st.session_state[1], st.session_state[2] and st.session_state[3] are all false when initialising.
+        if segment_id not in st.session_state or st.session_state[segment_id] is False:
             st.session_state[segment_id] = segment["question"]
         if f"new-{segment_id}" not in st.session_state:
             st.session_state[f"new-{segment_id}"] = ""

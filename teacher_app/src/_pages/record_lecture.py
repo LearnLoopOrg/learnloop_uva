@@ -166,7 +166,7 @@ class Recorder:
                 "upload_to_demo_db": "true",
             }
             print(f"Sending http request to: {url} with params: {params}")
-            requests.get(url, params=params)
+            # requests.get(url, params=params)
             while st.session_state.generated is False:
                 status = self.db_dal.fetch_module_status()
                 if status == "generated":
