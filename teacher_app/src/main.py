@@ -55,7 +55,8 @@ class Controller:
 
         # Fetch were user left off
         st.session_state.selected_module = _self.db_dal.fetch_last_module()
-        st.session_state.selected_phase = _self.db_dal.fetch_last_phase()
+        # st.session_state.selected_phase = _self.db_dal.fetch_last_phase()
+        # print(f"Selected phase: {st.session_state.selected_phase}")
 
         # Pages
         _self.lectures_page = LectureOverview()
@@ -104,28 +105,64 @@ class Controller:
 
     def render_sidebar(self):
         with st.sidebar:
-            st.title("Navigatie")
+            # selected = option_menu(
+            #     "Welkom Remko",
+            #     ["Mijn vakken", "Instellingen", "Help"],
+            #     icons=["journals", "gear", "question-circle"],
+            #     menu_icon="person",
+            #     default_index=0,
+            # )
+
+            # st.markdown("""
+            # # Welkom Remko
+            # ___
+            # """)
+            st.image(
+                "src/data/images/logo_universiteit_leiden.png",
+                use_column_width=False,
+                width=150,
+            )
+
+            st.markdown(
+                """
+                <style>
+                    .closer-line {
+                        margin-top: -5px;
+                    }
+                </style>
+
+                <h1> 
+                    <strong>Welkom Remko</strong>
+                </h1>
+                <hr class="closer-line">
+            """,
+                unsafe_allow_html=True,
+            )
             st.button(
-                "Vakken",
+                "📚 Mijn vakken",
                 on_click=self.set_selected_phase,
                 args=("courses",),
                 use_container_width=True,
             )
             st.button(
-                "Colleges",
+                "⚙️ Instellingen",
                 on_click=self.set_selected_phase,
-                args=("lectures",),
+                args=("courses",),
+                use_container_width=True,
+            )
+            st.button(
+                "💬 Ondersteuning",
+                on_click=self.set_selected_phase,
+                args=("courses",),
                 use_container_width=True,
             )
 
-            # Spacing
-            # for i in range(26):
-            #     st.write("\n\n")
-
-            # st.subheader(f"👤 {st.session_state.username}")
+            # st.subheader("👤 Remko Offringa")
 
     def set_selected_phase(self, phase):
+        print(f"Setting phase: {phase}")
         st.session_state.selected_phase = phase
+        self.db_dal.update_last_phase(phase)
 
 
 if __name__ == "__main__":
