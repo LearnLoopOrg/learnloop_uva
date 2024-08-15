@@ -7,36 +7,52 @@
             "description": "Leer chemische basisprincipes, watereigenschappen, biomoleculen, en zuur/base reacties voor biologen.",
             "lectures": [
                 {
-                    "title": "1_Embryonale_ontwikkeling",
-                    "description": "De ontwikkeling van een embryo van bevruchting tot geboorte en de invloed van externe factoren."
+                    "title": "1_Introductie_in_moleculaire_genetica",
+                    "description": "Een inleiding tot de basisprincipes van moleculaire genetica, inclusief de structuur en functie van genetisch materiaal."
                 },
                 {
-                    "title": "2_Signaaltransductie",
+                    "title": "2_Moleculaire_basis_van_erfelijkheid",
+                    "description": "De mechanismen en processen die de overerving van genetisch materiaal bepalen, met de nadruk op DNA, RNA en chromosomen."
+                },
+                {
+                    "title": "3_Van_gen_naar_eiwit:_transcriptie",
+                    "description": "De processen en enzymen betrokken bij het kopiëren van genetische informatie van DNA naar mRNA tijdens transcriptie."
+                },
+                {
+                    "title": "4_Van_gen_naar_eiwit:_translatie",
+                    "description": "Het proces waarbij mRNA wordt vertaald naar eiwitten, inclusief de rol van ribosomen en tRNA."
+                },
+                {
+                    "title": "5_Recombinant_DNA",
+                    "description": "De technieken en toepassingen van het manipuleren en combineren van DNA van verschillende bronnen voor onderzoek en biotechnologie."
+                },
+                {
+                    "title": "6_Regulatie_van_genexpressie_I",
+                    "description": "De mechanismen en factoren die genexpressie op het niveau van transcriptie reguleren, inclusief enhancers, repressors en transcriptiefactoren."
+                },
+                {
+                    "title": "7_Regulatie_van_genexpressie_II",
+                    "description": "Verdere verkenning van genexpressieregulatie, met focus op post-transcriptionele en post-translationele mechanismen."
+                },
+                {
+                    "title": "8_Mutaties:_oorzaak_en_gevolg",
+                    "description": "De oorzaken van genetische mutaties en hun gevolgen op moleculair en cellulair niveau."
+                },
+                {
+                    "title": "9_Moleculaire_biologie",
+                    "description": "Een overzicht van de kernconcepten en technieken in de moleculaire biologie, met nadruk op DNA-replicatie, reparatie en recombinatie."
+                },
+                {
+                    "title": "10_Genomen_en_GGOs",
+                    "description": "De structuur, functie en analyse van genomen, inclusief de rol en ethiek van genetisch gemodificeerde organismen (GGO's)."
+                },
+                {
+                    "title": "11_Embryonale_ontwikkeling",
+                    "description": "De genetische en moleculaire mechanismen die ten grondslag liggen aan de embryonale ontwikkeling van organismen."
+                },
+                {
+                    "title": "12_Signaaltransductie",
                     "description": "De processen en mechanismen die betrokken zijn bij het doorgeven van signalen binnen en tussen cellen."
-                },
-                {
-                    "title": "3_Eiwittransport",
-                    "description": "De processen en mechanismen die betrokken zijn bij het transport van eiwitten binnen cellen en tussen cellen."
-                },
-                {
-                    "title": "4_Structuur_en_functie_van_DNA",
-                    "description": "Behandelt de chemische en fysieke eigenschappen van DNA, de dubbele helix, en de organisatie van erfelijk materiaal."
-                },
-                {
-                    "title": "5_DNA_replicatie_en_reparatie",
-                    "description": "Gaat in op de mechanismen van DNA-replicatie, DNA-schade, en de reparatiesystemen die genetische integriteit handhaven."
-                },
-                {
-                    "title": "6_Mutatie_en_transpositie",
-                    "description": "Bestudeert de oorzaken en gevolgen van mutaties en de rol van transposons in genoomdiversiteit."
-                },
-                {
-                    "title": "7_Transcriptie_en_translatie",
-                    "description": "Richt zich op de processen waarbij DNA wordt omgezet in RNA (transcriptie) en RNA in eiwit (translatie)."
-                },
-                {
-                    "title": "8_Regulatie_van_genexpressie",
-                    "description": "Onderzoekt hoe genexpressie wordt gereguleerd in prokaryoten en eukaryoten, inclusief epigenetische controlemechanismen."
                 }
             ]
         },
