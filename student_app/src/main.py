@@ -75,12 +75,6 @@ def upload_progress():
     db.users.update_one(
         {"username": st.session_state.username}, {"$set": learning_path}
     )
-    print(
-        "Updating progress for topic",
-        st.session_state.topic_index,
-        "to",
-        st.session_state.segment_index,
-    )
     db.users.update_one(
         {"username": st.session_state.username}, {"$set": practice_data}
     )
@@ -1412,8 +1406,6 @@ def render_sidebar():
     # #     st.session_state.selected_module = flat_list[selected_index][2]
     # #     st.session_state.selected_phase = flat_list[selected_index][-1]
 
-    # print(st.session_state.selected_phase)
-
     with st.sidebar:
         st.image(
             "src/data/content/images/logo_universiteit_leiden.png",
@@ -1609,17 +1601,17 @@ def initialise_learning_in_database(module):
     )
 
 
-# @st.cache_data(show_spinner=False)
+@st.cache_data(show_spinner=False)
 def determine_if_to_initialise_database():
     """
     Determine if currently testing, if the progress is saved, or if all modules are included
     and if so, reset db when reloading webapp.
     """
     user_doc = db_dal.find_user_doc()
-    if not user_doc:
+    if not user_doc:  # NEW USER CASE
         db.users.insert_one({"username": st.session_state.username})
+        user_doc = db_dal.find_user_doc()
 
-    user_doc = db_dal.find_user_doc()
     if reset_user_doc:
         if "reset_db" not in st.session_state:
             st.session_state.reset_db = True
@@ -1628,31 +1620,32 @@ def determine_if_to_initialise_database():
             st.session_state.reset_db = False
             initialise_database()
 
-    user_doc = db_dal.find_user_doc()
+        user_doc = db_dal.find_user_doc()
+
     if "progress" not in user_doc:
         initialise_database()
+        user_doc = db_dal.find_user_doc()
 
     for module in st.session_state.modules:
-        user_doc = db_dal.find_user_doc()
         if module not in user_doc["progress"]:
             initialise_module_in_database(module)
+            user_doc = db_dal.find_user_doc()
 
-        user_doc = db_dal.find_user_doc()
         if "practice" not in user_doc["progress"][module]:
             initialise_practice_in_database(module)
+            user_doc = db_dal.find_user_doc()
 
-        user_doc = db_dal.find_user_doc()
         if "learning" not in user_doc["progress"][module]:
             initialise_learning_in_database(module)
+            user_doc = db_dal.find_user_doc()
 
         # Check if the user doc contains the dict in which the
         # is saved how many times a question is made by user
-        user_doc = db_dal.find_user_doc()
         if "progress_counter" not in user_doc["progress"][module]["learning"]:
             empty_dict = create_empty_progress_dict(module)
             db_dal.add_progress_counter(module, empty_dict)
+            user_doc = db_dal.find_user_doc()
 
-        user_doc = db_dal.find_user_doc()
         progress_counter = db_dal.get_progress_counter(module, user_doc)
         if progress_counter is None:
             empty_dict = create_empty_progress_dict(module)

@@ -177,21 +177,21 @@ class Recorder:
 
         self.rerun_if_generated()
 
-    def show_spinner_till_generated(self):
-        with st.spinner("Oefenmaterialen worden gegenereerd..."):
-            url = "https://contentpipeline.azurewebsites.net/api/contentpipeline?code=YxHEt2ZBmN6YX912nsC_i9KVpof7RVlr3k1yMSmZXlajAzFu_xvH1w=="
-            params = {
-                "lecture": "celbio_3",
-                "run_full_pipeline": "true",
-                "upload_to_demo_db": "true",
-            }
-            print(f"Sending http request to: {url} with params: {params}")
-            # requests.get(url, params=params)
-            while st.session_state.generated is False:
-                status = self.db_dal.fetch_module_status()
-                if status == "generated":
-                    st.session_state.generated = True
-                time.sleep(1)  # Sleep to avoid overwhelming the database with requests
+    # def show_spinner_till_generated(self):
+    #     with st.spinner("Oefenmaterialen worden gegenereerd..."):
+    #         url = "https://contentpipeline.azurewebsites.net/api/contentpipeline?code=YxHEt2ZBmN6YX912nsC_i9KVpof7RVlr3k1yMSmZXlajAzFu_xvH1w=="
+    #         params = {
+    #             "lecture": "celbio_3",
+    #             "run_full_pipeline": "true",
+    #             "upload_to_demo_db": "true",
+    #         }
+    #         print(f"Sending http request to: {url} with params: {params}")
+    #         # requests.get(url, params=params)
+    #         while st.session_state.generated is False:
+    #             status = self.db_dal.fetch_module_status()
+    #             if status == "generated":
+    #                 st.session_state.generated = True
+    #             time.sleep(1)  # Sleep to avoid overwhelming the database with requests
 
     def generate_materials(self):
         st.title("Leermateriaal wordt gegenereerd")
@@ -208,7 +208,6 @@ class Recorder:
             2
         )  # Wait for the balloons to finish before setting the session state
         st.session_state.generated = True
-        # self.show_spinner_till_generated()
 
     def rerun_if_generated(self):
         # Rerun necessary to render the correct page, namely quality check
