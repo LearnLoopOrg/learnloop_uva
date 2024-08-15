@@ -120,61 +120,94 @@ class Recorder:
             "Er is nog geen leermateriaal voor dit college gegenereerd. Kies een opname om de leermaterialen te genereren."
         )
 
-        user = st.session_state.username
+        # user = st.session_state.username
 
         # TODO - List actual recordings from blob storage for Demo
         recordings_listing = [
             {
                 "id": "1",
-                "title": f"{user}'s opname 1",
-                "description": "Opgenomen on 5 juli 2024 om 9:00",
+                "title": f"Moleculaire biologie 2023",
+                "description": "Opgenomen op 16 oktober 2023 om 9:00",
             },
             {
                 "id": "2",
-                "title": f"{user}'s opname 2",
-                "description": "Opgenomen on 2 juli 2023 om 9:00",
+                "title": f"Moleculaire biologie 2022",
+                "description": "Opgenomen op 17 oktober 2022 om 9:00",
             },
             {
                 "id": "3",
-                "title": f"{user}'s opname 3",
-                "description": "Opgenomen op 29 juni 2022 om 13:00",
+                "title": f"Moleculaire biologie 2021",
+                "description": "Opgenomen op 18 oktober 2021 om 9:00",
             },
         ]
         for recording in recordings_listing:
             container = st.container(border=True)
-            cols = container.columns([14, 6, 1])
+            cols = container.columns([3, 1, 2])
 
             with cols[0]:
                 st.subheader(recording["title"])
                 st.write(recording["description"])
 
             with cols[1]:
-                st.button(  # TODO: Invoke Cloud Function / API to generate practice materials
-                    "Genereer leermaterialen voor studenten",
-                    key=recording["id"],
-                    on_click=self.generate_materials,
-                )
+                if recording["id"] == "1":
+                    st.image("src/data/images/recording_2023.png")
+                else:
+                    st.image("src/data/images/icon_for_video.png")
+
+            with cols[2]:
+                with st.container():
+                    st.markdown(
+                        "<div style='height: 20px;'></div>", unsafe_allow_html=True
+                    )  # Top padding
+                    st.button(
+                        "Genereer leermateriaal",
+                        key=recording["id"],
+                        on_click=self.generate_materials,
+                        use_container_width=True,
+                    )
+                    st.markdown(
+                        "<div style='height: 20px;'></div>", unsafe_allow_html=True
+                    )  # Bottom padding
+                # st.button(  # TODO: Invoke Cloud Function / API to generate practice materials
+                #     "Genereer leertraject",
+                #     key=recording["id"],
+                #     on_click=self.generate_materials,
+                #     use_container_width=True,
+                # )
 
         self.rerun_if_generated()
 
-    def show_spinner_till_generated(self):
-        with st.spinner("Oefenmaterialen worden gegenereerd..."):
-            url = "https://contentpipeline.azurewebsites.net/api/contentpipeline?code=YxHEt2ZBmN6YX912nsC_i9KVpof7RVlr3k1yMSmZXlajAzFu_xvH1w=="
-            params = {
-                "lecture": "celbio_3",
-                "run_full_pipeline": "true",
-                "upload_to_demo_db": "true",
-            }
-            print(f"Sending http request to: {url} with params: {params}")
-            # requests.get(url, params=params)
-            while st.session_state.generated is False:
-                status = self.db_dal.fetch_module_status()
-                if status == "generated":
-                    st.session_state.generated = True
-                time.sleep(1)  # Sleep to avoid overwhelming the database with requests
+    # def show_spinner_till_generated(self):
+    #     with st.spinner("Oefenmaterialen worden gegenereerd..."):
+    #         url = "https://contentpipeline.azurewebsites.net/api/contentpipeline?code=YxHEt2ZBmN6YX912nsC_i9KVpof7RVlr3k1yMSmZXlajAzFu_xvH1w=="
+    #         params = {
+    #             "lecture": "celbio_3",
+    #             "run_full_pipeline": "true",
+    #             "upload_to_demo_db": "true",
+    #         }
+    #         print(f"Sending http request to: {url} with params: {params}")
+    #         # requests.get(url, params=params)
+    #         while st.session_state.generated is False:
+    #             status = self.db_dal.fetch_module_status()
+    #             if status == "generated":
+    #                 st.session_state.generated = True
+    #             time.sleep(1)  # Sleep to avoid overwhelming the database with requests
 
     def generate_materials(self):
-        self.show_spinner_till_generated()
+        st.title("Leermateriaal wordt gegenereerd")
+        st.write("Even geduld alsjeblieft...")
+        progress_bar = st.progress(0)
+        for percent_complete in range(101):
+            time.sleep(
+                0.1
+            )  # Simulates a time-consuming process (100 steps of 0.1 seconds each)
+            progress_bar.progress(percent_complete)
+        self.db_dal.update_module_status("generated")
+        st.balloons()
+        time.sleep(
+            2
+        )  # Wait for the balloons to finish before setting the session state
+        st.session_state.generated = True
 
     def rerun_if_generated(self):
         # Rerun necessary to render the correct page, namely quality check

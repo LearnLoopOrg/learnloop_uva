@@ -21,6 +21,7 @@ class Utils:
         Determines which lecture page to display based on the selected lecture status,
         which indicates if a lecture is recorded, generated or corrected.
         """
+
         if st.session_state.db.content.find_one(
             {"lecture_name": st.session_state.selected_module}
         ):
@@ -30,8 +31,8 @@ class Utils:
                 st.session_state.selected_phase = "generated"
             elif status == "corrected":
                 st.session_state.selected_phase = phase
-        else:
-            st.session_state.selected_phase = "not_recorded"
+            else:
+                st.session_state.selected_phase = "not_recorded"
 
 
 class ImageHandler:
