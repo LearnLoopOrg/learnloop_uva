@@ -1,3 +1,4 @@
+import argparse
 import json
 import time
 import random
@@ -1829,6 +1830,18 @@ def remove_nonce_from_memories():
     st.session_state.nonce = None
 
 
+def get_commandline_arguments() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        "--use_keyvault",
+        help="Set to True to use Azure Key Vault for secrets",
+        action="store_true",
+        default=False,
+    )
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
     # ---------------------------------------------------------
     # SETTINGS for DEVELOPMENT & DEPLOYMENT:
@@ -1836,6 +1849,7 @@ if __name__ == "__main__":
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     # SET ALL TO FALSE WHEN DEPLOYING
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    args = get_commandline_arguments()
 
     # Turn on 'testing' to use localhost instead of learnloop.datanose.nl for authentication
     surf_test_env = True
@@ -1846,7 +1860,7 @@ if __name__ == "__main__":
     # Your current IP has to be accepted by Gerrit to use CosmosDB (Gerrit controls this)
     st.session_state.use_mongodb = True
 
-    st.session_state.use_keyvault = True
+    st.session_state.use_keyvault = args.use_keyvault
 
     # Use dummy LLM feedback as response to save openai costs and time during testing
     use_dummy_openai_calls = False
