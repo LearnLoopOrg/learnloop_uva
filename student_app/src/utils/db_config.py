@@ -21,7 +21,7 @@ def connect_db(use_mongodb):
         if st.session_state.use_keyvault:
             MONGO_URI = AzureUtils.get_secret("MONGO-URI", "lluniappkv")
         else:
-            MONGO_URI = os.getenv("MONGO_DB")
+            MONGO_URI = os.getenv("MONGO_URI")
         db_client = MongoClient(MONGO_URI, tlsCAFile=certifi.where())
 
     db = db_client.demo
