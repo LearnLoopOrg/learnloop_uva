@@ -3,56 +3,52 @@
     "university_code": "UVA",
     "courses": [
         {
-            "title": "Moleculaire genetica",
-            "description": "Leer chemische basisprincipes, watereigenschappen, biomoleculen, en zuur/base reacties voor biologen.",
+            "title": "Celbiologie",
+            "description": "De cursus behandelt moleculaire processen in cellen, met nadruk op membranen, compartimenten en signaaloverdracht.",
             "lectures": [
                 {
-                    "title": "1_Introductie_in_moleculaire_genetica",
-                    "description": "Een inleiding tot de basisprincipes van moleculaire genetica, inclusief de structuur en functie van genetisch materiaal."
+                    "title": "1_Inleiding_tot_celbiologie",
+                    "description": "Basisprincipes van celbiologie, inclusief celstructuur en moleculaire processen."
                 },
                 {
-                    "title": "2_Moleculaire_basis_van_erfelijkheid",
-                    "description": "De mechanismen en processen die de overerving van genetisch materiaal bepalen, met de nadruk op DNA, RNA en chromosomen."
+                    "title": "2_Celmembraan",
+                    "description": "Structuur en samenstelling van celmembranen en hun dynamische eigenschappen."
                 },
                 {
-                    "title": "3_Van_gen_naar_eiwit:_transcriptie",
-                    "description": "De processen en enzymen betrokken bij het kopiëren van genetische informatie van DNA naar mRNA tijdens transcriptie."
+                    "title": "3_Membraanprocessen",
+                    "description": "Dynamische processen zoals transport en membraanfusie in celmembranen."
                 },
                 {
-                    "title": "4_Van_gen_naar_eiwit:_translatie",
-                    "description": "Het proces waarbij mRNA wordt vertaald naar eiwitten, inclusief de rol van ribosomen en tRNA."
+                    "title": "4_Cellulaire_componenten",
+                    "description": "Eigenschappen en functies van verschillende cellulaire componenten en hun interacties."
                 },
                 {
-                    "title": "5_Recombinant_DNA",
-                    "description": "De technieken en toepassingen van het manipuleren en combineren van DNA van verschillende bronnen voor onderzoek en biotechnologie."
+                    "title": "5_Compartimenten",
+                    "description": "Interacties tussen verschillende cellulaire compartimenten en hun rol in processen."
                 },
                 {
-                    "title": "6_Regulatie_van_genexpressie_I",
-                    "description": "De mechanismen en factoren die genexpressie op het niveau van transcriptie reguleren, inclusief enhancers, repressors en transcriptiefactoren."
+                    "title": "6_Signaaloverdracht_tussen_cellen",
+                    "description": "Mechanismen van signaaloverdracht tussen cellen in multicellulaire organismen."
                 },
                 {
-                    "title": "7_Regulatie_van_genexpressie_II",
-                    "description": "Verdere verkenning van genexpressieregulatie, met focus op post-transcriptionele en post-translationele mechanismen."
+                    "title": "7_Intracellulaire_signalen",
+                    "description": "Interne signaaloverdracht binnen de cel en regulatie van genexpressie."
                 },
                 {
-                    "title": "8_Mutaties:_oorzaak_en_gevolg",
-                    "description": "De oorzaken van genetische mutaties en hun gevolgen op moleculair en cellulair niveau."
+                    "title": "8_Lipide_signalen",
+                    "description": "Rol van lipiden en hun afgeleide moleculen in cel signaaloverdracht."
                 },
                 {
-                    "title": "9_Moleculaire_biologie",
-                    "description": "Een overzicht van de kernconcepten en technieken in de moleculaire biologie, met nadruk op DNA-replicatie, reparatie en recombinatie."
+                    "title": "9_Signaaltransductie",
+                    "description": "De processen en mechanismen die betrokken zijn bij het doorgeven van signalen binnen en tussen cellen."
                 },
                 {
-                    "title": "10_Genomen_en_GGOs",
-                    "description": "De structuur, functie en analyse van genomen, inclusief de rol en ethiek van genetisch gemodificeerde organismen (GGO's)."
+                    "title": "10_Celcyclus",
+                    "description": "De fasen van de celcyclus en de regulatie van celgroei en -deling."
                 },
                 {
                     "title": "11_Embryonale_ontwikkeling",
                     "description": "De genetische en moleculaire mechanismen die ten grondslag liggen aan de embryonale ontwikkeling van organismen."
-                },
-                {
-                    "title": "12_Signaaltransductie",
-                    "description": "De processen en mechanismen die betrokken zijn bij het doorgeven van signalen binnen en tussen cellen."
                 }
             ]
         },

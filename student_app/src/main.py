@@ -1421,7 +1421,7 @@ def render_sidebar():
             </style>
 
             <h1> 
-                <strong>Welkom student</strong>
+                <strong>Welkom Student</strong>
             </h1>
             <hr class="closer-line">
         """,

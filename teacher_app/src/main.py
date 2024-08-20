@@ -120,7 +120,7 @@ class Controller:
                 </style>
 
                 <h1> 
-                    <strong>Welkom Remko</strong>
+                    <strong>Welkom Nelleke Gruis</strong>
                 </h1>
                 <hr class="closer-line">
             """,
