@@ -96,9 +96,7 @@ class LectureOverview:
         """
         Loads lectures from the database into the session state.
         """
-        course_catalog = self.db_dal.get_course_catalog(
-            file_path="./src/data/uva_dummy_db.json"
-        )
+        course_catalog = self.db_dal.get_course_catalog()
         if st.session_state.selected_course is None:
             st.session_state.selected_course = course_catalog.courses[0].title
 

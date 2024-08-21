@@ -22,7 +22,7 @@ class Controller:
         _self.initialise_session_states()
 
         # DEMO: Use Azure KeyVault
-        st.session_state.use_keyvault = True
+        st.session_state.use_keyvault = False
 
         # Get keys from the keyvault
         if st.session_state.use_keyvault:
