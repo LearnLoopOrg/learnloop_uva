@@ -1431,9 +1431,9 @@ def render_sidebar():
 
     with st.sidebar:
         st.image(
-            "src/data/content/images/logo.png",
+            "src/data/content/images/logo_erasmus.png",
             use_column_width=False,
-            width=150,
+            width=250,
         )
 
         st.markdown(
