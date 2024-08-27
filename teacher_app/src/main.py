@@ -106,9 +106,9 @@ class Controller:
     def render_sidebar(self):
         with st.sidebar:
             st.image(
-                "src/data/images/logo.png",
+                "src/data/images/logo_erasmus.png",
                 use_column_width=False,
-                width=150,
+                width=250,
             )
 
             st.markdown(
@@ -120,7 +120,7 @@ class Controller:
                 </style>
 
                 <h1> 
-                    <strong>Welkom Björn</strong>
+                    <strong>Welkom Nelleke Gruis</strong>
                 </h1>
                 <hr class="closer-line">
             """,
