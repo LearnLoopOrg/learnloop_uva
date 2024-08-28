@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: learnloop-ui
+  name: learnloop-teacher
   namespace: "{{ .Release.Namespace }}"
 spec:
   selector:
     matchLabels:
-      app: learnloop-ui
+      app: learnloop-teacher
   replicas: 3
   revisionHistoryLimit: 3
   template:
     metadata:
       labels:
-        app: learnloop-ui
+        app: learnloop-teacher
     spec:
       containers:
         - name: learnloop-ui
           image: "{{ .Values.image }}/student_app:{{ .Values.tag }}"
           imagePullPolicy: Always
           ports:
-            - containerPort: 80
+            - containerPort: 8052
           env:
           - name: AZURE_OPENAI_ENDPOINT
             value: "{{ .Values.azureOpenaiEndpoint }}"
