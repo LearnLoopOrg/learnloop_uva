@@ -15,7 +15,7 @@ spec:
         app: learnloop-teacher
     spec:
       containers:
-        - name: learnloop-ui
+        - name: learnloop-teacher
           image: "{{ .Values.image }}/student_app:{{ .Values.tag }}"
           imagePullPolicy: Always
           ports:
