@@ -1241,6 +1241,17 @@ def render_generated_page():
     st.button("Stuur mailtje", on_click=send_mail_to_teacher, use_container_width=True)
 
 
+def render_LLM_info_page():
+    """
+    Renders the info page that contains the explanation of the learning and practice phases.
+    """
+    with open("./src/data/uitleg_llms_voor_student.txt", "r") as f:
+        info_page = f.read()
+    with mid_col:
+        st.markdown(info_page, unsafe_allow_html=True)
+    return
+
+
 def send_mail_to_teacher():
     # Dummy function to send mail to teacher
     st.success("Het mailtje is verstuurd!")
@@ -1272,6 +1283,8 @@ def render_selected_page():
             render_not_recorded_page()
         case "generated":
             render_generated_page()
+        case "LLM_info":
+            render_LLM_info_page()
         case _:  # Show courses page if no phase is selected
             render_courses_page()
 
@@ -1433,6 +1446,15 @@ def render_sidebar():
             on_click=set_selected_phase,
             args=("courses",),
             use_container_width=True,
+        )
+
+        st.sidebar.subheader("Extra Info")
+
+        st.button(
+            "Uitleg mogelijkheden & limitaties LLM's",
+            on_click=set_selected_phase,
+            use_container_width=True,
+            args=("LLM_info",),
         )
         # st.button(
         #     "⚙️ Instellingen",
