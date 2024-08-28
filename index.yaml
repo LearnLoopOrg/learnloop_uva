@@ -2,8 +2,18 @@ apiVersion: v1
 entries:
   learnloop:
   - apiVersion: v2
+    appVersion: 0.3.71
+    created: "2024-08-28T09:41:22.654675452Z"
+    description: LearnLoop
+    digest: 9df8ef4ba58e29470dd167fcee42bec844655e2ad82bc0ecda92ae8edf262fac
+    name: learnloop
+    type: application
+    urls:
+    - https://learnlooporg.github.io/learnloop_uva/learnloop-0.3.71.tgz
+    version: 0.3.71
+  - apiVersion: v2
     appVersion: 0.3.70
-    created: "2024-08-28T09:36:20.442079258Z"
+    created: "2024-08-28T09:41:22.654411651Z"
     description: LearnLoop
     digest: 508e437315841d4e3c667f6825add5c75be445a6ab4769472e3958928e814325
     name: learnloop
@@ -13,7 +23,7 @@ entries:
     version: 0.3.70
   - apiVersion: v2
     appVersion: 0.3.64
-    created: "2024-08-28T09:36:20.441584256Z"
+    created: "2024-08-28T09:41:22.654138231Z"
     description: LearnLoop
     digest: b922968f0e8a699b7a4864fc36709c582dd4e987ce753654965b068c22cc718b
     name: learnloop
@@ -21,4 +31,4 @@ entries:
     urls:
     - https://learnlooporg.github.io/learnloop_uva/learnloop-0.3.64.tgz
     version: 0.3.64
-generated: "2024-08-28T09:36:20.44071263Z"
+generated: "2024-08-28T09:41:22.653730612Z"
