@@ -1,3 +1,4 @@
+import json
 import time
 import random
 import streamlit as st
@@ -81,7 +82,7 @@ def upload_progress():
 
 def evaluate_answer():
     """Evaluates the answer of the student and returns a score and feedback."""
-    if use_dummy_openai_calls != True:
+    if not use_dummy_openai_calls:
         # Create user prompt with the question, correct answer and student answer
         prompt = f"""Input:\n
         Vraag: {st.session_state.segment_content['question']}\n
@@ -95,40 +96,19 @@ def evaluate_answer():
         ) as f:
             role_prompt = f.read()
 
-        stream = st.session_state.openai_client.chat.completions.create(
+        response = st.session_state.openai_client.chat.completions.create(
             model=st.session_state.openai_model,
             messages=[
                 {"role": "system", "content": role_prompt},
                 {"role": "user", "content": prompt},
             ],
             max_tokens=500,
-            # stream=True
+            response_format={"type": "json_object"},
         )
+        feedback_json = json.loads(response.choices[0].message.content)
 
-        # st.write_stream(stream)
-
-        # response = ""
-        # for chunk in stream:
-        #     st.write(chunk.choices[0]['delta']['content'])
-        #     if "choices" in chunk:
-        #         choice = chunk["choices"][0]
-        #         if "delta" in choice:
-        #             st.write(choice["delta"].get("content", ""))
-        #             response += choice["delta"].get("content", "")
-
-        # st.write(response)
-
-        split_response = stream.choices[0].message.content.split(";;")
-
-        # split_response = response.split(";;")
-
-        if len(split_response) != 2:
-            raise ValueError(
-                "Server response is not in the correct format. Please retry."
-            )
-
-        st.session_state.feedback = split_response[0].split(">>")
-        st.session_state.score = split_response[1]
+        st.session_state.feedback = feedback_json["feedback"]
+        st.session_state.score = feedback_json["score"]
     else:
         st.session_state.feedback = "O"
         st.session_state.score = "0/2"
