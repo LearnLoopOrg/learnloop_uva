@@ -132,18 +132,18 @@ class Controller:
                 args=("courses",),
                 use_container_width=True,
             )
-            # st.button(
-            #     "⚙️ Instellingen",
-            #     on_click=self.set_selected_phase,
-            #     args=("courses",),
-            #     use_container_width=True,
-            # )
-            # st.button(
-            #     "💬 Ondersteuning",
-            #     on_click=self.set_selected_phase,
-            #     args=("courses",),
-            #     use_container_width=True,
-            # )
+            st.button(
+                "⚙️ Instellingen",
+                on_click=self.set_selected_phase,
+                args=("courses",),
+                use_container_width=True,
+            )
+            st.button(
+                "💬 Ondersteuning",
+                on_click=self.set_selected_phase,
+                args=("courses",),
+                use_container_width=True,
+            )
 
             # st.subheader("👤 Remko Offringa")
 

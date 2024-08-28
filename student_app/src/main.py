@@ -1433,18 +1433,18 @@ def render_sidebar():
             args=("courses",),
             use_container_width=True,
         )
-        # st.button(
-        #     "⚙️ Instellingen",
-        #     on_click=set_selected_phase,
-        #     args=("courses",),
-        #     use_container_width=True,
-        # )
-        # st.button(
-        #     "💬 Ondersteuning",
-        #     on_click=set_selected_phase,
-        #     args=("courses",),
-        #     use_container_width=True,
-        # )
+        st.button(
+            "⚙️ Instellingen",
+            on_click=set_selected_phase,
+            args=("courses",),
+            use_container_width=True,
+        )
+        st.button(
+            "💬 Ondersteuning",
+            on_click=set_selected_phase,
+            args=("courses",),
+            use_container_width=True,
+        )
         # st.title("Vakken")
         # st.button(
         #     "Vakkenoverzicht",
