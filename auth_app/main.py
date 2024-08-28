@@ -23,8 +23,8 @@ load_dotenv()
 
 # Don't forget to re-build the image again after changing the code.
 
-use_mongodb = True
-surf_test_env = True
+use_mongodb = False
+surf_test_env = False
 # --------------------------------------------
 
 db = db_config.connect_db(use_mongodb)
@@ -140,6 +140,8 @@ def authorize():
     # nonce = save_nonce_to_db(user_id)
 
     # Redirect to streamlit app
+    # TODO: when logging in as a student, redirect to learnloop.datanose.nl/student and when
+    # logging in as a teacher redirect to learnloop.datanose.nl/teacher
     if surf_test_env:
         url = "http://localhost:8501/"
         # if info["user_description"] == "student":
@@ -147,12 +149,13 @@ def authorize():
         # elif info["user_description"] == "teacher":
         #     url = "http://localhost:8502/"
     else:
-        if info["user_description"] == "student":
-            url = "https://learnloop-student.datanose.nl/"
-        elif info["user_description"] == "teacher":
-            url = "https://learnloop.datanose.nl/"
+        url = "https://learnloop.datanose.nl/"
+        # if info["user_description"] == "student":
+        #     url = "https://learnloop-student.datanose.nl/"
+        # elif info["user_description"] == "teacher":
+        #     url = "https://learnloop.datanose.nl/"
 
-    redirect_url = f"{url}app?nonce={nonce}"
+    redirect_url = f"{url}student?nonce={nonce}"
 
     return redirect(redirect_url, code=302)
 
