@@ -592,7 +592,7 @@ class LectureInsights:
                             unsafe_allow_html=True,
                         )
                         st.markdown(
-                            f'<span style="color: gray; padding-left: 1rem;">{self.get_correct_answer(question_content)}</span>',
+                            f'<p style="color: gray; padding-left: 1rem">{self.get_correct_answer(question_content)}</p>',
                             unsafe_allow_html=True,
                         )
 
