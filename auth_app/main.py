@@ -150,10 +150,6 @@ def authorize():
         #     url = "http://localhost:8502/"
     else:
         url = "https://learnloop.datanose.nl/"
-        # if info["user_description"] == "student":
-        #     url = "https://learnloop-student.datanose.nl/"
-        # elif info["user_description"] == "teacher":
-        #     url = "https://learnloop.datanose.nl/"
 
     redirect_url = f"{url}student?nonce={nonce}"
 

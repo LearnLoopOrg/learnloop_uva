@@ -1427,13 +1427,15 @@ def render_sidebar():
             use_container_width=True,
         )
 
-        st.sidebar.subheader("Extra Info")
+        render_feedback_form()
+
+        st.subheader("Extra Info")
 
         st.button(
             "Uitleg mogelijkheden & limitaties LLM's",
-            on_click=set_selected_phase,
+            on_click=set_info_page_true,
             use_container_width=True,
-            args=("LLM_info",),
+            key="info_button_sidebar",
         )
         # st.button(
         #     "⚙️ Instellingen",
@@ -1490,15 +1492,6 @@ def render_sidebar():
         #         f"{practice_exam_name} ✍🏽", f"{practice_exam_name}", "learning"
         #     )
 
-        # render_feedback_form()  # So users can give feedback TODO: on for DEMO
-
-        # st.subheader("Extra Info")
-        # st.button(
-        #     "Uitleg mogelijkheden & limitaties LLM's",
-        #     on_click=set_info_page_true,
-        #     use_container_width=True,
-        #     key="info_button_sidebar",
-        # )
         # --------------------------------------------------------------
 
 
