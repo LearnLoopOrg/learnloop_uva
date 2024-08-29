@@ -7,7 +7,7 @@ spec:
   selector:
     matchLabels:
       app: learnloop-teacher
-  replicas: 3
+  replicas: 1
   revisionHistoryLimit: 3
   template:
     metadata:
@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: learnloop-teacher
-          image: "{{ .Values.image }}/student_app:{{ .Values.tag }}"
+          image: "{{ .Values.image }}/teacher_app:{{ .Values.tag }}"
           imagePullPolicy: Always
           ports:
             - containerPort: 8502
