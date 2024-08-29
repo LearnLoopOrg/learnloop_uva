@@ -3,9 +3,9 @@ entries:
   learnloop:
   - apiVersion: v2
     appVersion: 0.3.74
-    created: "2024-08-29T09:40:51.587398467Z"
+    created: "2024-08-29T15:43:59.509582399Z"
     description: LearnLoop
-    digest: 0d00093ae652e09c9248d0b4bc402796ae287cdb42edd25156e08bb7ec24e7ba
+    digest: 0754ec7b4b5079030ff223445a04bb0a9a469dec8767df92f707eefb86205495
     name: learnloop
     type: application
     urls:
@@ -13,7 +13,7 @@ entries:
     version: 0.3.74
   - apiVersion: v2
     appVersion: 0.3.73
-    created: "2024-08-29T09:40:51.586933182Z"
+    created: "2024-08-29T15:43:59.509107451Z"
     description: LearnLoop
     digest: 6667a3a61cd4a8f2a8146d7cfba1db7a03d3d74052f90b1e26b0e4fafc05a3b3
     name: learnloop
@@ -23,7 +23,7 @@ entries:
     version: 0.3.73
   - apiVersion: v2
     appVersion: 0.3.72
-    created: "2024-08-29T09:40:51.586453109Z"
+    created: "2024-08-29T15:43:59.508622314Z"
     description: LearnLoop
     digest: 969eaf6aaa4d33e702cb0e5f3b3df55891295b76aa09e8020ef55ef8c637579b
     name: learnloop
@@ -33,7 +33,7 @@ entries:
     version: 0.3.72
   - apiVersion: v2
     appVersion: 0.3.71
-    created: "2024-08-29T09:40:51.585911301Z"
+    created: "2024-08-29T15:43:59.508032662Z"
     description: LearnLoop
     digest: 9df8ef4ba58e29470dd167fcee42bec844655e2ad82bc0ecda92ae8edf262fac
     name: learnloop
@@ -43,7 +43,7 @@ entries:
     version: 0.3.71
   - apiVersion: v2
     appVersion: 0.3.70
-    created: "2024-08-29T09:40:51.585234823Z"
+    created: "2024-08-29T15:43:59.507501829Z"
     description: LearnLoop
     digest: 508e437315841d4e3c667f6825add5c75be445a6ab4769472e3958928e814325
     name: learnloop
@@ -53,7 +53,7 @@ entries:
     version: 0.3.70
   - apiVersion: v2
     appVersion: 0.3.64
-    created: "2024-08-29T09:40:51.585008723Z"
+    created: "2024-08-29T15:43:59.506557845Z"
     description: LearnLoop
     digest: b922968f0e8a699b7a4864fc36709c582dd4e987ce753654965b068c22cc718b
     name: learnloop
@@ -61,4 +61,4 @@ entries:
     urls:
     - https://learnlooporg.github.io/learnloop_uva/learnloop-0.3.64.tgz
     version: 0.3.64
-generated: "2024-08-29T09:40:51.584624879Z"
+generated: "2024-08-29T15:43:59.506169619Z"
