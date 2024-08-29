@@ -1191,8 +1191,29 @@ def render_not_recorded_page():
     """
     Renders the page that shows the student that the lecture is not recorded.
     """
-    st.title("Nog niet opgenomen")
-    st.write("Dit college is (nog) niet opgenomen. Hopelijk binnenkort wel!")
+    lecture_number, lecture_name = st.session_state.selected_module.replace(
+        "_", " "
+    ).split(" ", 1)
+    st.title(f"College {lecture_number} — {lecture_name}")
+
+    st.subheader("Nog niet opgenomen")
+    st.write("Dit college is (nog) niet opgenomen. Hopelijk binnenkort wel! ")
+    course_name = st.session_state.selected_course
+    st.button(
+        "Terug naar collegeoverzicht",
+        key=course_name,
+        on_click=go_to_course,
+        args=(course_name,),
+        use_container_width=True,
+    )
+
+
+def go_to_course(course_name):
+    """
+    Callback function for the button that redirects to the course overview page.
+    """
+    st.session_state.selected_course = course_name
+    st.session_state.selected_phase = "lectures"
 
 
 def render_generated_page():
@@ -1204,21 +1225,30 @@ def render_generated_page():
     ).split(" ", 1)
 
     st.title(f"College {lecture_number} — {lecture_name}")
-    utils.add_spacing(2)
+    utils.add_spacing(1)
     st.subheader("Nog niet nagekeken door docent")
     st.write(
-        "De docent moet dit college nog nakijken voordat je kunt oefenen. Herinner de docent met een anonieme mail hieronder."
+        "De docent moet de content van het college nog nakijken voordat je er hiermee kunt oefenen."
     )
-    st.session_state.mail_to_teacher = f"""Beste docent, \n\n Ik zou heel graag het college willen oefenen. Zou u de oefenmaterialen voor het college {" ".join(st.session_state.selected_module.replace(" ", "_").split("_")[1:])} willen controleren? \n\n Alvast heel erg bedankt!"""
-
-    st.text_area(
-        "Mailtje aan docent",
-        key="mail_to_teacher",
-        height=150,
-        label_visibility="hidden",
+    course_name = st.session_state.selected_course
+    st.button(
+        "Terug naar collegeoverzicht",
+        key=course_name,
+        on_click=go_to_course,
+        args=(course_name,),
+        use_container_width=True,
     )
 
-    st.button("Stuur mailtje", on_click=send_mail_to_teacher, use_container_width=True)
+    # st.session_state.mail_to_teacher = f"""Beste docent, \n\n Ik zou heel graag het college willen oefenen. Zou u de oefenmaterialen voor het college {" ".join(st.session_state.selected_module.replace(" ", "_").split("_")[1:])} willen controleren? \n\n Alvast heel erg bedankt!"""
+
+    # st.text_area(
+    #     "Mailtje aan docent",
+    #     key="mail_to_teacher",
+    #     height=150,
+    #     label_visibility="hidden",
+    # )
+
+    # st.button("Stuur mailtje", on_click=send_mail_to_teacher, use_container_width=True)
 
 
 def render_LLM_info_page():
