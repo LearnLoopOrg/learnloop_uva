@@ -91,7 +91,8 @@ class LectureOverview:
                             )
                         case "not_recorded":
                             st.button(
-                                "Genereren leermateriaal",
+                                # "Genereren leermateriaal",
+                                "Nog niet beschikbaar",
                                 key=lecture.title,
                                 on_click=self.go_to_lecture,
                                 args=(lecture.title.replace("_", " "),),
