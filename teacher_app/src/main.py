@@ -188,7 +188,6 @@ if __name__ == "__main__":
     if controller.fetch_nonce_from_query() is not None:
         # The username is fetched from the database with this nonce
         controller.determine_username_from_nonce()
-        print(f"Username: {}")
         # The nonce is removed from the query params, the session state and the database
         controller.remove_nonce_from_memories()
 
