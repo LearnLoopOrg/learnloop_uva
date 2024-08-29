@@ -114,69 +114,98 @@ class Recorder:
         self.db_dal.update_last_phase("record_lecture")
 
         st.title(
-            f"Leermateriaal genereren: College — {st.session_state.selected_module}"
+            # f"Leermateriaal genereren: College — {st.session_state.selected_module}"
+            f"College {st.session_state.selected_module}"
         )
-        st.subheader("Kies een opgenomen college")
         st.write(
-            "Er is nog geen leermateriaal voor dit college gegenereerd. Kies een opname om de leermaterialen te genereren."
+            "De opname van dit college is nog in afwachting. Wanneer dit gebeurd is, zal de content snel beschikbaar komen voor de kwaliteitscheck."
         )
+        course_name = st.session_state.selected_course
 
-        # user = st.session_state.username
+        st.button(
+            "Terug naar collegeoverzicht",
+            key=course_name,
+            on_click=self.go_to_course,
+            args=(course_name,),
+            use_container_width=True,
+        )
+        # st.button(
+        #     "Terug naar mijn vakken",
+        #     on_click=self.set_selected_phase,
+        #     args=("courses",),
+        #     use_container_width=True,
+        # )
 
-        # TODO - List actual recordings from blob storage for Demo
-        recordings_listing = [
-            {
-                "id": "1",
-                "title": f"Moleculaire biologie 2023",
-                "description": "Opgenomen op 16 oktober 2023 om 9:00",
-            },
-            {
-                "id": "2",
-                "title": f"Moleculaire biologie 2022",
-                "description": "Opgenomen op 17 oktober 2022 om 9:00",
-            },
-            {
-                "id": "3",
-                "title": f"Moleculaire biologie 2021",
-                "description": "Opgenomen op 18 oktober 2021 om 9:00",
-            },
-        ]
-        for recording in recordings_listing:
-            container = st.container(border=True)
-            cols = container.columns([3, 1, 2])
+    # def set_selected_phase(self, phase):
+    #     print(f"Setting phase: {phase}")
+    #     st.session_state.selected_phase = phase
+    #     self.db_dal.update_last_phase(phase)
 
-            with cols[0]:
-                st.subheader(recording["title"])
-                st.write(recording["description"])
+    # user = st.session_state.username
 
-            with cols[1]:
-                if recording["id"] == "1":
-                    st.image("src/data/images/recording_2023.png")
-                else:
-                    st.image("src/data/images/icon_for_video.png")
+    def go_to_course(self, course_name):
+        """
+        Callback function for the button that redirects to the course overview page.
+        """
+        st.session_state.selected_course = course_name
+        st.session_state.selected_phase = "lectures"
 
-            with cols[2]:
-                with st.container():
-                    st.markdown(
-                        "<div style='height: 20px;'></div>", unsafe_allow_html=True
-                    )  # Top padding
-                    st.button(
-                        "Genereer leermateriaal",
-                        key=recording["id"],
-                        on_click=self.generate_materials,
-                        use_container_width=True,
-                    )
-                    st.markdown(
-                        "<div style='height: 20px;'></div>", unsafe_allow_html=True
-                    )  # Bottom padding
-                # st.button(  # TODO: Invoke Cloud Function / API to generate practice materials
-                #     "Genereer leertraject",
-                #     key=recording["id"],
-                #     on_click=self.generate_materials,
-                #     use_container_width=True,
-                # )
+    # --------------------------------------------------------------------------------------------
+    #       Uitgecommende code voor het genereren van opgenomen colleges
+    # recordings_listing = [
+    #     {
+    #         "id": "1",
+    #         "title": f"Moleculaire biologie 2023",
+    #         "description": "Opgenomen op 16 oktober 2023 om 9:00",
+    #     },
+    #     {
+    #         "id": "2",
+    #         "title": f"Moleculaire biologie 2022",
+    #         "description": "Opgenomen op 17 oktober 2022 om 9:00",
+    #     },
+    #     {
+    #         "id": "3",
+    #         "title": f"Moleculaire biologie 2021",
+    #         "description": "Opgenomen op 18 oktober 2021 om 9:00",
+    #     },
+    # ]
+    # for recording in recordings_listing:
+    #     container = st.container(border=True)
+    #     cols = container.columns([3, 1, 2])
 
-        self.rerun_if_generated()
+    #     with cols[0]:
+    #         st.subheader(recording["title"])
+    #         st.write(recording["description"])
+
+    #     with cols[1]:
+    #         if recording["id"] == "1":
+    #             st.image("src/data/images/recording_2023.png")
+    #         else:
+    #             st.image("src/data/images/icon_for_video.png")
+
+    #     with cols[2]:
+    #         with st.container():
+    #             st.markdown(
+    #                 "<div style='height: 20px;'></div>", unsafe_allow_html=True
+    #             )  # Top padding
+    #             st.button(
+    #                 "Genereer leermateriaal",
+    #                 key=recording["id"],
+    #                 on_click=self.generate_materials,
+    #                 use_container_width=True,
+    #             )
+    #             st.markdown(
+    #                 "<div style='height: 20px;'></div>", unsafe_allow_html=True
+    #             )  # Bottom padding
+    #         # st.button(  # TODO: Invoke Cloud Function / API to generate practice materials
+    #         #     "Genereer leertraject",
+    #         #     key=recording["id"],
+    #         #     on_click=self.generate_materials,
+    #         #     use_container_width=True,
+    #         # )
+
+    # self.rerun_if_generated()
+    # --------------------------------------------------------------------------------------------
 
     # def show_spinner_till_generated(self):
     #     with st.spinner("Oefenmaterialen worden gegenereerd..."):
