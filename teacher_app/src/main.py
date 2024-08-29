@@ -195,21 +195,5 @@ if __name__ == "__main__":
     if "controller" not in st.session_state:
         st.session_state.controller = Controller(args)
 
-    controller = st.session_state.controller
-    # Directly after logging in via SURF, the nonce is fetched from the query parameters
-    if controller.fetch_nonce_from_query() is not None:
-        # The username is fetched from the database with this nonce
-        controller.determine_username_from_nonce()
-        # The nonce is removed from the query params, the session state and the database
-        controller.remove_nonce_from_memories()
-
-    if (
-        st.session_state.controller.no_login_page is False
-        and controller.fetch_nonce_from_query() is None
-        and st.session_state.username is None
-    ):
-        st.session_state.selected_phase = "login"
-        st.session_state.controller.render_page()
-    else:
-        st.session_state.controller.render_sidebar()
-        st.session_state.controller.render_page()
+    st.session_state.controller.render_sidebar()
+    st.session_state.controller.render_page()
