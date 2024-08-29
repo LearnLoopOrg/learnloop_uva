@@ -76,6 +76,18 @@ auth.register(
 )
 
 
+# @app.route("/")
+# def login():
+#     global surf_test_env
+#     if surf_test_env:
+#         scheme = "http"
+#     else:
+#         scheme = "https"
+
+#     redirect_uri = url_for("authorize", _external=True, _scheme=scheme)
+#     return auth.surfconext.authorize_redirect(redirect_uri)
+
+
 @app.route("/")
 def login():
     global surf_test_env
@@ -92,7 +104,11 @@ def login():
 def save_id_to_db(user_id):
     global db
     print("user_id")
+<<<<<<< HEAD
     db = db_client.demo
+=======
+    db = db.demo
+>>>>>>> b324147 (We kunnen nu van de userendpoint van SURF Conext de informatie ophalen)
     print(f"Looking for user with username: {user_id}")
 
     user = db.users.find_one({"username": user_id})
@@ -174,10 +190,17 @@ def authorize():
     # logging in as a teacher redirect to learnloop.datanose.nl/teacher
     if surf_test_env:
         url = "http://localhost:8502/"
+<<<<<<< HEAD
         if userinfo_response["affilliation"] == "student":
             url = "http://localhost:8501/"
         elif userinfo_response["afilliation"] == "teacher":
             url = "http://localhost:8502/"
+=======
+        # if affilliation == "student":
+        #     url = "http://localhost:8501/"
+        # elif affilliation["user_description"] == "teacher":
+        #     url = "http://localhost:8502/"
+>>>>>>> b324147 (We kunnen nu van de userendpoint van SURF Conext de informatie ophalen)
     else:
         url = "https://learnloop.datanose.nl/"
         if userinfo_response["affilliation"] == "student":
