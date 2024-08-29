@@ -102,6 +102,7 @@ class LectureOverview:
         if st.session_state.selected_course is None:
             st.session_state.selected_course = course_catalog.courses[0].title
 
+        print("Selected course:", st.session_state.selected_course)
         st.session_state.lectures = self.db_dal.get_lectures_for_course(
             st.session_state.selected_course, course_catalog
         )
