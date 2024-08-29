@@ -1,11 +1,13 @@
 from authlib.integrations.flask_client import OAuth
+import certifi
 from flask import Flask, url_for, redirect
 from dotenv import load_dotenv
 import os
-from pymongo import MongoClient
-import certifi
 import string
 import random
+
+from pymongo import MongoClient
+import requests
 import db_config
 
 load_dotenv()
@@ -24,10 +26,12 @@ load_dotenv()
 # Don't forget to re-build the image again after changing the code.
 
 use_mongodb = False
-surf_test_env = False
+surf_test_env = True
 # --------------------------------------------
 
-db = db_config.connect_db(use_mongodb)
+# Connect to the database
+MONGO_URI = os.getenv("MONGO_URI")
+db_client = MongoClient(MONGO_URI, tlsCAFile=certifi.where())
 
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET")
@@ -41,31 +45,12 @@ auth.register(
     client_secret=os.getenv("SURFCONEXT_CLIENT_SECRET"),
     server_metadata_url=os.getenv("SURFCONEXT_METADATA_URL"),
     client_kwargs={"scope": "openid"},
+    # TODO: Currently, this scope is not allowed.
+    # client_kwargs={"scope": "openid eduPersonAffiliation"},
 )
 
 
-# @app.route("/")
-# def login():
-#     global surf_test_env
-#     if surf_test_env:
-#         scheme = "http"
-#     else:
-#         scheme = "https"
-
-#     redirect_uri = url_for("authorize", _external=True, _scheme=scheme)
-#     return auth.surfconext.authorize_redirect(redirect_uri)
-
-
 @app.route("/")
-def welcome():
-    return """
-    <h1>Welkom bij LearnLoop</h1>
-    <p>Klik op de knop hieronder om in te loggen met SURFconext.</p>
-    <a href="/login"><button>Inloggen met SURFconext</button></a>
-    """
-
-
-@app.route("/login")
 def login():
     global surf_test_env
     if surf_test_env:
@@ -79,8 +64,13 @@ def login():
 
 def save_id_to_db(user_id):
     global db
+    print("user_id")
+    db = db_client.demo
+    print(f"Looking for user with username: {user_id}")
+
     user = db.users.find_one({"username": user_id})
-    if not user:
+    if user is None:
+        print("Username does not exist in the database. Adding it now.")
         db.users.insert_one({"username": user_id})
 
 
@@ -129,10 +119,23 @@ def authorize():
     global surf_test_env
     token = auth.surfconext.authorize_access_token()
 
+    userinfo_endpoint = auth.surfconext.server_metadata.get("userinfo_endpoint")
+    print(f"Userinfo Endpoint: {userinfo_endpoint}")
+    headers = {"Authorization": f'Bearer {token["access_token"]}'}
+    # Ik wil niet de userinfo endpoint aanroepen, maar het endpoint waar ik de claims mee kan ophalen
+
+    userinfo_response = requests.get(userinfo_endpoint, headers=headers)
+
+    print(f"Userinfo Response: {userinfo_response.json()}")
+
+    # TODO: Get the affilliation of the user to check whether it's a student or a teacher
+    # affiliation = userinfo_response.json()["eduPersonAffiliation"]
+
     user_id = token["userinfo"]["sub"]
+    nonce = token["userinfo"]["nonce"]
     save_id_to_db(user_id)
 
-    nonce = generate_nonce(16)
+    # nonce = generate_nonce(16)
     info = get_info(user_id)
 
     save_info_and_nonce(user_id, info, nonce)
@@ -143,15 +146,16 @@ def authorize():
     # TODO: when logging in as a student, redirect to learnloop.datanose.nl/student and when
     # logging in as a teacher redirect to learnloop.datanose.nl/teacher
     if surf_test_env:
-        url = "http://localhost:8501/"
-        # if info["user_description"] == "student":
+        url = "http://localhost:8502/"
+        # if affilliation == "student":
         #     url = "http://localhost:8501/"
-        # elif info["user_description"] == "teacher":
+        # elif affilliation["user_description"] == "teacher":
         #     url = "http://localhost:8502/"
     else:
         url = "https://learnloop.datanose.nl/"
 
-    redirect_url = f"{url}student?nonce={nonce}"
+    # redirect_url = f"{url}student?nonce={nonce}"
+    redirect_url = f"{url}app?nonce={nonce}"
 
     return redirect(redirect_url, code=302)
 
