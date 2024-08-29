@@ -9,6 +9,7 @@ from _pages.course_overview import CoursesOverview
 from _pages.lecture_student_answers_insights import LectureInsights
 from _pages.lecture_quality_check import QualityCheck
 from _pages.record_lecture import Recorder
+from _pages.login import Login
 import os
 
 # Must be called first
@@ -47,11 +48,15 @@ class Controller:
 
         _self.debug = True if os.getenv("DEBUG") == "True" else False
 
-        # User
-        st.session_state.username = "Luc Mahieu"
+        # Username
+        # st.session_state.username = "Luc Mahieu"
+        st.session_state.username = None
 
         # Data access layer
         _self.db_dal = DatabaseAccess()
+
+        # Showing login page for testing purposes
+        _self.no_login_page = False
 
         # Fetch were user left off
         st.session_state.selected_module = _self.db_dal.fetch_last_module()
@@ -64,6 +69,7 @@ class Controller:
         _self.insights_page = LectureInsights()
         _self.quality_check_page = QualityCheck()
         _self.record_page = Recorder()
+        _self.login_page = Login()
 
     def initialise_session_states(self):
         if "selected_course" not in st.session_state:
@@ -100,6 +106,8 @@ class Controller:
                 self.quality_check_page.run()
             case "insights":
                 self.insights_page.run()
+            case "login":
+                self.login_page.run()
             case _:  # Show courses by default
                 self.courses_page.run()
 
@@ -152,10 +160,45 @@ class Controller:
         st.session_state.selected_phase = phase
         self.db_dal.update_last_phase(phase)
 
+    def determine_username_from_nonce(self):
+        """
+        Fetches the username from the database using the nonce in the query parameters.
+        """
+        st.session_state.nonce = (
+            self.fetch_nonce_from_query()
+        )  # ? Why save nonce in session state? Pass a param?
+        self.db_dal.fetch_info()
+
+    def remove_nonce_from_memories(self):
+        """Removes the nonce from the query parameters and session state."""
+        st.query_params.pop("nonce", None)
+        self.db_dal.invalidate_nonce()
+        st.session_state.nonce = None
+
+    def fetch_nonce_from_query(self):
+        return st.query_params.get("nonce", None)
+
 
 if __name__ == "__main__":
     if "controller" not in st.session_state:
         st.session_state.controller = Controller()
 
-    st.session_state.controller.render_sidebar()
-    st.session_state.controller.render_page()
+    controller = st.session_state.controller
+    # Directly after logging in via SURF, the nonce is fetched from the query parameters
+    if controller.fetch_nonce_from_query() is not None:
+        # The username is fetched from the database with this nonce
+        controller.determine_username_from_nonce()
+        print(f"Username: {}")
+        # The nonce is removed from the query params, the session state and the database
+        controller.remove_nonce_from_memories()
+
+    if (
+        st.session_state.controller.no_login_page is False
+        and controller.fetch_nonce_from_query() is None
+        and st.session_state.username is None
+    ):
+        st.session_state.selected_phase = "login"
+        st.session_state.controller.render_page()
+    else:
+        st.session_state.controller.render_sidebar()
+        st.session_state.controller.render_page()

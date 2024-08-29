@@ -73,6 +73,15 @@ class DatabaseAccess:
 
         return modules
 
+    def fetch_info(self):
+        user_doc = self.db.users.find_one({"nonce": st.session_state.nonce})
+        if user_doc is not None:
+            st.session_state.username = user_doc["username"]
+            st.session_state.courses = user_doc["courses"]
+        else:
+            st.session_state.username = None
+            print("No user found with the nonce.")
+
     def get_segment_type(self, segment_index):
         return self.get_segments_list_from_db(self.get_module_name_underscored())[
             segment_index

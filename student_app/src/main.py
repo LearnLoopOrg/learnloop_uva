@@ -1688,7 +1688,7 @@ def render_login_page():
     prompts the user to login via SURFconext."""
     columns = st.columns([1, 0.9, 1])
     with columns[1]:
-        welcome_title = "Neuroanatomie- en fysiologie - deel 2"
+        welcome_title = "Klinische Neuropsychologie"
         logo_base64 = convert_image_base64("src/data/content/images/logo.png")
 
         if surf_test_env:
@@ -1699,7 +1699,7 @@ def render_login_page():
         html_content = f"""
         <div style='text-align: center; margin: 20px;'>
             <img src='data:image/png;base64,{logo_base64}' alt='Logo' style='max-width: 25%; height: auto; margin-bottom: 40px'>
-            <h1 style='color: #333; margin-bottom: 20px'>{welcome_title}</h1>
+            <h2 style='color: #333; margin-bottom: 20px'>{welcome_title}</h2>
             <a href={href} target="_self" style="text-decoration: none;">
                 <button style='font-size:20px; border: none; color: white; padding: 10px 20px; \
                 text-align: center; text-decoration: none; display: block; width: 100%; margin: \
@@ -1838,7 +1838,7 @@ if __name__ == "__main__":
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     # Turn on 'testing' to use localhost instead of learnloop.datanose.nl for authentication
-    surf_test_env = False
+    surf_test_env = True
 
     # Reset db for current user every time the webapp is loaded
     reset_user_doc = False
@@ -1852,14 +1852,15 @@ if __name__ == "__main__":
     use_dummy_openai_calls = False
 
     # Give the name of the test user when giving one. !! If not using a test username, set to None
-    test_username = "Luc Mahieu"
+    # test_username = "Luc Mahieu"
+    test_username = None
 
     st.session_state.openai_model = "LLgpt-4o"
 
     # Bypass authentication when testing so flask app doesnt have to run
     st.session_state.skip_authentication = True
 
-    no_login_page = True
+    no_login_page = False
     # ---------------------------------------------------------
 
     # Create a mid column with margins in which everything one a
@@ -1887,7 +1888,7 @@ if __name__ == "__main__":
     if test_username:
         st.session_state.username = test_username
 
-    # Login page reners if only if the user is not logged in
+    # Login page renders if only if the user is not logged in
     if (
         no_login_page is False
         and fetch_nonce_from_query() is None
