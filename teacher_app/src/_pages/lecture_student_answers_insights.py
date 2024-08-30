@@ -43,7 +43,9 @@ class LectureInsights:
 
     def render_title(self, module_number, module):
         st.title(f"Inzichten: College {module_number} — {module}")
-        st.write("\n")
+        st.write(
+            "Bekijk de onderstaande analyses van de gemaakte vragen om inzicht te krijgen in de prestaties van je studenten. Je kunt hier per vraag zien: hoevaak deze is beantwoord; wat de gemiddelde score is; wat studenten snapten en waar mogelijke verwarringen liggen. Deze inzichten kun je gebruiken om je lesaanpak te verfijnen."
+        )
 
     def start_learning_page(self, topic_index):
         """
@@ -536,10 +538,10 @@ class LectureInsights:
                 )
                 return
 
-            st.markdown(
-                f'<span style="color: gray;">👥 Studenten: {len(all_scores)}</span>',
-                unsafe_allow_html=True,
-            )
+            # st.markdown(
+            #     f'<span style="color: gray;">👥 Studenten: {len(all_scores)}</span>',
+            #     unsafe_allow_html=True,
+            # )
             st.markdown(
                 f'<span style="color: gray;">📊 Gemiddelde: {percentage_correct_topic * 100:.0f}% correct</span>',
                 unsafe_allow_html=True,
