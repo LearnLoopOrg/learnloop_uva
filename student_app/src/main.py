@@ -13,7 +13,7 @@ from _pages.topic_overview import TopicOverview
 from utils.utils import ImageHandler
 import utils.db_config as db_config
 from data.data_access_layer import DatabaseAccess
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from _pages.lecture_overview import LectureOverview
 from _pages.course_overview import CoursesOverview
 from _pages.theory_overview import TheoryOverview
@@ -742,7 +742,7 @@ def progress_date_tracking_format():
     a user visited a segment or answered a question, through dates as entries.
     It also adds the first entry directly.
     """
-    date = datetime.utcnow().date()
+    date = datetime.now(timezone.utc).date()
     return {
         "type": db_dal.get_segment_type(st.session_state.segment_index),
         "entries": [date.isoformat()],
@@ -764,7 +764,7 @@ def add_date_to_progress_counter():
     if not segment_progress_count:
         segment_progress_count = progress_date_tracking_format()
     else:
-        date = datetime.utcnow().date()
+        date = datetime.now(timezone.utc).date()
         segment_progress_count["entries"].append(date.isoformat())
 
     db_dal.update_progress_counter_for_segment(module, segment_progress_count)
