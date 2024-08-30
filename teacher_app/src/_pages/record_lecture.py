@@ -112,10 +112,10 @@ class Recorder:
 
     def run(self):
         self.db_dal.update_last_phase("record_lecture")
-
+        lecture_number, lecture_title = st.session_state.selected_module.split(" ", 1)
         st.title(
             # f"Leermateriaal genereren: College — {st.session_state.selected_module}"
-            f"College {st.session_state.selected_module}"
+            f"College {lecture_number} - {lecture_title}"
         )
         st.write(
             "De opname van dit college is nog in afwachting. Wanneer dit gebeurd is, zal de content snel beschikbaar komen voor de kwaliteitscheck."
