@@ -62,14 +62,13 @@ class DatabaseAccess:
         ]
 
     def get_course_catalog(
-        self, file_path: str = "./src/data/uva_dummy_db.json"
+        self, university_name: str = "Universiteit van Amsterdam"
     ) -> CourseCatalog:
         """
         Load the course catalog from the (dummy) university database.
         """
-        # TODO: Change dummy database to real database
-        with open(file_path, "r") as file:
-            data = json.load(file)
+
+        data = self.db.courses.find_one({"university_name": university_name})
 
         courses = [
             Course(
