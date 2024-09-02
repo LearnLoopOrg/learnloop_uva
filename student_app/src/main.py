@@ -28,21 +28,28 @@ load_dotenv()
 
 @st.cache_resource(ttl=timedelta(hours=4))
 def connect_to_openai() -> OpenAI:
-    print("Using LearnLoop Azure instance of OpenAI GPT-4o")
-    if st.session_state.use_keyvault:
-        LL_AZURE_OPENAI_API_KEY = AzureUtils.get_secret(
-            "LL-AZURE-OPENAI-API-KEY", "lluniappkv"
-        )
-        LL_AZURE_OPENAI_API_ENDPOINT = AzureUtils.get_secret(
-            "LL-AZURE-OPENAI-API-ENDPOINT", "lluniappkv"
-        )
+    if st.session_state.openai_model == "learnloop-4o":
+        print("Using UvA instance of OpenAI GPT-4o")
+        AZURE_OPENAI_API_KEY = os.getenv("AZURE_OPENAI_API_KEY")
+        AZURE_OPENAI_API_ENDPOINT = os.getenv("AZURE_OPENAI_API_ENDPOINT")
+        print("Azure key: ", AZURE_OPENAI_API_KEY)
+        print("Azure endpoint: ", AZURE_OPENAI_API_ENDPOINT)
     else:
-        LL_AZURE_OPENAI_API_KEY = os.getenv("LL_AZURE_OPENAI_API_KEY")
-        LL_AZURE_OPENAI_API_ENDPOINT = os.getenv("LL_AZURE_OPENAI_API_ENDPOINT")
+        print("Using LearnLoop Azure instance of OpenAI GPT-4o")
+        if st.session_state.use_keyvault:
+            AZURE_OPENAI_API_KEY = AzureUtils.get_secret(
+                "LL-AZURE-OPENAI-API-KEY", "lluniappkv"
+            )
+            AZURE_OPENAI_API_ENDPOINT = AzureUtils.get_secret(
+                "LL-AZURE-OPENAI-API-ENDPOINT", "lluniappkv"
+            )
+        else:
+            AZURE_OPENAI_API_KEY = os.getenv("LL_AZURE_OPENAI_API_KEY")
+            AZURE_OPENAI_API_ENDPOINT = os.getenv("LL_AZURE_OPENAI_API_ENDPOINT")
     return AzureOpenAI(
-        api_key=LL_AZURE_OPENAI_API_KEY,
+        api_key=AZURE_OPENAI_API_KEY,
         api_version="2024-04-01-preview",
-        azure_endpoint=LL_AZURE_OPENAI_API_ENDPOINT,
+        azure_endpoint=AZURE_OPENAI_API_ENDPOINT,
     )
 
 
@@ -1840,6 +1847,12 @@ def get_commandline_arguments() -> argparse.Namespace:
         action="store_true",
         default=False,
     )
+    parser.add_argument(
+        "--use_LL_openai_deployment",
+        help="Set to True to use the LearnLoop OpenAI instance, otherwise use the UvA's",
+        action="store_true",
+        default=False,
+    )
     return parser.parse_args()
 
 
@@ -1869,7 +1882,10 @@ if __name__ == "__main__":
     # Give the name of the test user when giving one. !! If not using a test username, set to None
     test_username = "Luc Mahieu"
 
-    st.session_state.openai_model = "LLgpt-4o"
+    if args.use_LL_openai_deployment:
+        st.session_state.openai_model = "LLgpt-4o"
+    else:
+        st.session_state.openai_model = "learnloop-4o"
 
     # Bypass authentication when testing so flask app doesnt have to run
     st.session_state.skip_authentication = True
