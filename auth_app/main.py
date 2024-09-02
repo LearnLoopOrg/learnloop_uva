@@ -44,28 +44,7 @@ auth.register(
 )
 
 
-# @app.route("/")
-# def login():
-#     global surf_test_env
-#     if surf_test_env:
-#         scheme = "http"
-#     else:
-#         scheme = "https"
-
-#     redirect_uri = url_for("authorize", _external=True, _scheme=scheme)
-#     return auth.surfconext.authorize_redirect(redirect_uri)
-
-
 @app.route("/")
-def welcome():
-    return """
-    <h1>Welkom bij LearnLoop</h1>
-    <p>Klik op de knop hieronder om in te loggen met SURFconext.</p>
-    <a href="/login"><button>Inloggen met SURFconext</button></a>
-    """
-
-
-@app.route("/login")
 def login():
     global surf_test_env
     if surf_test_env:
@@ -74,6 +53,7 @@ def login():
         scheme = "https"
 
     redirect_uri = url_for("authorize", _external=True, _scheme=scheme)
+
     return auth.surfconext.authorize_redirect(redirect_uri)
 
 
