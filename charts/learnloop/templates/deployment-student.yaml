@@ -19,7 +19,7 @@ spec:
           image: "{{ .Values.image }}/student_app:{{ .Values.tag }}"
           imagePullPolicy: Always
           ports:
-            - containerPort: 8501
+            - containerPort: 80
           env:
           - name: AZURE_OPENAI_ENDPOINT
             value: "{{ .Values.azureOpenaiEndpoint }}"
