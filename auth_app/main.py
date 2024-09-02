@@ -59,6 +59,7 @@ def login():
         scheme = "https"
 
     redirect_uri = url_for("authorize", _external=True, _scheme=scheme)
+
     return auth.surfconext.authorize_redirect(redirect_uri)
 
 
