@@ -14,4 +14,4 @@ ENV PYTHONUNBUFFERED=1
 
 EXPOSE 8502
 
-CMD ["streamlit", "run", "src/main.py"]
+CMD ["streamlit", "run", "src/main.py", "--server.port=8502"]
