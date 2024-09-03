@@ -1731,7 +1731,7 @@ def determine_selected_module():
 def initialise_session_states():
     if "db" not in st.session_state:
         st.session_state.db = db_config.connect_db(
-            use_mongodb=st.session_state.use_mongodb
+            use_LL_cosmosdb=st.session_state.use_LL_cosmosdb
         )
     if "selected_course" not in st.session_state:
         st.session_state.selected_course = None
@@ -1850,6 +1850,12 @@ def get_commandline_arguments() -> argparse.Namespace:
         action="store_true",
         default=False,
     )
+    parser.add_argument(
+        "--use_LL_cosmosdb",
+        help="Set to True to use the LearnLoop CosmosDB instance, otherwise use the UvA's",
+        action="store_true",
+        default=False,
+    )
     return parser.parse_args()
 
 
@@ -1869,8 +1875,11 @@ if __name__ == "__main__":
     reset_user_doc = False
 
     # Your current IP has to be accepted by Gerrit to use CosmosDB (Gerrit controls this)
-    st.session_state.use_mongodb = True
+    st.session_state.use_LL_cosmosdb = args.use_LL_cosmosdb
 
+    print(
+        "LearnLoop CosmosDB is being used"
+    ) if st.session_state.use_LL_cosmosdb else print("UvA CosmosDB is being used")
     st.session_state.use_keyvault = args.use_keyvault
 
     # Use dummy LLM feedback as response to save openai costs and time during testing
@@ -1896,7 +1905,7 @@ if __name__ == "__main__":
     left_col, mid_col, right_col = st.columns([1, 3, 1])
 
     db_dal, db_dal = initialise_data_access_layer()
-    db = db_config.connect_db(st.session_state.use_mongodb)
+    db = db_config.connect_db(st.session_state.use_LL_cosmosdb)
 
     initialise_session_states()
 
