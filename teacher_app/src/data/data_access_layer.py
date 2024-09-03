@@ -364,7 +364,12 @@ class DatabaseAccess:
         """
         Fetches if the module has been generated and checked on quality by teacher.
         """
-        print(st.session_state.selected_module.replace(" ", "_"))
-        return self.db.content.find_one(
-            {"lecture_name": st.session_state.selected_module.replace(" ", "_")}
-        )["status"]
+        module = self.db.content.find_one(
+            {"lecture_name": st.session_state.selected_module}
+        )
+        if module is None:
+            return None
+        else:
+            return self.db.content.find_one(
+                {"lecture_name": st.session_state.selected_module.replace(" ", "_")}
+            )["status"]
