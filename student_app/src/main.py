@@ -1,6 +1,5 @@
 import json
 import argparse
-import json
 import time
 import random
 import streamlit as st
@@ -32,8 +31,6 @@ def connect_to_openai() -> OpenAI:
         print("Using UvA instance of OpenAI GPT-4o")
         AZURE_OPENAI_API_KEY = os.getenv("AZURE_OPENAI_API_KEY")
         AZURE_OPENAI_API_ENDPOINT = os.getenv("AZURE_OPENAI_API_ENDPOINT")
-        print("Azure key: ", AZURE_OPENAI_API_KEY)
-        print("Azure endpoint: ", AZURE_OPENAI_API_ENDPOINT)
     else:
         print("Using LearnLoop Azure instance of OpenAI GPT-4o")
         if st.session_state.use_keyvault:
@@ -734,8 +731,9 @@ def render_warning():
         """,
         unsafe_allow_html=True,
     )
-    st.button("Nee", on_click=reset_progress, use_container_width=True)
     st.button("Ja", use_container_width=True, on_click=set_if_warned_true)
+    st.button("Nee", on_click=reset_progress, use_container_width=True)
+
     st.button(
         "Leer meer over mogelijkheden & limitaties van LLM's",
         on_click=set_info_page_true,
@@ -779,6 +777,7 @@ def add_date_to_progress_counter():
 
 def render_image_if_available():
     segment = st.session_state.segment_content
+
     if segment.get("image"):
         image_handler.render_image(segment, max_height=600)
 
@@ -851,7 +850,7 @@ def render_learning_page():
                     set_submitted_true()
                     st.rerun()
 
-                if st.session_state.warned == True:
+                if st.session_state.warned:
                     render_check_and_nav_buttons()
 
         # Multiple choice question
@@ -1199,10 +1198,8 @@ def render_not_recorded_page():
     """
     Renders the page that shows the student that the lecture is not recorded.
     """
-    lecture_number, lecture_name = st.session_state.selected_module.replace(
-        "_", " "
-    ).split(" ", 1)
-    st.title(f"College {lecture_number} — {lecture_name}")
+    lecture_name = st.session_state.selected_module
+    st.title(f"College — {lecture_name}")
 
     st.subheader("Nog niet opgenomen")
     st.write("Dit college is (nog) niet opgenomen. Hopelijk binnenkort wel! ")

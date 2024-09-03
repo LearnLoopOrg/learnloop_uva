@@ -41,8 +41,8 @@ class LectureInsights:
             unsafe_allow_html=True,
         )
 
-    def render_title(self, module_number, module):
-        st.title(f"Inzichten: College {module_number} — {module}")
+    def render_title(self, module):
+        st.title(f"Inzichten: College {module}")
         st.write(
             "Bekijk de onderstaande analyses van de gemaakte vragen om inzicht te krijgen in de prestaties van je studenten. Je kunt hier per vraag zien: hoevaak deze is beantwoord; wat de gemiddelde score is; wat studenten snapten en waar mogelijke verwarringen liggen. Deze inzichten kun je gebruiken om je lesaanpak te verfijnen."
         )
@@ -178,7 +178,7 @@ class LectureInsights:
         Renders the container that contains the topic title, start button,
         and theory and questions for one topic of the lecture.
         """
-        module_name_underscored = st.session_state.selected_module.replace(" ", "_")
+        module_name_underscored = st.session_state.selected_module
         topics_data = self.get_module_data(module_name_underscored)
 
         for topic_index, topic in enumerate(topics_data):
@@ -630,13 +630,11 @@ class LectureInsights:
         self.set_styling()  # for texts
 
         self.module = st.session_state.selected_module
-        module_number = self.module.split(" ")[0]
-        module = " ".join(self.module.split(" ")[1:])
-        self.render_title(module_number, module)
+        self.render_title(self.module)
         # Spacing
         st.write("\n")
 
-        module = st.session_state.selected_module.replace(" ", "_")
+        module = st.session_state.selected_module
 
         topics = self.db_dal.get_topics_list_from_db(module)
         for topic_index, topic in enumerate(topics):
