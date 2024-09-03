@@ -7,7 +7,7 @@ from data.data_access_layer import DatabaseAccess
 
 class TheoryOverview:
     def __init__(self) -> None:
-        self.db = db_config.connect_db(st.session_state.use_mongodb)
+        self.db = db_config.connect_db(st.session_state.use_LL_cosmosdb)
         self.db_dal = DatabaseAccess()
         self.utils = Utils()
         self.image_handler = ImageHandler()
