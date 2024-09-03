@@ -165,6 +165,9 @@ class DatabaseAccess:
         page_content = self.db.content.find_one({"lecture_name": module})
         return page_content["corrected_lecturepath_topics"]
 
+    def get_lecture(self, lecture_name):
+        return self.db.content.find_one({"lecture_name": lecture_name})
+
     def get_image_path(self, image_file_name):
         return f"src/data/content/images/{image_file_name}"
 
