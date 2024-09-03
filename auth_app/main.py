@@ -147,12 +147,16 @@ def authorize():
     # logging in as a teacher redirect to learnloop.datanose.nl/teacher
     if surf_test_env:
         url = "http://localhost:8502/"
-        # if affilliation == "student":
-        #     url = "http://localhost:8501/"
-        # elif affilliation["user_description"] == "teacher":
-        #     url = "http://localhost:8502/"
+        if userinfo_response["affilliation"] == "student":
+            url = "http://localhost:8501/"
+        elif userinfo_response["afilliation"] == "teacher":
+            url = "http://localhost:8502/"
     else:
         url = "https://learnloop.datanose.nl/"
+        if userinfo_response["affilliation"] == "student":
+            url = "https://learnloop.datanose.nl/"
+        elif userinfo_response["afilliation"] == "teacher":
+            url = "https://learnloop.datanose.nl/"
 
     # redirect_url = f"{url}student?nonce={nonce}"
     redirect_url = f"{url}app?nonce={nonce}"
