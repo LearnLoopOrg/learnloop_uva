@@ -12,8 +12,6 @@ class TheoryOverview:
         self.utils = Utils()
         self.image_handler = ImageHandler()
         self.module_name = st.session_state.selected_module
-        self.module_title = " ".join(self.module_name.split("_")[1:])
-        self.module_number = self.module_name.split("_")[0]
 
     def set_styling(self):
         st.markdown(
@@ -33,9 +31,7 @@ class TheoryOverview:
         )
 
     def render_title(self):
-        st.title(
-            f"Theorie overzicht: College {self.module_number} — {self.module_title}"
-        )
+        st.title(f"Theorie overzicht: {self.module_name}")
         st.write("\n")
 
     def render_theory_for_segments(_self, segment_indices: list[int]):

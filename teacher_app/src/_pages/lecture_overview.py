@@ -47,13 +47,14 @@ class LectureOverview:
                 st.session_state.selected_module = lecture.title.replace("_", " ")
 
                 module_status = self.db_dal.fetch_module_status()
+
                 if module_status is None:
                     module_status = "not_recorded"
 
                 match module_status:
                     case "corrected":
                         st.button(
-                            "Inzichten bekijken",
+                            "📊 Inzichten bekijken",
                             key=lecture.title,
                             on_click=self.go_to_lecture,
                             args=(lecture.title.replace("_", " "),),
@@ -61,7 +62,7 @@ class LectureOverview:
                         )
                     case "generated":
                         st.button(
-                            "Kwaliteitscontrole",
+                            "✔️ Kwaliteitscheck",
                             key=lecture.title,
                             on_click=self.go_to_lecture,
                             args=(lecture.title.replace("_", " "),),
@@ -70,7 +71,7 @@ class LectureOverview:
                     case "not_recorded":
                         st.button(
                             # "Genereren leermateriaal",
-                            "Nog niet beschikbaar",
+                            "⏳ Nog niet beschikbaar",
                             key=lecture.title,
                             on_click=self.go_to_lecture,
                             args=(lecture.title.replace("_", " "),),
