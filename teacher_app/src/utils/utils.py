@@ -39,7 +39,7 @@ class Utils:
         which indicates if a lecture is recorded, generated or corrected.
         """
         if st.session_state.db.content.find_one(
-            {"lecture_name": st.session_state.selected_module.replace(" ", "_")}
+            {"lecture_name": st.session_state.selected_module}
         ):
             status = self.db_dal.fetch_module_status()
 
@@ -274,8 +274,9 @@ class ImageHandler:
 
             st.image(image)
         except Exception as e:
-            st.error("No image found for this segment.")
-            print(e)
+            # st.error("No image found for this segment.")
+            print(f"No image found; error message: {e}")
+            pass
 
 
 class AzureUtils:

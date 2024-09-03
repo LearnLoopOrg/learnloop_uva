@@ -74,11 +74,15 @@ class ImageHandler:
 
     def render_image(self, segment, max_height=None):
         self.get_image_url(segment)
-        image = self.download_image_from_blob_storage()
-        if max_height:
-            image = self.resize_image_to_max_height(image, max_height)
+        try:
+            image = self.download_image_from_blob_storage()
+            if max_height:
+                image = self.resize_image_to_max_height(image, max_height)
 
-        st.image(image)
+            st.image(image)
+        # Afbeelding niet gevonden
+        except Exception:
+            pass
 
 
 class AzureUtils:
