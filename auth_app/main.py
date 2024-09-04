@@ -2,20 +2,16 @@ from authlib.integrations.flask_client import OAuth
 from flask import Flask, url_for, redirect
 from dotenv import load_dotenv
 import os
-from pymongo import MongoClient
-import certifi
+import argparse
 import string
 import random
 import db_config
 
 load_dotenv()
 
+
 # --------------------------------------------
 # SETTINGS for DEVELOPMENT and DEPLOYMENT
-
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# SET ALL TO FALSE WHEN DEPLOYING
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 # Test before deployment by runing in docker with the following commands:
 # docker build -t flask-app .
@@ -23,11 +19,28 @@ load_dotenv()
 
 # Don't forget to re-build the image again after changing the code.
 
-use_mongodb = False
-surf_test_env = False
+parser = argparse.ArgumentParser(description="Flask App Configuration")
+
+parser.add_argument(
+    "--surf_test_env",
+    action="store_true",
+    help="Enable Surf Test Environment",
+    default=False,
+)
+parser.add_argument(
+    "--use_LL_cosmosdb",
+    action="store_true",
+    help="Use LearnLoop instance of CosmosDB, otherwise use the UvA's",
+    default=False,
+)
+
+args = parser.parse_args()
+
+use_LL_cosmosdb = args.use_LL_cosmosdb
+surf_test_env = args.surf_test_env
 # --------------------------------------------
 
-db = db_config.connect_db(use_mongodb)
+db = db_config.connect_db(use_LL_cosmosdb)
 
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET")
