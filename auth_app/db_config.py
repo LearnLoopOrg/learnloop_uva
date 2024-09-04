@@ -6,16 +6,16 @@ import certifi
 load_dotenv()
 
 
-def connect_db(use_mongodb):
+def connect_db(use_LL_cosmosdb):
     """
     Connect to either MongoDB or CosmosDB and ping to check connection.
     """
-    if not use_mongodb:
-        COSMOS_URI = os.getenv("COSMOS_URI")
-        db_client = MongoClient(COSMOS_URI, tlsCAFile=certifi.where())
+    if use_LL_cosmosdb:
+        COSMOS_URI = os.getenv("LL_COSMOS_URI")
     else:
-        MONGO_URI = os.getenv("MONGO_URI")
-        db_client = MongoClient(MONGO_URI, tlsCAFile=certifi.where())
+        COSMOS_URI = os.getenv("COSMOS_URI")
+
+    db_client = MongoClient(COSMOS_URI, tlsCAFile=certifi.where())
 
     db = db_client.UvA_KNP
 

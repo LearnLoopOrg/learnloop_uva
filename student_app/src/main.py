@@ -29,24 +29,24 @@ load_dotenv()
 def connect_to_openai() -> OpenAI:
     if st.session_state.openai_model == "learnloop-4o":
         print("Using UvA instance of OpenAI GPT-4o")
-        AZURE_OPENAI_API_KEY = os.getenv("AZURE_OPENAI_API_KEY")
-        AZURE_OPENAI_API_ENDPOINT = os.getenv("AZURE_OPENAI_API_ENDPOINT")
+        OPENAI_API_KEY = os.getenv("UVA_OPENAI_API_KEY")
+        OPENAI_API_ENDPOINT = os.getenv("UVA_OPENAI_API_ENDPOINT")
     else:
         print("Using LearnLoop Azure instance of OpenAI GPT-4o")
         if st.session_state.use_keyvault:
-            AZURE_OPENAI_API_KEY = AzureUtils.get_secret(
+            OPENAI_API_KEY = AzureUtils.get_secret(
                 "LL-AZURE-OPENAI-API-KEY", "lluniappkv"
             )
-            AZURE_OPENAI_API_ENDPOINT = AzureUtils.get_secret(
+            OPENAI_API_ENDPOINT = AzureUtils.get_secret(
                 "LL-AZURE-OPENAI-API-ENDPOINT", "lluniappkv"
             )
         else:
-            AZURE_OPENAI_API_KEY = os.getenv("LL_AZURE_OPENAI_API_KEY")
-            AZURE_OPENAI_API_ENDPOINT = os.getenv("LL_AZURE_OPENAI_API_ENDPOINT")
+            OPENAI_API_KEY = os.getenv("LL_AZURE_OPENAI_API_KEY")
+            OPENAI_API_ENDPOINT = os.getenv("LL_AZURE_OPENAI_API_ENDPOINT")
     return AzureOpenAI(
-        api_key=AZURE_OPENAI_API_KEY,
+        api_key=OPENAI_API_KEY,
         api_version="2024-04-01-preview",
-        azure_endpoint=AZURE_OPENAI_API_ENDPOINT,
+        azure_endpoint=OPENAI_API_ENDPOINT,
     )
 
 
@@ -1731,7 +1731,7 @@ def determine_selected_module():
 def initialise_session_states():
     if "db" not in st.session_state:
         st.session_state.db = db_config.connect_db(
-            use_mongodb=st.session_state.use_mongodb
+            use_LL_cosmosdb=st.session_state.use_LL_cosmosdb
         )
     if "selected_course" not in st.session_state:
         st.session_state.selected_course = None
@@ -1850,6 +1850,12 @@ def get_commandline_arguments() -> argparse.Namespace:
         action="store_true",
         default=False,
     )
+    parser.add_argument(
+        "--use_LL_cosmosdb",
+        help="Set to True to use the LearnLoop CosmosDB instance, otherwise use the UvA's",
+        action="store_true",
+        default=False,
+    )
     return parser.parse_args()
 
 
@@ -1869,13 +1875,17 @@ if __name__ == "__main__":
     reset_user_doc = False
 
     # Your current IP has to be accepted by Gerrit to use CosmosDB (Gerrit controls this)
-    st.session_state.use_mongodb = True
+    st.session_state.use_LL_cosmosdb = args.use_LL_cosmosdb
+
+    if st.session_state.use_LL_cosmosdb:
+        print("LearnLoop CosmosDB is being used")
+    else:
+        print("UvA CosmosDB is being used")
 
     st.session_state.use_keyvault = args.use_keyvault
 
     # Use dummy LLM feedback as response to save openai costs and time during testing
     use_dummy_openai_calls = False
-
     # Give the name of the test user when giving one. !! If not using a test username, set to None
     test_username = "Luc Mahieu"
 
@@ -1886,7 +1896,6 @@ if __name__ == "__main__":
 
     # Bypass authentication when testing so flask app doesnt have to run
     st.session_state.skip_authentication = True
-
     no_login_page = True
     # ---------------------------------------------------------
 
@@ -1895,10 +1904,9 @@ if __name__ == "__main__":
     left_col, mid_col, right_col = st.columns([1, 3, 1])
 
     db_dal, db_dal = initialise_data_access_layer()
-    db = db_config.connect_db(st.session_state.use_mongodb)
+    db = db_config.connect_db(st.session_state.use_LL_cosmosdb)
 
     initialise_session_states()
-
     image_handler = initialise_image_handler()
     utils = Utils()
 

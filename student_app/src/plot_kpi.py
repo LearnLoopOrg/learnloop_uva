@@ -8,7 +8,6 @@ import streamlit as st
 class PlotUsage:
     def __init__(self) -> None:
         st.session_state.modules = []
-        st.session_state.use_mongodb = True
         self.db_dal = DatabaseAccess()
 
     def extract_question_dates(self, progress_counter, start_date, end_date):
