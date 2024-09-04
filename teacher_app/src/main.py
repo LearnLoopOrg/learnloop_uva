@@ -11,6 +11,7 @@ from _pages.lecture_quality_check import QualityCheck
 from _pages.record_lecture import Recorder
 from _pages.login import Login
 import os
+import argparse
 
 # Must be called first
 st.set_page_config(page_title="LearnLoop", layout="wide")
@@ -19,32 +20,32 @@ load_dotenv()
 
 
 class Controller:
-    def __init__(_self):
+    def __init__(_self, args):
         _self.initialise_session_states()
 
-        # DEMO: Use Azure KeyVault
-        st.session_state.use_keyvault = False
-
-        # Get keys from the keyvault
-        if st.session_state.use_keyvault:
-            LL_AZURE_OPENAI_API_KEY = AzureUtils.get_secret(
-                "LL-AZURE-OPENAI-API-KEY", "lluniappkv"
-            )
-            LL_AZURE_OPENAI_API_ENDPOINT = AzureUtils.get_secret(
-                "LL-AZURE-OPENAI-API-ENDPOINT", "lluniappkv"
-            )
-            MONGO_URI = AzureUtils.get_secret("MONGO-URI", "lluniappkv")
+        if args.use_LL_cosmosdb:
+            COSMOS_URI = os.getenv("LL_COSMOS_URI")
         else:
-            LL_AZURE_OPENAI_API_KEY = os.getenv("LL_AZURE_OPENAI_API_KEY")
-            LL_AZURE_OPENAI_API_ENDPOINT = os.getenv("LL_AZURE_OPENAI_API_ENDPOINT")
-            MONGO_URI = os.getenv("MONGO_URI")
+            COSMOS_URI = os.getenv("COSMOS_URI")
+
+        if args.use_LL_openai_deployment:
+            print("Using LearnLoop OpenAI deployment")
+            OPENAI_API_KEY = os.getenv("LL_OPENAI_API_KEY")
+            OPENAI_API_ENDPOINT = os.getenv("LL_OPENAI_API_ENDPOINT")
+            st.session_state.openai_model = "LLgpt-4o"
+        else:
+            print("Using UvA OpenAI deployment")
+            OPENAI_API_KEY = os.getenv("UVA_OPENAI_API_KEY")
+            OPENAI_API_ENDPOINT = os.getenv("UVA_OPENAI_API_ENDPOINT")
+            st.session_state.openai_model = "learnloop-4o"
 
         st.session_state.openai_client = connect_to_openai(
-            LL_AZURE_OPENAI_API_KEY, LL_AZURE_OPENAI_API_ENDPOINT, llm_model="LLgpt-4o"
+            OPENAI_API_KEY,
+            OPENAI_API_ENDPOINT,  # , llm_model=st.session_state.openai_model
         )
 
         st.session_state.use_mongodb = True
-        st.session_state.db = db_config.connect_db(MONGO_URI)
+        st.session_state.db = db_config.connect_db(COSMOS_URI)
 
         _self.debug = True if os.getenv("DEBUG") == "True" else False
 
@@ -61,7 +62,6 @@ class Controller:
         # Fetch were user left off
         st.session_state.selected_module = _self.db_dal.fetch_last_module()
         # st.session_state.selected_phase = _self.db_dal.fetch_last_phase()
-        # print(f"Selected phase: {st.session_state.selected_phase}")
 
         # Pages
         _self.lectures_page = LectureOverview()
@@ -140,20 +140,6 @@ class Controller:
                 args=("courses",),
                 use_container_width=True,
             )
-            # st.button(
-            #     "⚙️ Instellingen",
-            #     on_click=self.set_selected_phase,
-            #     args=("courses",),
-            #     use_container_width=True,
-            # )
-            # st.button(
-            #     "💬 Ondersteuning",
-            #     on_click=self.set_selected_phase,
-            #     args=("courses",),
-            #     use_container_width=True,
-            # )
-
-            # st.subheader("👤 Remko Offringa")
 
     def set_selected_phase(self, phase):
         print(f"Setting phase: {phase}")
@@ -179,9 +165,35 @@ class Controller:
         return st.query_params.get("nonce", None)
 
 
+def get_commandline_arguments() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        "--use_keyvault",
+        help="Set to True to use Azure Key Vault for secrets",
+        action="store_true",
+        default=False,
+    )
+    parser.add_argument(
+        "--use_LL_openai_deployment",
+        help="Set to True to use the LearnLoop OpenAI instance, otherwise use the UvA's",
+        action="store_true",
+        default=False,
+    )
+    parser.add_argument(
+        "--use_LL_cosmosdb",
+        help="Set to True to use the LearnLoop CosmosDB instance, otherwise use the UvA's",
+        action="store_true",
+        default=False,
+    )
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
+    args = get_commandline_arguments()
+
     if "controller" not in st.session_state:
-        st.session_state.controller = Controller()
+        st.session_state.controller = Controller(args)
 
     controller = st.session_state.controller
     # Directly after logging in via SURF, the nonce is fetched from the query parameters
