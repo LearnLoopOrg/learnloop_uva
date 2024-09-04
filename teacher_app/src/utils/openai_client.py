@@ -11,10 +11,10 @@ load_dotenv()
 def connect_to_openai(
     OpenAI_API_key,
     OpenAI_API_endpoint,
-    llm_model: Literal["LLgpt-4o", "azure_gpt-4", "azure_gpt-4_turbo"] = "gpt-4o",
+    # llm_model: Literal[
+    #     "LLgpt-4o", "azure_gpt-4", "azure_gpt-4_turbo", "learnloop-4o"
+    # ] = "gpt-4o",
 ):
-    st.session_state.openai_model = "LLgpt-4o"
-
     return AzureOpenAI(
         api_key=OpenAI_API_key,
         api_version="2024-04-01-preview",
