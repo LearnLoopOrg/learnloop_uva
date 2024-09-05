@@ -68,7 +68,7 @@ class TheoryOverview:
                     if answer := segment.get("answer"):
                         st.write(f"_{answer}_")
                     elif mc_answers := segment.get("answers"):
-                        st.write(f"_{mc_answers['correct_answer']}._")
+                        st.write(f"_{mc_answers['correct_answer']}_")
 
     def run(self):
         """

@@ -1244,17 +1244,6 @@ def render_generated_page():
         use_container_width=True,
     )
 
-    # st.session_state.mail_to_teacher = f"""Beste docent, \n\n Ik zou heel graag het college willen oefenen. Zou u de oefenmaterialen voor het college {" ".join(st.session_state.selected_module.replace(" ", "_").split("_")[1:])} willen controleren? \n\n Alvast heel erg bedankt!"""
-
-    # st.text_area(
-    #     "Mailtje aan docent",
-    #     key="mail_to_teacher",
-    #     height=150,
-    #     label_visibility="hidden",
-    # )
-
-    # st.button("Stuur mailtje", on_click=send_mail_to_teacher, use_container_width=True)
-
 
 def render_LLM_info_page():
     """
@@ -1264,12 +1253,6 @@ def render_LLM_info_page():
         info_page = f.read()
     with mid_col:
         st.markdown(info_page, unsafe_allow_html=True)
-    return
-
-
-def send_mail_to_teacher():
-    # Dummy function to send mail to teacher
-    st.success("Het mailtje is verstuurd!")
     return
 
 
@@ -1381,58 +1364,6 @@ def render_sidebar():
     """
     Function to render the sidebar with the modules and login module.
     """
-    # st.session_state.courses = db_dal.fetch_courses()
-    # st.session_state.lectures = db_dal.fetch_lectures()
-
-    # flat_list = []
-
-    # def flatten_items(items, parent_label=None):
-    #     """
-    #     Adds the paths of the menu items to a list, so that the selected phase can be determined
-    #     by the index of the selected item.
-    #     """
-    #     for item in items:
-    #         current_label = f"{parent_label}/{item.label}" if parent_label else item.label
-    #         flat_list.append(current_label)
-    #         if item.children:
-    #             flatten_items(item.children, current_label)
-
-    # def flatten_items(menu, path=None):
-    #     if path is None:
-    #         path = []
-    #     flat_list = []
-    #     for item in menu:
-    #         current_path = path + [item.label]
-    #         flat_list.append(tuple(current_path))
-    #         if item.children:
-    #             flat_list.extend(flatten_items(item.children, current_path))
-    #     return flat_list
-
-    # # Build the menu items structure
-    # menu_items = [
-    #     sac.MenuItem('Courses', icon='box-fill', children=[
-    #         sac.MenuItem(course[0], icon='book', children=[
-    #             sac.MenuItem(lecture[0], icon='book', children=[
-    #                 sac.MenuItem('learning', icon='book'),
-    #                 sac.MenuItem('practice', icon='book')
-    #             ]) for lecture in st.session_state.lectures
-    #         ]) for course in st.session_state.courses
-    #     ]),
-    #     sac.MenuItem('log_out', icon='box')
-    # ]
-
-    # flat_list = flatten_items(menu_items)
-
-    # with st.sidebar:
-    #     selected_index = sac.menu(menu_items, return_index=True, open_all=False)
-    #     print(selected_index)
-
-    # print(flat_list[selected_index])
-
-    # # if flat_list[selected_index] == 'Courses':
-    # #     st.session_state.selected_course = flat_list[selected_index][1]
-    # #     st.session_state.selected_module = flat_list[selected_index][2]
-    # #     st.session_state.selected_phase = flat_list[selected_index][-1]
 
     with st.sidebar:
         st.image(
@@ -1473,62 +1404,6 @@ def render_sidebar():
             use_container_width=True,
             key="info_button_sidebar",
         )
-        # st.button(
-        #     "⚙️ Instellingen",
-        #     on_click=set_selected_phase,
-        #     args=("courses",),
-        #     use_container_width=True,
-        # )
-        # st.button(
-        #     "💬 Ondersteuning",
-        #     on_click=set_selected_phase,
-        #     args=("courses",),
-        #     use_container_width=True,
-        # )
-        # st.title("Vakken")
-        # st.button(
-        #     "Vakkenoverzicht",
-        #     on_click=set_selected_phase,
-        #     args=("courses",),
-        #     use_container_width=True,
-        # )
-
-        # st.title("Colleges")
-
-        # practice_exam_count = 0
-        # # Display the modules in expanders in the sidebar
-        # for i, module in enumerate(st.session_state.modules):
-        #     # If the module is not a Oefententamen, then skip it
-        #     if not module.startswith(st.session_state.practice_exam_name.split(" ")[0]):
-        #         zero_width_space = "\u200b"
-        #         with st.expander(
-        #             f"{i + 1}.{zero_width_space} "
-        #             + " ".join(module.replace("_", " ").split(" ")[1:])
-        #         ):
-        #             # Display buttons for the two types of phases per module
-        #             render_page_button("📖 Leren", module, phase="topics")
-        #             render_page_button("🔄 Herhalen", module, phase="practice")
-        #             render_page_button(
-        #                 "📚 Overzicht theorie", module, phase="theory-overview"
-        #             )
-
-        #     elif module.startswith(st.session_state.practice_exam_name.split(" ")[0]):
-        #         practice_exam_count += 1
-
-        # --------------------------------------------------------------
-        # DO NOT DELETE! This is the code for the practice exams
-        # --------------------------------------------------------------
-        # st.title(st.session_state.practice_exam_name)
-
-        # # Render the practice exam buttons
-        # for i in range(practice_exam_count):
-        #     practice_exam_name = st.session_state.practice_exam_name
-        #     # render_page_button(f'{practice_exam_name} {i + 1} ✍🏽', f'{practice_exam_name} {i + 1}', 'learning')
-        #     render_page_button(
-        #         f"{practice_exam_name} ✍🏽", f"{practice_exam_name}", "learning"
-        #     )
-
-        # --------------------------------------------------------------
 
 
 def initialise_database():
