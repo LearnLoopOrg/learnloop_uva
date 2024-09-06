@@ -269,9 +269,11 @@ class DatabaseAccess:
             {"username": st.session_state.username},
             {
                 "$set": {
-                    f"progress.{module}.learning.progress_counter.{str(st.session_state.segment_index)}": new_progress_count
+                    f"progress.{module}": {"learning": {"progress_counter": {}}},
+                    f"progress.{module}.learning.progress_counter.{str(st.session_state.segment_index)}": new_progress_count,
                 }
             },
+            upsert=True,
         )
 
     def add_progress_counter(self, module, empty_dict):

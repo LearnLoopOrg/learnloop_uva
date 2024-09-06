@@ -758,7 +758,7 @@ def add_date_to_progress_counter():
     """
     Counts how many times a person answered the current question and updates database.
     """
-    module = st.session_state.selected_module.replace("_", " ")
+    module = st.session_state.selected_module
     user_doc = db_dal.find_user_doc()
 
     progress_counter = db_dal.get_progress_counter(module, user_doc)
