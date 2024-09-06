@@ -6,6 +6,7 @@ import argparse
 import string
 import random
 import db_config
+import requests
 
 load_dotenv()
 
@@ -84,27 +85,15 @@ def generate_nonce(length=16):
     return nonce
 
 
-def save_nonce_to_db(user_id):
+def save_nonce_to_db(user_id, nonce):
     global db
-    nonce = generate_nonce(16)
     db.users.update_one({"username": user_id}, {"$set": {"nonce": nonce}})
     return nonce
 
 
-def get_info(user_id):
-    def fetch_info_from_UVA(user_id):
-        # TODO: make call to UVA API
-        return {
-            "user_description": "student",
-            "courses": ["course1", "course2", "course3"],
-        }
-
-    info = fetch_info_from_UVA(user_id)
-    return info
-
-
 def save_info_and_nonce(user_id, info, nonce):
     global db
+    print(f"Saving nonce {nonce} for user {user_id}")
     db.users.update_one(
         {"username": user_id},
         {
@@ -117,20 +106,38 @@ def save_info_and_nonce(user_id, info, nonce):
     )
 
 
+def save_user_info_to_db(user_id, user_info):
+    global db
+    user_info = user_info.json()
+    db.users.update_one(
+        {"username": user_id},
+        {
+            "$set": {
+                "userinfo": user_info,
+            }
+        },
+    )
+    return
+
+
 @app.route("/auth")
 def authorize():
     global surf_test_env
     token = auth.surfconext.authorize_access_token()
 
+    userinfo_endpoint = auth.surfconext.server_metadata.get("userinfo_endpoint")
+
+    headers = {"Authorization": f'Bearer {token["access_token"]}'}
+    userinfo = requests.get(userinfo_endpoint, headers=headers)
+
+    print(f"Userinfo Response: {userinfo.json()}")
+
     user_id = token["userinfo"]["sub"]
+    nonce = token["userinfo"]["nonce"]
+
     save_id_to_db(user_id)
-
-    nonce = generate_nonce(16)
-    info = get_info(user_id)
-
-    save_info_and_nonce(user_id, info, nonce)
-
-    # nonce = save_nonce_to_db(user_id)
+    save_nonce_to_db(user_id, nonce)
+    save_user_info_to_db(user_id, userinfo)
 
     # Redirect to streamlit app
     # TODO: when logging in as a student, redirect to learnloop.datanose.nl/student and when

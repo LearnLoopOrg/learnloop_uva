@@ -29,8 +29,8 @@ load_dotenv()
 def connect_to_openai() -> OpenAI:
     if st.session_state.openai_model == "learnloop-4o":
         print("Using UvA instance of OpenAI GPT-4o")
-        OPENAI_API_KEY = os.getenv("UVA_OPENAI_API_KEY")
-        OPENAI_API_ENDPOINT = os.getenv("UVA_OPENAI_API_ENDPOINT")
+        OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+        OPENAI_API_ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT")
     else:
         print("Using LearnLoop Azure instance of OpenAI GPT-4o")
         if st.session_state.use_keyvault:
@@ -417,7 +417,7 @@ def render_check_and_nav_buttons():
 def render_info():
     """Renders the info segment with title and text."""
     # if the image directory is present in the JSON for this segment, then display the image
-    render_image_if_available()
+    # render_image_if_available()
 
     segment = st.session_state.segment_content
     st.subheader(segment["title"])
@@ -775,11 +775,11 @@ def add_date_to_progress_counter():
     db_dal.update_progress_counter_for_segment(module, segment_progress_count)
 
 
-def render_image_if_available():
-    segment = st.session_state.segment_content
+# def render_image_if_available():
+#     segment = st.session_state.segment_content
 
-    if segment.get("image"):
-        image_handler.render_image(segment, max_height=600)
+#     if segment.get("image"):
+#         image_handler.render_image(segment, max_height=600)
 
 
 def render_learning_page():
@@ -815,7 +815,7 @@ def render_learning_page():
         ):
             if st.session_state.submitted:
                 # Render image if present in the feedback
-                render_image_if_available()
+                # render_image_if_available()
 
                 render_question()
 
@@ -836,7 +836,7 @@ def render_learning_page():
                 render_explanation()
                 render_navigation_buttons()
             else:
-                render_image_if_available()
+                # render_image_if_available()
 
                 render_question()
 
@@ -1083,7 +1083,7 @@ def render_practice_page():
             and "answer" in st.session_state.segment_content
         ):
             # Render image if present in the feedback
-            render_image_if_available()
+            # render_image_if_available()
 
             render_question()
             if st.session_state.submitted:
@@ -1225,11 +1225,7 @@ def render_generated_page():
     """
     Renders the page that shows the student that the lecture is not recorded.
     """
-    lecture_number, lecture_name = st.session_state.selected_module.replace(
-        "_", " "
-    ).split(" ", 1)
-
-    st.title(f"College {lecture_number} — {lecture_name}")
+    st.title(f"College — {st.session_state.selected_module}")
     utils.add_spacing(1)
     st.subheader("Nog niet nagekeken door docent")
     st.write(
@@ -1569,7 +1565,7 @@ def render_login_page():
     prompts the user to login via SURFconext."""
     columns = st.columns([1, 0.9, 1])
     with columns[1]:
-        welcome_title = "Neuroanatomie- en fysiologie - deel 2"
+        welcome_title = "Klinische Neuropsychologie"
         logo_base64 = convert_image_base64("src/data/content/images/logo.png")
 
         if surf_test_env:
@@ -1580,7 +1576,7 @@ def render_login_page():
         html_content = f"""
         <div style='text-align: center; margin: 20px;'>
             <img src='data:image/png;base64,{logo_base64}' alt='Logo' style='max-width: 25%; height: auto; margin-bottom: 40px'>
-            <h1 style='color: #333; margin-bottom: 20px'>{welcome_title}</h1>
+            <h2 style='color: #333; margin-bottom: 20px'; text-align:center>{welcome_title}</h2>
             <a href={href} target="_self" style="text-decoration: none;">
                 <button style='font-size:20px; border: none; color: white; padding: 10px 20px; \
                 text-align: center; text-decoration: none; display: block; width: 100%; margin: \
@@ -1688,9 +1684,9 @@ def fetch_nonce_from_query():
     return st.query_params.get("nonce", None)
 
 
-@st.cache_resource(ttl=timedelta(hours=4))
-def initialise_image_handler():
-    return ImageHandler()
+# @st.cache_resource(ttl=timedelta(hours=4))
+# def initialise_image_handler():
+#     return ImageHandler()
 
 
 def determine_username_from_nonce():
@@ -1700,6 +1696,7 @@ def determine_username_from_nonce():
     st.session_state.nonce = (
         fetch_nonce_from_query()
     )  # ? Why save nonce in session state? Pass a param?
+
     db_dal.fetch_info()
 
 
@@ -1762,7 +1759,8 @@ if __name__ == "__main__":
     # Use dummy LLM feedback as response to save openai costs and time during testing
     use_dummy_openai_calls = False
     # Give the name of the test user when giving one. !! If not using a test username, set to None
-    test_username = "Luc Mahieu"
+    # test_username = "Luc Mahieu"
+    test_username = None
 
     if args.use_LL_openai_deployment:
         st.session_state.openai_model = "LLgpt-4o"
@@ -1770,8 +1768,8 @@ if __name__ == "__main__":
         st.session_state.openai_model = "learnloop-4o"
 
     # Bypass authentication when testing so flask app doesnt have to run
-    st.session_state.skip_authentication = True
-    no_login_page = True
+    # st.session_state.skip_authentication = True
+    no_login_page = False
     # ---------------------------------------------------------
 
     # Create a mid column with margins in which everything one a
@@ -1782,7 +1780,7 @@ if __name__ == "__main__":
     db = db_config.connect_db(st.session_state.use_LL_cosmosdb)
 
     initialise_session_states()
-    image_handler = initialise_image_handler()
+    # image_handler = initialise_image_handler()
     utils = Utils()
 
     st.session_state.openai_client = connect_to_openai()
@@ -1798,6 +1796,7 @@ if __name__ == "__main__":
     if test_username:
         st.session_state.username = test_username
 
+    print(f"Username: {st.session_state.username}")
     # Login page renders if only if the user is not logged in
     if (
         no_login_page is False
