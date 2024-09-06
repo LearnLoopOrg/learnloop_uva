@@ -19,9 +19,14 @@ class QualityCheck:
     def run(self):
         self.db_dal.update_last_phase("quality_check")
         self.display_header()
-        module_name = st.session_state.selected_module.replace(" ", "_")
-        data_module = self.db_dal.fetch_original_module_content(module_name)
-        data_module_topics = self.db_dal.fetch_original_module_topics(module_name)
+        print("Selected module: ", st.session_state.selected_module)
+
+        data_module = self.db_dal.fetch_original_module_content(
+            st.session_state.selected_module
+        )
+        data_module_topics = self.db_dal.fetch_original_module_topics(
+            st.session_state.selected_module
+        )
         segments, topics = data_module["segments"], data_module_topics["topics"]
         self.initialize_session_state(segments, topics)
         self.display_sidebar_page_navigation(topics)
@@ -52,10 +57,7 @@ class QualityCheck:
                 st.html("</div>")
 
     def display_header(self):
-        lecture_number, lecture_name = st.session_state.selected_module.replace(
-            "_", " "
-        ).split(" ", 1)
-        st.title(f"Kwaliteitscheck: College {lecture_number} — {lecture_name}")
+        st.title(f"Kwaliteitscheck: {st.session_state.selected_module}")
         st.write(
             "Controleer de onderstaande gegenereerde oefenmaterialen om er zeker van te zijn dat studenten het juiste leren. "
             "Pas de afbeelding, theorie, vraag of het antwoord aan, of verwijder deze indien nodig. "
@@ -257,16 +259,14 @@ class QualityCheck:
             "Opslaan",
             use_container_width=True,
             on_click=self.go_to_lecture,
-            args=(
-                st.session_state.selected_module.replace(" ", "_").replace("_", " "),
-            ),
+            args=(st.session_state.selected_module,),
         )
 
     def go_to_lecture(self, lecture_title):
         """
         Sets the selected page and lecture to the one that the student clicked on.
         """
-        module_db_name = st.session_state.selected_module.replace(" ", "_")
+        module_db_name = st.session_state.selected_module
         segments_list_with_delete = self.utils.preprocessed_segments(module_db_name)
         self.module_repository.save_correction(
             module=module_db_name, segments_list=segments_list_with_delete

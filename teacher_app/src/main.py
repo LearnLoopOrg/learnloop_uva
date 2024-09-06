@@ -108,7 +108,7 @@ class Controller:
             st.image(
                 "src/data/images/logo.png",
                 use_column_width=False,
-                width=250,
+                width=200,
             )
 
             st.markdown(
@@ -132,18 +132,18 @@ class Controller:
                 args=("courses",),
                 use_container_width=True,
             )
-            st.button(
-                "⚙️ Instellingen",
-                on_click=self.set_selected_phase,
-                args=("courses",),
-                use_container_width=True,
-            )
-            st.button(
-                "💬 Ondersteuning",
-                on_click=self.set_selected_phase,
-                args=("courses",),
-                use_container_width=True,
-            )
+            # st.button(
+            #     "⚙️ Instellingen",
+            #     on_click=self.set_selected_phase,
+            #     args=("courses",),
+            #     use_container_width=True,
+            # )
+            # st.button(
+            #     "💬 Ondersteuning",
+            #     on_click=self.set_selected_phase,
+            #     args=("courses",),
+            #     use_container_width=True,
+            # )
 
             # st.subheader("👤 Remko Offringa")
 

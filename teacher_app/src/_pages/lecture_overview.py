@@ -44,7 +44,7 @@ class LectureOverview:
             # Render the button to view the lecture
             with cols[1]:
                 st.write("\n\n")
-                st.session_state.selected_module = lecture.title.replace("_", " ")
+                st.session_state.selected_module = lecture.title
 
                 module_status = self.db_dal.fetch_module_status()
 
@@ -57,7 +57,7 @@ class LectureOverview:
                             "📊 Inzichten bekijken",
                             key=lecture.title,
                             on_click=self.go_to_lecture,
-                            args=(lecture.title.replace("_", " "),),
+                            args=(lecture.title,),
                             use_container_width=True,
                         )
                     case "generated":
@@ -65,7 +65,7 @@ class LectureOverview:
                             "✔️ Kwaliteitscheck",
                             key=lecture.title,
                             on_click=self.go_to_lecture,
-                            args=(lecture.title.replace("_", " "),),
+                            args=(lecture.title,),
                             use_container_width=True,
                         )
                     case "not_recorded":
@@ -74,7 +74,7 @@ class LectureOverview:
                             "⏳ Nog niet beschikbaar",
                             key=lecture.title,
                             on_click=self.go_to_lecture,
-                            args=(lecture.title.replace("_", " "),),
+                            args=(lecture.title,),
                             use_container_width=True,
                         )
 

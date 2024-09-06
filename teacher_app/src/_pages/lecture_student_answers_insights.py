@@ -176,8 +176,7 @@ class LectureInsights:
         Renders the container that contains the topic title, start button,
         and theory and questions for one topic of the lecture.
         """
-        module_name_underscored = st.session_state.selected_module.replace(" ", "_")
-        topics_data = self.get_module_data(module_name_underscored)
+        topics_data = self.get_module_data(st.session_state.selected_module)
 
         for topic_index, topic in enumerate(topics_data):
             container = st.container(border=True)
@@ -185,7 +184,9 @@ class LectureInsights:
 
             with cols[1]:
                 # Check if user made all segments in topic
-                if self.is_topic_completed(topic_index, module_name_underscored):
+                if self.is_topic_completed(
+                    topic_index, st.session_state.selected_module
+                ):
                     topic_status = "✅"
                 else:
                     topic_status = "⬜"
@@ -279,13 +280,12 @@ class LectureInsights:
 
     # @st.cache_data(ttl=timedelta(hours=4), show_spinner=False)
     def get_question_stats(_self, module, question_index, question_content):
-        mongo_module = module.replace("_", " ")
-        results = _self.db_dal.fetch_question(mongo_module, question_index)
+        results = _self.db_dal.fetch_question(module, question_index)
 
         if "answers" in question_content:
-            return _self.get_mc_question_stats(mongo_module, question_index, results)
+            return _self.get_mc_question_stats(module, question_index, results)
         elif "answer" in question_content:
-            return _self.get_open_question_stats(mongo_module, question_index, results)
+            return _self.get_open_question_stats(module, question_index, results)
         else:
             raise ValueError("Invalid question type")
 
@@ -634,7 +634,7 @@ class LectureInsights:
         # Spacing
         st.write("\n")
 
-        module = st.session_state.selected_module.replace(" ", "_")
+        module = st.session_state.selected_module
 
         topics = self.db_dal.get_topics_list_from_db(module)
         for topic_index, topic in enumerate(topics):

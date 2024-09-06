@@ -751,7 +751,7 @@ def add_date_to_progress_counter():
     """
     Counts how many times a person answered the current question and updates database.
     """
-    module = st.session_state.selected_module.replace("_", " ")
+    module = st.session_state.selected_module
     user_doc = db_dal.find_user_doc()
 
     progress_counter = db_dal.get_progress_counter(module, user_doc)
@@ -1198,11 +1198,8 @@ def render_generated_page():
     """
     Renders the page that shows the student that the lecture is not recorded.
     """
-    lecture_number, lecture_name = st.session_state.selected_module.replace(
-        "_", " "
-    ).split(" ", 1)
 
-    st.title(f"College {lecture_number} — {lecture_name}")
+    st.title(f"{st.session_state.selected_module}")
     utils.add_spacing(2)
     st.subheader("Nog niet nagekeken door docent")
     st.write(
@@ -1387,9 +1384,9 @@ def render_sidebar():
 
     with st.sidebar:
         st.image(
-            "src/data/content/images/logo_erasmus.png",
+            "src/data/content/images/logo.png",
             use_column_width=False,
-            width=250,
+            width=150,
         )
 
         st.markdown(
