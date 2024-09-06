@@ -281,7 +281,7 @@ class LectureInsights:
 
     # @st.cache_data(ttl=timedelta(hours=4), show_spinner=False)
     def get_question_stats(_self, module, question_index, question_content):
-        mongo_module = module.replace("_", " ")
+        mongo_module = module
         results = _self.db_dal.fetch_question(mongo_module, question_index)
 
         if "answers" in question_content:
