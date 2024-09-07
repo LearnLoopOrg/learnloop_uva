@@ -1429,6 +1429,8 @@ def initialise_database():
                 }
             },
         )
+        empty_dict = create_empty_progress_dict(module)
+        db_dal.add_progress_counter(module, empty_dict)
 
 
 def initialise_module_in_database(module):
@@ -1547,10 +1549,11 @@ def determine_if_to_initialise_database():
             db_dal.add_progress_counter(module, empty_dict)
             user_doc = db_dal.find_user_doc()
 
-        progress_counter = db_dal.get_progress_counter(module, user_doc)
-        if progress_counter is None:
-            empty_dict = create_empty_progress_dict(module)
-            db_dal.add_progress_counter(module, empty_dict)
+        # progress_counter = db_dal.get_progress_counter(module, user_doc)
+        # print("Setting the progress counter.")
+        # if progress_counter is None:
+        #     empty_dict = create_empty_progress_dict(module)
+        #     db_dal.add_progress_counter(module, empty_dict)
 
 
 def convert_image_base64(image_path):
@@ -1728,6 +1731,12 @@ def get_commandline_arguments() -> argparse.Namespace:
         action="store_true",
         default=False,
     )
+    parser.add_argument(
+        "--surf_test_env",
+        help="Set to True to use the SURF test environment for authentication",
+        action="store_true",
+        default=False,
+    )
     return parser.parse_args()
 
 
@@ -1741,7 +1750,7 @@ if __name__ == "__main__":
     args = get_commandline_arguments()
 
     # Turn on 'testing' to use localhost instead of learnloop.datanose.nl for authentication
-    surf_test_env = False
+    surf_test_env = args.surf_test_env
 
     # Reset db for current user every time the webapp is loaded
     reset_user_doc = False

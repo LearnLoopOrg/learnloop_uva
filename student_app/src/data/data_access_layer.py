@@ -265,15 +265,6 @@ class DatabaseAccess:
         return progress_counter if progress_counter is not None else {}
 
     def update_progress_counter_for_segment(self, module, new_progress_count):
-        # Check if the progress fields exists in the database
-        self.db.users.update_one(
-            {
-                "username": st.session_state.username,
-                f"progress.{module}.learning.progress_counter": {"$exists": False},
-            },
-            {"$set": {f"progress.{module}.learning.progress_counter": {}}},
-            upsert=True,
-        )
         self.db.users.update_one(
             {"username": st.session_state.username},
             {
