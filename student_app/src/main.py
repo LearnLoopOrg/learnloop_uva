@@ -91,10 +91,6 @@ def evaluate_answer():
     """Evaluates the answer of the student and returns a score and feedback."""
     if not use_dummy_openai_calls:
         # Create user prompt with the question, correct answer and student answer
-        API_KEY = os.getenv("OPENAI_API_KEY")
-        st.write(f"Azure UvA OpenAI API Key: {API_KEY[:3] + "..." + API_KEY[-3:]}")
-        st.write(f"Model: {st.session_state.openai_model}")
-        st.write("Azure OpenAI API Endpoint: ", os.getenv("AZURE_OPENAI_ENDPOINT"))
         prompt = f"""Input:\n
         Vraag: {st.session_state.segment_content['question']}\n
         Antwoord student: {st.session_state.student_answer}\n
@@ -1582,15 +1578,36 @@ def render_login_page():
             href = "https://learnloop.datanose.nl/"
 
         html_content = f"""
-        <div style='text-align: center; margin: 20px;'>
-            <img src='data:image/png;base64,{logo_base64}' alt='Logo' style='max-width: 25%; height: auto; margin-bottom: 40px'>
-            <h2 style='color: #333; margin-bottom: 20px'; text-align:center>{welcome_title}</h2>
-            <a href={href} target="_self" style="text-decoration: none;">
-                <button style='font-size:20px; border: none; color: white; padding: 10px 20px; \
-                text-align: center; text-decoration: none; display: block; width: 100%; margin: \
-                4px 0px; cursor: pointer; background-color: #4CAF50; border-radius: 12px;'>UvA Login</button>
+        <div style="text-align: center; margin: 20px;">
+            <img src="data:image/png;base64,{logo_base64}" alt="Logo" style="max-width: 25%; height: auto; margin-bottom: 20px;">
+            <div style="font-size: 36px; margin-bottom: 20px;"><strong>{welcome_title}</strong></div>
+            <a href="{href}" target="_self" style="text-decoration: none;">
+                <button style="font-size: 20px; border: none; color: white; padding: 10px 20px; 
+                text-align: center; text-decoration: none; display: block; width: 100%; margin: 
+                4px 0; cursor: pointer; background-color: #4CAF50; border-radius: 12px;">SURF Login</button>
             </a>
+            <br>
+            <div style="padding: 5px; max-width: 400px; margin: 5px auto 0; border-radius: 12px; background-color: #f5f5f5;">
+                <p style="font-size: 12px; margin: 10px 0; color: #333; text-align: left;">
+                    ⚠️ Om in te loggen met SURF, moet je eerst de uitnodiging accepteren die je per e-mail hebt ontvangen van SURF <br>
+                    (<i>Uitnodiging voor uva_fnwi_learnloop</i>).<br><br>Kun je de e-mail niet vinden? Controleer dan je spamfolder.<br><br>
+                    Staat de e-mail daar ook niet in? Stuur dan een bericht naar <br> <strong>+31 6 20192794</strong> met je volledige naam en je UvA e-mailadres.
+                </p>
+            </div>
         </div>"""
+
+        # html_content = f"""
+        # <div style="display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+        #     <div style="text-align: center;">
+        #         <div style="font-size: 24px; font-weight: bold; margin-bottom: 20px;">
+        #             <img src='data:image/png;base64,{logo_base64}' alt="LearnLoop Logo" style="vertical-align: middle; margin-right: 10px;">
+        #         LearnLoop
+        #     </div>
+        #     <div style="font-size: 36px; margin-bottom: 20px;">Klinische Neuropsychologie</div>
+        #         <a href={href} style="display: inline-block; padding: 10px 20px; font-size: 18px; color: white; background-color: #4CAF50; border: none; border-radius: 10px; text-decoration: none; cursor: pointer;">UvA Login</a>
+        #     </div>
+        # </div>
+        # """
 
         st.markdown(html_content, unsafe_allow_html=True)
 
