@@ -1712,7 +1712,6 @@ def fetch_nonce_from_query():
     return st.query_params.get("nonce", None)
 
 
-@st.cache_resource(ttl=timedelta(hours=4))
 def initialise_image_handler():
     return ImageHandler()
 
