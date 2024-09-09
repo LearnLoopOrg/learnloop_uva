@@ -29,6 +29,7 @@ load_dotenv()
 def connect_to_openai() -> OpenAI:
     if st.session_state.openai_model == "learnloop-4o":
         print("Using UvA instance of OpenAI GPT-4o")
+
         OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
         OPENAI_API_ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT")
     else:
@@ -90,6 +91,10 @@ def evaluate_answer():
     """Evaluates the answer of the student and returns a score and feedback."""
     if not use_dummy_openai_calls:
         # Create user prompt with the question, correct answer and student answer
+        API_KEY = os.getenv("OPENAI_API_KEY")
+        st.write(f"Azure UvA OpenAI API Key: {API_KEY[:3] + "..." + API_KEY[-3:]}")
+        st.write(f"Model: {st.session_state.openai_model}")
+        st.write("Azure OpenAI API Endpoint: ", os.getenv("AZURE_OPENAI_ENDPOINT"))
         prompt = f"""Input:\n
         Vraag: {st.session_state.segment_content['question']}\n
         Antwoord student: {st.session_state.student_answer}\n
@@ -1737,6 +1742,13 @@ def get_commandline_arguments() -> argparse.Namespace:
         action="store_true",
         default=False,
     )
+    parser.add_argument(
+        "--no_login_page",
+        help="Set to True to skip the login page",
+        action="store_true",
+        default=False,
+    )
+
     return parser.parse_args()
 
 
@@ -1768,7 +1780,6 @@ if __name__ == "__main__":
     # Use dummy LLM feedback as response to save openai costs and time during testing
     use_dummy_openai_calls = False
     # Give the name of the test user when giving one. !! If not using a test username, set to None
-    # test_username = "Luc Mahieu"
     test_username = None
 
     if args.use_LL_openai_deployment:
@@ -1778,7 +1789,7 @@ if __name__ == "__main__":
 
     # Bypass authentication when testing so flask app doesnt have to run
     # st.session_state.skip_authentication = True
-    no_login_page = False
+    no_login_page = args.no_login_page
     # ---------------------------------------------------------
 
     # Create a mid column with margins in which everything one a
