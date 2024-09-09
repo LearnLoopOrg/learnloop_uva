@@ -34,7 +34,7 @@ class Controller:
             st.session_state.openai_model = "LLgpt-4o"
         else:
             print("Using UvA OpenAI deployment")
-            OPENAI_API_KEY = os.getenv("UVA_OPENAI_API_KEY")
+            OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
             OPENAI_API_ENDPOINT = os.getenv("UVA_OPENAI_API_ENDPOINT")
             st.session_state.openai_model = "learnloop-4o"
 
@@ -45,6 +45,7 @@ class Controller:
 
         st.session_state.use_mongodb = True
         st.session_state.db = db_config.connect_db(COSMOS_URI)
+        st.session_state.use_LL_blob_storage = args.use_LL_blob_storage
 
         _self.debug = True if os.getenv("DEBUG") == "True" else False
 
@@ -84,6 +85,8 @@ class Controller:
             st.session_state.generated = False
         if "use_keyvault" not in st.session_state:
             st.session_state.use_keyvault = False
+        if "use_LL_blob_storage" not in st.session_state:
+            st.session_state.use_LL_blob_storage = False
 
     def render_page(self):
         """
@@ -157,6 +160,12 @@ def get_commandline_arguments() -> argparse.Namespace:
     parser.add_argument(
         "--use_LL_cosmosdb",
         help="Set to True to use the LearnLoop CosmosDB instance, otherwise use the UvA's",
+        action="store_true",
+        default=False,
+    )
+    parser.add_argument(
+        "--use_LL_blob_storage",
+        help="Set to True to use the LearnLoop Blob Storage instance, by default use the UvA's",
         action="store_true",
         default=False,
     )

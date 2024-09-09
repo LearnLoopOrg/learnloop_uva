@@ -23,3 +23,5 @@ azure:
       key: SURFCONEXT_CLIENT_SECRET
     - name: learnloop-flask-secret
       key: FLASK_SECRET
+    - name: learnloop-storage-connectionstring
+      key: UVA_BLOB_CONNECTION_STRING

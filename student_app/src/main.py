@@ -418,7 +418,7 @@ def render_check_and_nav_buttons():
 def render_info():
     """Renders the info segment with title and text."""
     # if the image directory is present in the JSON for this segment, then display the image
-    # render_image_if_available()
+    render_image_if_available()
 
     segment = st.session_state.segment_content
     st.subheader(segment["title"])
@@ -776,11 +776,11 @@ def add_date_to_progress_counter():
     db_dal.update_progress_counter_for_segment(module, segment_progress_count)
 
 
-# def render_image_if_available():
-#     segment = st.session_state.segment_content
+def render_image_if_available():
+    segment = st.session_state.segment_content
 
-#     if segment.get("image"):
-#         image_handler.render_image(segment, max_height=600)
+    if segment.get("image"):
+        image_handler.render_image(segment, max_height=600)
 
 
 def render_learning_page():
@@ -816,7 +816,7 @@ def render_learning_page():
         ):
             if st.session_state.submitted:
                 # Render image if present in the feedback
-                # render_image_if_available()
+                render_image_if_available()
 
                 render_question()
 
@@ -837,7 +837,7 @@ def render_learning_page():
                 render_explanation()
                 render_navigation_buttons()
             else:
-                # render_image_if_available()
+                render_image_if_available()
 
                 render_question()
 
@@ -1084,7 +1084,7 @@ def render_practice_page():
             and "answer" in st.session_state.segment_content
         ):
             # Render image if present in the feedback
-            # render_image_if_available()
+            render_image_if_available()
 
             render_question()
             if st.session_state.submitted:
@@ -1704,14 +1704,17 @@ def initialise_session_states():
     if "use_keyvault" not in st.session_state:
         st.session_state.use_keyvault = False
 
+    if "use_LL_blob_storage" not in st.session_state:
+        st.session_state.use_LL_blob_storage = False
+
 
 def fetch_nonce_from_query():
     return st.query_params.get("nonce", None)
 
 
-# @st.cache_resource(ttl=timedelta(hours=4))
-# def initialise_image_handler():
-#     return ImageHandler()
+@st.cache_resource(ttl=timedelta(hours=4))
+def initialise_image_handler():
+    return ImageHandler()
 
 
 def determine_username_from_nonce():
@@ -1765,6 +1768,12 @@ def get_commandline_arguments() -> argparse.Namespace:
         action="store_true",
         default=False,
     )
+    parser.add_argument(
+        "--use_LL_blob_storage",
+        help="Set to True to use the LearnLoop Blob Storage instance, otherwise use the UvA's",
+        action="store_true",
+        default=False,
+    )
 
     return parser.parse_args()
 
@@ -1786,7 +1795,7 @@ if __name__ == "__main__":
 
     # Your current IP has to be accepted by Gerrit to use CosmosDB (Gerrit controls this)
     st.session_state.use_LL_cosmosdb = args.use_LL_cosmosdb
-
+    st.session_state.use_LL_blob_storage = args.use_LL_blob_storage
     if st.session_state.use_LL_cosmosdb:
         print("LearnLoop CosmosDB is being used")
     else:
@@ -1817,7 +1826,7 @@ if __name__ == "__main__":
     db = db_config.connect_db(st.session_state.use_LL_cosmosdb)
 
     initialise_session_states()
-    # image_handler = initialise_image_handler()
+    image_handler = initialise_image_handler()
     utils = Utils()
 
     st.session_state.openai_client = connect_to_openai()
