@@ -22,9 +22,17 @@ class Utils:
                 "AZURE-BLOB-STORAGE-CONNECTION-STRING", "lluniappkv"
             )
         else:
-            AZURE_BLOB_STORAGE_CONNECTION_STRING = os.getenv(
-                "AZURE_BLOB_STORAGE_CONNECTION_STRING"
-            )
+            # In development, use the LearnLoop Blob Storage connection string
+            if st.session_state.use_LL_blob_storage:
+                AZURE_BLOB_STORAGE_CONNECTION_STRING = os.getenv(
+                    "AZURE_BLOB_STORAGE_CONNECTION_STRING"
+                )
+            else:
+                # In production by default, use the UvA Blob Storage connection string
+                AZURE_BLOB_STORAGE_CONNECTION_STRING = os.getenv(
+                    "UVA_BLOB_CONNECTION_STRING"
+                )
+
         self.connection_string = AZURE_BLOB_STORAGE_CONNECTION_STRING
         self.blob_service_client = BlobServiceClient.from_connection_string(
             self.connection_string
@@ -92,7 +100,6 @@ class Utils:
         blob_client.upload_blob(content, overwrite=True)
         print(f"Content uploaded to '{blob_name}' in container '{container_name}'.")
 
-    @st.cache_data(ttl=timedelta(hours=4))
     def download_content_from_blob_storage(_self, container_name, blob_name):
         """
         Download content from a specific directory within a container in Azure Blob Storage.
@@ -134,7 +141,6 @@ class Utils:
         list_output = [x.split(")", 1)[1].strip() for x in list_output if x != ""]
         return list_output
 
-    @st.cache_data(ttl=timedelta(hours=4))
     def original_topics(self, module) -> list:
         data_modules = self.download_content_from_blob_storage(
             "content", f"topics/{module}.json"
@@ -245,19 +251,21 @@ class ImageHandler:
         self.blob_service_client = BlobServiceClient.from_connection_string(
             self.connection_string
         )
-        self.container_name = None
-        self.blob_name = None
+        # self.container_name = None
+        # self.blob_name = None
+        self.container_name = "uva-knp"
+        self.blob_name = "Dementie/images/uva_knp_Dementie_slide_00014_1.jpg"
 
-    # @st.cache_data(ttl=timedelta(hours=4))
     def download_image_from_blob_storage(_self) -> Image.Image:
         blob_client = _self.blob_service_client.get_blob_client(
             container=_self.container_name, blob=_self.blob_name
         )
         blob_data = blob_client.download_blob().readall()
+        print(blob_data)
         return Image.open(BytesIO(blob_data))
 
     def get_image_url(self, segment):
-        self.container_name = "uva-celbiologie"
+        self.container_name = "uva-knp"
         self.blob_name = segment.get("image", {}).get("url")
 
     def resize_image_to_max_height(self, image: Image.Image, max_height):
@@ -273,7 +281,7 @@ class ImageHandler:
 
     def render_image(self, segment, max_height=None):
         try:
-            self.get_image_url(segment)
+            # self.get_image_url(segment)
             image = self.download_image_from_blob_storage()
             if max_height:
                 image = self.resize_image_to_max_height(image, max_height)
@@ -281,7 +289,9 @@ class ImageHandler:
             st.image(image)
         except Exception as e:
             # st.error("No image found for this segment.")
-            print(f"No image found; error message: {e}")
+            if "container" in str(e):
+                print(f"Container '{self.container_name}' not found.")
+            # print(f"No image found; error message: {e}")
             pass
 
 

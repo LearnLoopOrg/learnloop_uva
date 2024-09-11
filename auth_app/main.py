@@ -117,7 +117,7 @@ def save_user_info_to_db(user_id, user_info):
             }
         },
     )
-    return
+    return user_info
 
 
 @app.route("/auth")
@@ -137,21 +137,18 @@ def authorize():
 
     save_id_to_db(user_id)
     save_nonce_to_db(user_id, nonce)
-    save_user_info_to_db(user_id, userinfo)
+    user_info = save_user_info_to_db(user_id, userinfo)
 
-    # Redirect to streamlit app
-    # TODO: when logging in as a student, redirect to learnloop.datanose.nl/student and when
-    # logging in as a teacher redirect to learnloop.datanose.nl/teacher
     if surf_test_env:
         url = "http://localhost:8501/"
-        # if info["user_description"] == "student":
-        #     url = "http://localhost:8501/"
-        # elif info["user_description"] == "teacher":
-        #     url = "http://localhost:8502/"
     else:
         url = "https://learnloop.datanose.nl/"
 
-    redirect_url = f"{url}student?nonce={nonce}"
+    # Redirect a user to the teacher or student page based on their affiliation
+    if "employee" in user_info["eduperson_affiliation"]:
+        redirect_url = f"{url}teacher?nonce={nonce}"
+    else:
+        redirect_url = f"{url}student?nonce={nonce}"
 
     return redirect(redirect_url, code=302)
 
