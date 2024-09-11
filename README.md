@@ -265,7 +265,7 @@ Follow these steps for each app as needed to set up and run the applications.
 4. Update the Azure Container Instance (ACI) deployment
     To update the existing deployment, use the following command. Note that although the command says `create`, it will update the existing resources if they already exist:
     ```
-    az container create --resource-group LLUniAppRG --file azure_deployment/deploy-aci.yaml
+    az container create --resource-group LLUniAppRG --file azure_deployment_demo/deploy-aci.yaml
     ```
 
 5. Verify deployment in Azure portal

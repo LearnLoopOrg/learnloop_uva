@@ -29,30 +29,46 @@ class LectureOverview:
         self.utils.set_phase_to_match_lecture_status("topics")
         self.db_dal.update_last_module()
 
-    def render_lecture(self, lecture_title, lecture_description):
+    def render_lecture(self, lecture_title, lecture_description, lecture_record):
         """
         Renders a single lecture's title, description, and view button.
         """
         container = st.container(border=True)
         cols = container.columns([14, 6, 1])
+
         with container:
-            with cols[1]:
-                st.write("\n\n")
-                st.button(
-                    "📝 Leerstof oefenen",
-                    key=lecture_title,
-                    on_click=self.go_to_lecture,
-                    args=(lecture_title,),
-                    use_container_width=True,
-                )
-                self.render_page_button(
-                    "📚 Overzicht theorie",
-                    f"{lecture_title}",
-                    phase="theory-overview",
-                )
+            if (
+                lecture_record is None
+                or lecture_record["status"] == "not_recorded"
+                or lecture_record["status"] == "generated"
+            ):
+                with cols[1]:
+                    st.write("\n\n")
+                    st.button(
+                        "Nog niet beschikbaar",
+                        key=lecture_title,
+                        on_click=self.go_to_lecture,
+                        args=(lecture_title,),
+                        use_container_width=True,
+                    )
+            else:
+                with cols[1]:
+                    st.write("\n\n")
+                    st.button(
+                        "📝 Leerstof oefenen",
+                        key=lecture_title,
+                        on_click=self.go_to_lecture,
+                        args=(lecture_title,),
+                        use_container_width=True,
+                    )
+                    self.render_page_button(
+                        "📚 Overzicht theorie",
+                        f"{lecture_title}",
+                        phase="theory-overview",
+                    )
+
             with cols[0]:
-                formatted_title = lecture_title.split("_", 1)[1].replace("_", " ")
-                st.subheader(formatted_title)
+                st.subheader(lecture_title)
                 st.write(lecture_description)
 
     def render_page_button(self, page_title, module, phase):
@@ -90,15 +106,15 @@ class LectureOverview:
         Render the page that shows all the lectures that are available for the student for this course.
         """
         for lecture in st.session_state.lectures:
-            self.render_lecture(lecture.title, lecture.description)
+            # find the lecture that is currently being rendered in the database
+            lecture_record = self.db_dal.get_lecture(lecture.title)
+            self.render_lecture(lecture.title, lecture.description, lecture_record)
 
     def load_lectures(self):
         """
         Loads lectures from the database into the session state.
         """
-        course_catalog = self.db_dal.get_course_catalog(
-            file_path="./src/data/uva_dummy_db.json"
-        )
+        course_catalog = self.db_dal.get_course_catalog()
         if st.session_state.selected_course is None:
             st.session_state.selected_course = course_catalog.courses[0].title
 

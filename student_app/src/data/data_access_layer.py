@@ -62,14 +62,13 @@ class DatabaseAccess:
         ]
 
     def get_course_catalog(
-        self, file_path: str = "./src/data/uva_dummy_db.json"
+        self, university_name: str = "Universiteit van Amsterdam"
     ) -> CourseCatalog:
         """
         Load the course catalog from the (dummy) university database.
         """
-        # TODO: Change dummy database to real database
-        with open(file_path, "r") as file:
-            data = json.load(file)
+
+        data = self.db.courses.find_one({"university_name": university_name})
 
         courses = [
             Course(
@@ -233,6 +232,9 @@ class DatabaseAccess:
             {"$set": {"last_module": st.session_state.selected_module}},
         )
 
+    def get_lecture(self, lecture_name):
+        return self.db.content.find_one({"lecture_name": lecture_name})
+
     def fetch_info(self):
         user_doc = self.db.users.find_one({"nonce": st.session_state.nonce})
         if user_doc is not None:
@@ -312,6 +314,11 @@ class DatabaseAccess:
         """
         Fetches if the module has been generated and checked on quality by teacher.
         """
-        return self.db.content.find_one(
+        module = self.db.content.find_one(
             {"lecture_name": st.session_state.selected_module}
-        )["status"]
+        )
+
+        if module is None:
+            return None
+        else:
+            return module["status"]

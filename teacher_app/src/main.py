@@ -106,9 +106,9 @@ class Controller:
     def render_sidebar(self):
         with st.sidebar:
             st.image(
-                "src/data/images/logo_universiteit_leiden.png",
+                "src/data/images/logo.png",
                 use_column_width=False,
-                width=150,
+                width=200,
             )
 
             st.markdown(
@@ -120,7 +120,7 @@ class Controller:
                 </style>
 
                 <h1> 
-                    <strong>Welkom Nelleke Gruis</strong>
+                    <strong>Welkom Erwin</strong>
                 </h1>
                 <hr class="closer-line">
             """,
@@ -132,18 +132,18 @@ class Controller:
                 args=("courses",),
                 use_container_width=True,
             )
-            st.button(
-                "⚙️ Instellingen",
-                on_click=self.set_selected_phase,
-                args=("courses",),
-                use_container_width=True,
-            )
-            st.button(
-                "💬 Ondersteuning",
-                on_click=self.set_selected_phase,
-                args=("courses",),
-                use_container_width=True,
-            )
+            # st.button(
+            #     "⚙️ Instellingen",
+            #     on_click=self.set_selected_phase,
+            #     args=("courses",),
+            #     use_container_width=True,
+            # )
+            # st.button(
+            #     "💬 Ondersteuning",
+            #     on_click=self.set_selected_phase,
+            #     args=("courses",),
+            #     use_container_width=True,
+            # )
 
             # st.subheader("👤 Remko Offringa")
 

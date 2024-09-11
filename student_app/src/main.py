@@ -16,6 +16,7 @@ from _pages.course_overview import CoursesOverview
 from _pages.theory_overview import TheoryOverview
 from utils.utils import Utils
 from utils.utils import AzureUtils
+import json
 
 # Must be called first
 st.set_page_config(page_title="LearnLoop", layout="wide")
@@ -81,7 +82,7 @@ def upload_progress():
 
 def evaluate_answer():
     """Evaluates the answer of the student and returns a score and feedback."""
-    if use_dummy_openai_calls != True:
+    if not use_dummy_openai_calls:
         # Create user prompt with the question, correct answer and student answer
         prompt = f"""Input:\n
         Vraag: {st.session_state.segment_content['question']}\n
@@ -95,40 +96,19 @@ def evaluate_answer():
         ) as f:
             role_prompt = f.read()
 
-        stream = st.session_state.openai_client.chat.completions.create(
+        response = st.session_state.openai_client.chat.completions.create(
             model=st.session_state.openai_model,
             messages=[
                 {"role": "system", "content": role_prompt},
                 {"role": "user", "content": prompt},
             ],
             max_tokens=500,
-            # stream=True
+            response_format={"type": "json_object"},
         )
+        feedback_json = json.loads(response.choices[0].message.content)
 
-        # st.write_stream(stream)
-
-        # response = ""
-        # for chunk in stream:
-        #     st.write(chunk.choices[0]['delta']['content'])
-        #     if "choices" in chunk:
-        #         choice = chunk["choices"][0]
-        #         if "delta" in choice:
-        #             st.write(choice["delta"].get("content", ""))
-        #             response += choice["delta"].get("content", "")
-
-        # st.write(response)
-
-        split_response = stream.choices[0].message.content.split(";;")
-
-        # split_response = response.split(";;")
-
-        if len(split_response) != 2:
-            raise ValueError(
-                "Server response is not in the correct format. Please retry."
-            )
-
-        st.session_state.feedback = split_response[0].split(">>")
-        st.session_state.score = split_response[1]
+        st.session_state.feedback = feedback_json["feedback"]
+        st.session_state.score = feedback_json["score"]
     else:
         st.session_state.feedback = "O"
         st.session_state.score = "0/2"
@@ -771,7 +751,7 @@ def add_date_to_progress_counter():
     """
     Counts how many times a person answered the current question and updates database.
     """
-    module = st.session_state.selected_module.replace("_", " ")
+    module = st.session_state.selected_module
     user_doc = db_dal.find_user_doc()
 
     progress_counter = db_dal.get_progress_counter(module, user_doc)
@@ -1218,11 +1198,8 @@ def render_generated_page():
     """
     Renders the page that shows the student that the lecture is not recorded.
     """
-    lecture_number, lecture_name = st.session_state.selected_module.replace(
-        "_", " "
-    ).split(" ", 1)
 
-    st.title(f"College {lecture_number} — {lecture_name}")
+    st.title(f"{st.session_state.selected_module}")
     utils.add_spacing(2)
     st.subheader("Nog niet nagekeken door docent")
     st.write(
@@ -1407,7 +1384,7 @@ def render_sidebar():
 
     with st.sidebar:
         st.image(
-            "src/data/content/images/logo_universiteit_leiden.png",
+            "src/data/content/images/logo.png",
             use_column_width=False,
             width=150,
         )

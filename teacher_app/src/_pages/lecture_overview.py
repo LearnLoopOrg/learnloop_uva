@@ -14,34 +14,6 @@ class LectureOverview:
         for course in st.session_state.courses:
             st.button(course, use_container_width=True)
 
-    def display_login_info(self):
-        """Displays login information and logout button."""
-        st.write(
-            f"{st.session_state.controller.username}"
-        )  # TODO: Replace with actual username
-        st.button("Uitloggen", use_container_width=True)
-
-    def render_lecture(self, lecture_title, lecture_description):
-        """
-        Renders a single lecture's title, description, and view button.
-        """
-        container = st.container(border=True)
-        cols = container.columns([14, 6, 1])
-        with container:
-            with cols[1]:
-                st.write("\n\n")
-                st.button(
-                    "Leerstof bekijken",
-                    key=lecture_title,
-                    on_click=self.go_to_lecture,
-                    args=(lecture_title.replace("_", " "),),
-                    use_container_width=True,
-                )
-            with cols[0]:
-                formatted_title = lecture_title.split("_", 1)[1].replace("_", " ")
-                st.subheader(formatted_title)
-                st.write(lecture_description)
-
     def go_to_lecture(self, lecture_title):
         """
         Sets the selected page and lecture to the one that the student clicked on.
@@ -63,55 +35,60 @@ class LectureOverview:
         Render the page that shows all the lectures that are available for the student for this course.
         """
         for lecture in st.session_state.lectures:
-            container = st.container(border=True)
-            cols = container.columns([14, 6, 1])
+            self.render_lecture(lecture)
 
-            with container:
-                # Render the button to view the lecture
-                with cols[1]:
-                    st.write("\n\n")
-                    st.session_state.selected_module = lecture.title.replace("_", " ")
-                    module_status = self.db_dal.fetch_module_status()
-                    match module_status:
-                        case "corrected":
-                            st.button(
-                                "Inzichten bekijken",
-                                key=lecture.title,
-                                on_click=self.go_to_lecture,
-                                args=(lecture.title.replace("_", " "),),
-                                use_container_width=True,
-                            )
-                        case "generated":
-                            st.button(
-                                "Kwaliteitscontrole",
-                                key=lecture.title,
-                                on_click=self.go_to_lecture,
-                                args=(lecture.title.replace("_", " "),),
-                                use_container_width=True,
-                            )
-                        case "not_recorded":
-                            st.button(
-                                "Genereren leermateriaal",
-                                key=lecture.title,
-                                on_click=self.go_to_lecture,
-                                args=(lecture.title.replace("_", " "),),
-                                use_container_width=True,
-                            )
+    def render_lecture(self, lecture):
+        container = st.container(border=True)
+        cols = container.columns([14, 6, 1])
+        with container:
+            # Render the button to view the lecture
+            with cols[1]:
+                st.write("\n\n")
+                st.session_state.selected_module = lecture.title
 
-                with cols[0]:
-                    formatted_title = lecture.title.split("_", 1)[1].replace("_", " ")
-                    internal_cols = st.columns([0.5, 40])
-                    with internal_cols[1]:
-                        st.subheader(formatted_title)
-                        st.write(lecture.description)
+                module_status = self.db_dal.fetch_module_status()
+
+                if module_status is None:
+                    module_status = "not_recorded"
+
+                match module_status:
+                    case "corrected":
+                        st.button(
+                            "📊 Inzichten bekijken",
+                            key=lecture.title,
+                            on_click=self.go_to_lecture,
+                            args=(lecture.title,),
+                            use_container_width=True,
+                        )
+                    case "generated":
+                        st.button(
+                            "✔️ Kwaliteitscheck",
+                            key=lecture.title,
+                            on_click=self.go_to_lecture,
+                            args=(lecture.title,),
+                            use_container_width=True,
+                        )
+                    case "not_recorded":
+                        st.button(
+                            # "Genereren leermateriaal",
+                            "⏳ Nog niet beschikbaar",
+                            key=lecture.title,
+                            on_click=self.go_to_lecture,
+                            args=(lecture.title,),
+                            use_container_width=True,
+                        )
+
+            with cols[0]:
+                internal_cols = st.columns([0.5, 40])
+                with internal_cols[1]:
+                    st.subheader(lecture.title)
+                    st.write(lecture.description)
 
     def load_lectures(self):
         """
         Loads lectures from the database into the session state.
         """
-        course_catalog = self.db_dal.get_course_catalog(
-            file_path="./src/data/uva_dummy_db.json"
-        )
+        course_catalog = self.db_dal.get_course_catalog()
         if st.session_state.selected_course is None:
             st.session_state.selected_course = course_catalog.courses[0].title
 
