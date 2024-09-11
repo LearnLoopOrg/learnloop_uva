@@ -1,12 +1,13 @@
 from authlib.integrations.flask_client import OAuth
 from flask import Flask, url_for, redirect
-from dotenv import load_dotenv
-import os
 from pymongo import MongoClient
 import certifi
 import string
 import random
 import db_config
+
+import os
+from dotenv import load_dotenv
 
 load_dotenv()
 

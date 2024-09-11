@@ -16,6 +16,7 @@ def connect_db(use_mongodb):
 
     if not use_mongodb:
         COSMOS_URI = os.getenv("COSMOS_URI")
+        print(COSMOS_URI)
         db_client = MongoClient(COSMOS_URI, tlsCAFile=certifi.where())
     else:
         if st.session_state.use_keyvault:
@@ -24,7 +25,7 @@ def connect_db(use_mongodb):
             MONGO_URI = os.getenv("MONGO_URI")
         db_client = MongoClient(MONGO_URI, tlsCAFile=certifi.where())
 
-    db = db_client.demo
+    db = db_client.UvA_NAF
 
     # Ping database to check if it's connected
     try:
