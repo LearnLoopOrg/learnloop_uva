@@ -63,7 +63,7 @@ class ImageHandler:
         return Image.open(BytesIO(blob_data))
 
     def get_image_url(self, segment):
-        self.container_name = "uva-celbiologie"
+        self.container_name = "uva-knp"
         self.blob_name = segment.get("image", {}).get("url")
 
     def resize_image_to_max_height(self, image: Image.Image, max_height):

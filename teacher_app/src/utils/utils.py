@@ -261,7 +261,6 @@ class ImageHandler:
             container=_self.container_name, blob=_self.blob_name
         )
         blob_data = blob_client.download_blob().readall()
-        print(blob_data)
         return Image.open(BytesIO(blob_data))
 
     def get_image_url(self, segment):

@@ -1773,6 +1773,12 @@ def get_commandline_arguments() -> argparse.Namespace:
         action="store_true",
         default=False,
     )
+    parser.add_argument(
+        "--test_username",
+        help="Set to a test username to use when testing (Luc Mahieu)",
+        action="store",
+        default=None,
+    )
 
     return parser.parse_args()
 
@@ -1805,7 +1811,7 @@ if __name__ == "__main__":
     # Use dummy LLM feedback as response to save openai costs and time during testing
     use_dummy_openai_calls = False
     # Give the name of the test user when giving one. !! If not using a test username, set to None
-    test_username = None
+    test_username = args.test_username
 
     if args.use_LL_openai_deployment:
         st.session_state.openai_model = "LLgpt-4o"
