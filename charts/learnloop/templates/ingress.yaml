@@ -20,10 +20,18 @@ spec:
                 name: learnloop-auth
                 port:
                   number: 80
-          - path: /app
+          - path: /student
             pathType: Prefix
             backend:
               service:
-                name: learnloop-ui
+                name: learnloop-student
+                port:
+                  number: 80
+
+          - path: /teacher
+            pathType: Prefix
+            backend:
+              service:
+                name: learnloop-teacher
                 port:
                   number: 80

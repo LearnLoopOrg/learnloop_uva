@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: learnloop-auth
-          image: "{{ .Values.image }}/flask_app:{{ .Values.tag }}"
+          image: "{{ .Values.image }}/auth_app:{{ .Values.tag }}"
           imagePullPolicy: Always
           ports:
             - containerPort: 3000

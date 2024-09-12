@@ -1,0 +1,401 @@
+{
+    "module_name": "NAF_2",
+    "segments": [
+        {
+            "type": "theory",
+            "title": "Organen van het spijsverteringsstelsel",
+            "text": "Het **spijsverteringsstelsel** bestaat uit een reeks organen verantwoordelijk voor de **verwerking van voedsel**. Deze organen zijn de **mondholte**, **farynx**, **oesophagus**, **maag**, **lever**, **pancreas**, **dunne darm**, **dikke darm**, **rectum**, en **anus**.",
+            "image": "spijsvertering.png",
+            "tag": "2.7.1"
+        },
+        {
+            "type": "theory",
+            "title": "Functie van het spijsverteringsstelsel",
+            "text": "Het belangrijkste doel van het spijsverteringsstelsel is de **verwerking van voedsel** en de **afscheiding van resten**. Het stelt het lichaam in staat voedingsstoffen uit voedsel te absorberen en afvalstoffen te elimineren.",
+            "image": "spijsvertering.png",
+            "tag": "2.7.2"
+        },
+        {
+            "type": "question",
+            "question": "Welke organen zijn betrokken bij de verwerking van voedsel in het spijsverteringsstelsel?",
+            "answer": "De organen in het spijsverteringsstelsel betrokken bij de verwerking van voedsel zijn: mondholte (1 punt), farynx (1 punt), oesophagus (1 punt), maag (1 punt), lever (1 punt), pancreas (1 punt), dunne darm (1 punt), dikke darm (1 punt), rectum (1 punt), en anus (1 punt).",
+            "tag": "2.7.1",
+            "image": "spijsvertering.png"
+        },
+        {
+            "type": "question",
+            "question": "Wat zijn de twee primaire doelen van het spijsverteringsstelsel?",
+            "answer": "De twee primaire doelen van het spijsverteringsstelsel zijn de verwerking van voedsel (1 punt) en de afscheiding van resten (1 punt).",
+            "tag": "2.7.2",
+            "image": null
+        },
+        {
+            "type": "theory",
+            "title": "Speekselklieren",
+            "text": "De **speekselklieren** spelen een rol in het spijsverteringsproces door **enzymen** en **vocht** te leveren die bijdragen aan de **verwerking van voedsel** voordat het door de rest van het spijsverteringskanaal gaat.",
+            "image": "speekselklieren.png",
+            "tag": "2.7.3"
+        },
+        {
+            "type": "question",
+            "question": "Wat is de functie van speekselklieren in het spijsverteringsproces?",
+            "answer": "Speekselklieren leveren enzymen en vocht die zorgen voor de initi\u00eble verwerking van voedsel in de mondholte (1 punt) voordat het voedsel verder door het spijsverteringskanaal gaat (1 punt).",
+            "tag": "2.7.3",
+            "image": null
+        },
+        {
+            "type": "theory",
+            "title": "Mesenteria",
+            "text": "**Mesenteria** zijn ophangbanden die organen binnen de buikholte verbinden met de **dorsale** (achterste) en/of **ventrale** (voorste) lichaamswand. Ze zorgen voor de positionering en stabiliteit van de organen en zorgen voor de doorvoer van bloedvaten en zenuwen naar deze organen. Als we spreken over een **mesenterium**, dan is dat een mesenterium van een specifiek orgaan, zoals het ventraal mesogastrium in het geval van de maag en lever. Als er gesproken wordt over h\u00E9t **mesenterium** dan is dat het mesenterium van de dunne darm.",
+            "image": "mesenterium.png",
+            "tag": "2.9.1"
+        },
+        {
+            "type": "question",
+            "question": "Wat zijn mesenteria en welke functie vervullen zij binnen de buikholte?",
+            "answer": "Mesenteria zijn ophangbanden die buikorganen verbinden met de lichaamswand en zorgen voor de positionering en stabiliteit van deze organen (1 punt). Daarnaast voorzien ze de organen van bloedvaten en zenuwen (1 punt).",
+            "tag": "2.9.1",
+            "image": null
+        },
+        {
+            "type": "theory",
+            "title": "Het peritoneum",
+            "text": "Het **peritoneum** is een groot en dun membraan dat de binnenwand van de buikholte bekleedt en de meeste buikorganen omhult. Het bestaat uit twee lagen: het **pari\u00EBtale peritoneum**, dat de binnenmuren van de buikholte bekleedt, en het **viscerale peritoneum**, dat de externe oppervlakken van de meeste buikorganen bedekt. Tussen deze twee lagen bevindt zich de peritoneale holte. Het peritoneum speelt een rol in bescherming tegen infecties, opslag van vet, de immuunrespons, en het transport van voedingsstoffen en afvalstoffen tussen de bloedbaan en de buikorganen.",
+            "image": "peritoneum.png",
+            "tag": "3.1.1"
+        },
+        {
+            "type": "theory",
+            "title": "Intraperitoneale organen",
+            "text": "**Intraperitoneale organen** zijn volledig omhuld door het peritoneum en liggen binnen de peritoneale holte. Deze organen, zoals de maag, lever, dunne darm, milt, en delen van de dikke darm, hebben een mesenterium dat hen verbindt met de achterwand van de buikholte, wat zorgt voor mobiliteit en een bloedtoevoer.",
+            "image": "intraperitoneaal_retraperitoneaal.png",
+            "tag": "2.10.1"
+        },
+        {
+            "type": "theory",
+            "title": "Retroperitoneale organen",
+            "text": "**Retroperitoneale organen** liggen achter het peritoneum en zijn slechts gedeeltelijk bedekt door het peritoneum. Deze organen, waaronder de nieren, bijnieren, pancreas, duodenum, en delen van de dikke darm zoals het opstijgend en afdalend colon, hebben geen mesenterium en zijn daardoor minder beweeglijk.",
+            "image": "intraperitoneaal_retraperitoneaal.png",
+            "tag": "2.10.2"
+        },
+        {
+            "type": "question",
+            "question": "Wat is het verschil tussen intraperitoneale en retroperitoneale organen in termen van hun locatie en verhouding tot het peritoneum?",
+            "answer": "Intraperitoneale organen zijn volledig omhuld door het peritoneum en bevinden zich binnen de peritoneale holte (1 punt), hun mesenteria verbindt hen met de achterwand van de buikholte, wat zorgt voor mobiliteit en een bloedtoevoer (1 punt). Retroperitoneale organen daarentegen liggen achter het peritoneum en zijn slechts gedeeltelijk door het peritoneum bedekt (1 punt). Deze organen hebben geen mesenterium en zijn daardoor minder beweeglijk (1 punt).",
+            "tag": "3.1.2",
+            "image": null
+        },
+        {
+            "type": "theory",
+            "title": "Organen van het ademhalingstelsel",
+            "text": "Het **ademhalingstelsel** bestaat uit de volgende organen: **neusholte**, **farynx** (keelholte), **larynx** (strottenhoofd), **trachea** (luchtpijp), **bronchi\u00ebn** en **longen**. Deze organen werken samen om zuurstof op te nemen en koolstofdioxide af te voeren.",
+            "image": "ademhalingsstelsel.png",
+            "tag": "2.8.1"
+        },
+        {
+            "type": "question",
+            "question": "Welke organen behoren tot het ademhalingstelsel en wat is hun gezamenlijke functie?",
+            "answer": "Het ademhalingstelsel bestaat uit de neusholte (1 punt), farynx (keelholte) (1 punt), larynx (strottenhoofd) (1 punt), trachea (luchtpijp) (1 punt), bronchi\u00ebn (1 punt) en longen (1 punt), die samenwerken met als doel de gaswisseling te faciliteren (1 punt).",
+            "tag": "2.8.1",
+            "image": null
+        },
+        {
+            "type": "theory",
+            "title": "Functies van de neusholte",
+            "text": "De **neusholte** speelt speelt een rol in het ademhalingstelsel door de ingeademde lucht te **reinigen**, **verwarmen** en **bevochtigen**. Dit helpt om de luchtwegen te beschermen en de lucht voor te bereiden voor effectieve gasuitwisseling in de longen.",
+            "image": "neusholte.png",
+            "tag": "2.8.3"
+        },
+        {
+            "type": "question",
+            "question": "Wat zijn de drie belangrijkste functies van de neusholte binnen het ademhalingstelsel?",
+            "answer": "Het reinigen (1 punt), verwarmen (1 punt) en bevochtigen (1 punt) van de ingeademde lucht.",
+            "tag": "2.8.3",
+            "image": "neusholte.png"
+        },
+        {
+            "type": "theory",
+            "title": "Rol van de larynx",
+            "text": "De **larynx** bevat de **stembanden** en is verantwoordelijk voor stemgeluiden. Het fungeert ook als een belangrijke beschermer voor de lagere luchtwegen door te voorkomen dat voedsel en andere deeltjes de **trachea** binnendringen.",
+            "image": "larynx.png",
+            "tag": "2.8.4"
+        },
+        {
+            "type": "question",
+            "question": "Wat is g\u00e9\u00e9n rol van de larynx in het ademhalingstelsel?",
+            "answers": {
+                "correct_answer": "Het voorbereiden van de lucht voordat deze doorgaat naar de longen",
+                "wrong_answers": [
+                    "Het produceren van stemgeluiden door middel van stembanden",
+                    "Het beschermen van de lagere luchtwegen"
+                ]
+            },
+            "tag": "2.8.4",
+            "image": "larynx.png"
+        },
+        {
+            "type": "theory",
+            "title": "De bronchiaalboom",
+            "text": "De **bronchiaalboom** (Arbor Bronchialis), is een complex netwerk van luchtwegen dat begint bij de luchtpijp en zich vertakt in 24 generaties van steeds kleinere buizen, eindigend bij de **longblaasjes** (alveoli). Het uiteindelijke doel van deze vertakkingen is om een zo groot mogelijk oppervlak te cre\u00ebren, wat de effici\u00ebntie van de gaswisseling in de longen maximaliseert.",
+            "image": "bronchiaalboom.png",
+            "tag": "3.2.1"
+        },
+        {
+            "type": "question",
+            "question": "Wat is het grootste doel van de vertakkingen van de bronchiaalboom?",
+            "answer": "Het grootste doel van de vertakkingen van de bronchiaalboom is het cre\u00EBren van een zo groot mogelijk oppervlak voor gasuitwisseling (1 punt).",
+            "tag": "3.2.2",
+            "image": "bronchiaalboom.png"
+        },
+        {
+            "type": "theory",
+            "title": "Bilaterale symmetrie",
+            "text": "Bilaterale symmetrie verwijst naar de aanwezigheid van **bilaterale organen** zoals armen en benen, waarbij een organisme over een linker- en rechterversie van het orgaan beschikt die vrijwel identiek zijn.",
+            "image": "bilaterale_symmetrie.png",
+            "tag": "2.9.1"
+        },
+        {
+            "type": "theory",
+            "title": "Asymmetrie",
+            "text": "**Asymmetrie** in organen houdt in dat bepaalde organen, zoals de lever, hart, maag, milt en longen, niet bilateraal zijn maar een specifieke positie in het lichaam hebben die niet identiek gespiegeld is aan de andere zijde.",
+            "image": "lateraliteit.png",
+            "tag": "2.9.2"
+        },
+        {
+            "type": "theory",
+            "title": "Situs solitus en situs inversus",
+            "text": "**Situs solitus** duidt op de normale orgaanpositie binnen het menselijk lichaam, waarbij de organen zich aan de gebruikelijke zijde bevinden, zoals het hart aan de linkerkant. Situs inversus is een zeldzame aandoening waarbij de orgaanpositie **gespiegeld** is ten opzichte van de normale positie, met bijvoorbeeld het hart aan de rechterkant in plaats van links.",
+            "image": "situs_solitus.png",
+            "tag": "2.9.3"
+        },
+        {
+            "type": "theory",
+            "title": "Isomerisme van organen",
+            "text": "**Isomerisme** verwijst naar een situatie waarin enkelzijdige vorming van organen voorkomt, wat inhoudt dat sommige organen die normaal gesproken bilateraal zijn slechts aan \u00e9\u00e9n zijde van het lichaam ontwikkeld zijn. Hierin heb je een links isomerisme en een rechts isomerisme. Bij een links / rechts isomerisme zijn de organen aan de linkerkant / rechterkant ook gespiegeld aan de rechterkant / linkerkant ",
+            "image": null,
+            "tag": "2.9.5"
+        },
+        {
+            "type": "question",
+            "question": "Wat is bilaterale symmetrie?",
+            "answers": {
+                "correct_answer": "De aanwezigheid van organen aan de linker- en rechterkant van het lichaam",
+                "wrong_answers": [
+                    "De aanwezigheid van organen aan de boven- en onderkant van het lichaam",
+                    "De aanwezigheid van organen aan de voor- en achterkant van het lichaam"
+                ]
+            },
+            "tag": "2.8.4",
+            "image": null
+        },
+        {
+            "type": "question",
+            "question": "Beschrijf het verschil tussen situs solitus en links isomerisme in termen van orgaanpositie.",
+            "answer": "Situs solitus verwijst naar de normale positionering van organen (1 punt). Links isomerisme, daarentegen, kenmerkt zich doordat er een bilaterale symmetrie van normaal linkszijdige organen is (1 punt).",
+            "tag": "3.3.1",
+            "image": null
+        },
+        {
+            "type": "theory",
+            "title": "Organen van het urinewegstelsel",
+            "text": "Het **urinewegstelsel** bestaat uit de volgende organen: **nieren, ureters, blaas** en **urethra**. Deze organen werken samen om urine te produceren en af te voeren uit het lichaam.",
+            "image": "urinewegstelsel.png",
+            "tag": "2.10.1"
+        },
+        {
+            "type": "theory",
+            "title": "Functie van het urinewegstelsel",
+            "text": "De primaire functie van het urinewegstelsel is de **urineproductie** en de **-afvoer**. De nieren filteren afvalstoffen uit het bloed en vormen urine, die vervolgens via de ureters naar de blaas wordt getransporteerd en uiteindelijk via de urethra het lichaam verlaat.",
+            "image": null,
+            "tag": "2.10.2"
+        },
+        {
+            "type": "theory",
+            "title": "Positie van de ureters",
+            "text": "De ureters, die urine van de nieren naar de blaas vervoeren, zijn **retroperitoneaal** gelegen. Dit betekent dat ze achter het peritoneum (buikvlies) liggen in de buikholte.",
+            "image": "ureter.png",
+            "tag": "2.10.3"
+        },
+        {
+            "type": "question",
+            "question": "Welke organen maken deel uit van het urinewegstelsel?",
+            "answer": "Het urinewegstelsel bestaat uit de nieren (1 punt), de ureters (1 punt), de blaas (1 punt) en de urethra (1 punt).",
+            "tag": "2.10.1",
+            "image": null
+        },
+        {
+            "type": "question",
+            "question": "Wat is de primaire functie van het urinewegstelsel?",
+            "answer": "De primaire functie van het urinewegstelsel is urineproductie en -afvoer (1 punt).",
+            "tag": "2.10.2",
+            "image": "ureter.png"
+        },
+        {
+            "type": "question",
+            "question": "Beschrijf de rol van de ureters en de urethra in het urinewegstelsel",
+            "answer": "De ureters hebben als primaire functie het transporteren van urine van de nieren naar de blaas (1 punt) en de urethra is het verwijderen van urine uit het lichaam (1 punt).",
+            "tag": "2.10.1",
+            "image": null
+        },
+        {
+            "type": "theory",
+            "title": "Voortplantingssysteem",
+            "text": "Het **voortplantingssysteem** bestaat uit **genitalia** die kunnen worden onderverdeeld in interne en externe structuren. Zijn primaire functies omvatten de **productie van geslachtscellen** (gameten) en **productie van hormonen**.",
+            "image": "voortplantingssysteem.png",
+            "tag": "2.11.1"
+        },
+        {
+            "type": "theory",
+            "title": "Embryonale ontwikkeling van genitali\u00EBn",
+            "text": "De embryonale ontwikkeling van mannelijke en vrouwelijke genitali\u00EBn start vanuit een gemeenschappelijke, ongedifferentieerde toestand. Rond de zesde week van de zwangerschap beginnen de geslachtsorganen te differenti\u00EBren door de invloed van hormonale signalen. Bij mannelijke embryo's leiden **hormonen** zoals testosteron tot de ontwikkeling van de mannelijke reproductieve structuren, terwijl bij vrouwelijke embryo's de **afwezigheid van deze hormonen** resulteert in de ontwikkeling van vrouwelijke reproductieve structuren. Dit proces bepaalt de vorming van de interne en externe genitali\u00EBn van elk geslacht.",
+            "image": "voortplanting_ontwikkeling.png",
+            "tag": "3.4.1"
+        },
+        {
+            "type": "question",
+            "question": "Welke twee hoofdfuncties heeft het voortplantingssysteem?",
+            "answer": "Het voortplantingssysteem heeft als hoofdfuncties de productie van geslachtscellen (1 punt), en de productie van hormonen (1 punt).",
+            "tag": "2.11.1",
+            "image": "voortplantingssysteem.png"
+        },
+        {
+            "type": "theory",
+            "title": "Mannelijk voortplantingssysteem",
+            "text": "Het **mannelijke voortplantingssysteem** omvat de **testes** waar sperma wordt geproduceerd, de **epididymis** voor de opslag en rijping van sperma, de **ductus deferens** voor het transport van sperma, en de **prostaat** die secreten toevoegt aan het sperma om semen te vormen.",
+            "image": "voortplantingssysteem_man.png",
+            "tag": "2.11.2"
+        },
+        {
+            "type": "theory",
+            "title": "Vrouwelijk Voortplantingssysteem",
+            "text": "Het **vrouwelijke voortplantingssysteem** bestaat uit de **ovaria**, waar eicellen worden geproduceerd, de **tuba uterina** (eileiders) die de eicellen naar de **uterus** vervoeren, de **cervix** als de opening naar de uterus, en de **vagina**, die dient als geboortekanaal en ontvangt het mannelijk sperma tijdens geslachtsgemeenschap.",
+            "image": "voortplantingssysteem_vrouw.png",
+            "tag": "2.11.3"
+        },
+        {
+            "type": "question",
+            "question": "Welke organen en structuren zijn betrokken bij de productie, opslag, rijping, en transport van sperma in het mannelijke voortplantingssysteem?",
+            "answer": "In het mannelijke voortplantingssysteem zijn de testes betrokken bij de productie van sperma (1 punt), de epididymis bij de opslag en rijping (1 punt), de ductus deferens bij het transport (1 punt), en de prostaat voegt secreten toe aan het sperma om semen te vormen (1 punt).",
+            "tag": "2.11.2",
+            "image": null
+        },
+        {
+            "type": "theory",
+            "title": "Typen Lichaamsholten",
+            "text": "Er zijn verschillende typen **lichaamsholten** die belangrijk zijn in de anatomie, waaronder de **pericardiale**, **pleurale**, en **peritoneale** holten. Deze holten omringen respectievelijk het hart, de longen en de buikorganen en spelen een rol in het beschermen en ondersteunen van deze organen.",
+            "image": "lichaamsholten.png",
+            "tag": "2.13.1"
+        },
+        {
+            "type": "theory",
+            "title": "Orgaanbekleding",
+            "text": "De bekleding van organen binnen deze holten bestaat uit twee lagen: het **viscerale** en **pari\u00ebtale** blad. Het **viscerale blad** is direct tegen het orgaan aan gelegen, terwijl het **pari\u00ebtale blad** de binnenkant van de holte zelf bekleedt.",
+            "image": "visceraal_parietaal.png",
+            "tag": "2.13.2"
+        },
+        {
+            "type": "question",
+            "question": "Welk orgaan/welke organen is/zijn in de pleurale holte gelegen?",
+            "answers": {
+                "correct_answer": "Longen",
+                "wrong_answers": [
+                    "Hart",
+                    "De buikorganen"
+                ]
+            },
+            "tag": "2.8.4",
+            "image": null
+        },
+        {
+            "type": "question",
+            "question": "Beschrijf het verschil tussen het viscerale en pari\u00ebtale blad dat de organen bekleedt in de lichaamsholten.",
+            "answer": "Het viscerale blad ligt direct tegen het orgaan aan (1 punt) en het pari\u00ebtale blad bekleedt de binnenkant van de holte zelf (1 punt).",
+            "tag": "2.13.2",
+            "image": null
+        },
+        {
+            "type": "theory",
+            "title": "Pneumothorax",
+            "text": "Een **pneumothorax** (klaplong) ontstaat door de aanwezigheid van **lucht in de pleuraholte**, de ruimte tussen de longen en de borstwand.",
+            "image": "pneumathorax.png",
+            "tag": "2.14.1"
+        },
+        {
+            "type": "question",
+            "question": "Wat is de primaire oorzaak van een pneumothorax?",
+            "answer": "De primaire oorzaak van een pneumothorax is de aanwezigheid van lucht in de pleuraholte (1 punt).",
+            "tag": "2.14.1",
+            "image": null
+        },
+        {
+            "type": "theory",
+            "title": "Typen Pneumothorax",
+            "text": "Er zijn drie verschillende typen pneumothoraces; de **open pneumothorax**, de **gesloten pneumothorax** en de meer ernstige **spanningspneumothorax**. Bij een open pneumothorax is er een opening tussen de buitenlucht en de pleuraholte, waardoor lucht vrij in en uit kan stromen. Een gesloten pneumothorax treedt op zonder een externe wond, waarbij lucht zich ophoopt in de pleuraholte door een lek binnenin de longen. De spanningspneumothorax is potentieel levensbedreigend en ontstaat wanneer ingesloten lucht in de pleuraholte onder druk staat en het hart en andere organen comprimeert.",
+            "image": "pneumathorax_typen.png",
+            "tag": "2.14.2"
+        },
+        {
+            "type": "question",
+            "question": "Wat is het verschil tussen een open pneumothorax en een spanningspneumothorax?",
+            "answer": "Bij een open pneumothorax is er een directe verbinding tussen de buitenlucht en de pleuraholte door een wond (1 punt), waardoor lucht vrijelijk in en uit kan stromen en de druk in de pleuraholte gelijk blijft aan de atmosferische druk (1 punt). Een spanningspneumothorax daarentegen is een ernstiger toestand waarbij lucht in de pleuraholte gevangen raakt zonder een weg naar buiten (1 punt), wat leidt tot toenemende druk in de pleuraholte. Deze toenemende druk kan omliggende structuren zoals het hart en de grote bloedvaten comprimeren (1 punt).",
+            "tag": "2.14.4",
+            "image": null
+        },
+        {
+            "type": "theory",
+            "title": "Ascites",
+            "text": "Ascites is een aandoening die wordt gekarakteriseerd door **vochtophoping in de peritoneale holte**. Dit kan leiden tot buikzwelling en is vaak een indicatie van onderliggende gezondheidsproblemen zoals levercirrose of hartfalen.",
+            "image": "ascites.png",
+            "tag": "2.15.1"
+        },
+        {
+            "type": "theory",
+            "title": "Harttamponade",
+            "text": "Harttamponade is een ernstige medische toestand waarbij **bloed zich ophoopt in de pericardholte**. Dit kan de normale werking van het hart verstoren doordat het de beweging van het hart beperkt, wat levensbedreigend kan zijn.",
+            "image": "harttamponade.png",
+            "tag": "2.15.2"
+        },
+        {
+            "type": "question",
+            "question": "Wat is ascites?",
+            "answer": "Ascites is vochtophoping in de peritoneale holte (1 punt), wat buikzwelling veroorzaakt (1 punt).",
+            "tag": "2.15.1",
+            "image": null
+        },
+        {
+            "type": "question",
+            "question": "Wat is een harttamponade?",
+            "answer": "Harttamponade is een toestand waarbij bloed zich ophoopt in de pericardholte (1 punt), wat levensbedreigend kan zijn doordat het de beweging van het hart beperkt en zo de normale werking van het hart verstoort (1 punt).",
+            "tag": "2.15.2",
+            "image": null
+        },
+        {
+            "type": "theory",
+            "title": "Belangrijke organen van het hormonale systeem",
+            "text": "Het **hormonale systeem** bestaat uit diverse organen, waaronder de **hypofyse**, **schildklier**, **bijschildklier**, **pancreas** (alvleesklier), **bijnieren**, en **gonaden** (geslachtsklieren).",
+            "image": null,
+            "tag": "hormonaal_systeem.png"
+        },
+        {
+            "type": "theory",
+            "title": "Functie van het Hormonale Systeem",
+            "text": "Het hormonale systeem, ook bekend als het endocriene systeem, dient als een schakel tussen het zenuwstelsel en de overige orgaansystemen. Het speelt een rol in de regulatie van vegetatieve en metabole functies. Dit houdt in dat het helpt bij het reguleren van lichaamsprocessen die niet onder bewuste controle staan, zoals de hartslag, ademhalingsfrequentie, en de verwerking van voedingsstoffen in het lichaam. Daarnaast heeft het een sleutelrol in het aansturen van de stofwisseling, groei, en ontwikkeling door middel van de productie en secretie van diverse hormonen.",
+            "image": "hormonaal_systeem.png",
+            "tag": "3.5.1"
+        },
+        {
+            "type": "question",
+            "question": "Welke organen maken deel uit van het hormonale systeem?",
+            "answer": "Het hormonale systeem omvat de hypofyse (1 punt), schildklier (1 punt), bijschildklier (1 punt), pancreas (1 punt), bijnieren (1 punt) en gonaden (1 punt).",
+            "tag": "2.12.1",
+            "image": null
+        },
+        {
+            "type": "theory",
+            "title": "Communicatiemethoden van het Zenuwstelsel en Hormonaal Stelsel",
+            "text": "Het zenuwstelsel kan worden vergeleken met het versturen van een gerichte e-mail: signalen worden zeer specifiek en gericht gestuurd via elektrische overdracht, wat resulteert in een snelle en kortdurende reactie. In tegenstelling tot het zenuwstelsel, werkt het hormonale systeem meer als het versturen van een algemeen spam bericht. Hormonen worden via het bloed naar alle delen van het lichaam verzonden, en alleen de cellen die de specifieke receptoren hebben voor deze hormonen ('aangevinkt om de informatie te ontvangen') zullen reageren. Dit proces van chemische overdracht is relatief trager en de effecten zijn langduriger in vergelijking met de elektrische signalen van het zenuwstelsel.",
+            "image": "hormoon_zenuwstelsel.png",
+            "tag": "3.6.1"
+        }
+    ]
+}

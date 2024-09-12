@@ -1,0 +1,85 @@
+{
+    "module_name": "oefententamen_1",
+    "segments": [
+        {
+            "type": "question",
+            "question": "Hoe kunnen de termen 'proximaal' en 'distaal' worden gebruikt om de locatie van structuren in het menselijk lichaam te beschrijven, en waarom zijn deze termen nuttig in de klinische praktijk?",
+            "answer": "Voor de extremiteiten worden de termen proximaal en distaal gebruikt om aan te geven of iets dichter of verder van de romp gelegen is (1 punt). Omdat de extremiteiten zo bewegelijk zijn, zijn deze termen in de praktijk handiger dan superior/inferior (1 punt). De termen proximaal en distaal worden ook bij het spijsverteringsstelsel gebruikt. Daar is het ondoenlijk om de andere termen, zoals lateraal, mediaal, dorsaal etc., te gebruiken om de weg van het voedsel te gebruiken (1 punt)."
+        },
+        {
+            "type": "question",
+            "question": "Beschrijf de verschillende componenten van het huidorgaansysteem en leg uit hoe elk van deze componenten bijdraagt aan de bescherming van het lichaam.",
+            "answer": "Het huidorgaansysteem omvat de huid, haren, klieren en hun derivaten (1 punt). De huid fungeert als een fysieke barrière tegen pathogenen en fysieke schade (1 punt). Haren bieden extra bescherming door bijvoorbeeld warmte vast te houden en gevoelige gebieden te beschermen (1 punt). Klieren, zoals zweetklieren, helpen bij temperatuurregulatie (1 punt)."
+        },
+        {
+            "type": "question",
+            "question": "Beschrijf welke delen tot het axiale skelet behoren en leg uit hoe het axiale skelet bijdraagt aan de bescherming en ondersteuning van het lichaam.",
+            "answer": "Het axiale skelet vormt de centrale structuur van het lichaam en bestaat uit de schedel (cranium) en de wervelkolom (columna vertebralis) (1 punt). De wervelkolom bestaat uit 7 halswervels (vertebrae cervicales), 12 borstwervels (vertebrae thoracales), 5 lendenwervels (vertebrae lumbales), 5 heiligbeenwervels (vertebrae sacrales) (1 punt) en 3-5 staartbeenwervels (vertebrae coccygeales). Deze structuren ondersteunen het lichaam door een centrale as te bieden waaraan andere skeletdelen en spieren zich kunnen hechten (1 punt). Daarnaast beschermen ze het ruggenmerg, dat door de wervelkolom loopt, en de hersenen, die door de schedel worden omgeven (1 punt)."
+        },
+        {
+            "type": "question",
+            "question": "Beschrijf de structurele verschillen tussen junctura fibrosa en junctura synovialis en leg uit hoe deze verschillen de bewegingsmogelijkheden van de gewrichten beïnvloeden.",
+            "answer": "Junctura fibrosa, ook wel bindweefselverbinding genoemd, is een type continue, onbeweeglijke gewricht (1 punt). Deze gewrichten bestaan uit fibreuze verbindingen die stabiliteit en bescherming bieden, zoals de suturen tussen de botstukken van de schedel (1 punt). Junctura synovialis, ook wel synoviale gewrichten genoemd, zijn beweeglijke gewrichten met een synoviale holte gevuld met vloeistof (1 punt). Deze gewrichten zijn omgeven door een gewrichtskapsel dat bestaat uit de membrana fibrosa en de membrana synovialis, en bevatten synoviaalvocht voor smering en vermindering van wrijving (1 punt). De structurele verschillen tussen deze twee typen gewrichten zorgen ervoor dat junctura fibrosa zeer beperkte beweging toestaat, terwijl junctura synovialis een breed scala aan bewegingen mogelijk maakt (1 punt)."
+        },
+        {
+            "type": "question",
+            "question": "Beschrijf de rol van agonisten, synergisten en antagonisten in de samenwerking van spieren tijdens een beweging en leg uit hoe deze samenwerking bijdraagt aan een gecontroleerde en efficiënte beweging.",
+            "answer": "Agonisten zijn de spieren die een beweging initiëren en worden ook wel prime movers genoemd (1 punt). Synergisten ondersteunen de beweging door de agonist te helpen en extra kracht of stabiliteit te bieden (1 punt). Antagonisten werken tegengesteld aan de agonist en helpen bij het gecontroleerd terugkeren naar de oorspronkelijke positie of het afremmen van de beweging (1 punt). Deze samenwerking zorgt voor een gecontroleerde en efficiënte beweging doordat de agonisten de beweging starten, de synergisten de beweging ondersteunen en stabiliseren, en de antagonisten de beweging afremmen en terugkeren naar de oorspronkelijke positie mogelijk maken (1 punt)."
+        },
+        {
+            "type": "question",
+            "question": "Hoe beïnvloeden de verschillende gewrichtstypen de bewegingsvrijheid van het menselijk lichaam en welke specifieke bewegingen zijn mogelijk binnen deze gewrichten?",
+            "answer": "De verschillende gewrichtstypen beïnvloeden de bewegingsvrijheid van het menselijk lichaam door het aantal vrijheidsgraden dat ze toestaan (1 punt). Het kogelgewricht, zoals in de schouder en heup, staat beweging toe om alle drie de anatomische assen (1 punt). Het scharniergewricht, zoals in de elleboog en knie, maakt voornamelijk beweging in één vlak mogelijk (1 punt). Het rolgewricht, zoals in de nek, laat rotatie rond één as toe (1 punt). Specifieke bewegingen die mogelijk zijn binnen deze gewrichten omvatten flexie (buigen) (1 punt), extensie (strekken) (1 punt), abductie (wegvoeren van de middenlijn) (1 punt), adductie (naar de middenlijn toe bewegen) (1 punt), endorotatie (naar binnen draaien) (1 punt), en exorotatie (naar buiten draaien) (1 punt)."
+        },
+        {
+            "type": "question",
+            "question": "Beschrijf hoe het zenuwstelsel de aansturing van orgaansystemen en de informatieoverdracht tussen verschillende delen van het lichaam verzorgt.",
+            "answer": "Het zenuwstelsel verzorgt de aansturing van orgaansystemen door middel van elektrische signalen die via zenuwen worden doorgegeven (1 punt). De informatieoverdracht tussen verschillende delen van het lichaam gebeurt door middel van neurotransmitters die signalen tussen zenuwcellen overbrengen (1 punt)."
+        },
+        {
+            "type": "question",
+            "question": "Beschrijf de route van de systemische bloedsomloop en de pulmonale circulatie, en leg uit hoe deze twee systemen samenwerken om zuurstof en koolstofdioxide in het lichaam te transporteren.",
+            "answer": "De route van de bloedsomloop begint in de linkerventrikel waar zuurstofrijk bloed wordt gepompt naar de aorta (1 punt). Het bloed reist door het lichaam, keert terug via de venen naar het rechter atrium (1 punt), gaat naar de rechterventrikel, en wordt dan naar de longen gepompt (1 punt). In de longen vindt gasuitwisseling plaats, waarna het zuurstofrijke bloed terugkeert naar het linker atrium en vervolgens naar de linkerventrikel om de cyclus opnieuw te beginnen (1 punt). De pulmonale circulatie begint in het rechterventrikel van het hart, pompt bloed door de longslagaders naar de longen waar gasuitwisseling plaatsvindt (1 punt), en keert terug naar het hart via de longaders die uitkomen in het linker atrium (1 punt). Deze twee systemen werken samen door zuurstofarm bloed naar de longen te sturen voor zuurstofuitwisseling en zuurstofrijk bloed naar de weefsels en organen te transporteren (1 punt)."
+        },
+        {
+            "type": "question",
+            "question": "Beschrijf de rol van de speekselklieren in het spijsverteringsproces en leg uit hoe de enzymen en het vocht die zij afscheiden bijdragen aan de verwerking van voedsel.",
+            "answer": "De speekselklieren spelen een rol in het spijsverteringsproces door enzymen en vocht te leveren (1 punt). Deze enzymen beginnen met de afbraak van koolhydraten in de mondholte (1 punt). Het vocht helpt bij het bevochtigen en verzachten van het voedsel, waardoor het gemakkelijker door de oesophagus kan worden getransporteerd (1 punt). Hierdoor wordt de verwerking van voedsel efficiënter voordat het door de rest van het spijsverteringskanaal gaat (1 punt)."
+        },
+        {
+            "type": "question",
+            "question": "Hoe verschilt de rol van mesenteria bij intraperitoneale organen ten opzichte van retroperitoneale organen?",
+            "answer": "Mesenteria spelen een cruciale rol bij intraperitoneale organen door hen te verbinden met de achterwand van de buikholte, wat zorgt voor mobiliteit (1 punt) en een goede bloedtoevoer (1 punt). Retroperitoneale organen daarentegen hebben geen mesenterium (1 punt) en zijn daardoor minder beweeglijk (1 punt)."
+        },
+        {
+            "type": "question",
+            "question": "Welke rol heeft de larynx in het ademhalingsstelsel en welke specifieke rol heeft de larynx daarnaast bij het communiceren?",
+            "answer": "De larynx speelt een cruciale rol in het ademhalingsstelsel door de stembanden te bevatten, die verantwoordelijk zijn voor de productie van stemgeluiden (1 punt). Daarnaast fungeert de larynx als een belangrijke beschermer voor de lagere luchtwegen door te voorkomen dat voedsel en andere deeltjes de trachea binnendringen tijdens het slikken (1 punt). Deze dubbele functie zorgt ervoor dat de luchtwegen vrij blijven van obstructies en dat communicatie via stemgeluiden mogelijk is (1 punt)."
+        },
+        {
+            "type": "question",
+            "question": "Wat is het verschil tussen situs solitus en situs inversus, en hoe kunnen deze condities de functionele anatomie van een persoon beïnvloeden?",
+            "answer": "Situs solitus verwijst naar de normale orgaanpositie binnen het menselijk lichaam, waarbij de organen zich aan de gebruikelijke zijde bevinden, zoals het hart aan de linkerkant (1 punt). Situs inversus is een zeldzame aandoening waarbij de orgaanpositie gespiegeld is ten opzichte van de normale positie, met bijvoorbeeld het hart aan de rechterkant in plaats van links (1 punt). Deze condities kunnen de functionele anatomie van een persoon beïnvloeden doordat de spiegeling van organen kan leiden tot complicaties bij medische procedures en diagnostiek, omdat de verwachte positie van organen anders is dan normaal (1 punt)."
+        },
+        {
+            "type": "question",
+            "question": "Beschrijf de route die urine aflegt vanaf de productie in de nieren tot aan de uitscheiding uit het lichaam, en leg uit welke rol elk orgaan in het urinewegstelsel speelt in dit proces.",
+            "answer": "Urine wordt geproduceerd in de nieren, waar afvalstoffen uit het bloed worden gefilterd (1 punt). Vervolgens wordt de urine via de ureters, die retroperitoneaal gelegen zijn, naar de blaas getransporteerd (1 punt). De blaas dient als tijdelijke opslagplaats voor urine (1 punt). Uiteindelijk wordt de urine via de urethra uit het lichaam uitgescheiden (1 punt)."
+        },
+        {
+            "type": "question",
+            "question": "Beschrijf het proces van embryonale ontwikkeling van de mannelijke en vrouwelijke genitaliën vanaf de ongedifferentieerde toestand tot de uiteindelijke differentiatie, en leg uit welke rol hormonen spelen in dit proces.",
+            "answer": "De embryonale ontwikkeling van mannelijke en vrouwelijke genitaliën begint vanuit een gemeenschappelijke, ongedifferentieerde toestand (1 punt). Rond de zesde week van de zwangerschap beginnen de geslachtsorganen te differentiëren door de invloed van hormonale signalen (1 punt). Bij mannelijke embryo's leiden hormonen zoals testosteron tot de ontwikkeling van de mannelijke reproductieve structuren (1 punt), terwijl bij vrouwelijke embryo's de afwezigheid van deze hormonen resulteert in de ontwikkeling van vrouwelijke reproductieve structuren (1 punt). Dit proces bepaalt de vorming van de interne en externe genitaliën van elk geslacht (1 punt)."
+        },
+        {
+            "type": "question",
+            "question": "Beschrijf de verschillen tussen een open pneumothorax, een gesloten pneumothorax en een spanningspneumothorax, en leg uit waarom een spanningspneumothorax als potentieel levensbedreigend wordt beschouwd.",
+            "answer": "Een open pneumothorax ontstaat door een opening tussen de buitenlucht en de pleuraholte, waardoor lucht vrij in en uit kan stromen (1 punt). Een gesloten pneumothorax treedt op zonder een externe wond, waarbij lucht zich ophoopt in de pleuraholte door een lek binnenin de longen (1 punt). Een spanningspneumothorax is potentieel levensbedreigend omdat ingesloten lucht in de pleuraholte onder druk staat en het hart en andere organen comprimeert, wat de normale werking van het hart kan verstoren en kan leiden tot ernstige complicaties (1 punt)."
+        },
+        {
+            "type": "question",
+            "question": "Hoe verschilt de communicatiemethode van het hormonale systeem van die van het zenuwstelsel, en wat zijn de implicaties van deze verschillen voor de snelheid en duur van de reacties in het lichaam?",
+            "answer": "De communicatiemethode van het hormonale systeem verschilt van die van het zenuwstelsel doordat het hormonale systeem gebruik maakt van chemische overdracht via het bloed (1 punt), terwijl het zenuwstelsel gebruik maakt van elektrische overdracht via neuronen (1 punt). Dit betekent dat signalen in het hormonale systeem trager zijn omdat hormonen door het bloed moeten reizen (1 punt), maar de effecten zijn langduriger omdat hormonen langer in de bloedbaan blijven en hun werking langer aanhoudt (1 punt). In tegenstelling, signalen in het zenuwstelsel zijn snel en kortdurend omdat elektrische signalen snel door neuronen reizen en direct doelcellen bereiken (1 punt)."
+        }
+    ]
+}
