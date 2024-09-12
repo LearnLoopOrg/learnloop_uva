@@ -28,19 +28,19 @@ load_dotenv()
 def connect_to_openai() -> OpenAI:
     print("Using LearnLoop Azure instance of OpenAI GPT-4o")
     if st.session_state.use_keyvault:
-        LL_AZURE_OPENAI_API_KEY = AzureUtils.get_secret(
+        LL_OPENAI_API_KEY = AzureUtils.get_secret(
             "LL-AZURE-OPENAI-API-KEY", "lluniappkv"
         )
-        LL_AZURE_OPENAI_API_ENDPOINT = AzureUtils.get_secret(
+        LL_OPENAI_API_ENDPOINT = AzureUtils.get_secret(
             "LL-AZURE-OPENAI-API-ENDPOINT", "lluniappkv"
         )
     else:
-        LL_AZURE_OPENAI_API_KEY = os.getenv("LL_AZURE_OPENAI_API_KEY")
-        LL_AZURE_OPENAI_API_ENDPOINT = os.getenv("LL_AZURE_OPENAI_API_ENDPOINT")
+        LL_OPENAI_API_KEY = os.getenv("LL_OPENAI_API_KEY")
+        LL_OPENAI_API_ENDPOINT = os.getenv("LL_OPENAI_API_ENDPOINT")
     return AzureOpenAI(
-        api_key=LL_AZURE_OPENAI_API_KEY,
+        api_key=LL_OPENAI_API_KEY,
         api_version="2024-04-01-preview",
-        azure_endpoint=LL_AZURE_OPENAI_API_ENDPOINT,
+        azure_endpoint=LL_OPENAI_API_ENDPOINT,
     )
 
 
@@ -1477,155 +1477,107 @@ def render_sidebar():
         # --------------------------------------------------------------
 
 
-def initialise_database():
+def update_user_progress_bulk(username, updates):
     """
-    Initialise the progress object with the modules and phases in the database.
+    Updates multiple fields in the user's document with a single update operation.
     """
-    for module in st.session_state.modules:
-        db.users.update_one(
-            {"username": st.session_state.username},
-            {
-                "$set": {
-                    "warned": False,
-                    "last_module": st.session_state.modules[
-                        0
-                    ],  # Open the first module by default
-                    f"progress.{module}": {
-                        "learning": {
-                            "segment_index": -1,  # Set to -1 so an explanation displays when phase is first opened
-                            "progress_counter": None,
-                        },
-                        "practice": {
-                            "segment_index": -1,
-                            "ordered_segment_sequence": [],
-                        },
-                        "feedback": {"questions": []},
-                    },
-                }
-            },
-        )
+    db.users.update_one({"username": username}, {"$set": updates})
 
 
-def initialise_module_in_database(module):
+def create_default_progress_structure(module):
     """
-    Adds a new module to the database without resetting the rest of the database.
+    Returns the default structure for progress in any module, including the progress_counter.
     """
-    db.users.update_one(
-        {"username": st.session_state.username},
-        {
-            "$set": {
-                f"progress.{module}": {
-                    "learning": {
-                        "segment_index": -1
-                    },  # Set to -1 so an explanation displays when phase is first opened
-                    "practice": {
-                        "segment_index": -1,
-                        "ordered_segment_sequence": [],
-                    },
-                }
-            }
+    empty_dict = create_empty_progress_dict(module)
+
+    return {
+        "learning": {
+            "segment_index": -1,
+            "progress_counter": empty_dict,
         },
-    )
+        "practice": {"segment_index": -1, "ordered_segment_sequence": []},
+        "feedback": {"questions": []},
+    }
 
 
 def create_empty_progress_dict(module):
     """
-    Creates an empty dictionary that contains the JSON
-    index of the segment as key and the number of times
-    the user answered a question.
+    Creates an empty dictionary with segment indices as keys and None as values for progress tracking.
     """
-    empty_dict = {}
-
     st.session_state.page_content = db_dal.fetch_module_content(module)
-
     number_of_segments = (
         len(st.session_state.page_content["segments"])
         if st.session_state.page_content
         else 0
     )
-
-    # Create a dictionary with indexes (strings) as key and None as value
-    empty_dict = {str(i): None for i in range(number_of_segments)}
-
-    return empty_dict
+    return {str(i): None for i in range(number_of_segments)}
 
 
-def initialise_practice_in_database(module):
+@st.cache_data(
+    show_spinner=False, ttl=600
+)  # Cache for 1 hour only, so it checks every 10 minutes if there is a new lecture available
+def check_user_doc_and_add_missing_fields():
     """
-    Adds a new module to the database without resetting the rest of the database.
+    Initializes the user database with missing fields and modules.
     """
-    db.users.update_one(
-        {"username": st.session_state.username},
-        {
-            "$set": {
-                f"progress.{module}.practice": {
-                    "segment_index": -1,
-                    "ordered_segment_sequence": [],
-                }
-            }
-        },
-    )
-
-
-def initialise_learning_in_database(module):
-    """
-    Adds a new module to the database without resetting the rest of the database.
-    """
-    db.users.update_one(
-        {"username": st.session_state.username},
-        {"$set": {f"progress.{module}.learning": {"segment_index": -1}}},
-    )
-
-
-@st.cache_data(show_spinner=False)
-def determine_if_to_initialise_database():
-    """
-    Determine if currently testing, if the progress is saved, or if all modules are included
-    and if so, reset db when reloading webapp.
-    """
+    print("Checking user doc and adding missing fields")
     user_doc = db_dal.find_user_doc()
-    if not user_doc:  # NEW USER CASE
+    if not user_doc:
         db.users.insert_one({"username": st.session_state.username})
         user_doc = db_dal.find_user_doc()
 
-    if reset_user_doc:
-        if "reset_db" not in st.session_state:
-            st.session_state.reset_db = True
+    general_updates = {}
+    nested_updates = {}
 
-        if st.session_state.reset_db:
-            st.session_state.reset_db = False
-            initialise_database()
+    # General fields initialization
+    if "warned" not in user_doc:
+        general_updates["warned"] = False
 
-        user_doc = db_dal.find_user_doc()
+    if "last_module" not in user_doc:
+        general_updates["last_module"] = st.session_state.modules[0]
 
-    if "progress" not in user_doc:
-        initialise_database()
-        user_doc = db_dal.find_user_doc()
-
+    # Module-specific initialization
     for module in st.session_state.modules:
-        if module not in user_doc["progress"]:
-            initialise_module_in_database(module)
-            user_doc = db_dal.find_user_doc()
+        # Initialize progress for the module if missing
+        if module not in user_doc.get("progress", {}):
+            general_updates[f"progress.{module}"] = create_default_progress_structure()
+            print(
+                f"Added progress structure for module {module} to 'general_updates' variable"
+            )
 
-        if "practice" not in user_doc["progress"][module]:
-            initialise_practice_in_database(module)
-            user_doc = db_dal.find_user_doc()
+        # Initialize specific fields if missing (nested updates)
+        if "practice" not in user_doc.get("progress", {}).get(module, {}):
+            nested_updates[f"progress.{module}.practice"] = {
+                "segment_index": -1,
+                "ordered_segment_sequence": [],
+            }
+            print(
+                f"Added 'practice' field for module {module} to 'nested_updates' variable"
+            )
 
-        if "learning" not in user_doc["progress"][module]:
-            initialise_learning_in_database(module)
-            user_doc = db_dal.find_user_doc()
+        if "learning" not in user_doc.get("progress", {}).get(module, {}):
+            nested_updates[f"progress.{module}.learning"] = {"segment_index": -1}
+            print(
+                f"Added 'learning' field for module {module} to 'nested_updates' variable"
+            )
 
-        # Check if the user doc contains the dict in which the
-        # is saved how many times a question is made by user
-        if "progress_counter" not in user_doc["progress"][module]["learning"]:
+        if "progress_counter" not in user_doc.get("progress", {}).get(module, {}).get(
+            "learning", {}
+        ):
             empty_dict = create_empty_progress_dict(module)
-            db_dal.add_progress_counter(module, empty_dict)
-            user_doc = db_dal.find_user_doc()
+            nested_updates[f"progress.{module}.learning.progress_counter"] = empty_dict
+            print(
+                f"Added 'progress_counter' field for module {module} to 'nested_updates' variable"
+            )
 
-        progress_counter = db_dal.get_progress_counter(module, user_doc)
-        if progress_counter is None:
-            empty_dict = create_empty_progress_dict(module)
-            db_dal.add_progress_counter(module, empty_dict)
+    # Apply all accumulated updates in two stages
+    if general_updates:
+        print("Applying general updates")
+        update_user_progress_bulk(st.session_state.username, general_updates)
+
+    if nested_updates:
+        print("Applying nested updates")
+        update_user_progress_bulk(st.session_state.username, nested_updates)
 
 
 def convert_image_base64(image_path):
@@ -1796,7 +1748,7 @@ if __name__ == "__main__":
     reset_user_doc = False
 
     # Your current IP has to be accepted by Gerrit to use CosmosDB (Gerrit controls this)
-    st.session_state.use_mongodb = False
+    st.session_state.use_mongodb = True
 
     st.session_state.use_keyvault = False
 
@@ -1849,7 +1801,7 @@ if __name__ == "__main__":
 
     # Render the actual app when the username is determined
     else:
-        determine_if_to_initialise_database()
+        check_user_doc_and_add_missing_fields()
 
         if st.session_state.warned is None:
             if warned := db_dal.fetch_if_warned() is True:
