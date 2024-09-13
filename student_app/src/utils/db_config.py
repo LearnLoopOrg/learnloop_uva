@@ -25,7 +25,7 @@ def connect_db(use_mongodb):
             LL_COSMOS_URI = os.getenv("LL_COSMOS_URI")
         db_client = MongoClient(LL_COSMOS_URI, tlsCAFile=certifi.where())
 
-    db = db_client.UvA_NAF
+    db = db_client.demo
 
     # Ping database to check if it's connected
     try:

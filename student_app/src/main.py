@@ -1757,7 +1757,7 @@ if __name__ == "__main__":
     # Your current IP has to be accepted by Gerrit to use CosmosDB (Gerrit controls this)
     st.session_state.use_mongodb = True
 
-    st.session_state.use_keyvault = False
+    st.session_state.use_keyvault = True
 
     # Use dummy LLM feedback as response to save openai costs and time during testing
     use_dummy_openai_calls = False
