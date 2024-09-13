@@ -8,21 +8,60 @@ class ModuleRepository:
     def __init__(self, db: Database[dict[str, Any]]):
         self.db = db
 
-    def save_correction(self, module, segments_list):
-        try:
-            self._update_correct_lecture_path_content(module, segments_list)
-            self._upload_modules_topics_json(module, segments_list)
+    def save_draft_correction(self, module, updated_segments):
+        self._save_topics_json(module, updated_segments)
+        self.db.get_collection("content").find_one_and_update(
+            {"lecture_name": module},
+            {
+                "$set": {
+                    "status": "generated",
+                    "updated_at": datetime.now(),
+                    "corrected_lecturepath_content": {"segments": updated_segments},
+                }
+            },
+        )
+        return
 
-            self.db.get_collection("content").find_one_and_update(
-                {"lecture_name": module},
-                {
-                    "$set": {
-                        "status": "corrected",  # TODO: set to corrected
-                    }
-                },
-            )
-        except:
-            raise ValueError("Error while saving correction")
+    def save_final_correction(self, module, updated_segments):
+        self._save_topics_json(module, updated_segments)
+        self.db.get_collection("content").find_one_and_update(
+            {"lecture_name": module},
+            {
+                "$set": {
+                    "status": "corrected",
+                    "updated_at": datetime.now(),
+                    "corrected_lecturepath_content": {"segments": updated_segments},
+                }
+            },
+        )
+        return
+
+    def _save_topics_json(self, module, updated_segments):
+        topics_dict = {}
+
+        # Iterate over the segments to group them by topic_title
+        for index, segment in enumerate(updated_segments):
+            topic_title = segment.get("topic_title", "Unknown Topic")
+            if topic_title not in topics_dict:
+                topics_dict[topic_title] = {
+                    "topic_title": topic_title,
+                    "segment_indexes": [],
+                }
+            topics_dict[topic_title]["segment_indexes"].append(index)
+        # Convert the topics_dict to a list of topics
+        topics_json = {"topics": list(topics_dict.values())}
+        self._save_topics_json_to_db(module, topics_json)
+
+    def _save_topics_json_to_db(self, module, topics_json):
+        self.db.get_collection("content").find_one_and_update(
+            {"lecture_name": module},
+            {
+                "$set": {
+                    "corrected_lecturepath_topics": topics_json,
+                    "updated_at": datetime.now(),
+                }
+            },
+        )
 
     def _update_correct_lecture_path_content(
         self, module, segments_list_with_delete
