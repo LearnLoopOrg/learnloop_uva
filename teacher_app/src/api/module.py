@@ -25,6 +25,7 @@ class ModuleRepository:
 
     def save_final_correction(self, module, updated_segments):
         self._save_topics_json(module, updated_segments)
+        updated_segments = self.remove_topics_from_updated_segments(updated_segments)
         self.db.get_collection("content").find_one_and_update(
             {"lecture_name": module},
             {
@@ -36,6 +37,12 @@ class ModuleRepository:
             },
         )
         return
+
+    def remove_topics_from_updated_segments(self, updated_segments):
+        for segment in updated_segments:
+            if "topic_title" in segment:
+                del segment["topic_title"]
+        return updated_segments
 
     def _save_topics_json(self, module, updated_segments):
         topics_dict = {}
