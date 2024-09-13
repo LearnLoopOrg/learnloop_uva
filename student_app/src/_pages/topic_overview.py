@@ -11,8 +11,6 @@ class TopicOverview:
         self.db_dal = DatabaseAccess()
         self.utils = Utils()
         self.module_name = st.session_state.selected_module
-        self.module_title = " ".join(self.module_name.split("_")[1:])
-        self.module_number = self.module_name.split("_")[0]
 
     def convert_image_base64(self, image_path):
         """
@@ -46,7 +44,7 @@ class TopicOverview:
         # with header_cols[1]:
         #     st.title(f"College {self.module_number} — {self.module_title}")
         #     st.write("\n")
-        st.title(f"College {self.module_number} — {self.module_title}")
+        st.title(f"{self.module_name}")
 
     def start_learning_page(self, topic_index: int):
         """

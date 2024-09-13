@@ -131,7 +131,7 @@ class Recorder:
         course_name = st.session_state.selected_course
 
         st.button(
-            "Terug naar collegeoverzicht",
+            "Terug naar moduleoverzicht",
             key=course_name,
             on_click=self.go_to_course,
             args=(course_name,),

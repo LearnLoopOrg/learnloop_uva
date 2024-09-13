@@ -99,7 +99,7 @@ class LectureOverview:
     def run(self):
         self.db_dal.update_last_phase("lectures")
         self.load_lectures()
-        st.title("Collegeoverzicht")
+        st.title("Moduleoverzicht")
         self.utils.add_spacing(1)
         self.render_page()
 

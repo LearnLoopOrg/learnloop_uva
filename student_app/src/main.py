@@ -1383,14 +1383,16 @@ def render_sidebar():
     # #     st.session_state.selected_phase = flat_list[selected_index][-1]
 
     with st.sidebar:
-        st.image(
-            "src/data/content/images/logo.png",
-            use_column_width=False,
-            width=150,
-        )
+        logo_base64 = convert_image_base64("src/data/content/images/logo.png")
 
-        st.markdown(
-            """
+        html_content = f"""
+        <div style='text-align: center; margin: 1px;'>
+            <img src='data:image/png;base64,{logo_base64}' alt='Logo' style='max-width: 45%; height: auto;'>
+        </div>
+        <br>
+        """
+        st.markdown(html_content, unsafe_allow_html=True)
+        html_content = """
             <style>
                 .closer-line {
                     margin-top: -5px;
@@ -1400,10 +1402,15 @@ def render_sidebar():
             <h1> 
                 <strong>Welkom Student</strong>
             </h1>
-            <hr class="closer-line">
-        """,
-            unsafe_allow_html=True,
-        )
+            <hr class="closer-line">"""
+
+        st.markdown(html_content, unsafe_allow_html=True)
+        # st.image(
+        #     "src/data/content/images/logo.png",
+        #     use_column_width=False,
+        #     width=150,
+        # )
+
         st.button(
             "📚 Mijn vakken",
             on_click=set_selected_phase,
