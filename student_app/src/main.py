@@ -2,6 +2,7 @@ import json
 import argparse
 import time
 import random
+from typing import Callable
 import streamlit as st
 from dotenv import load_dotenv
 import os
@@ -18,11 +19,42 @@ from _pages.course_overview import CoursesOverview
 from _pages.theory_overview import TheoryOverview
 from utils.utils import Utils
 from utils.utils import AzureUtils
+from slack_sdk import WebClient
+
 
 # Must be called first
 st.set_page_config(page_title="LearnLoop", layout="wide")
 
 load_dotenv()
+
+
+def set_global_exception_handler(custom_handler: Callable, debug: bool = False):
+    import sys
+
+    script_runner = sys.modules["streamlit.runtime.scriptrunner.script_runner"]
+    original_fn: Callable = script_runner.handle_uncaught_app_exception
+
+    def combined_fn(e: BaseException):
+        if not debug:  # run custom error handling only in production
+            custom_handler(e)
+        original_fn(e)
+
+    script_runner.handle_uncaught_app_exception = combined_fn
+
+
+def exception_handler(e: BaseException):
+    # Custom error handling
+    BOT_OAUTH_TOKEN = "xoxb-7362589208226-7719097315238-curwvsQxH1PbDjnQGQstR3JN"
+    try:
+        client = WebClient(token=BOT_OAUTH_TOKEN)
+        client.chat_postMessage(
+            channel="production-errors-student-app",
+            text=f"An error occurred in the student app: {e}",
+            username="Bot User",
+        )
+    except Exception as e:
+        print(e)
+        pass
 
 
 @st.cache_resource(ttl=timedelta(hours=4))
@@ -1738,6 +1770,13 @@ def get_commandline_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
+        "--debug",
+        help="Enable debug mode: which means that the app will not report errors to Slack",
+        action="store_true",
+        default=False,
+    )
+
+    parser.add_argument(
         "--use_keyvault",
         help="Set to True to use Azure Key Vault for secrets",
         action="store_true",
@@ -1791,6 +1830,9 @@ if __name__ == "__main__":
     # SET ALL TO FALSE WHEN DEPLOYING
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     args = get_commandline_arguments()
+    set_global_exception_handler(
+        exception_handler, debug=args.debug
+    )  # set custom exception handler
 
     # Turn on 'testing' to use localhost instead of learnloop.datanose.nl for authentication
     surf_test_env = args.surf_test_env
