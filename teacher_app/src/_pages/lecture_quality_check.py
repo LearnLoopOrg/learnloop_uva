@@ -13,17 +13,19 @@ class QualityCheck:
         self.module_repository = ModuleRepository(st.session_state.db)
         self.db_dal = DatabaseAccess()
         self.image_handler = ImageHandler()
-        module_name = st.session_state.selected_module
+        self.module_name = st.session_state.selected_module
 
-        # Fetch the corrected content of the module
-        content = self.db_dal.fetch_corrected_module_content(module_name)
+        self._initialise_segments_in_qualitycheck()
+
+    def _initialise_segments_in_qualitycheck(self):
+        content = self.db_dal.fetch_corrected_module_content(self.module_name)
         if content == "":
-            content = self.db_dal.fetch_original_module_content(module_name)
+            content = self.db_dal.fetch_original_module_content(self.module_name)
         self.segments = content["segments"]
 
-        topics = self.db_dal.fetch_original_module_topics(module_name)
+        topics = self.db_dal.fetch_original_module_topics(self.module_name)
         if topics == "":
-            topics = self.db_dal.fetch_corrected_module_topics(module_name)
+            topics = self.db_dal.fetch_corrected_module_topics(self.module_name)
         self.topics = topics["topics"]
         for topic in self.topics:
             topic_title = topic["topic_title"]
@@ -97,8 +99,10 @@ class QualityCheck:
             self.display_MC_question(segment_id, segment)
 
     def display_theory_segment(self, segment_id, segment):
-        st.markdown(f"### Theorie segment: {segment.get('title', '')}")
+        st.markdown("### Theorie segment")
+        title_key = f"segment_{segment_id}_title"
         text_key = f"segment_{segment_id}_text"
+        st.text_area("Titel", value=segment.get("title", ""), key=title_key)
         st.text_area("Theorie", value=segment.get("text", ""), key=text_key)
 
     def display_question_segment(self, segment_id, segment):
@@ -136,8 +140,13 @@ class QualityCheck:
                 continue
             segment_type = segment["type"]
             if segment_type == "theory":
+                title_key = f"segment_{segment_id}_title"
                 text_key = f"segment_{segment_id}_text"
+                updated_title = st.session_state.get(
+                    title_key, segment.get("title", "")
+                )
                 updated_text = st.session_state.get(text_key, segment.get("text", ""))
+                segment["title"] = updated_title
                 segment["text"] = updated_text
             elif segment_type == "question" and "answers" not in segment:
                 question_key = f"segment_{segment_id}_question"
