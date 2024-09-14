@@ -2,7 +2,7 @@ name: build and push container
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 env:
   REGISTRY: ghcr.io
@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          
+
       - name: Set lowercase repository name
         id: repo_name
         run: echo "REPO_NAME_LOWER=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
@@ -31,7 +31,7 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-          
+
       - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
@@ -39,20 +39,29 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push Flask Docker image
+      - name: Build and push Auth Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./flask_app
-          file: ./flask_app/Dockerfile
+          context: ./auth_app
+          file: ./auth_app/Dockerfile
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.REPO_NAME_LOWER }}/flask_app:main
+          tags: ${{ env.REGISTRY }}/${{ env.REPO_NAME_LOWER }}/auth_app:main
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Build and push Streamlit Docker image
+      - name: Build and push Student Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./streamlit_app
-          file: ./streamlit_app/Dockerfile
+          context: ./student_app
+          file: ./student_app/Dockerfile
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.REPO_NAME_LOWER }}/streamlit_app:main
+          tags: ${{ env.REGISTRY }}/${{ env.REPO_NAME_LOWER }}/student_app:main
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Build and push Teacher Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./teacher_app
+          file: ./teacher_app/Dockerfile
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.REPO_NAME_LOWER }}/teacher_app:main
           labels: ${{ steps.meta.outputs.labels }}

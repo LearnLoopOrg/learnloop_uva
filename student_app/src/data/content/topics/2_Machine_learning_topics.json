@@ -1,0 +1,156 @@
+{
+    "module_name": "NAF_1",
+    "topics": [
+        {
+            "topic_title": "Introductie",
+            "segment_indexes": [
+                0,
+                1,
+                2,
+                3
+            ]
+        },
+        {
+            "topic_title": "Anatomische ori\u00EBntatie",
+            "segment_indexes": [
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10
+            ]
+        },
+        {
+            "topic_title": "Orgaansystemen",
+            "segment_indexes": [
+                11,
+                12
+            ]
+        },
+        {
+            "topic_title": "Huid",
+            "segment_indexes": [
+                13,
+                14
+            ]
+        },
+        {
+            "topic_title": "Skelet",
+            "segment_indexes": [
+                15,
+                16,
+                17,
+                18,
+                19,
+                20,
+                21,
+                22,
+                23,
+                24,
+                25,
+                26,
+                27,
+                28,
+                29,
+                30,
+                31
+            ]
+        },
+        {
+            "topic_title": "Gewrichten",
+            "segment_indexes": [
+                32,
+                33,
+                34,
+                35,
+                36,
+                37,
+                38,
+                39
+            ]
+        },
+        {
+            "topic_title": "Spieren",
+            "segment_indexes": [
+                40,
+                41,
+                42,
+                43
+            ]
+        },
+        {
+            "topic_title": "Bewegingsapparaat",
+            "segment_indexes": [
+                44,
+                45,
+                46,
+                47,
+                48,
+                49,
+                50,
+                51,
+                52,
+                53,
+                54,
+                55,
+                56,
+                57,
+                58,
+                59,
+                60,
+                61,
+                62,
+                63,
+                64,
+                65,
+                66,
+                67,
+                68,
+                69,
+                70,
+                71,
+                72,
+                73,
+                74,
+                75
+            ]
+        },
+        {
+            "topic_title": "Zenuwstelsel",
+            "segment_indexes": [
+                76,
+                77
+            ]
+        },
+        {
+            "topic_title": "Cardiovasculair systeem",
+            "segment_indexes": [
+                78,
+                79,
+                80,
+                81,
+                82,
+                83,
+                84,
+                85,
+                86,
+                87,
+                88,
+                89,
+                90,
+                91,
+                92,
+                93
+            ]
+        },
+        {
+            "topic_title": "Lymfestelsel",
+            "segment_indexes": [
+                94,
+                95
+            ]
+        }
+    ]
+}

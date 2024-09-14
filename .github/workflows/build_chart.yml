@@ -1,4 +1,6 @@
-name: build and release chart
+name: build and release helm chart
+
+concurrency: release-helm
 
 on:
   workflow_run:
@@ -22,6 +24,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          path: "dest"
+          ref: "gh-pages"
+          fetch-depth: 0
 
       - name: Configure Git
         run: |
@@ -30,6 +38,24 @@ jobs:
 
       - name: Install Helm
         uses: azure/setup-helm@v3
+
+      - name: Package Helm Charts
+        shell: bash
+        run: |
+          helm dep up charts/learnloop
+          helm package charts/learnloop -u -d dest
+
+      - name: Push New Files
+        shell: bash
+        working-directory: dest
+        run: |
+          helm repo index . --url https://learnlooporg.github.io/learnloop_uva/
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git add $(git ls-files -o --exclude-standard)
+          git add index.yaml
+          git commit -m "Updated from ref: $GITHUB_SHA"
+          git push
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.6.0

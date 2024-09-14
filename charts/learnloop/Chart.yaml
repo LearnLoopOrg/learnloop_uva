@@ -2,5 +2,10 @@ apiVersion: v2
 name: learnloop
 description: LearnLoop
 type: application
+<<<<<<< HEAD
 version: 0.3.65
 appVersion: "0.3.65"
+=======
+version: 0.3.93
+appVersion: "0.3.93"
+>>>>>>> aa500f2501614f7a1983acf74afbe956d41566b1

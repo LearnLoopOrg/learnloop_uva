@@ -1,0 +1,37 @@
+apiVersion: 2019-12-01
+location: westeurope
+name: demo-uni-app-aci
+properties:
+  containers:
+    - name: student-app-demo
+      properties:
+        image: llcontainerregistry.azurecr.io/student-app-demo:latest
+        resources:
+          requests:
+            cpu: 1
+            memoryInGb: 1.5
+        ports:
+          - port: 8501
+    - name: teacher-app-demo
+      properties:
+        image: llcontainerregistry.azurecr.io/teacher-app-demo:latest
+        resources:
+          requests:
+            cpu: 1
+            memoryInGb: 1.5
+        ports:
+          - port: 8502
+  osType: Linux
+  ipAddress:
+    type: Public
+    dnsNameLabel: demo-uni-app-aci
+    ports:
+      - protocol: tcp
+        port: 8501
+      - protocol: tcp
+        port: 8502
+  imageRegistryCredentials:
+    - server: llcontainerregistry.azurecr.io
+      username: LLcontainerregistry
+      password: aXiDV1EPtJ90D4uyW8zNswDoxWI3v1BMAeD8APQORl+ACRBS18QC
+type: Microsoft.ContainerInstance/containerGroups
