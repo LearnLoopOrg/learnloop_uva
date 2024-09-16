@@ -1,5 +1,4 @@
 from datetime import datetime
-import json
 from typing import Any
 from pymongo.database import Database
 from slack_sdk import WebClient
