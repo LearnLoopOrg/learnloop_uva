@@ -5,7 +5,7 @@ properties:
   containers:
     - name: student-app-demo
       properties:
-        image: llcontainerregistry.azurecr.io/student-app-demo:WUR
+        image: llcontainerregistry.azurecr.io/student-app-demo:RUG
         resources:
           requests:
             cpu: 1
@@ -14,7 +14,7 @@ properties:
           - port: 8501
     - name: teacher-app-demo
       properties:
-        image: llcontainerregistry.azurecr.io/teacher-app-demo:WUR
+        image: llcontainerregistry.azurecr.io/teacher-app-demo:RUG
         resources:
           requests:
             cpu: 1

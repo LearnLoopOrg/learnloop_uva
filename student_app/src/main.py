@@ -1393,12 +1393,6 @@ def render_sidebar():
         """
         st.markdown(html_content, unsafe_allow_html=True)
         html_content = """
-            <style>
-                .closer-line {
-                    margin-top: -5px;
-                }
-            </style>
-
             <h1> 
                 <strong>Welkom Student</strong>
             </h1>

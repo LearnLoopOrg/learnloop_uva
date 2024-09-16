@@ -40,6 +40,12 @@ class DatabaseAccess:
 
         return CourseCatalog(courses=courses)
 
+    def fetch_professor_name(
+        self, university_name: str = "Universiteit van Amsterdam"
+    ) -> str:
+        data = self.db.courses.find_one({"university_name": university_name})
+        return data["courses"][0].get("professor", "Professor")
+
     def get_lectures_for_course(
         self, selected_course: str, catalog: CourseCatalog
     ) -> List[Lecture]:

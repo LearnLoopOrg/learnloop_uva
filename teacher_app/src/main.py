@@ -117,6 +117,13 @@ class Controller:
             <br>
             """
             st.markdown(html_content, unsafe_allow_html=True)
+            professor_name = self.db_dal.fetch_professor_name()
+            html_content = f"""
+                <h1> 
+                    <strong>Welkom {professor_name}</strong>
+                </h1>
+            """
+            st.markdown(html_content, unsafe_allow_html=True)
             html_content = """
                 <style>
                     .closer-line {
@@ -124,9 +131,7 @@ class Controller:
                     }
                 </style>
 
-                <h1> 
-                    <strong>Welkom Coen</strong>
-                </h1>
+                
                 <hr class="closer-line">"""
 
             st.markdown(html_content, unsafe_allow_html=True)
