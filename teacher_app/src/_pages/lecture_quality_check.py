@@ -23,9 +23,9 @@ class QualityCheck:
             content = self.db_dal.fetch_original_module_content(self.module_name)
         self.segments = content["segments"]
 
-        topics = self.db_dal.fetch_original_module_topics(self.module_name)
+        topics = self.db_dal.fetch_corrected_module_topics(self.module_name)
         if topics == "":
-            topics = self.db_dal.fetch_corrected_module_topics(self.module_name)
+            topics = self.db_dal.fetch_original_module_topics(self.module_name)
         self.topics = topics["topics"]
         for topic in self.topics:
             topic_title = topic["topic_title"]
@@ -40,18 +40,16 @@ class QualityCheck:
 
     def run(self):
         self.db_dal.update_last_phase("quality_check")
+        self.display_header()
         self.display_segments()
         self.display_save_buttons()
 
     def display_save_buttons(self):
         if st.button("Tussentijds opslaan", use_container_width=True):
-            self.save_updates_in_session_state()
-            self.module_repository.save_draft_correction(
-                st.session_state.selected_module,
-                st.session_state.segments_in_qualitycheck,
-            )
+            self.save_updates_draft()
+
         if st.button("Definitief opslaan", use_container_width=True):
-            self.save_updates_in_session_state()
+            self.save_updates_final()
             self.module_repository.save_final_correction(
                 st.session_state.selected_module,
                 st.session_state.segments_in_qualitycheck,
@@ -65,10 +63,13 @@ class QualityCheck:
                 self.display_segment(segment_id, segment)
 
     def display_segment(self, segment_id, segment):
+        self.display_segment_content(segment_id, segment)
         flagged_for_deletion = segment.get("flagged_for_deletion")
         if segment.get("flagged_for_deletion"):
             st.warning("Dit segment is gemarkeerd voor verwijdering.")
 
+        if segment.get("image"):
+            self.image_handler.render_image(segment, max_height=300)
         # Add Delete/Undo Delete button
         delete_button_key = f"delete_button_{segment_id}"
         if not flagged_for_deletion:
@@ -76,18 +77,13 @@ class QualityCheck:
                 st.session_state.segments_in_qualitycheck[segment_id][
                     "flagged_for_deletion"
                 ] = True
-                st.rerun()
+                # st.rerun()
         else:
             if st.button("Verwijderen ongedaan maken", key=delete_button_key):
                 del st.session_state.segments_in_qualitycheck[segment_id][
                     "flagged_for_deletion"
                 ]
-                st.rerun()
-
-        if segment.get("image"):
-            self.image_handler.render_image(segment, max_height=300)
-
-        self.display_segment_content(segment_id, segment)
+                # st.rerun()
 
     def display_segment_content(self, segment_id, segment):
         segment_type = segment["type"]
@@ -102,36 +98,63 @@ class QualityCheck:
         st.markdown("### Theorie segment")
         title_key = f"segment_{segment_id}_title"
         text_key = f"segment_{segment_id}_text"
-        st.text_area("Titel", value=segment.get("title", ""), key=title_key)
-        st.text_area("Theorie", value=segment.get("text", ""), key=text_key)
+        st.text_area(
+            "Titel",
+            value=segment.get("title", ""),
+            key=title_key,
+            on_change=self.save_updates(draft_correction=True),
+        )
+        st.text_area(
+            "Theorie",
+            value=segment.get("text", ""),
+            key=text_key,
+            on_change=self.save_updates(draft_correction=True),
+        )
 
     def display_question_segment(self, segment_id, segment):
         st.markdown("### Open Vraag")
         question_key = f"segment_{segment_id}_question"
         answer_key = f"segment_{segment_id}_answer"
-        st.text_area("Vraag", value=segment.get("question", ""), key=question_key)
-        st.text_area("Antwoord", value=segment.get("answer", ""), key=answer_key)
+        st.text_area(
+            "Vraag",
+            value=segment.get("question", ""),
+            key=question_key,
+            on_change=self.save_updates(draft_correction=True),
+        )
+        st.text_area(
+            "Antwoord",
+            value=segment.get("answer", ""),
+            key=answer_key,
+            on_change=self.save_updates(draft_correction=True),
+        )
 
     def display_MC_question(self, segment_id, segment):
         st.markdown("### Meerkeuzevraag")
         question_key = f"segment_{segment_id}_question"
         correct_answer_key = f"segment_{segment_id}_correct_answer"
         wrong_answers_key = f"segment_{segment_id}_wrong_answers"
-        st.text_area("Vraag", value=segment.get("question", ""), key=question_key)
+        st.text_area(
+            "Vraag",
+            value=segment.get("question", ""),
+            key=question_key,
+            on_change=self.save_updates(draft_correction=True),
+        )
         st.text_area(
             "Goede antwoord",
             # value=", ".join(segment.get("answers", [])),
             value=segment.get("answers").get("correct_answer"),
             key=correct_answer_key,
+            on_change=self.save_updates(draft_correction=True),
         )
         st.text_area(
             "Foute antwoord(en)",
             value="\n".join(segment.get("answers").get("wrong_answers")),
             key=wrong_answers_key,
+            on_change=self.save_updates(draft_correction=True),
         )
         st.text_area
 
-    def save_updates_in_session_state(self):
+    def save_updates(self, draft_correction=False):
         segments = st.session_state.segments_in_qualitycheck
         updated_segments = []
         for segment_id, segment in enumerate(segments):
@@ -189,6 +212,83 @@ class QualityCheck:
             updated_segments.append(segment)
         # Update the session state with the modified segments
         st.session_state.segments_in_qualitycheck = updated_segments
+
+        # Save the draft correction to the database
+        if draft_correction:
+            self.module_repository.save_draft_correction(
+                st.session_state.selected_module,
+                st.session_state.segments_in_qualitycheck,
+            )
+        else:
+            self.module_repository.save_final_correction(
+                st.session_state.selected_module,
+                st.session_state.segments_in_qualitycheck,
+            )
+
+    def save_updates_final(self):
+        segments = st.session_state.segments_in_qualitycheck
+        updated_segments = []
+        for segment_id, segment in enumerate(segments):
+            if segment.get("flagged_for_deletion"):
+                # Skip this segment; it will not be included in the updated_segments
+                continue
+            segment_type = segment["type"]
+            if segment_type == "theory":
+                title_key = f"segment_{segment_id}_title"
+                text_key = f"segment_{segment_id}_text"
+                updated_title = st.session_state.get(
+                    title_key, segment.get("title", "")
+                )
+                updated_text = st.session_state.get(text_key, segment.get("text", ""))
+                segment["title"] = updated_title
+                segment["text"] = updated_text
+            elif segment_type == "question" and "answers" not in segment:
+                question_key = f"segment_{segment_id}_question"
+                answer_key = f"segment_{segment_id}_answer"
+                updated_question = st.session_state.get(
+                    question_key, segment.get("question", "")
+                )
+                updated_answer = st.session_state.get(
+                    answer_key, segment.get("answer", "")
+                )
+                segment["question"] = updated_question
+                segment["answer"] = updated_answer
+            elif segment_type == "question" and segment.get("subtype") == "mc_question":
+                question_key = f"segment_{segment_id}_question"
+                correct_answer_key = f"segment_{segment_id}_correct_answer"
+                wrong_answers_key = f"segment_{segment_id}_wrong_answers"
+
+                updated_question = st.session_state.get(
+                    question_key, segment.get("question", "")
+                )
+                updated_correct_answer = st.session_state.get(
+                    correct_answer_key,
+                    segment.get("answers", {}).get("correct_answer", ""),
+                )
+                updated_wrong_answers_text = st.session_state.get(
+                    wrong_answers_key,
+                    "\n".join(segment.get("answers", {}).get("wrong_answers", [])),
+                )
+                updated_wrong_answers = [
+                    answer.strip()
+                    for answer in updated_wrong_answers_text.split("\n")
+                    if answer.strip()
+                ]
+
+                segment["question"] = updated_question
+                segment["answers"] = {
+                    "correct_answer": updated_correct_answer,
+                    "wrong_answers": updated_wrong_answers,
+                }
+            updated_segments.append(segment)
+        # Update the session state with the modified segments
+        st.session_state.segments_in_qualitycheck = updated_segments
+
+        # Save the draft correction to the database
+        self.module_repository.save_draft_correction(
+            st.session_state.selected_module,
+            st.session_state.segments_in_qualitycheck,
+        )
 
         st.success("Voortgang opgeslagen.")
 
