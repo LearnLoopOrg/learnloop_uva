@@ -1547,7 +1547,9 @@ def check_user_doc_and_add_missing_fields():
     for module in st.session_state.modules:
         # Initialize progress for the module if missing
         if module not in user_doc.get("progress", {}):
-            general_updates[f"progress.{module}"] = create_default_progress_structure()
+            general_updates[f"progress.{module}"] = create_default_progress_structure(
+                module
+            )
             print(
                 f"Added progress structure for module {module} to 'general_updates' variable"
             )
