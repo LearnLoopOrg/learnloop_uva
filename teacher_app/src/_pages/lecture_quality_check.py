@@ -46,15 +46,10 @@ class QualityCheck:
 
     def display_save_buttons(self):
         if st.button("Tussentijds opslaan", use_container_width=True):
-            self.save_updates_draft()
+            self.save_updates(draft_correction=True)
 
         if st.button("Definitief opslaan", use_container_width=True):
-            self.save_updates_final()
-            self.module_repository.save_final_correction(
-                st.session_state.selected_module,
-                st.session_state.segments_in_qualitycheck,
-            )
-            st.rerun()
+            self.save_updates(draft_correction=False)
 
     def display_segments(self):
         segments = st.session_state.segments_in_qualitycheck
@@ -102,13 +97,13 @@ class QualityCheck:
             "Titel",
             value=segment.get("title", ""),
             key=title_key,
-            on_change=self.save_updates(draft_correction=True),
+            on_change=self.save_updates(draft_correction=True, save_to_db=True),
         )
         st.text_area(
             "Theorie",
             value=segment.get("text", ""),
             key=text_key,
-            on_change=self.save_updates(draft_correction=True),
+            on_change=self.save_updates(draft_correction=True, save_to_db=True),
         )
 
     def display_question_segment(self, segment_id, segment):
@@ -119,13 +114,13 @@ class QualityCheck:
             "Vraag",
             value=segment.get("question", ""),
             key=question_key,
-            on_change=self.save_updates(draft_correction=True),
+            on_change=self.save_updates(draft_correction=True, save_to_db=True),
         )
         st.text_area(
             "Antwoord",
             value=segment.get("answer", ""),
             key=answer_key,
-            on_change=self.save_updates(draft_correction=True),
+            on_change=self.save_updates(draft_correction=True, save_to_db=True),
         )
 
     def display_MC_question(self, segment_id, segment):
@@ -137,24 +132,24 @@ class QualityCheck:
             "Vraag",
             value=segment.get("question", ""),
             key=question_key,
-            on_change=self.save_updates(draft_correction=True),
+            on_change=self.save_updates(draft_correction=True, save_to_db=True),
         )
         st.text_area(
             "Goede antwoord",
             # value=", ".join(segment.get("answers", [])),
             value=segment.get("answers").get("correct_answer"),
             key=correct_answer_key,
-            on_change=self.save_updates(draft_correction=True),
+            on_change=self.save_updates(draft_correction=True, save_to_db=True),
         )
         st.text_area(
             "Foute antwoord(en)",
             value="\n".join(segment.get("answers").get("wrong_answers")),
             key=wrong_answers_key,
-            on_change=self.save_updates(draft_correction=True),
+            on_change=self.save_updates(draft_correction=True, save_to_db=True),
         )
         st.text_area
 
-    def save_updates(self, draft_correction=False):
+    def save_updates(self, draft_correction=False, save_to_db=False):
         segments = st.session_state.segments_in_qualitycheck
         updated_segments = []
         for segment_id, segment in enumerate(segments):
@@ -214,16 +209,17 @@ class QualityCheck:
         st.session_state.segments_in_qualitycheck = updated_segments
 
         # Save the draft correction to the database
-        if draft_correction:
-            self.module_repository.save_draft_correction(
-                st.session_state.selected_module,
-                st.session_state.segments_in_qualitycheck,
-            )
-        else:
-            self.module_repository.save_final_correction(
-                st.session_state.selected_module,
-                st.session_state.segments_in_qualitycheck,
-            )
+        if save_to_db:
+            if draft_correction:
+                self.module_repository.save_draft_correction(
+                    st.session_state.selected_module,
+                    st.session_state.segments_in_qualitycheck,
+                )
+            else:
+                self.module_repository.save_final_correction(
+                    st.session_state.selected_module,
+                    st.session_state.segments_in_qualitycheck,
+                )
 
     def save_updates_final(self):
         segments = st.session_state.segments_in_qualitycheck
