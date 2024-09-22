@@ -10,6 +10,7 @@ from _pages.lecture_student_answers_insights import LectureInsights
 from _pages.lecture_quality_check import QualityCheck
 from _pages.record_lecture import Recorder
 import os
+import base64
 
 # Must be called first
 st.set_page_config(page_title="LearnLoop", layout="wide")
@@ -105,27 +106,35 @@ class Controller:
 
     def render_sidebar(self):
         with st.sidebar:
-            st.image(
-                "src/data/images/logo.png",
-                use_column_width=False,
-                width=200,
-            )
+            logo_path = "src/data/content/images/logo.png"
+            with open(logo_path, "rb") as image_file:
+                logo_base64 = base64.b64encode(image_file.read()).decode()
 
-            st.markdown(
-                """
+            html_content = f"""
+            <div style='text-align: center; margin: 1px;'>
+                <img src='data:image/png;base64,{logo_base64}' alt='Logo' style='max-width: 45%; height: auto;'>
+            </div>
+            <br>
+            """
+            st.markdown(html_content, unsafe_allow_html=True)
+            professor_name = self.db_dal.fetch_professor_name()
+            html_content = f"""
+                <h1> 
+                    <strong>Welkom {professor_name}</strong>
+                </h1>
+            """
+            st.markdown(html_content, unsafe_allow_html=True)
+            html_content = """
                 <style>
                     .closer-line {
                         margin-top: -5px;
                     }
                 </style>
 
-                <h1> 
-                    <strong>Welkom Erwin</strong>
-                </h1>
-                <hr class="closer-line">
-            """,
-                unsafe_allow_html=True,
-            )
+                
+                <hr class="closer-line">"""
+
+            st.markdown(html_content, unsafe_allow_html=True)
             st.button(
                 "📚 Mijn vakken",
                 on_click=self.set_selected_phase,

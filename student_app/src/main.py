@@ -1383,27 +1383,28 @@ def render_sidebar():
     # #     st.session_state.selected_phase = flat_list[selected_index][-1]
 
     with st.sidebar:
-        st.image(
-            "src/data/content/images/logo.png",
-            use_column_width=False,
-            width=150,
-        )
+        logo_base64 = convert_image_base64("src/data/content/images/logo.png")
 
-        st.markdown(
-            """
-            <style>
-                .closer-line {
-                    margin-top: -5px;
-                }
-            </style>
-
+        html_content = f"""
+        <div style='text-align: center; margin: 1px;'>
+            <img src='data:image/png;base64,{logo_base64}' alt='Logo' style='max-width: 45%; height: auto;'>
+        </div>
+        <br>
+        """
+        st.markdown(html_content, unsafe_allow_html=True)
+        html_content = """
             <h1> 
                 <strong>Welkom Student</strong>
             </h1>
-            <hr class="closer-line">
-        """,
-            unsafe_allow_html=True,
-        )
+            <hr class="closer-line">"""
+
+        st.markdown(html_content, unsafe_allow_html=True)
+        # st.image(
+        #     "src/data/content/images/logo.png",
+        #     use_column_width=False,
+        #     width=150,
+        # )
+
         st.button(
             "📚 Mijn vakken",
             on_click=set_selected_phase,
@@ -1540,7 +1541,9 @@ def check_user_doc_and_add_missing_fields():
     for module in st.session_state.modules:
         # Initialize progress for the module if missing
         if module not in user_doc.get("progress", {}):
-            general_updates[f"progress.{module}"] = create_default_progress_structure()
+            general_updates[f"progress.{module}"] = create_default_progress_structure(
+                module
+            )
             print(
                 f"Added progress structure for module {module} to 'general_updates' variable"
             )
@@ -1750,7 +1753,7 @@ if __name__ == "__main__":
     # Your current IP has to be accepted by Gerrit to use CosmosDB (Gerrit controls this)
     st.session_state.use_mongodb = True
 
-    st.session_state.use_keyvault = False
+    st.session_state.use_keyvault = True
 
     # Use dummy LLM feedback as response to save openai costs and time during testing
     use_dummy_openai_calls = False

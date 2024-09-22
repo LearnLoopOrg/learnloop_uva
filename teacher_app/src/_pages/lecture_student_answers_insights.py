@@ -41,8 +41,8 @@ class LectureInsights:
             unsafe_allow_html=True,
         )
 
-    def render_title(self, module_number, module):
-        st.title(f"Inzichten: College {module_number} — {module}")
+    def render_title(self):
+        st.title(f"Inzichten: {self.module}")
         st.write("\n")
 
     def start_learning_page(self, topic_index):
@@ -628,9 +628,7 @@ class LectureInsights:
         self.set_styling()  # for texts
 
         self.module = st.session_state.selected_module
-        module_number = self.module.split(" ")[0]
-        module = " ".join(self.module.split(" ")[1:])
-        self.render_title(module_number, module)
+        self.render_title()
         # Spacing
         st.write("\n")
 
