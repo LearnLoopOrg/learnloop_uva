@@ -131,7 +131,7 @@ class QualityCheck:
             segment_id_str = str(segment_id)
             if topic_segment_id == 0:
                 st.subheader(
-                    f"Onderwerp {topic_id + 1} / {len(topics)} - {topics[topic_id]["topic_title"]}",
+                    f"Onderwerp {topic_id + 1} / {len(topics)} - {topics[topic_id]['topic_title']}",
                     anchor=topics[topic_id]["topic_title"],
                 )
             topic_id, topic_segment_id = self.update_topic_indices(

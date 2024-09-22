@@ -25,12 +25,13 @@ def connect_db(use_LL_cosmosdb):
         COSMOS_URI = os.getenv("COSMOS_URI")
 
     db_client = MongoClient(COSMOS_URI, tlsCAFile=certifi.where())
-    db = db_client.get_database("UvA_KNP")
+    database_name = "UvA_NAF"
+    db = db_client.get_database("UvA_NAF")
 
     # Ping database to check if it's connected
     try:
         db.command("ping")
-        print("Student app is connected to database")
+        print(f"Student app is connected to {database_name} database")
     except Exception as e:
         print(f"Error: {e}")
 
