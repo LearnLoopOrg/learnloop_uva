@@ -1,0 +1,12 @@
+## Gebruik van Large Language Models (LLM's) in LearnLoop
+
+LearnLoop maakt gebruik van Large Language Models (LLM's) om directe feedback te bieden op je antwoorden waardoor je direct weet welke onderwerpen je nog moet oefenen.
+
+#### Belangrijke aandachtspunten:
+
+- **Betrouwbaarheid van beoordelingen:** Hoewel de vragen en antwoorden door docenten zijn gecontroleerd, zijn de LLM-beoordelingen op je antwoorden tijdens het leertraject niet gecontroleerd. Daarom is het mogelijk dat de feedback van de LLM niet altijd nauwkeurig is.
+- **Geen rechten ontlenen:** Aan de feedback van het LLM kun je geen rechten ontlenen. Bij twijfel of onduidelijkheden is het essentieel om altijd de informatie uit je studiemateriaal of boeken als leidraad te nemen.
+- **Rapporteer onjuistheden:** Kom je iets tegen dat niet klopt of twijfel je aan de gegeven feedback? Gebruik de 'Denk je mee?' feedback box om dit aan ons te rapporteren. Jouw bijdragen helpen ons om de nauwkeurigheid en betrouwbaarheid van de LLM feedback te verbeteren.
+
+#### Take-away:
+**Blijf kritisch** wanneer je feedback ontvangt van de LLM. Het is een hulpmiddel dat bedoeld is om je leerervaring te verrijken, maar het vervangt niet jouw eigen oordeel of het belang van traditionele leerbronnen.

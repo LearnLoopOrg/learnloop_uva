@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LTI Tool</title>
+    <style>
+        .btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn.green {
+            background-color: #28A745;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Welkom {{ user_name }} bij je LTI-tool!</h1>
+    <button id="myButton" class="btn">Klik hier</button>
+
+    <script>
+        document.getElementById('myButton').addEventListener('click', function () {
+            this.classList.add('green');
+        });
+    </script>
+</body>
+
+</html>
