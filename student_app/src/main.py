@@ -1471,9 +1471,9 @@ def create_empty_progress_dict(module):
     return {str(i): None for i in range(number_of_segments)}
 
 
-# @st.cache_data(
-#     show_spinner=False, ttl=600
-# )  # Cache for 1 hour only, so it checks every 10 minutes if there is a new lecture available
+@st.cache_data(
+    show_spinner=False, ttl=600
+)  # Cache for 1 hour only, so it checks every 10 minutes if there is a new lecture available
 def check_user_doc_and_add_missing_fields():
     """
     Initializes the user database with missing fields and modules.
