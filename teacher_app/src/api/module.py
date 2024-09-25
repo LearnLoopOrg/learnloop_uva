@@ -139,6 +139,7 @@ class ModuleRepository:
 
         for segment in segments_list:
             topic_title = topics[topic_id]["topic_title"]
+
             if segment["delete"] == "no":
                 topic_segment_id_list.append(topic_segment_id_new)
                 topic_segment_id_new += 1
