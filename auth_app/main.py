@@ -111,11 +111,7 @@ def save_user_info_to_db(user_id, user_info):
     user_info = user_info.json()
     db.users.update_one(
         {"username": user_id},
-        {
-            "$set": {
-                "userinfo": user_info,
-            }
-        },
+        {"$set": {"userinfo": user_info, "progress": {}}},
     )
     return user_info
 
