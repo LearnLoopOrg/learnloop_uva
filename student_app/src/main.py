@@ -1514,9 +1514,9 @@ def create_empty_progress_dict(module):
     return {str(i): None for i in range(number_of_segments)}
 
 
-@st.cache_data(
-    show_spinner=False, ttl=600
-)  # Cache for 1 hour only, so it checks every 10 minutes if there is a new lecture available
+# @st.cache_data(
+#     show_spinner=False, ttl=600
+# )  # Cache for 1 hour only, so it checks every 10 minutes if there is a new lecture available
 def check_user_doc_and_add_missing_fields():
     """
     Initializes the user database with missing fields and modules.
@@ -1527,60 +1527,58 @@ def check_user_doc_and_add_missing_fields():
         db.users.insert_one({"username": st.session_state.username})
         user_doc = db_dal.find_user_doc()
 
-    general_updates = {}
-    nested_updates = {}
-
     # General fields initialization
     if "warned" not in user_doc:
-        general_updates["warned"] = False
+        user_doc["warned"] = False
 
     if "last_module" not in user_doc:
-        general_updates["last_module"] = st.session_state.modules[0]
+        # Zorg ervoor dat je een default module hebt als er geen modules in user_doc zijn
+        user_doc["last_module"] = next(iter(user_doc.get("progress", {})), None)
 
-    # Module-specific initialization
-    for module in st.session_state.modules:
-        # Initialize progress for the module if missing
-        if module not in user_doc.get("progress", {}):
-            general_updates[f"progress.{module}"] = create_default_progress_structure(
-                module
-            )
-            print(
-                f"Added progress structure for module {module} to 'general_updates' variable"
-            )
+    # Check of alle course modules in user_doc["progress"] zitten
+    course_catalog = db_dal.get_course_catalog()
+    # print(f"course_catalog: {course_catalog}")
+    for course in course_catalog.courses:
+        course_modules = db_dal.get_lectures_for_course(course.title, course_catalog)
 
-        # Initialize specific fields if missing (nested updates)
-        if "practice" not in user_doc.get("progress", {}).get(module, {}):
-            nested_updates[f"progress.{module}.practice"] = {
-                "segment_index": -1,
-                "ordered_segment_sequence": [],
-            }
-            print(
-                f"Added 'practice' field for module {module} to 'nested_updates' variable"
-            )
+        for module in course_modules:
+            print(f"module: {module.title}")
+            if module.title not in user_doc.get("progress", {}):
+                user_doc["progress"][module.title] = create_default_progress_structure(
+                    module.title
+                )
 
-        if "learning" not in user_doc.get("progress", {}).get(module, {}):
-            nested_updates[f"progress.{module}.learning"] = {"segment_index": -1}
-            print(
-                f"Added 'learning' field for module {module} to 'nested_updates' variable"
-            )
+            if "practice" not in user_doc.get("progress", {}).get(module.title, {}):
+                print(f"practice zit niet in de db voor module {module.title}")
 
-        if "progress_counter" not in user_doc.get("progress", {}).get(module, {}).get(
-            "learning", {}
-        ):
-            empty_dict = create_empty_progress_dict(module)
-            nested_updates[f"progress.{module}.learning.progress_counter"] = empty_dict
-            print(
-                f"Added 'progress_counter' field for module {module} to 'nested_updates' variable"
-            )
+                user_doc["progress"][module.title]["practice"] = {
+                    "segment_index": -1,
+                    "ordered_segment_sequence": [],
+                }
 
-    # Apply all accumulated updates in two stages
-    if general_updates:
-        print("Applying general updates")
-        update_user_progress_bulk(st.session_state.username, general_updates)
+                print(
+                    f"Added 'practice' field for module {module.title} to user_doc['progress']"
+                )
 
-    if nested_updates:
-        print("Applying nested updates")
-        update_user_progress_bulk(st.session_state.username, nested_updates)
+            if "learning" not in user_doc.get("progress", {}).get(module.title, {}):
+                user_doc["progress"][module.title]["learning"] = {"segment_index": -1}
+                print(
+                    f"Added 'learning' field for module {module.title} to user_doc['progress']"
+                )
+
+            if "progress_counter" not in user_doc.get("progress", {}).get(
+                module.title, {}
+            ).get("learning", {}):
+                empty_dict = create_empty_progress_dict(module.title)
+                user_doc["progress"][module.title]["learning"]["progress_counter"] = (
+                    empty_dict
+                )
+                print(
+                    f"Added 'progress_counter' field for module {module.title} to user_doc['progress']"
+                )
+
+    # Update user_doc in db
+    db.users.update_one({"username": st.session_state.username}, {"$set": user_doc})
 
 
 def convert_image_base64(image_path):
