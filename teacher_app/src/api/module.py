@@ -9,7 +9,78 @@ class ModuleRepository:
     def __init__(self, db: Database[dict[str, Any]]):
         self.db = db
 
+    def correct_topics_json(self, module):
+        self.db.content.update_one(
+            {"lecture_name": module},
+            {
+                "$set": {
+                    "original_lecturepath_topics": {
+                        "topics": [
+                            {
+                                "topic_title": "Diagnose van autisme en ADHD",
+                                "segment_indexes": [0, 1, 2, 3, 4, 5, 6, 7, 8],
+                            },
+                            {
+                                "topic_title": "Neurodiversiteit",
+                                "segment_indexes": [
+                                    9,
+                                    10,
+                                    11,
+                                    12,
+                                    13,
+                                    14,
+                                    15,
+                                    16,
+                                    17,
+                                    18,
+                                    19,
+                                    20,
+                                    21,
+                                    22,
+                                ],
+                            },
+                            {
+                                "topic_title": "Autisme",
+                                "segment_indexes": [
+                                    23,
+                                    24,
+                                    25,
+                                    26,
+                                    27,
+                                    28,
+                                    29,
+                                    30,
+                                    31,
+                                    32,
+                                ],
+                            },
+                            {
+                                "topic_title": "Cognitieve theorieën bij autisme",
+                                "segment_indexes": [33, 34, 35, 36, 37],
+                            },
+                            {
+                                "topic_title": "Cognitieve theorieën bij ADHD",
+                                "segment_indexes": [
+                                    38,
+                                    39,
+                                    40,
+                                    41,
+                                    42,
+                                    43,
+                                    44,
+                                    45,
+                                    46,
+                                    47,
+                                ],
+                            },
+                        ]
+                    }
+                }
+            },
+        )
+
     def save_correction(self, module, segments_list):
+        self.correct_topics_json(module)
         try:
             self._update_correct_lecture_path_content(module, segments_list)
             self._upload_modules_topics_json(module, segments_list)
@@ -94,6 +165,7 @@ class ModuleRepository:
 
         for segment in segments_list:
             topic_title = topics[topic_id]["topic_title"]
+
             if segment["delete"] == "no":
                 topic_segment_id_list.append(topic_segment_id_new)
                 topic_segment_id_new += 1
