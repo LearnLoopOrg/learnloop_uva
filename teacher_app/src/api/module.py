@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Any
 from pymongo.database import Database
+from slack_sdk import WebClient
 
 
 class ModuleRepository:
@@ -100,6 +101,20 @@ class ModuleRepository:
             raise ValueError(f"Module {module} not found in database")
         return doc
 
+    def exception_handler(self, error_message: str) -> None:
+        # Custom error handling
+        BOT_OAUTH_TOKEN = "xoxb-7362589208226-7719097315238-curwvsQxH1PbDjnQGQstR3JN"
+        try:
+            client = WebClient(token=BOT_OAUTH_TOKEN)
+            client.chat_postMessage(
+                channel="production-errors-student-app",
+                text=f"An error occurred in the student app: {error_message}",
+                username="Bot User",
+            )
+        except Exception as e:
+            print(e)
+            pass
+
     def _upload_modules_topics_json(self, module, segments_list) -> None:
         modules_topics_topics_list = []
 
@@ -116,9 +131,11 @@ class ModuleRepository:
         len_segments_indices = sum([len(topic["segment_indexes"]) for topic in topics])
 
         if len_segments_list != len_segments_indices:
-            raise ValueError(
-                f"Number of segments in the list {len_segments_list} does not match the number of segments in the topics {len_segments_indices}"
+            error_message = (
+                f"Number of segments in the list {len_segments_list} does not match the number of segments "
+                f"in the topics {len_segments_indices}"
             )
+            self.exception_handler(error_message)
 
         for segment in segments_list:
             topic_title = topics[topic_id]["topic_title"]
