@@ -68,7 +68,7 @@ class DatabaseAccess:
         Load the course catalog from the (dummy) university database.
         """
         data = self.db.courses.find_one({"university_name": university_name})
-        print(f"Data (courses doc): {data}")
+        # print(f"Data (courses doc): {data}")
 
         courses = [
             Course(

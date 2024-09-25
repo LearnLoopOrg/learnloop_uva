@@ -1486,46 +1486,45 @@ def check_user_doc_and_add_missing_fields():
 
     # Check of alle course modules in user_doc["progress"] zitten
     course_catalog = db_dal.get_course_catalog()
-    print(f"course_catalog: {course_catalog}")
+    # print(f"course_catalog: {course_catalog}")
+    for course in course_catalog.courses:
+        course_modules = db_dal.get_lectures_for_course(course.title, course_catalog)
 
-    course_modules = db_dal.get_lectures_for_course(
-        "Klinische Neuropsychologie", course_catalog
-    )
+        for module in course_modules:
+            print(f"module: {module.title}")
+            if module.title not in user_doc.get("progress", {}):
+                user_doc["progress"][module.title] = create_default_progress_structure(
+                    module.title
+                )
 
-    print(f"course_modules: {course_modules}")
+            if "practice" not in user_doc.get("progress", {}).get(module.title, {}):
+                print(f"practice zit niet in de db voor module {module.title}")
 
-    for module in course_modules:
-        print(f"module: {module.title}")
-        if module.title not in user_doc.get("progress", {}):
-            user_doc.progress[module.title] = create_default_progress_structure(
-                module.title
-            )
+                user_doc.progress[module.title]["practice"] = {
+                    "segment_index": -1,
+                    "ordered_segment_sequence": [],
+                }
 
-    print(f"modules in user doc: {user_doc.get('progress', {})}")
+                print(
+                    f"Added 'practice' field for module {module.title} to user_doc['progress']"
+                )
 
-    for module in user_doc.get("progress", {}):
-        if "practice" not in user_doc.get("progress", {}).get(module, {}):
-            print(f"practice zit niet in de db voor module {module}")
+            if "learning" not in user_doc.get("progress", {}).get(module.title, {}):
+                user_doc.progress[module.title]["learning"] = {"segment_index": -1}
+                print(
+                    f"Added 'learning' field for module {module.title} to user_doc['progress']"
+                )
 
-            user_doc.progress[module]["practice"] = {
-                "segment_index": -1,
-                "ordered_segment_sequence": [],
-            }
-
-            print(f"Added 'practice' field for module {module} to user_doc['progress']")
-
-        if "learning" not in user_doc.get("progress", {}).get(module, {}):
-            user_doc.progress[module]["learning"] = {"segment_index": -1}
-            print(f"Added 'learning' field for module {module} to user_doc['progress']")
-
-        if "progress_counter" not in user_doc.get("progress", {}).get(module, {}).get(
-            "learning", {}
-        ):
-            empty_dict = create_empty_progress_dict(module)
-            user_doc.progress[module]["learning"]["progress_counter"] = empty_dict
-            print(
-                f"Added 'progress_counter' field for module {module} to user_doc['progress']"
-            )
+            if "progress_counter" not in user_doc.get("progress", {}).get(
+                module.title, {}
+            ).get("learning", {}):
+                empty_dict = create_empty_progress_dict(module.title)
+                user_doc.progress[module.title]["learning"]["progress_counter"] = (
+                    empty_dict
+                )
+                print(
+                    f"Added 'progress_counter' field for module {module.title} to user_doc['progress']"
+                )
 
     # Update user_doc in db
     db.users.update_one({"username": st.session_state.username}, {"$set": user_doc})
