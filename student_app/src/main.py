@@ -1500,7 +1500,7 @@ def check_user_doc_and_add_missing_fields():
             if "practice" not in user_doc.get("progress", {}).get(module.title, {}):
                 print(f"practice zit niet in de db voor module {module.title}")
 
-                user_doc.progress[module.title]["practice"] = {
+                user_doc["progress"][module.title]["practice"] = {
                     "segment_index": -1,
                     "ordered_segment_sequence": [],
                 }
@@ -1510,7 +1510,7 @@ def check_user_doc_and_add_missing_fields():
                 )
 
             if "learning" not in user_doc.get("progress", {}).get(module.title, {}):
-                user_doc.progress[module.title]["learning"] = {"segment_index": -1}
+                user_doc["progress"][module.title]["learning"] = {"segment_index": -1}
                 print(
                     f"Added 'learning' field for module {module.title} to user_doc['progress']"
                 )
@@ -1519,7 +1519,7 @@ def check_user_doc_and_add_missing_fields():
                 module.title, {}
             ).get("learning", {}):
                 empty_dict = create_empty_progress_dict(module.title)
-                user_doc.progress[module.title]["learning"]["progress_counter"] = (
+                user_doc["progress"][module.title]["learning"]["progress_counter"] = (
                     empty_dict
                 )
                 print(
