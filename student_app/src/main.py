@@ -1484,8 +1484,12 @@ def check_user_doc_and_add_missing_fields():
         # Zorg ervoor dat je een default module hebt als er geen modules in user_doc zijn
         user_doc["last_module"] = next(iter(user_doc.get("progress", {})), None)
 
+    if "progress" not in user_doc:
+        user_doc["progress"] = {}
+
     # Check of alle course modules in user_doc["progress"] zitten
     course_catalog = db_dal.get_course_catalog()
+    print(user_doc)
     # print(f"course_catalog: {course_catalog}")
     for course in course_catalog.courses:
         course_modules = db_dal.get_lectures_for_course(course.title, course_catalog)
