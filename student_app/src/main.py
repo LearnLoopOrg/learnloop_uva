@@ -1465,38 +1465,39 @@ def create_empty_progress_dict(module):
 
 
 # Cache for 10 minutes only, so it checks every 10 minutes if there is a new lecture available
-# @st.cache_data(show_spinner=False, ttl=600)
+@st.cache_data(show_spinner=False, ttl=600)
 def check_user_doc_and_add_missing_fields():
     """
     Initializes the user database with missing fields and modules.
     """
     print("Checking user doc and adding missing fields")
     user_doc = db_dal.find_user_doc()
+    print(f"user_doc before insert one: {user_doc}")
     if not user_doc:
         db.users.insert_one({"username": st.session_state.username})
         user_doc = db_dal.find_user_doc()
+        print("Inserted new user doc in db: ", user_doc)
 
     # General fields initialization
     if "warned" not in user_doc:
         user_doc["warned"] = False
-
-    if "last_module" not in user_doc:
-        # Zorg ervoor dat je een default module hebt als er geen modules in user_doc zijn
-        user_doc["last_module"] = next(iter(user_doc.get("progress", {})), None)
+        print("Added 'warned' field to user_doc")
 
     if "progress" not in user_doc:
         user_doc["progress"] = {}
+        print("Added 'progress' field to user_doc")
 
     # Check of alle course modules in user_doc["progress"] zitten
     course_catalog = db_dal.get_course_catalog()
-    # print(f"course_catalog: {course_catalog}")
     for course in course_catalog.courses:
         course_modules = db_dal.get_lectures_for_course(course.title, course_catalog)
         for module in course_modules:
-            print(f"module: {module.title}")
             if module.title not in user_doc.get("progress", {}):
                 user_doc["progress"][module.title] = create_default_progress_structure(
                     module.title
+                )
+                print(
+                    f"Added progess structure for 'module' {module.title} to user_doc['progress']"
                 )
 
             if "practice" not in user_doc.get("progress", {}).get(module.title, {}):
@@ -1527,6 +1528,11 @@ def check_user_doc_and_add_missing_fields():
                 print(
                     f"Added 'progress_counter' field for module {module.title} to user_doc['progress']"
                 )
+
+    if "last_module" not in user_doc:
+        # Zorg ervoor dat je een default module hebt als er geen modules in user_doc zijn
+        user_doc["last_module"] = next(iter(user_doc.get("progress", {})), None)
+        print("Added 'last_module' field to user_doc")
 
     # Update user_doc in db
     db.users.update_one({"username": st.session_state.username}, {"$set": user_doc})
