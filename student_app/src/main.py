@@ -1547,6 +1547,7 @@ def determine_if_to_initialise_database():
     if not user_doc:  # NEW USER CASE
         db.users.insert_one({"username": st.session_state.username})
         user_doc = db_dal.find_user_doc()
+        print("Inserted new user doc in db: ", user_doc)
 
     if reset_user_doc:
         if "reset_db" not in st.session_state:
