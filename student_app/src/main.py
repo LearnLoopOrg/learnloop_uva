@@ -3,6 +3,7 @@ import argparse
 import time
 import random
 from typing import Callable
+from typing import Callable
 import streamlit as st
 from dotenv import load_dotenv
 import os
@@ -21,6 +22,8 @@ from utils.utils import Utils
 from utils.utils import AzureUtils
 from slack_sdk import WebClient
 
+from slack_sdk import WebClient
+
 
 # Must be called first
 st.set_page_config(page_title="LearnLoop", layout="wide")
@@ -28,6 +31,37 @@ st.set_page_config(page_title="LearnLoop", layout="wide")
 load_dotenv()
 
 
+def set_global_exception_handler(custom_handler: Callable, debug: bool = False):
+    import sys
+
+    script_runner = sys.modules["streamlit.runtime.scriptrunner.script_runner"]
+    original_fn: Callable = script_runner.handle_uncaught_app_exception
+
+    def combined_fn(e: BaseException):
+        if not debug:  # run custom error handling only in production
+            custom_handler(e)
+        original_fn(e)
+
+    script_runner.handle_uncaught_app_exception = combined_fn
+
+
+def exception_handler(e: BaseException):
+    # Custom error handling
+    BOT_OAUTH_TOKEN = "xoxb-7362589208226-7719097315238-curwvsQxH1PbDjnQGQstR3JN"
+    try:
+        client = WebClient(token=BOT_OAUTH_TOKEN)
+        client.chat_postMessage(
+            channel="production-errors-student-app",
+            text=f"An error occurred in the student app: {e}",
+            username="Bot User",
+        )
+    except Exception as e:
+        print(e)
+        pass
+
+
+# Cache for 5 minutes the topics list
+@st.cache_resource(ttl=300)
 def set_global_exception_handler(custom_handler: Callable, debug: bool = False):
     import sys
 
@@ -1436,159 +1470,107 @@ def render_sidebar():
         )
 
 
-def initialise_database():
+def create_default_progress_structure(module):
     """
-    Initialise the progress object with the modules and phases in the database.
+    Returns the default structure for progress in any module, including the progress_counter.
     """
-    for module in st.session_state.modules:
-        db.users.update_one(
-            {"username": st.session_state.username},
-            {
-                "$set": {
-                    "warned": False,
-                    "last_module": st.session_state.modules[
-                        0
-                    ],  # Open the first module by default
-                    f"progress.{module}": {
-                        "learning": {
-                            "segment_index": -1,  # Set to -1 so an explanation displays when phase is first opened
-                            "progress_counter": None,
-                        },
-                        "practice": {
-                            "segment_index": -1,
-                            "ordered_segment_sequence": [],
-                        },
-                        "feedback": {"questions": []},
-                    },
-                }
-            },
-        )
-        empty_dict = create_empty_progress_dict(module)
-        db_dal.add_progress_counter(module, empty_dict)
+    empty_dict = create_empty_progress_dict(module)
 
-
-def initialise_module_in_database(module):
-    """
-    Adds a new module to the database without resetting the rest of the database.
-    """
-    db.users.update_one(
-        {"username": st.session_state.username},
-        {
-            "$set": {
-                f"progress.{module}": {
-                    "learning": {
-                        "segment_index": -1
-                    },  # Set to -1 so an explanation displays when phase is first opened
-                    "practice": {
-                        "segment_index": -1,
-                        "ordered_segment_sequence": [],
-                    },
-                }
-            }
+    return {
+        "learning": {
+            "segment_index": -1,
+            "progress_counter": empty_dict,
         },
-    )
+        "practice": {"segment_index": -1, "ordered_segment_sequence": []},
+        "feedback": {"questions": []},
+    }
 
 
 def create_empty_progress_dict(module):
     """
-    Creates an empty dictionary that contains the JSON
-    index of the segment as key and the number of times
-    the user answered a question.
+    Creates an empty dictionary with segment indices as keys and None as values for progress tracking.
     """
-    empty_dict = {}
-
     st.session_state.page_content = db_dal.fetch_module_content(module)
-
     number_of_segments = (
         len(st.session_state.page_content["segments"])
         if st.session_state.page_content
         else 0
     )
-
-    # Create a dictionary with indexes (strings) as key and None as value
-    empty_dict = {str(i): None for i in range(number_of_segments)}
-
-    return empty_dict
+    return {str(i): None for i in range(number_of_segments)}
 
 
-def initialise_practice_in_database(module):
+# Cache for 10 minutes only, so it checks every 10 minutes if there is a new lecture available
+@st.cache_data(show_spinner=False, ttl=600)
+def check_user_doc_and_add_missing_fields():
     """
-    Adds a new module to the database without resetting the rest of the database.
+    Initializes the user database with missing fields and modules.
     """
-    db.users.update_one(
-        {"username": st.session_state.username},
-        {
-            "$set": {
-                f"progress.{module}.practice": {
-                    "segment_index": -1,
-                    "ordered_segment_sequence": [],
-                }
-            }
-        },
-    )
-
-
-def initialise_learning_in_database(module):
-    """
-    Adds a new module to the database without resetting the rest of the database.
-    """
-    db.users.update_one(
-        {"username": st.session_state.username},
-        {"$set": {f"progress.{module}.learning": {"segment_index": -1}}},
-    )
-
-
-@st.cache_data(show_spinner=False)
-def determine_if_to_initialise_database():
-    """
-    Determine if currently testing, if the progress is saved, or if all modules are included
-    and if so, reset db when reloading webapp.
-    """
+    print("Checking user doc and adding missing fields")
     user_doc = db_dal.find_user_doc()
-    if not user_doc:  # NEW USER CASE
+    print(f"user_doc before insert one: {user_doc}")
+    if not user_doc:
         db.users.insert_one({"username": st.session_state.username})
         user_doc = db_dal.find_user_doc()
         print("Inserted new user doc in db: ", user_doc)
 
-    if reset_user_doc:
-        if "reset_db" not in st.session_state:
-            st.session_state.reset_db = True
-
-        if st.session_state.reset_db:
-            st.session_state.reset_db = False
-            initialise_database()
-
-        user_doc = db_dal.find_user_doc()
+    # General fields initialization
+    if "warned" not in user_doc:
+        user_doc["warned"] = False
+        print("Added 'warned' field to user_doc")
 
     if "progress" not in user_doc:
-        initialise_database()
-        user_doc = db_dal.find_user_doc()
+        user_doc["progress"] = {}
+        print("Added 'progress' field to user_doc")
 
-    for module in st.session_state.modules:
-        if module not in user_doc["progress"]:
-            initialise_module_in_database(module)
-            user_doc = db_dal.find_user_doc()
+    # Check of alle course modules in user_doc["progress"] zitten
+    course_catalog = db_dal.get_course_catalog()
+    for course in course_catalog.courses:
+        course_modules = db_dal.get_lectures_for_course(course.title, course_catalog)
+        for module in course_modules:
+            if module.title not in user_doc.get("progress", {}):
+                user_doc["progress"][module.title] = create_default_progress_structure(
+                    module.title
+                )
+                print(
+                    f"Added progess structure for 'module' {module.title} to user_doc['progress']"
+                )
 
-        if "practice" not in user_doc["progress"][module]:
-            initialise_practice_in_database(module)
-            user_doc = db_dal.find_user_doc()
+            if "practice" not in user_doc.get("progress", {}).get(module.title, {}):
+                print(f"practice zit niet in de db voor module {module.title}")
 
-        if "learning" not in user_doc["progress"][module]:
-            initialise_learning_in_database(module)
-            user_doc = db_dal.find_user_doc()
+                user_doc["progress"][module.title]["practice"] = {
+                    "segment_index": -1,
+                    "ordered_segment_sequence": [],
+                }
 
-        # Check if the user doc contains the dict in which the
-        # is saved how many times a question is made by user
-        if "progress_counter" not in user_doc["progress"][module]["learning"]:
-            empty_dict = create_empty_progress_dict(module)
-            db_dal.add_progress_counter(module, empty_dict)
-            user_doc = db_dal.find_user_doc()
+                print(
+                    f"Added 'practice' field for module {module.title} to user_doc['progress']"
+                )
 
-        # progress_counter = db_dal.get_progress_counter(module, user_doc)
-        # print("Setting the progress counter.")
-        # if progress_counter is None:
-        #     empty_dict = create_empty_progress_dict(module)
-        #     db_dal.add_progress_counter(module, empty_dict)
+            if "learning" not in user_doc.get("progress", {}).get(module.title, {}):
+                user_doc["progress"][module.title]["learning"] = {"segment_index": -1}
+                print(
+                    f"Added 'learning' field for module {module.title} to user_doc['progress']"
+                )
+
+            if "progress_counter" not in user_doc.get("progress", {}).get(
+                module.title, {}
+            ).get("learning", {}):
+                empty_dict = create_empty_progress_dict(module.title)
+                user_doc["progress"][module.title]["learning"]["progress_counter"] = (
+                    empty_dict
+                )
+                print(
+                    f"Added 'progress_counter' field for module {module.title} to user_doc['progress']"
+                )
+
+    if "last_module" not in user_doc:
+        # Zorg ervoor dat je een default module hebt als er geen modules in user_doc zijn
+        user_doc["last_module"] = next(iter(user_doc.get("progress", {})), None)
+        print("Added 'last_module' field to user_doc")
+
+    # Update user_doc in db
+    db.users.update_one({"username": st.session_state.username}, {"$set": user_doc})
 
 
 def convert_image_base64(image_path):
@@ -1902,7 +1884,7 @@ if __name__ == "__main__":
 
     # Render the actual app when the username is determined
     else:
-        determine_if_to_initialise_database()
+        check_user_doc_and_add_missing_fields()
 
         if st.session_state.warned is None:
             if warned := db_dal.fetch_if_warned() is True:

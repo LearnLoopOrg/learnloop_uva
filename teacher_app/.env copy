@@ -1,0 +1,28 @@
+# Secrets voor LearnLoop omgeving
+LL_OPENAI_API_KEY="71f57e6a807f4ef0ad5e9583af1efcd8"
+LL_OPENAI_API_ENDPOINT="https://learnloopopenai.openai.azure.com/"
+LL_COSMOS_URI=mongodb+srv://learnloopadmin:pooLnraeL%404070@learnloop-cosmosdb.mongocluster.cosmos.azure.com/?tls=true&authMechanism=SCRAM-SHA-256&retrywrites=false&maxIdleTimeMS=120000
+AZURE_BLOB_STORAGE_CONNECTION_STRING="DefaultEndpointsProtocol=https;AccountName=uniappblobstorage;AccountKey=T5SbavOVnKz+i34kzGxpflFZ4kjMAVyTqGrjH/30RXLJCyMc55Hwjm2VIUO31J/AxYs0rVvTqQl9+AStjl90sQ==;EndpointSuffix=core.windows.net"
+# SURFConext LearnLoop
+# SURFCONEXT_CLIENT_ID=demo-uni-app-aci.westeurope.azurecontainer.io/app/
+# SURFCONEXT_CLIENT_SECRET=9q5TyQbXzJW3nyJdGmPk
+
+# ----------------------------------------------------------------------------------
+# Secrets voor UvA omgeving
+OPENAI_API_KEY=74387c1dd150400f898d35d6436fdbbd
+AZURE_OPENAI_ENDPOINT="https://uva-test-learnloop-turbo.openai.azure.com/"
+UVA_BLOB_CONNECTION_STRING="DefaultEndpointsProtocol=https;AccountName=learnloop;AccountKey=3lP+93LHmMBQxBGMII2JsfFvRDydqbfkmGdTZkwOu/RfXRMfZ2rJe7kib3mwJsqLDSQZOld3pIDl+AStUUmLIA==;EndpointSuffix=core.windows.net"
+
+COSMOS_URI=mongodb://learnloop-test:fK7T82KFkiO2MnTPqxvJE6zBXibOoa8JGF6V0bh2T7MNeaDhksFfBfAMTbvTr8HvpAXRKZCT8fQIACDbs5OFvA==@learnloop-test.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@learnloop-test@
+
+#  SURFconext UvA
+SURFCONEXT_CLIENT_SECRET=CNdyez6yfX5yCKbj2sn3
+SURFCONEXT_CLIENT_ID=learnloop-test.datanose.nl
+SURFCONEXT_METADATA_URL=https://connect.test.surfconext.nl/.well-known/openid-configuration
+# AZURE_OPENAI_ENDPOINT=https://uva-test-learnloop.openai.azure.com
+# OPENAI_API_KEY=0001ff45ccb24cd4ae964ab8e1428e0c
+
+# ----------------------------------------------------------------------------------
+FLASK_SECRET=ditiseentestkeydieveranderdmoetwordenbijproductie
+
+# MONGO_URI=mongodb+srv://learnloop_admin:M5xx5AWLqqTa8mzi@learnloop.b3a5kdz.mongodb.net/?retryWrites=true&w=majority&appName=learnloop
