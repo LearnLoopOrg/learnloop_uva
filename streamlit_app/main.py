@@ -1,26 +1,17 @@
-import json
-import argparse
 import time
 import random
-from typing import Callable
 import streamlit as st
 from dotenv import load_dotenv
 import os
+import json
 from openai import AzureOpenAI
 from openai import OpenAI
+from pymongo import MongoClient
 import base64
-from _pages.topic_overview import TopicOverview
-from utils.utils import ImageHandler
-import utils.db_config as db_config
-from data.data_access_layer import DatabaseAccess
-from datetime import datetime, timedelta, timezone
-from _pages.lecture_overview import LectureOverview
-from _pages.course_overview import CoursesOverview
-from _pages.theory_overview import TheoryOverview
-from utils.utils import Utils
-from utils.utils import AzureUtils
-from slack_sdk import WebClient
-
+from overview_page import OverviewPage
+import db_config
+from data_access_layer import DatabaseAccess, ContentAccess
+from datetime import datetime
 
 # Must be called first
 st.set_page_config(page_title="LearnLoop", layout="wide")
@@ -28,60 +19,33 @@ st.set_page_config(page_title="LearnLoop", layout="wide")
 load_dotenv()
 
 
-def set_global_exception_handler(custom_handler: Callable, debug: bool = False):
-    import sys
+def connect_to_openai():
+    if llm_model == "gpt-4o":
+        print("Using OpenAI GPT-4o")
+        st.session_state.openai_model = "gpt-4o"
+        return OpenAI(api_key=os.getenv("OPENAI_API_KEY_2"))
 
-    script_runner = sys.modules["streamlit.runtime.scriptrunner.script_runner"]
-    original_fn: Callable = script_runner.handle_uncaught_app_exception
-
-    def combined_fn(e: BaseException):
-        if not debug:  # run custom error handling only in production
-            custom_handler(e)
-        original_fn(e)
-
-    script_runner.handle_uncaught_app_exception = combined_fn
-
-
-def exception_handler(e: BaseException):
-    # Custom error handling
-    BOT_OAUTH_TOKEN = "xoxb-7362589208226-7719097315238-curwvsQxH1PbDjnQGQstR3JN"
-    try:
-        client = WebClient(token=BOT_OAUTH_TOKEN)
-        client.chat_postMessage(
-            channel="production-errors-student-app",
-            text=f"An error occurred in the student app: {e}",
-            username="Bot User",
+    elif llm_model == "azure_gpt-4":
+        print("Using Azure GPT-4")
+        st.session_state.openai_model = "learnloop"
+        return AzureOpenAI(
+            api_key=os.getenv("OPENAI_API_KEY"),
+            api_version="2024-03-01-preview",
+            azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
         )
-    except Exception as e:
-        print(e)
-        pass
 
-
-# Cache for 5 minutes the topics list
-@st.cache_resource(ttl=300)
-def connect_to_openai() -> OpenAI:
-    if st.session_state.openai_model == "learnloop-4o":
-        print("Using UvA instance of OpenAI GPT-4o")
-
-        OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-        OPENAI_API_ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT")
-    else:
-        print("Using LearnLoop Azure instance of OpenAI GPT-4o")
-        if st.session_state.use_keyvault:
-            OPENAI_API_KEY = AzureUtils.get_secret(
-                "LL-AZURE-OPENAI-API-KEY", "lluniappkv"
-            )
-            OPENAI_API_ENDPOINT = AzureUtils.get_secret(
-                "LL-AZURE-OPENAI-API-ENDPOINT", "lluniappkv"
-            )
-        else:
-            OPENAI_API_KEY = os.getenv("LL_AZURE_OPENAI_API_KEY")
-            OPENAI_API_ENDPOINT = os.getenv("LL_AZURE_OPENAI_API_ENDPOINT")
-    return AzureOpenAI(
-        api_key=OPENAI_API_KEY,
-        api_version="2024-04-01-preview",
-        azure_endpoint=OPENAI_API_ENDPOINT,
-    )
+    elif llm_model == "azure_gpt-4_Turbo":
+        print("Using Azure GPT-4 Turbo")
+        st.session_state.openai_model = "learnloop"
+        return AzureOpenAI(
+            # api_key=os.getenv("OPENAI_API_KEY_TURBO"), #TODO: ask Gerrit to put key in Azure secrets
+            api_key=os.getenv("OPENAI_API_KEY"),
+            api_version="2024-03-01-preview",
+            # azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT_TURBO")
+            azure_endpoint=os.getenv(
+                "AZURE_OPENAI_ENDPOINT"
+            ),  # TODO: ask Gerrit to put key in Azure secrets
+        )
 
 
 def upload_progress():
@@ -89,40 +53,24 @@ def upload_progress():
     Uploads the progress of the user in the current phase to the database.
     """
     # Store path and data in variables for clarity
-    topics = db_dal.fetch_module_topics(st.session_state.selected_module)["topics"]
-    topic = topics[st.session_state.topic_index]
-    segment_indices = topic["segment_indexes"]
-    segment_index_to_save_progress_for_topic = st.session_state.segment_index
-    if st.session_state.segment_index not in segment_indices:
-        segment_index_to_save_progress_for_topic = segment_indices[0]
-
-    learning_path = {
-        f"progress.{st.session_state.selected_module}.{st.session_state.selected_phase}.last_visited_segment_index_per_topic_index.{st.session_state.topic_index}": segment_index_to_save_progress_for_topic
-    }
-
-    practice_path = (
+    path = (
         f"progress.{st.session_state.selected_module}.{st.session_state.selected_phase}"
     )
-    practice_data = {f"{practice_path}.segment_index": st.session_state.segment_index}
+    data = {f"{path}.segment_index": st.session_state.segment_index}
 
     # Also upload the ordered_segment_sequence if the practice session if active
     if st.session_state.selected_phase == "practice":
-        practice_data[f"{practice_path}.ordered_segment_sequence"] = (
+        data[f"{path}.ordered_segment_sequence"] = (
             st.session_state.ordered_segment_sequence
         )
 
     # The data dict contains the paths and data
-    db.users.update_one(
-        {"username": st.session_state.username}, {"$set": learning_path}
-    )
-    db.users.update_one(
-        {"username": st.session_state.username}, {"$set": practice_data}
-    )
+    db.users_2.update_one({"username": st.session_state.username}, {"$set": data})
 
 
 def evaluate_answer():
     """Evaluates the answer of the student and returns a score and feedback."""
-    if not use_dummy_openai_calls:
+    if use_dummy_openai_calls != True:
         # Create user prompt with the question, correct answer and student answer
         prompt = f"""Input:\n
         Vraag: {st.session_state.segment_content['question']}\n
@@ -131,24 +79,43 @@ def evaluate_answer():
         Output:\n"""
 
         # Read the role prompt from a file
-        with open(
-            "./src/assets/prompts/direct_feedback_prompt.txt", "r", encoding="utf-8"
-        ) as f:
+        with open("./direct_feedback_prompt.txt", "r", encoding="utf-8") as f:
             role_prompt = f.read()
 
-        response = st.session_state.openai_client.chat.completions.create(
+        stream = openai_client.chat.completions.create(
             model=st.session_state.openai_model,
             messages=[
                 {"role": "system", "content": role_prompt},
                 {"role": "user", "content": prompt},
             ],
             max_tokens=500,
-            response_format={"type": "json_object"},
+            # stream=True
         )
-        feedback_json = json.loads(response.choices[0].message.content)
 
-        st.session_state.feedback = feedback_json["feedback"]
-        st.session_state.score = feedback_json["score"]
+        # st.write_stream(stream)
+
+        # response = ""
+        # for chunk in stream:
+        #     st.write(chunk.choices[0]['delta']['content'])
+        #     if "choices" in chunk:
+        #         choice = chunk["choices"][0]
+        #         if "delta" in choice:
+        #             st.write(choice["delta"].get("content", ""))
+        #             response += choice["delta"].get("content", "")
+
+        # st.write(response)
+
+        split_response = stream.choices[0].message.content.split(";;")
+
+        # split_response = response.split(";;")
+
+        if len(split_response) != 2:
+            raise ValueError(
+                "Server response is not in the correct format. Please retry."
+            )
+
+        st.session_state.feedback = split_response[0].split(">>")
+        st.session_state.score = split_response[1]
     else:
         st.session_state.feedback = "O"
         st.session_state.score = "0/2"
@@ -217,12 +184,10 @@ def render_feedback():
     result_html = f"""
     <h1 style='font-size: 20px; margin: 25px 0 10px 10px; padding: 0;'>Feedback:</h1>
     {feedback_html}
-    <div style='background-color: {color}; padding: 10px; margin-bottom: 0px; margin-top: 28px; border-radius: 7px; display: flex; align-items: center;'> <!-- Verhoogd naar 50px voor meer ruimte -->
+    <div style='background-color: {color}; padding: 10px; margin-bottom: 15px; margin-top: 28px; border-radius: 7px; display: flex; align-items: center;'> <!-- Verhoogd naar 50px voor meer ruimte -->
         <h1 style='font-size: 20px; margin: 8px 0 8px 10px; padding: 0;'>Score: {st.session_state.score}</h1>
+        <p style='margin: -30px; padding: 0;'>⚠️ Kan afwijken</p>
     </div>
-    <span style="font-size: 0.9em; color: darkgray;">LearnLoop kan fouten maken. Check het antwoordmodel als je twijfelt.</span>
-    <br>
-    <br>
     """
     st.markdown(result_html, unsafe_allow_html=True)
 
@@ -366,21 +331,7 @@ def change_segment_index(step_direction):
 
 def render_navigation_buttons():
     """Render the navigation buttons that allows users to move between segments."""
-    sources = False  # TODO: add sources to the json in content pipeline to turn this on
-
-    # Create two or three columns, depending on whether sources is turned on
-    if sources is True:
-        prev_col, source_col, next_col = st.columns(3)
-        with source_col:
-            with st.popover("Bron", use_container_width=True):
-                slides: list[int] = st.session_state.segment_content.get("slides", [])
-                st.markdown(
-                    "**Relevante slides:** "
-                    + ", ".join([str(slide) for slide in slides])
-                )
-    else:
-        prev_col, next_col = st.columns([1, 1])
-
+    prev_col, next_col = st.columns(2)
     if st.session_state.segment_index != 0:
         with prev_col:
             st.button(
@@ -389,7 +340,6 @@ def render_navigation_buttons():
                 args=(-1,),
                 use_container_width=True,
             )
-
     with next_col:
         st.button(
             "Volgende",
@@ -398,30 +348,10 @@ def render_navigation_buttons():
             use_container_width=True,
         )
 
-    if st.session_state.selected_phase == "learning":
-        temp_state = st.session_state.questions_only
-        st.session_state.questions_only = st.toggle(
-            "Toon geen theorie, alleen vragen", key="theory_questions"
-        )
-
-        if temp_state != st.session_state.questions_only:
-            st.rerun()
-
 
 def set_submitted_true():
     """Whithout this helper function the user will have to press "check" button twice before submitting"""
     st.session_state.submitted = True
-
-
-def show_toggle_if_practice_page():
-    if st.session_state.selected_phase == "learning":
-        temp_state = st.session_state.questions_only
-        st.session_state.questions_only = st.toggle(
-            "Toon geen theorie, alleen vragen", key="theory_questions"
-        )
-
-        if temp_state != st.session_state.questions_only:
-            st.rerun()
 
 
 def render_check_and_nav_buttons():
@@ -445,17 +375,34 @@ def render_check_and_nav_buttons():
             args=(1,),
         )
 
-    show_toggle_if_practice_page()
+
+def render_image(image_path):
+    image_base64 = convert_image_base64(image_path)
+    image_html = f"""
+    <div style='text-align: center; margin: 10px;'>
+        <img src='data:image/png;base64,{image_base64}' alt='image can't load' style='max-width: 100%; max-height: 500px'>
+    </div>"""
+    st.markdown(image_html, unsafe_allow_html=True)
+
+
+def fetch_image_path():
+    if "image" in st.session_state.segment_content:
+        image_path = st.session_state.segment_content["image"]
+        if image_path is None:
+            return None
+        else:
+            return f"./content/images/{image_path}"
 
 
 def render_info():
     """Renders the info segment with title and text."""
     # if the image directory is present in the JSON for this segment, then display the image
-    render_image_if_available()
+    image_path = fetch_image_path()
+    if image_path:
+        render_image(image_path)
 
-    segment = st.session_state.segment_content
-    st.subheader(segment["title"])
-    st.write(segment["text"])
+    st.subheader(st.session_state.segment_content["title"])
+    st.write(st.session_state.segment_content["text"])
 
 
 def render_answerbox():
@@ -491,7 +438,7 @@ def render_question():
 
 def fetch_ordered_segment_sequence():
     """Fetches the practice segments from the database."""
-    user_doc = db.users.find_one({"username": st.session_state.username})
+    user_doc = db.users_2.find_one({"username": st.session_state.username})
     st.session_state.ordered_segment_sequence = user_doc["progress"][
         st.session_state.selected_module
     ]["practice"]["ordered_segment_sequence"]
@@ -499,7 +446,7 @@ def fetch_ordered_segment_sequence():
 
 def update_ordered_segment_sequence(ordered_segment_sequence):
     """Updates the practice segments in the database."""
-    db.users.update_one(
+    db.users_2.update_one(
         {"username": st.session_state.username},
         {
             "$set": {
@@ -548,12 +495,12 @@ def render_learning_explanation():
     the current phase."""
     with mid_col:
         st.markdown(
-            '<p style="font-size: 30px;"><strong>📖 Leren</strong></p>',
+            '<p style="font-size: 30px;"><strong>Leren 📖</strong></p>',
             unsafe_allow_html=True,
         )
         # st.write("The learning phase **guides you through the concepts of a lecture** in an interactive way with **personalized feedback**. Incorrectly answered questions are automatically added to the practice phase.")
         st.write(
-            "In de leerfase word je op een interactieve manier door de concepten van een college heen geleid en krijg je **direct persoonlijke feedback** op open vragen. Vragen die je niet goed hebt, komen automatisch terug in 🔄 'Herhalen'."
+            "In de leerfase word je op een interactieve manier door de concepten van een college heen geleid en krijg je **direct persoonlijke feedback** op open vragen. Vragen die je niet goed hebt, komen automatisch terug in 'Herhalen' 🔄."
         )
         render_start_button()
     exit()
@@ -562,7 +509,7 @@ def render_learning_explanation():
 def render_practice_exam_explanation():
     with mid_col:
         st.markdown(
-            '<p style="font-size: 30px;"><strong>✍🏽 Samenvattende vragen</strong></p>',
+            '<p style="font-size: 30px;"><strong>Samenvattende vragen ✍🏽</strong></p>',
             unsafe_allow_html=True,
         )
         st.write(
@@ -576,6 +523,8 @@ def initialise_learning_page():
     """
     Sets all session states to correspond with database.
     """
+    # Fetch the last segment index from db
+    st.session_state.segment_index = cont_dal.fetch_segment_index()
 
     if st.session_state.segment_index == -1:  # If user never started this phase
         if st.session_state.selected_module.startswith("Samenvattende"):
@@ -613,7 +562,7 @@ def reset_feedback():
         "$set": {f"progress.{st.session_state.selected_module}.feedback.questions": []}
     }
 
-    db.users.update_one(user_query, set_empty_array)
+    db.users_2.update_one(user_query, set_empty_array)
 
 
 # render the page at the end of the learning phase (after the last question)
@@ -682,7 +631,6 @@ def calculate_score():
     return total_score, possible_score
 
 
-# TODO move to db access class
 def get_feedback_questions_from_db():
     query = {"username": st.session_state.username}
 
@@ -691,7 +639,7 @@ def get_feedback_questions_from_db():
         "_id": 0,
     }
 
-    user_document = db.users.find_one(query, projection)
+    user_document = db.users_2.find_one(query, projection)
 
     if user_document is None:
         return []
@@ -709,14 +657,11 @@ def get_feedback_questions_from_db():
 def show_feedback_overview():
     questions = get_feedback_questions_from_db()
     for question in questions:
-        st.subheader(
-            f"{question['question']}"
-        )  # TODO get question content not from DB but from DatabaseAccess
+        st.subheader(f"{question['question']}")
         if "feedback" in question:
             st.session_state.feedback = question["feedback"]
             st.session_state.student_answer = question["student_answer"]
             st.session_state.score = question["score"]
-            render_student_answer()
             render_feedback()
         else:
             render_mc_feedback(question)
@@ -740,7 +685,7 @@ def render_oefententamen_final_page():
 
 def reset_progress():
     """Resets the progress of the user in the current phase to the database."""
-    db.users.update_one(
+    db.users_2.update_one(
         {"username": st.session_state.username},
         {
             "$set": {
@@ -765,9 +710,8 @@ def render_warning():
         """,
         unsafe_allow_html=True,
     )
-    st.button("Ja", use_container_width=True, on_click=set_if_warned_true)
     st.button("Nee", on_click=reset_progress, use_container_width=True)
-
+    st.button("Ja", use_container_width=True, on_click=set_if_warned_true)
     st.button(
         "Leer meer over mogelijkheden & limitaties van LLM's",
         on_click=set_info_page_true,
@@ -781,9 +725,9 @@ def progress_date_tracking_format():
     a user visited a segment or answered a question, through dates as entries.
     It also adds the first entry directly.
     """
-    date = datetime.now(timezone.utc).date()
+    date = datetime.utcnow().date()
     return {
-        "type": db_dal.get_segment_type(st.session_state.segment_index),
+        "type": cont_dal.get_segment_type(st.session_state.segment_index),
         "entries": [date.isoformat()],
     }
 
@@ -792,28 +736,20 @@ def add_date_to_progress_counter():
     """
     Counts how many times a person answered the current question and updates database.
     """
-    module = st.session_state.selected_module
+    module = st.session_state.selected_module.replace("_", " ")
     user_doc = db_dal.find_user_doc()
-
-    progress_counter = db_dal.get_progress_counter(module, user_doc)
-
-    segment_progress_count = progress_counter.get(str(st.session_state.segment_index))
+    segment_progress_count = db_dal.fetch_progress_counter(module, user_doc)[
+        str(st.session_state.segment_index)
+    ]
 
     # Initialise or update date format
-    if not segment_progress_count:
+    if segment_progress_count is None:
         segment_progress_count = progress_date_tracking_format()
     else:
-        date = datetime.now(timezone.utc).date()
+        date = datetime.utcnow().date()
         segment_progress_count["entries"].append(date.isoformat())
 
     db_dal.update_progress_counter_for_segment(module, segment_progress_count)
-
-
-def render_image_if_available():
-    segment = st.session_state.segment_content
-
-    if segment.get("image"):
-        image_handler.render_image(segment, max_height=600)
 
 
 def render_learning_page():
@@ -849,17 +785,17 @@ def render_learning_page():
         ):
             if st.session_state.submitted:
                 # Render image if present in the feedback
-                render_image_if_available()
+                image_path = fetch_image_path()
+                if image_path:
+                    render_image(image_path)
 
                 render_question()
 
                 # Spinner that displays during evaluating answer
-                with st.spinner(
-                    "Een large language model (LLM) checkt je antwoord met het antwoordmodel. \
+                with st.spinner(f"Een large language model (LLM) checkt je antwoord met het antwoordmodel. \
                                 Check zelf het antwoordmodel als je twijfelt. \n\n Leer meer over het gebruik \
                                 van LLM's op de pagina **'Uitleg mogelijkheden & limitaties LLM's'** onder \
-                                het kopje 'Extra info' in de sidebar."
-                ):
+                                het kopje 'Extra info' in de sidebar."):
                     render_student_answer()
                     evaluate_answer()
                     add_date_to_progress_counter()
@@ -870,7 +806,9 @@ def render_learning_page():
                 render_explanation()
                 render_navigation_buttons()
             else:
-                render_image_if_available()
+                image_path = fetch_image_path()
+                if image_path:
+                    render_image(image_path)
 
                 render_question()
 
@@ -884,7 +822,7 @@ def render_learning_page():
                     set_submitted_true()
                     st.rerun()
 
-                if st.session_state.warned:
+                if st.session_state.warned == True:
                     render_check_and_nav_buttons()
 
         # Multiple choice question
@@ -958,22 +896,20 @@ def save_feedback_on_open_question():
     pull_query = {
         "$pull": {
             f"progress.{st.session_state.selected_module}.feedback.questions": {
-                "segment_index": st.session_state.segment_index
+                "question": st.session_state.segment_content["question"]
             }
         }
     }
 
     # Execute the pull operation
-    db.users.update_one(user_query, pull_query)
+    db.users_2.update_one(user_query, pull_query)
 
     # Prepare the new question data to be pushed
-    # TODO remove question as it should come from DatabaseAccess
     new_question_data = {
         "question": st.session_state.segment_content["question"],
         "student_answer": st.session_state.student_answer,
         "feedback": st.session_state.feedback,
         "score": st.session_state.score,
-        "segment_index": st.session_state.segment_index,
     }
 
     # Push the new question data
@@ -984,7 +920,7 @@ def save_feedback_on_open_question():
     }
 
     # Execute the push operation
-    db.users.update_one(user_query, push_query)
+    db.users_2.update_one(user_query, push_query)
 
 
 def save_feedback_on_mc_question():
@@ -999,22 +935,20 @@ def save_feedback_on_mc_question():
     pull_query = {
         "$pull": {
             f"progress.{st.session_state.selected_module}.feedback.questions": {
-                "segment_index": st.session_state.segment_index
+                "question": st.session_state.segment_content["question"]
             }
         }
     }
 
     # Execute the pull operation
-    db.users.update_one(user_query, pull_query)
+    db.users_2.update_one(user_query, pull_query)
 
     # Prepare the new question data to be pushed
-    # TODO remove question and correct_answer as they should come from DatabaseAccess
     new_question_data = {
         "question": st.session_state.segment_content["question"],
         "student_answer": st.session_state.choosen_answer,
         "correct_answer": st.session_state.segment_content["answers"]["correct_answer"],
         "score": st.session_state.score,
-        "segment_index": st.session_state.segment_index,
     }
 
     # Push the new question data
@@ -1025,7 +959,7 @@ def save_feedback_on_mc_question():
     }
 
     # Execute the push operation
-    db.users.update_one(user_query, push_query)
+    db.users_2.update_one(user_query, push_query)
 
 
 def reset_submitted_if_page_changed():
@@ -1049,7 +983,7 @@ def render_practice_explanation():
     this phase in this module."""
     with mid_col:
         st.markdown(
-            '<p style="font-size: 30px;"><strong>🔄 Herhalen</strong></p>',
+            '<p style="font-size: 30px;"><strong>Herhalen 🔄</strong></p>',
             unsafe_allow_html=True,
         )
         # st.write("The practice phase is where you can practice the concepts you've learned in the learning phase. It uses **spaced repetition** to reinforce your memory and **improve retention.**")
@@ -1070,7 +1004,7 @@ def initialise_practice_page():
     if it's the first time."""
 
     # Fetch the last segment index from db
-    st.session_state.segment_index = db_dal.fetch_segment_index()
+    st.session_state.segment_index = cont_dal.fetch_segment_index()
 
     if st.session_state.segment_index == -1:
         fetch_ordered_segment_sequence()
@@ -1117,17 +1051,16 @@ def render_practice_page():
             and "answer" in st.session_state.segment_content
         ):
             # Render image if present in the feedback
-            render_image_if_available()
-
+            image_path = fetch_image_path()
+            if image_path:
+                render_image(image_path)
             render_question()
             if st.session_state.submitted:
                 # Spinner that displays during evaluating answer
-                with st.spinner(
-                    "Een large language model (LLM) checkt je antwoord met het antwoordmodel. \
+                with st.spinner(f"Een large language model (LLM) checkt je antwoord met het antwoordmodel. \
                                 Check zelf het antwoordmodel als je twijfelt. \n\n Leer meer over het gebruik \
                                 van LLM's op de pagina **'Uitleg mogelijkheden & limitaties LLM's'** onder \
-                                het kopje 'Extra info' in de sidebar."
-                ):
+                                het kopje 'Extra info' in de sidebar."):
                     render_student_answer()
                     evaluate_answer()
 
@@ -1136,7 +1069,7 @@ def render_practice_page():
                 render_explanation()
                 render_SR_nav_buttons()
             else:
-                if st.session_state.warned is False:
+                if st.session_state.warned == False:
                     render_warning()
                 else:
                     render_answerbox()
@@ -1159,7 +1092,7 @@ def render_practice_page():
             wrong_answers = st.session_state.segment_content["answers"]["wrong_answers"]
 
             # Check if the answers have already been shuffled and stored
-            if st.session_state.shuffled_answers is None:
+            if st.session_state.shuffled_answers == None:
                 answers = [correct_answer] + wrong_answers
                 random.shuffle(answers)
                 st.session_state.shuffled_answers = answers
@@ -1195,126 +1128,37 @@ def render_practice_page():
             render_navigation_buttons()
 
 
-def render_topics_page():
+def render_overview_page():
     """
     Renders the page that shows all the subjects in a lecture, which gives the
     student insight into their progress.
     """
-    topics_page = TopicOverview()
-    topics_page.render_page()
-
-
-def render_lectures_page():
-    """
-    Renders the page that renders the lectures of the course.
-    """
-    lectures_page = LectureOverview()
-    lectures_page.run()
-
-
-def render_courses_page():
-    """
-    Renders the page that shows the courses that the student can choose from.
-    """
-    courses_page = CoursesOverview()
-    courses_page.run()
-
-
-def render_theory_overview_page():
-    """
-    Renders the page that shows the theory overview of the course.
-    """
-    theory_overview_page = TheoryOverview()
-    theory_overview_page.run()
-
-
-def render_not_recorded_page():
-    """
-    Renders the page that shows the student that the lecture is not recorded.
-    """
-    lecture_name = st.session_state.selected_module
-    st.title(f"College — {lecture_name}")
-
-    st.subheader("Nog niet opgenomen")
-    st.write("Dit college is (nog) niet opgenomen. Hopelijk binnenkort wel! ")
-    course_name = st.session_state.selected_course
-    st.button(
-        "Terug naar collegeoverzicht",
-        key=course_name,
-        on_click=go_to_course,
-        args=(course_name,),
-        use_container_width=True,
-    )
-
-
-def go_to_course(course_name):
-    """
-    Callback function for the button that redirects to the course overview page.
-    """
-    st.session_state.selected_course = course_name
-    st.session_state.selected_phase = "lectures"
-
-
-def render_generated_page():
-    """
-    Renders the page that shows the student that the lecture is not recorded.
-    """
-    st.title(f"College — {st.session_state.selected_module}")
-    utils.add_spacing(1)
-    st.subheader("Nog niet nagekeken door docent")
-    st.write(
-        "De docent moet de content van het college nog nakijken voordat je er hiermee kunt oefenen."
-    )
-    course_name = st.session_state.selected_course
-    st.button(
-        "Terug naar collegeoverzicht",
-        key=course_name,
-        on_click=go_to_course,
-        args=(course_name,),
-        use_container_width=True,
-    )
-
-
-def render_LLM_info_page():
-    """
-    Renders the info page that contains the explanation of the learning and practice phases.
-    """
-    with open("./src/data/uitleg_llms_voor_student.txt", "r") as f:
-        info_page = f.read()
-    with mid_col:
-        st.markdown(info_page, unsafe_allow_html=True)
-    return
+    module_title = " ".join(st.session_state.selected_module.split(" ")[1:])
+    overview_page = OverviewPage(module_title)
+    overview_page.render_page()
 
 
 def render_selected_page():
     """
     Determines what type of page to display based on which module the user selected.
     """
-    st.session_state.page_content = db_dal.fetch_module_content(
+    cont_dal.load_page_content_of_module_in_session_state(
         st.session_state.selected_module
     )
 
-    match st.session_state.selected_phase:
-        case "courses":
-            render_courses_page()
-        case "lectures":
-            render_lectures_page()
-        case "topics":
-            render_topics_page()
-        case "learning":
-            render_learning_page()
-        case "practice":
-            render_practice_page()
-        case "theory-overview":
-            render_theory_overview_page()
-        case "not_recorded":
-            render_not_recorded_page()
-        case "generated":
-            render_generated_page()
-        case "LLM_info":
-            render_LLM_info_page()
-        case _:  # Show courses page if no phase is selected
-            render_courses_page()
+    # Determine what type of page to display
+    if st.session_state.info_page:
+        render_info_page()
+    elif st.session_state.selected_phase == "overview":
+        render_overview_page()
+    elif st.session_state.selected_phase == "learning":
+        render_learning_page()
+    elif st.session_state.selected_phase == "practice":
+        render_practice_page()
+
+
+def render_logo():
+    st.image("./content/images/logo.png", width=100)
 
 
 def upload_feedback():
@@ -1325,25 +1169,27 @@ def upload_feedback():
 
 def render_feedback_form():
     """Feedback form in the sidebar."""
-    with st.sidebar:
-        st.subheader("Denk je mee?")
-        st.text_area(
-            label="Wat vind je handig? Wat kan beter? Voer geen persoonlijke of herkenbare gegevens in.",
-            key="feedback_box",
-        )
-        st.button("Verstuur", on_click=upload_feedback, use_container_width=True)
+    st.write("\n\n")
+    st.write("\n\n")
+    st.sidebar.subheader("Denk je mee?")
+    st.sidebar.text_area(
+        label="Wat vind je handig? Wat kan beter? Voer geen persoonlijke of herkenbare gegevens in.",
+        key="feedback_box",
+    )
 
-        if st.session_state.get("feedback_submitted", False):
-            st.success("Bedankt voor je feedback!")
-            st.balloons()
-            time.sleep(2)
-            st.session_state.feedback_submitted = False
-            st.experimental_rerun()
+    st.sidebar.button("Verstuur", on_click=upload_feedback, use_container_width=True)
+
+    if st.session_state.feedback_submitted:
+        st.sidebar.success("Bedankt voor je feedback!")
+        st.balloons()
+        time.sleep(2)
+        st.session_state.feedback_submitted = False
+        st.rerun()
 
 
 def render_info_page():
     """Renders the info page that contains the explanation of the learning and practice phases."""
-    with open("./src/data/uitleg_llms_voor_student.txt", "r") as f:
+    with open("./uitleg_llms.txt", "r") as f:
         info_page = f.read()
     with mid_col:
         st.markdown(info_page, unsafe_allow_html=True)
@@ -1357,7 +1203,7 @@ def set_info_page_true():
 
 def track_visits():
     """Tracks the visits to the modules."""
-    db.users.update_one(
+    db.users_2.update_one(
         {"username": st.session_state.username},
         {
             "$inc": {
@@ -1369,65 +1215,60 @@ def track_visits():
 
 def render_page_button(page_title, module, phase):
     """
-    Renders the buttons that the users clicks to go to a certain lecture learning experience.
+    Renders the buttons that the users clicks to go to a certain page.
     """
-
     if st.button(page_title, key=f"{module} {phase}", use_container_width=True):
-        # If the page is changed, then the feedback will be reset
-        if st.session_state.selected_phase != phase and phase == "practice":
-            reset_feedback()
-
         st.session_state.selected_module = module
-        utils.set_phase_to_match_lecture_status(phase)
 
+        # If the state is changed, then the feedback will be reset
+        if st.session_state.selected_phase != phase:
+            reset_feedback()
+        st.session_state.selected_phase = phase
         st.session_state.info_page = False
         track_visits()
-
-
-def set_selected_phase(phase):
-    st.session_state.selected_phase = phase
-    # update the selected phase in the database
-    db_dal.update_last_phase(phase)
 
 
 def render_sidebar():
     """
     Function to render the sidebar with the modules and login module.
     """
-
     with st.sidebar:
-        st.image(
-            "src/data/content/images/logo.png",
-            use_column_width=False,
-            width=150,
-        )
+        spacer, image_col = st.columns([0.4, 1])
+        with image_col:
+            render_logo()
+        st.sidebar.title("Colleges")
 
-        st.markdown(
-            """
-            <style>
-                .closer-line {
-                    margin-top: -5px;
-                }
-            </style>
+        st.session_state.questions_only = st.toggle("Alleen vragen tonen")
 
-            <h1> 
-                <strong>Welkom Student</strong>
-            </h1>
-            <hr class="closer-line">
-        """,
-            unsafe_allow_html=True,
-        )
-        st.button(
-            "📚 Mijn vakken",
-            on_click=set_selected_phase,
-            args=("courses",),
-            use_container_width=True,
-        )
+        practice_exam_count = 0
+        # Display the modules in expanders in the sidebar
+        for i, module in enumerate(st.session_state.modules):
+            # If the module is not a Oefententamen, then skip it
+            if not module.startswith(st.session_state.practice_exam_name.split(" ")[0]):
+                zero_width_space = "\u200b"
+                with st.expander(
+                    f"{i + 1}.{zero_width_space} " + " ".join(module.split(" ")[1:])
+                ):
+                    # Display buttons for the two types of phases per module
+                    render_page_button("Leren 📖", module, phase="overview")
+                    render_page_button("Herhalen 🔄", module, phase="practice")
 
-        render_feedback_form()
+            elif module.startswith(st.session_state.practice_exam_name.split(" ")[0]):
+                practice_exam_count += 1
 
-        st.subheader("Extra Info")
+        st.sidebar.title(st.session_state.practice_exam_name)
 
+        # Render the practice exam buttons
+        for i in range(practice_exam_count):
+            practice_exam_name = st.session_state.practice_exam_name
+            # render_page_button(f'{practice_exam_name} {i + 1} ✍🏽', f'{practice_exam_name} {i + 1}', 'learning')
+            render_page_button(
+                f"{practice_exam_name} ✍🏽", f"{practice_exam_name}", "learning"
+            )
+
+        render_feedback_form()  # So users can give feedback
+
+        st.sidebar.subheader("Extra Info")
         st.button(
             "Uitleg mogelijkheden & limitaties LLM's",
             on_click=set_info_page_true,
@@ -1436,107 +1277,143 @@ def render_sidebar():
         )
 
 
-def create_default_progress_structure(module):
+def initialise_database():
     """
-    Returns the default structure for progress in any module, including the progress_counter.
+    Initialise the progress object with the modules and phases in the database.
     """
-    empty_dict = create_empty_progress_dict(module)
+    for module in st.session_state.modules:
+        db.users_2.update_one(
+            {"username": st.session_state.username},
+            {
+                "$set": {
+                    "warned": False,
+                    "last_module": st.session_state.modules[
+                        0
+                    ],  # Open the first module by default
+                    f"progress.{module}": {
+                        "learning": {
+                            "segment_index": -1,  # Set to -1 so an explanation displays when phase is first opened
+                            "progress_counter": None,
+                        },
+                        "practice": {
+                            "segment_index": -1,
+                            "ordered_segment_sequence": [],
+                        },
+                        "feedback": {"questions": []},
+                    },
+                }
+            },
+        )
 
-    return {
-        "learning": {
-            "segment_index": -1,
-            "progress_counter": empty_dict,
+
+def initialise_module_in_database(module):
+    """
+    Adds a new module to the database without resetting the rest of the database.
+    """
+    db.users_2.update_one(
+        {"username": st.session_state.username},
+        {
+            "$set": {
+                f"progress.{module}": {
+                    "learning": {
+                        "segment_index": -1
+                    },  # Set to -1 so an explanation displays when phase is first opened
+                    "practice": {
+                        "segment_index": -1,
+                        "ordered_segment_sequence": [],
+                    },
+                }
+            }
         },
-        "practice": {"segment_index": -1, "ordered_segment_sequence": []},
-        "feedback": {"questions": []},
-    }
+    )
 
 
 def create_empty_progress_dict(module):
     """
-    Creates an empty dictionary with segment indices as keys and None as values for progress tracking.
+    Creates an empty dictionary that contains the JSON
+    index of the segment as key and the number of times
+    the user answered a question.
     """
-    st.session_state.page_content = db_dal.fetch_module_content(module)
-    number_of_segments = (
-        len(st.session_state.page_content["segments"])
-        if st.session_state.page_content
-        else 0
-    )
-    return {str(i): None for i in range(number_of_segments)}
+    empty_dict = {}
+
+    cont_dal.load_page_content_of_module_in_session_state(module)
+
+    number_of_segments = len(st.session_state.page_content["segments"])
+
+    # Create a dictionary with indexes (strings) as key and None as value
+    empty_dict = {str(i): None for i in range(number_of_segments)}
+
+    return empty_dict
 
 
-# Cache for 10 minutes only, so it checks every 10 minutes if there is a new lecture available
-@st.cache_data(show_spinner=False, ttl=600)
-def check_user_doc_and_add_missing_fields():
+def initialise_practice_in_database(module):
     """
-    Initializes the user database with missing fields and modules.
+    Adds a new module to the database without resetting the rest of the database.
     """
-    print("Checking user doc and adding missing fields")
-    user_doc = db_dal.find_user_doc()
-    print(f"user_doc before insert one: {user_doc}")
-    if not user_doc:
-        db.users.insert_one({"username": st.session_state.username})
-        user_doc = db_dal.find_user_doc()
-        print("Inserted new user doc in db: ", user_doc)
-
-    # General fields initialization
-    if "warned" not in user_doc:
-        user_doc["warned"] = False
-        print("Added 'warned' field to user_doc")
-
-    if "progress" not in user_doc:
-        user_doc["progress"] = {}
-        print("Added 'progress' field to user_doc")
-
-    # Check of alle course modules in user_doc["progress"] zitten
-    course_catalog = db_dal.get_course_catalog()
-    for course in course_catalog.courses:
-        course_modules = db_dal.get_lectures_for_course(course.title, course_catalog)
-        for module in course_modules:
-            if module.title not in user_doc.get("progress", {}):
-                user_doc["progress"][module.title] = create_default_progress_structure(
-                    module.title
-                )
-                print(
-                    f"Added progess structure for 'module' {module.title} to user_doc['progress']"
-                )
-
-            if "practice" not in user_doc.get("progress", {}).get(module.title, {}):
-                print(f"practice zit niet in de db voor module {module.title}")
-
-                user_doc["progress"][module.title]["practice"] = {
+    db.users_2.update_one(
+        {"username": st.session_state.username},
+        {
+            "$set": {
+                f"progress.{module}.practice": {
                     "segment_index": -1,
                     "ordered_segment_sequence": [],
                 }
+            }
+        },
+    )
 
-                print(
-                    f"Added 'practice' field for module {module.title} to user_doc['progress']"
-                )
 
-            if "learning" not in user_doc.get("progress", {}).get(module.title, {}):
-                user_doc["progress"][module.title]["learning"] = {"segment_index": -1}
-                print(
-                    f"Added 'learning' field for module {module.title} to user_doc['progress']"
-                )
+def initialise_learning_in_database(module):
+    """
+    Adds a new module to the database without resetting the rest of the database.
+    """
+    db.users_2.update_one(
+        {"username": st.session_state.username},
+        {"$set": {f"progress.{module}.learning": {"segment_index": -1}}},
+    )
 
-            if "progress_counter" not in user_doc.get("progress", {}).get(
-                module.title, {}
-            ).get("learning", {}):
-                empty_dict = create_empty_progress_dict(module.title)
-                user_doc["progress"][module.title]["learning"]["progress_counter"] = (
-                    empty_dict
-                )
-                print(
-                    f"Added 'progress_counter' field for module {module.title} to user_doc['progress']"
-                )
 
-    if "last_module" not in user_doc:
-        # Zorg ervoor dat je een default module hebt als er geen modules in user_doc zijn
-        user_doc["last_module"] = next(iter(user_doc.get("progress", {})), None)
-        print("Added 'last_module' field to user_doc")
+# @st.cache_data(show_spinner=False)
+def determine_if_to_initialise_database():
+    """
+    Determine if currently testing, if the progress is saved, or if all modules are included
+    and if so, reset db when reloading webapp.
+    """
+    user_doc = db_dal.find_user_doc()
+    if not user_doc:
+        db.users_2.insert_one({"username": st.session_state.username})
 
-    # Update user_doc in db
-    db.users.update_one({"username": st.session_state.username}, {"$set": user_doc})
+    user_doc = db_dal.find_user_doc()
+    if reset_user_doc:
+        if "reset_db" not in st.session_state:
+            st.session_state.reset_db = True
+
+        if st.session_state.reset_db:
+            st.session_state.reset_db = False
+            initialise_database()
+
+    user_doc = db_dal.find_user_doc()
+    if "progress" not in user_doc:
+        initialise_database()
+
+    for module in st.session_state.modules:
+        user_doc = db_dal.find_user_doc()
+        if module not in user_doc["progress"]:
+            initialise_module_in_database(module)
+
+        if "practice" not in user_doc["progress"][module]:
+            initialise_practice_in_database(module)
+
+        if "learning" not in user_doc["progress"][module]:
+            initialise_learning_in_database(module)
+
+        # Check if the user doc contains the dict in which the
+        # is saved how many times a question is made by user
+        user_doc = db_dal.find_user_doc()
+        progress_counter = db_dal.fetch_progress_counter(module, user_doc)
+        if progress_counter is None:
+            empty_dict = create_empty_progress_dict(module)
+            db_dal.add_progress_counter(module, empty_dict)
 
 
 def convert_image_base64(image_path):
@@ -1551,8 +1428,8 @@ def render_login_page():
     prompts the user to login via SURFconext."""
     columns = st.columns([1, 0.9, 1])
     with columns[1]:
-        welcome_title = "Klinische Neuropsychologie"
-        logo_base64 = convert_image_base64("src/data/content/images/logo.png")
+        welcome_title = "Neuroanatomie- en fysiologie - deel 2"
+        logo_base64 = convert_image_base64("./content/images/logo.png")
 
         if surf_test_env:
             href = "http://localhost:3000/"
@@ -1560,36 +1437,15 @@ def render_login_page():
             href = "https://learnloop.datanose.nl/"
 
         html_content = f"""
-        <div style="text-align: center; margin: 20px;">
-            <img src="data:image/png;base64,{logo_base64}" alt="Logo" style="max-width: 25%; height: auto; margin-bottom: 20px;">
-            <div style="font-size: 36px; margin-bottom: 20px;"><strong>{welcome_title}</strong></div>
-            <a href="{href}" target="_self" style="text-decoration: none;">
-                <button style="font-size: 20px; border: none; color: white; padding: 10px 20px; 
-                text-align: center; text-decoration: none; display: block; width: 100%; margin: 
-                4px 0; cursor: pointer; background-color: #4CAF50; border-radius: 12px;">SURF Login</button>
+        <div style='text-align: center; margin: 20px;'>
+            <img src='data:image/png;base64,{logo_base64}' alt='Logo' style='max-width: 25%; height: auto; margin-bottom: 40px'>
+            <h1 style='color: #333; margin-bottom: 20px'>{welcome_title}</h1>
+            <a href={href} style="text-decoration: none;">
+                <button style='font-size:20px; border: none; color: white; padding: 10px 20px; \
+                text-align: center; text-decoration: none; display: block; width: 100%; margin: \
+                4px 0px; cursor: pointer; background-color: #4CAF50; border-radius: 12px;'>UvA Login</button>
             </a>
-            <br>
-            <div style="padding: 5px; max-width: 400px; margin: 5px auto 0; border-radius: 12px; background-color: #f5f5f5;">
-                <p style="font-size: 12px; margin: 10px 0; color: #333; text-align: left;">
-                    ⚠️ Om in te loggen met SURF, moet je eerst de uitnodiging accepteren die je per e-mail hebt ontvangen van SURF <br>
-                    (<i>Uitnodiging voor uva_fnwi_learnloop</i>).<br><br>Kun je de e-mail niet vinden? Controleer dan je spamfolder.<br><br>
-                    Staat de e-mail daar ook niet in? Stuur dan een bericht naar <br> <strong>+31 6 20192794</strong> met je volledige naam en je UvA e-mailadres.
-                </p>
-            </div>
         </div>"""
-
-        # html_content = f"""
-        # <div style="display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
-        #     <div style="text-align: center;">
-        #         <div style="font-size: 24px; font-weight: bold; margin-bottom: 20px;">
-        #             <img src='data:image/png;base64,{logo_base64}' alt="LearnLoop Logo" style="vertical-align: middle; margin-right: 10px;">
-        #         LearnLoop
-        #     </div>
-        #     <div style="font-size: 36px; margin-bottom: 20px;">Klinische Neuropsychologie</div>
-        #         <a href={href} style="display: inline-block; padding: 10px 20px; font-size: 18px; color: white; background-color: #4CAF50; border: none; border-radius: 10px; text-decoration: none; cursor: pointer;">UvA Login</a>
-        #     </div>
-        # </div>
-        # """
 
         st.markdown(html_content, unsafe_allow_html=True)
 
@@ -1597,7 +1453,8 @@ def render_login_page():
 @st.cache_resource(show_spinner=False)
 def initialise_data_access_layer():
     db_dal = DatabaseAccess()
-    return db_dal, db_dal
+    cont_dal = ContentAccess()
+    return db_dal, cont_dal
 
 
 def determine_selected_module():
@@ -1606,16 +1463,18 @@ def determine_selected_module():
         st.session_state.selected_module = st.session_state.modules[0]
 
 
-def initialise_session_states():
-    if "db" not in st.session_state:
-        st.session_state.db = db_config.connect_db(
-            use_LL_cosmosdb=st.session_state.use_LL_cosmosdb
-        )
-    if "selected_course" not in st.session_state:
-        st.session_state.selected_course = None
+def determine_selected_phase():
+    if st.session_state.selected_module.startswith(
+        st.session_state.practice_exam_name.split(" ")[0]
+    ):
+        st.session_state.selected_phase = "learning"
+    else:
+        st.session_state.selected_phase = "overview"
 
+
+def initialise_session_states():
     if "openai_model" not in st.session_state:
-        st.session_state.openai_model = "LLgpt-4o"
+        st.session_state.openai_model = "gpt-4o"
 
     if "practice_exam_name" not in st.session_state:
         st.session_state.practice_exam_name = "Samenvattende vragen"
@@ -1654,7 +1513,7 @@ def initialise_session_states():
         st.session_state.segment_index = 0
 
     if "modules" not in st.session_state:
-        st.session_state.modules = db_dal.initialise_modules()
+        st.session_state.modules = cont_dal.determine_modules()
 
     if "selected_module" not in st.session_state:
         st.session_state.selected_module = None
@@ -1683,30 +1542,17 @@ def initialise_session_states():
     if "questions_only" not in st.session_state:
         st.session_state.questions_only = False
 
-    if "use_keyvault" not in st.session_state:
-        st.session_state.use_keyvault = False
-
-    if "use_LL_blob_storage" not in st.session_state:
-        st.session_state.use_LL_blob_storage = False
-
 
 def fetch_nonce_from_query():
     return st.query_params.get("nonce", None)
-
-
-def initialise_image_handler():
-    return ImageHandler()
 
 
 def determine_username_from_nonce():
     """
     Fetches the username from the database using the nonce in the query parameters.
     """
-    st.session_state.nonce = (
-        fetch_nonce_from_query()
-    )  # ? Why save nonce in session state? Pass a param?
-
-    db_dal.fetch_info()
+    st.session_state.nonce = fetch_nonce_from_query()
+    db_dal.fetch_username_with_nonce()
 
 
 def remove_nonce_from_memories():
@@ -1716,62 +1562,6 @@ def remove_nonce_from_memories():
     st.session_state.nonce = None
 
 
-def get_commandline_arguments() -> argparse.Namespace:
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument(
-        "--debug",
-        help="Enable debug mode: which means that the app will not report errors to Slack",
-        action="store_true",
-        default=False,
-    )
-
-    parser.add_argument(
-        "--use_keyvault",
-        help="Set to True to use Azure Key Vault for secrets",
-        action="store_true",
-        default=False,
-    )
-    parser.add_argument(
-        "--use_LL_openai_deployment",
-        help="Set to True to use the LearnLoop OpenAI instance, otherwise use the UvA's",
-        action="store_true",
-        default=False,
-    )
-    parser.add_argument(
-        "--use_LL_cosmosdb",
-        help="Set to True to use the LearnLoop CosmosDB instance, otherwise use the UvA's",
-        action="store_true",
-        default=False,
-    )
-    parser.add_argument(
-        "--surf_test_env",
-        help="Set to True to use the SURF test environment for authentication",
-        action="store_true",
-        default=False,
-    )
-    parser.add_argument(
-        "--no_login_page",
-        help="Set to True to skip the login page",
-        action="store_true",
-        default=False,
-    )
-    parser.add_argument(
-        "--use_LL_blob_storage",
-        help="Set to True to use the LearnLoop Blob Storage instance, otherwise use the UvA's",
-        action="store_true",
-        default=False,
-    )
-    parser.add_argument(
-        "--test_username",
-        help="Set to a test username to use when testing (Luc Mahieu)",
-        action="store",
-        default=None,
-    )
-
-    return parser.parse_args()
-
-
 if __name__ == "__main__":
     # ---------------------------------------------------------
     # SETTINGS for DEVELOPMENT & DEPLOYMENT:
@@ -1779,54 +1569,42 @@ if __name__ == "__main__":
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     # SET ALL TO FALSE WHEN DEPLOYING
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    args = get_commandline_arguments()
-    set_global_exception_handler(
-        exception_handler, debug=args.debug
-    )  # set custom exception handler
 
     # Turn on 'testing' to use localhost instead of learnloop.datanose.nl for authentication
-    surf_test_env = args.surf_test_env
+    surf_test_env = False
 
     # Reset db for current user every time the webapp is loaded
     reset_user_doc = False
 
     # Your current IP has to be accepted by Gerrit to use CosmosDB (Gerrit controls this)
-    st.session_state.use_LL_cosmosdb = args.use_LL_cosmosdb
-    st.session_state.use_LL_blob_storage = args.use_LL_blob_storage
-    if st.session_state.use_LL_cosmosdb:
-        print("LearnLoop CosmosDB is being used")
-    else:
-        print("UvA CosmosDB is being used")
-
-    st.session_state.use_keyvault = args.use_keyvault
+    st.session_state.use_mongodb = False
 
     # Use dummy LLM feedback as response to save openai costs and time during testing
     use_dummy_openai_calls = False
-    # Give the name of the test user when giving one. !! If not using a test username, set to None
-    test_username = args.test_username
 
-    if args.use_LL_openai_deployment:
-        st.session_state.openai_model = "LLgpt-4o"
-    else:
-        st.session_state.openai_model = "learnloop-4o"
+    # Give the name of the test user when giving one. !! If not using a test username, set to None
+    test_username = False
+
+    # Use the Azure Openai API or the Openai API (GPT-4o) for the feedback
+    models = ["gpt-4o", "azure_gpt-4", "azure_gpt-4_Turbo"]
+    llm_model = models[2]
 
     # Bypass authentication when testing so flask app doesnt have to run
-    # st.session_state.skip_authentication = True
-    no_login_page = args.no_login_page
+    st.session_state.skip_authentication = False
+
+    no_login_page = False
     # ---------------------------------------------------------
 
     # Create a mid column with margins in which everything one a
     # page is displayed (referenced to mid_col in functions)
     left_col, mid_col, right_col = st.columns([1, 3, 1])
 
-    db_dal, db_dal = initialise_data_access_layer()
-    db = db_config.connect_db(st.session_state.use_LL_cosmosdb)
+    db_dal, cont_dal = initialise_data_access_layer()
+    db = db_config.connect_db(st.session_state.use_mongodb)
 
     initialise_session_states()
-    image_handler = initialise_image_handler()
-    utils = Utils()
 
-    st.session_state.openai_client = connect_to_openai()
+    openai_client = connect_to_openai()
 
     # Directly after logging in via SURF, the nonce is fetched from the query parameters
     if fetch_nonce_from_query() is not None:
@@ -1839,10 +1617,9 @@ if __name__ == "__main__":
     if test_username:
         st.session_state.username = test_username
 
-    print(f"Username: {st.session_state.username}")
-    # Login page renders if only if the user is not logged in
+    # Login page reners if only if the user is not logged in
     if (
-        no_login_page is False
+        no_login_page == False
         and fetch_nonce_from_query() is None
         and st.session_state.username is None
     ):
@@ -1850,9 +1627,9 @@ if __name__ == "__main__":
 
     # Render the actual app when the username is determined
     else:
-        check_user_doc_and_add_missing_fields()
+        determine_if_to_initialise_database()
 
-        if st.session_state.warned is None:
+        if st.session_state.warned == None:
             if warned := db_dal.fetch_if_warned() is True:
                 st.session_state.warned = True
             else:
@@ -1864,7 +1641,7 @@ if __name__ == "__main__":
             determine_selected_module()
 
         if st.session_state.selected_phase is None:
-            st.session_state.selected_phase = "courses"
+            determine_selected_phase()
 
         render_sidebar()
         render_selected_page()
