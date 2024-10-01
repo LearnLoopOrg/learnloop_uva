@@ -123,19 +123,31 @@ class DatabaseAccess:
 
     def fetch_original_module_content(self, module):
         page_content = self.db.content.find_one({"lecture_name": module})
-        return page_content["original_lecturepath_content"]
+        if page_content and "original_lecturepath_content" in page_content:
+            return page_content["original_lecturepath_content"]
+        else:
+            return None
 
     def fetch_corrected_module_content(self, module):
         page_content = self.db.content.find_one({"lecture_name": module})
-        return page_content["corrected_lecturepath_content"]
+        if page_content and "corrected_lecturepath_content" in page_content:
+            return page_content["corrected_lecturepath_content"]
+        else:
+            return None
 
     def fetch_original_module_topics(self, module):
         page_content = self.db.content.find_one({"lecture_name": module})
-        return page_content["original_lecturepath_topics"]
+        if page_content and "original_lecturepath_topics" in page_content:
+            return page_content["original_lecturepath_topics"]
+        else:
+            return None
 
     def fetch_corrected_module_topics(self, module):
         page_content = self.db.content.find_one({"lecture_name": module})
-        return page_content["corrected_lecturepath_topics"]
+        if page_content and "corrected_lecturepath_topics" in page_content:
+            return page_content["corrected_lecturepath_topics"]
+        else:
+            return None
 
     def fetch_json_file_name_of_module(self, module):
         return module + ".json"
