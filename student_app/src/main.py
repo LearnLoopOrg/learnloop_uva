@@ -57,7 +57,8 @@ def exception_handler(e: BaseException):
         pass
 
 
-@st.cache_resource(ttl=timedelta(hours=4))
+# Cache for 5 minutes the topics list
+@st.cache_resource(ttl=300)
 def connect_to_openai() -> OpenAI:
     if st.session_state.openai_model == "learnloop-4o":
         print("Using UvA instance of OpenAI GPT-4o")
