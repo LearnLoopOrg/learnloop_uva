@@ -16,7 +16,7 @@ def connect_db(MONGO_URI):
         MONGO_URI, tlsCAFile=certifi.where()
     )
 
-    db = db_client.get_database("demo")
+    db = db_client.get_database("UvA_KNP")
 
     # Ping database to check if it's connected
     try:
