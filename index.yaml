@@ -3,9 +3,9 @@ entries:
   learnloop:
   - apiVersion: v2
     appVersion: 0.4.6
-    created: "2024-10-01T23:54:41.388992328Z"
+    created: "2024-10-02T00:14:32.920537542Z"
     description: LearnLoop
-    digest: 8bcbbba571b88655d634a07433a6326b29619e06e830995f888b53df0cc13b0f
+    digest: 649302725cf1286056e6ed78e0cabb1ec31263e9ee1f6f9fd94f65c99d9ac591
     name: learnloop
     type: application
     urls:
@@ -13,7 +13,7 @@ entries:
     version: 0.4.6
   - apiVersion: v2
     appVersion: 0.4.5
-    created: "2024-10-01T23:54:41.388749874Z"
+    created: "2024-10-02T00:14:32.920032703Z"
     description: LearnLoop
     digest: 229b4aa13d211ca349ffd81aa95024b71c106ada44a3f093b707c5b05774bdcd
     name: learnloop
@@ -23,7 +23,7 @@ entries:
     version: 0.4.5
   - apiVersion: v2
     appVersion: 0.4.04
-    created: "2024-10-01T23:54:41.388529712Z"
+    created: "2024-10-02T00:14:32.919530019Z"
     description: LearnLoop
     digest: b1af75cec184c2d8e074231cc5de14631556a846fcedfaef65b4d06c8e65a7a1
     name: learnloop
@@ -33,7 +33,7 @@ entries:
     version: 0.4.04
   - apiVersion: v2
     appVersion: 0.4.03
-    created: "2024-10-01T23:54:41.388297436Z"
+    created: "2024-10-02T00:14:32.918937366Z"
     description: LearnLoop
     digest: 21efeb1cdc3caf713d804ceaa47be32b75837c4b8b43dcfebb0ee9c7235d3266
     name: learnloop
@@ -43,7 +43,7 @@ entries:
     version: 0.4.03
   - apiVersion: v2
     appVersion: 0.4.02
-    created: "2024-10-01T23:54:41.388077624Z"
+    created: "2024-10-02T00:14:32.91837509Z"
     description: LearnLoop
     digest: 282d8b0b6f2f8de6ba878c901d293c5bd38e03930c82363269e5b2fdf2d31116
     name: learnloop
@@ -53,7 +53,7 @@ entries:
     version: 0.4.02
   - apiVersion: v2
     appVersion: 0.4.01
-    created: "2024-10-01T23:54:41.387837364Z"
+    created: "2024-10-02T00:14:32.917950272Z"
     description: LearnLoop
     digest: 96a6a64e3a3c6573eb43459570ff5b58346c8f1fabf1fedbed8dd59e575eb3b9
     name: learnloop
@@ -63,7 +63,7 @@ entries:
     version: 0.4.01
   - apiVersion: v2
     appVersion: 0.4.0
-    created: "2024-10-01T23:54:41.387607423Z"
+    created: "2024-10-02T00:14:32.91772036Z"
     description: LearnLoop
     digest: 0de6341ba81c8c55310843a6f6e8c1579c10d8882bc9a7f0136dc3b19acda0ae
     name: learnloop
@@ -73,7 +73,7 @@ entries:
     version: 0.4.0
   - apiVersion: v2
     appVersion: 0.3.99
-    created: "2024-10-01T23:54:41.38735474Z"
+    created: "2024-10-02T00:14:32.917485979Z"
     description: LearnLoop
     digest: ee2900fb367a5adb1cade71c64faa3f22bf64c83392a4b9f1479ca585d0a3daf
     name: learnloop
@@ -83,7 +83,7 @@ entries:
     version: 0.3.99
   - apiVersion: v2
     appVersion: 0.3.98
-    created: "2024-10-01T23:54:41.387126182Z"
+    created: "2024-10-02T00:14:32.917265756Z"
     description: LearnLoop
     digest: 0510e457b1a2b9b3e8c7bd614091543ef4ff2f6db95fdca72ba71f2fd14d522b
     name: learnloop
@@ -93,7 +93,7 @@ entries:
     version: 0.3.98
   - apiVersion: v2
     appVersion: 0.3.97
-    created: "2024-10-01T23:54:41.386882204Z"
+    created: "2024-10-02T00:14:32.917037828Z"
     description: LearnLoop
     digest: 3adb21c96a9211472dd5ae529692b057855a5165c3218af8a312d91bf3e7024c
     name: learnloop
@@ -103,7 +103,7 @@ entries:
     version: 0.3.97
   - apiVersion: v2
     appVersion: 0.3.96
-    created: "2024-10-01T23:54:41.386611577Z"
+    created: "2024-10-02T00:14:32.916636804Z"
     description: LearnLoop
     digest: 10159f6b99e741d92400297043b519ef29e898bef69eff91d976157425c532a0
     name: learnloop
@@ -113,7 +113,7 @@ entries:
     version: 0.3.96
   - apiVersion: v2
     appVersion: 0.3.95
-    created: "2024-10-01T23:54:41.386295254Z"
+    created: "2024-10-02T00:14:32.916413475Z"
     description: LearnLoop
     digest: cf82b419aa2fb1ea4731f82c2b22800b36a8a9c196dd8d1f25f514cd493c6188
     name: learnloop
@@ -123,7 +123,7 @@ entries:
     version: 0.3.95
   - apiVersion: v2
     appVersion: 0.3.94
-    created: "2024-10-01T23:54:41.385748941Z"
+    created: "2024-10-02T00:14:32.916182882Z"
     description: LearnLoop
     digest: 5acb31102b030edd8fcc481a5115f2e1160bb38e53b08babdb16678d9c0f06c7
     name: learnloop
@@ -133,7 +133,7 @@ entries:
     version: 0.3.94
   - apiVersion: v2
     appVersion: 0.3.93
-    created: "2024-10-01T23:54:41.384625455Z"
+    created: "2024-10-02T00:14:32.915957539Z"
     description: LearnLoop
     digest: 07b3926aa29da471453b5a76b13538c17bb11bb382e68d7e6451b42e1e5f6326
     name: learnloop
@@ -143,7 +143,7 @@ entries:
     version: 0.3.93
   - apiVersion: v2
     appVersion: 0.3.92
-    created: "2024-10-01T23:54:41.383973564Z"
+    created: "2024-10-02T00:14:32.915722136Z"
     description: LearnLoop
     digest: 44542059d83af21b68db25ae84a3e0c1cfac09d872f318ad4e270536e756fdc4
     name: learnloop
@@ -153,7 +153,7 @@ entries:
     version: 0.3.92
   - apiVersion: v2
     appVersion: 0.3.91
-    created: "2024-10-01T23:54:41.383021961Z"
+    created: "2024-10-02T00:14:32.915453562Z"
     description: LearnLoop
     digest: cb4a68ae9f70ea2a6c25d7f0d7928d9742df529e2d339c9d24a32b7f56e29451
     name: learnloop
@@ -163,7 +163,7 @@ entries:
     version: 0.3.91
   - apiVersion: v2
     appVersion: 0.3.90
-    created: "2024-10-01T23:54:41.382704376Z"
+    created: "2024-10-02T00:14:32.915222638Z"
     description: LearnLoop
     digest: 7474b991ab3fda32e807e72a7171fb67b921ee6e414bd76c7d29c7832d163826
     name: learnloop
@@ -173,7 +173,7 @@ entries:
     version: 0.3.90
   - apiVersion: v2
     appVersion: 0.3.89
-    created: "2024-10-01T23:54:41.382372303Z"
+    created: "2024-10-02T00:14:32.914985172Z"
     description: LearnLoop
     digest: ff8d64ffd0ccc7992d69cc6620a5bd8d6abb5c720124b5264d43d690c741bc8e
     name: learnloop
@@ -183,7 +183,7 @@ entries:
     version: 0.3.89
   - apiVersion: v2
     appVersion: 0.3.88
-    created: "2024-10-01T23:54:41.3820559Z"
+    created: "2024-10-02T00:14:32.914746905Z"
     description: LearnLoop
     digest: 9527266d8418110e5832bfdaf89dbf9b50479974461dd0da66407a4b43673617
     name: learnloop
@@ -193,7 +193,7 @@ entries:
     version: 0.3.88
   - apiVersion: v2
     appVersion: 0.3.87
-    created: "2024-10-01T23:54:41.381752482Z"
+    created: "2024-10-02T00:14:32.914504189Z"
     description: LearnLoop
     digest: 0469092473b41a621420bd32f107049dd6da6d0ec26f5571e976331d4932193b
     name: learnloop
@@ -203,7 +203,7 @@ entries:
     version: 0.3.87
   - apiVersion: v2
     appVersion: 0.3.86
-    created: "2024-10-01T23:54:41.381395713Z"
+    created: "2024-10-02T00:14:32.914288463Z"
     description: LearnLoop
     digest: 616f0880597c021f321e3ffb436b4194ad52af6f23c0e4bf105d775acd277332
     name: learnloop
@@ -213,7 +213,7 @@ entries:
     version: 0.3.86
   - apiVersion: v2
     appVersion: 0.3.85
-    created: "2024-10-01T23:54:41.38109488Z"
+    created: "2024-10-02T00:14:32.91407877Z"
     description: LearnLoop
     digest: 01f97fa0437be845309da3e424b35966ffe83a020038cc108aa965d0981b9a14
     name: learnloop
@@ -223,7 +223,7 @@ entries:
     version: 0.3.85
   - apiVersion: v2
     appVersion: 0.3.84
-    created: "2024-10-01T23:54:41.380777345Z"
+    created: "2024-10-02T00:14:32.913841544Z"
     description: LearnLoop
     digest: e8876acc068db1cca615ce2faea55530291d94f9bb5fca96c9d19ea6eaf2e689
     name: learnloop
@@ -233,7 +233,7 @@ entries:
     version: 0.3.84
   - apiVersion: v2
     appVersion: 0.3.83
-    created: "2024-10-01T23:54:41.380523589Z"
+    created: "2024-10-02T00:14:32.913581906Z"
     description: LearnLoop
     digest: 6b52b825e89bc8a66adeff19739df475d1aa20c0f2f84747491d61da1647b408
     name: learnloop
@@ -243,7 +243,7 @@ entries:
     version: 0.3.83
   - apiVersion: v2
     appVersion: 0.3.82
-    created: "2024-10-01T23:54:41.380275023Z"
+    created: "2024-10-02T00:14:32.913368265Z"
     description: LearnLoop
     digest: 59ffb46a5fae5a7c0d49666f977c4ace1088093ecd62e234b44af530ee69a56a
     name: learnloop
@@ -253,7 +253,7 @@ entries:
     version: 0.3.82
   - apiVersion: v2
     appVersion: 0.3.81
-    created: "2024-10-01T23:54:41.380055712Z"
+    created: "2024-10-02T00:14:32.913148191Z"
     description: LearnLoop
     digest: 34e35f332f1ed07808a36b12ae5d3a073a844f9071f98419059015cac8b1764c
     name: learnloop
@@ -263,7 +263,7 @@ entries:
     version: 0.3.81
   - apiVersion: v2
     appVersion: 0.3.80
-    created: "2024-10-01T23:54:41.379840599Z"
+    created: "2024-10-02T00:14:32.912890708Z"
     description: LearnLoop
     digest: 61dbc815bafdb978707b752f2ebf43ec055039b42fe596e27cd3886639a3a9f3
     name: learnloop
@@ -273,7 +273,7 @@ entries:
     version: 0.3.80
   - apiVersion: v2
     appVersion: 0.3.79
-    created: "2024-10-01T23:54:41.379628392Z"
+    created: "2024-10-02T00:14:32.912606825Z"
     description: LearnLoop
     digest: a099d1b3512b7f4de54365d0e9e97d9b31ce48e084fe07d6cdd71805f9f08359
     name: learnloop
@@ -283,7 +283,7 @@ entries:
     version: 0.3.79
   - apiVersion: v2
     appVersion: 0.3.78
-    created: "2024-10-01T23:54:41.379370338Z"
+    created: "2024-10-02T00:14:32.912388074Z"
     description: LearnLoop
     digest: fffcf8eb9fad16cc95b85e2f7d4908147f3353c8c537e48537fe1c0cd9540968
     name: learnloop
@@ -293,7 +293,7 @@ entries:
     version: 0.3.78
   - apiVersion: v2
     appVersion: 0.3.77
-    created: "2024-10-01T23:54:41.379156828Z"
+    created: "2024-10-02T00:14:32.912150477Z"
     description: LearnLoop
     digest: 8f29b36bfb1ab584b893e1d0e5920d58e51cfb10ebba5e6d44d55b94b3b4f6fe
     name: learnloop
@@ -303,7 +303,7 @@ entries:
     version: 0.3.77
   - apiVersion: v2
     appVersion: 0.3.76
-    created: "2024-10-01T23:54:41.378943508Z"
+    created: "2024-10-02T00:14:32.911902281Z"
     description: LearnLoop
     digest: 61616ee51d22bccb40e60e9031d0cdf21a6e75132b780bc9a9759c5ad1bb38ad
     name: learnloop
@@ -313,7 +313,7 @@ entries:
     version: 0.3.76
   - apiVersion: v2
     appVersion: 0.3.75
-    created: "2024-10-01T23:54:41.3786993Z"
+    created: "2024-10-02T00:14:32.911516647Z"
     description: LearnLoop
     digest: 350afc66c2345950c06d809ae164ba6c1847384823425c505cd4f31fe357f29e
     name: learnloop
@@ -323,7 +323,7 @@ entries:
     version: 0.3.75
   - apiVersion: v2
     appVersion: 0.3.74
-    created: "2024-10-01T23:54:41.378470832Z"
+    created: "2024-10-02T00:14:32.910897454Z"
     description: LearnLoop
     digest: b0380fe324360014ee7bdfefd912ff984408e772c5b29156d5a422d18b099465
     name: learnloop
@@ -333,7 +333,7 @@ entries:
     version: 0.3.74
   - apiVersion: v2
     appVersion: 0.3.73
-    created: "2024-10-01T23:54:41.378225122Z"
+    created: "2024-10-02T00:14:32.910134881Z"
     description: LearnLoop
     digest: 6667a3a61cd4a8f2a8146d7cfba1db7a03d3d74052f90b1e26b0e4fafc05a3b3
     name: learnloop
@@ -343,7 +343,7 @@ entries:
     version: 0.3.73
   - apiVersion: v2
     appVersion: 0.3.72
-    created: "2024-10-01T23:54:41.377982407Z"
+    created: "2024-10-02T00:14:32.90963903Z"
     description: LearnLoop
     digest: 969eaf6aaa4d33e702cb0e5f3b3df55891295b76aa09e8020ef55ef8c637579b
     name: learnloop
@@ -353,7 +353,7 @@ entries:
     version: 0.3.72
   - apiVersion: v2
     appVersion: 0.3.71
-    created: "2024-10-01T23:54:41.377730395Z"
+    created: "2024-10-02T00:14:32.90919754Z"
     description: LearnLoop
     digest: 9df8ef4ba58e29470dd167fcee42bec844655e2ad82bc0ecda92ae8edf262fac
     name: learnloop
@@ -363,7 +363,7 @@ entries:
     version: 0.3.71
   - apiVersion: v2
     appVersion: 0.3.70
-    created: "2024-10-01T23:54:41.377489874Z"
+    created: "2024-10-02T00:14:32.908662104Z"
     description: LearnLoop
     digest: 508e437315841d4e3c667f6825add5c75be445a6ab4769472e3958928e814325
     name: learnloop
@@ -373,7 +373,7 @@ entries:
     version: 0.3.70
   - apiVersion: v2
     appVersion: 0.3.64
-    created: "2024-10-01T23:54:41.377207776Z"
+    created: "2024-10-02T00:14:32.908190509Z"
     description: LearnLoop
     digest: b922968f0e8a699b7a4864fc36709c582dd4e987ce753654965b068c22cc718b
     name: learnloop
@@ -381,4 +381,4 @@ entries:
     urls:
     - https://learnlooporg.github.io/learnloop_uva/learnloop-0.3.64.tgz
     version: 0.3.64
-generated: "2024-10-01T23:54:41.375923149Z"
+generated: "2024-10-02T00:14:32.90689748Z"
