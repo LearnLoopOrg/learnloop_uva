@@ -41,21 +41,21 @@ custom_toolbar = [
 # Display a rich text editor with a custom toolbar
 user_input = st_quill(value=input_text, html=True, toolbar=custom_toolbar)
 
-# import streamlit as st
-# from streamlit_input_box import input_box
+import streamlit as st
+from streamlit_input_box import input_box
 
-# state = st.session_state
+state = st.session_state
 
-# if "texts" not in state:
-#     state.texts = []
+if "texts" not in state:
+    state.texts = []
 
-# text = input_box(min_lines=3, max_lines=10, just_once=True)
+text = input_box(min_lines=3, max_lines=10, just_once=True)
 
-# if text:
-#     state.texts.append(text)
+if text:
+    state.texts.append(text)
 
-# for text in state.texts:
-#     st.text(text)
+for text in state.texts:
+    st.text(text)
 
 
 import streamlit as st
@@ -87,6 +87,3 @@ st.markdown(
 
 # Quill editor
 content = st_quill(value="Your text here")
-
-# Output
-st.write(content)
