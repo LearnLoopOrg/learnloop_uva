@@ -1,5 +1,4 @@
 from utils.openai_client import connect_to_openai
-from utils.utils import AzureUtils
 import streamlit as st
 from dotenv import load_dotenv
 import utils.db_config as db_config
@@ -43,14 +42,16 @@ class Controller:
             OPENAI_API_ENDPOINT,  # , llm_model=st.session_state.openai_model
         )
 
-        st.session_state.use_mongodb = True
         st.session_state.db = db_config.connect_db(COSMOS_URI)
         st.session_state.use_LL_blob_storage = args.use_LL_blob_storage
 
         _self.debug = True if os.getenv("DEBUG") == "True" else False
 
-        # User
-        st.session_state.username = "Luc Mahieu"
+        # Username for test user
+        st.session_state.username = "4def1a90c9aa237c857bc530766d0feb6d831415"
+
+        # NOTE: DO NOT USE WHEN TESTING: This user does not exist in the production database
+        # st.session_state.username = "Luc Mahieu"
 
         # Data access layer
         _self.db_dal = DatabaseAccess()
@@ -67,6 +68,10 @@ class Controller:
         _self.record_page = Recorder()
 
     def initialise_session_states(self):
+        if "segments_in_qualitycheck" not in st.session_state:
+            st.session_state.segments_in_qualitycheck = None
+        if "previous_module" not in st.session_state:
+            st.session_state.previous_module = None
         if "selected_course" not in st.session_state:
             st.session_state.selected_course = None
         if "selected_phase" not in st.session_state:
@@ -90,7 +95,7 @@ class Controller:
 
     def render_page(self):
         """
-        Determines what type of page to display based on which module the user selected.
+        Determines what type of page to display based on which phase the user selected.
         """
         match st.session_state.selected_phase:
             case "courses":
@@ -131,13 +136,12 @@ class Controller:
             )
             st.button(
                 "📚 Mijn vakken",
-                on_click=self.set_selected_phase,
+                on_click=self.save_last_phase_and_module,
                 args=("courses",),
                 use_container_width=True,
             )
 
-    def set_selected_phase(self, phase):
-        print(f"Setting phase: {phase}")
+    def save_last_phase_and_module(self, phase):
         st.session_state.selected_phase = phase
         self.db_dal.update_last_phase(phase)
 

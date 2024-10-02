@@ -13,19 +13,23 @@ class QualityCheck:
         self.module_repository = ModuleRepository(st.session_state.db)
         self.db_dal = DatabaseAccess()
         self.image_handler = ImageHandler()
-        self.module_name = st.session_state.selected_module
 
+        # NOTE: Remove self.module_name, otherwise it will continually have the same value after the first run
+        # self.module_name = st.session_state.selected_module
+
+        # Only runs at beginning when no segments are in the session state, else error
         self._initialise_segments_in_qualitycheck()
 
     def _initialise_segments_in_qualitycheck(self):
-        content = self.db_dal.fetch_corrected_module_content(self.module_name)
+        module_name = st.session_state.selected_module
+        content = self.db_dal.fetch_corrected_module_content(module_name)
         if content == "" or content is None:
-            content = self.db_dal.fetch_original_module_content(self.module_name)
+            content = self.db_dal.fetch_original_module_content(module_name)
         self.segments = content["segments"]
 
-        topics = self.db_dal.fetch_corrected_module_topics(self.module_name)
+        topics = self.db_dal.fetch_corrected_module_topics(module_name)
         if topics == "" or topics is None:
-            topics = self.db_dal.fetch_original_module_topics(self.module_name)
+            topics = self.db_dal.fetch_original_module_topics(module_name)
         self.topics = topics["topics"]
         for topic in self.topics:
             topic_title = topic["topic_title"]
@@ -39,11 +43,18 @@ class QualityCheck:
         st.session_state.segments_in_qualitycheck = self.segments
 
     def run(self):
+        self.init_segments_on_module_switch()
+        # Set previous module so on the next run the init_segments function can check if user opened new modiule
+        st.session_state.previous_module = st.session_state.selected_module
         self.db_dal.update_last_phase("quality_check")
         self.display_header()
         self.display_segments()
         self.display_save_buttons()
         self.scroll_to_segment()
+
+    def init_segments_on_module_switch(self):
+        if st.session_state.selected_module != st.session_state.previous_module:
+            self._initialise_segments_in_qualitycheck()
 
     def display_save_buttons(self):
         if st.button("Tussentijds opslaan", use_container_width=True):
@@ -67,6 +78,7 @@ class QualityCheck:
     def display_segment(self, segment_id, segment):
         self.display_segment_content(segment_id, segment)
         flagged_for_deletion = segment.get("flagged_for_deletion")
+
         if segment.get("flagged_for_deletion"):
             st.warning("Dit segment is gemarkeerd voor verwijdering.")
 
@@ -117,7 +129,7 @@ class QualityCheck:
         )
 
     def display_question_segment(self, segment_id, segment):
-        st.markdown("##### Open Vraag")
+        st.markdown("##### Open vraag")
         question_key = f"segment_{segment_id}_question"
         answer_key = f"segment_{segment_id}_answer"
         st.text_area(
