@@ -22,8 +22,6 @@ from utils.utils import Utils
 from utils.utils import AzureUtils
 from slack_sdk import WebClient
 
-from slack_sdk import WebClient
-
 
 # Must be called first
 st.set_page_config(page_title="LearnLoop", layout="wide")
@@ -261,7 +259,7 @@ def render_mc_feedback(question):
 
 def render_feedback():
     color_mapping = {
-        "Juist": "#63f73",  # Lichter groen
+        "Juist": "#63f730",  # Lichter groen
         "Gedeeltelijk juist": "#ffb84d",  # Lichter oranje
         "Onjuist": "#ff8080",  # Lichter rood
     }
