@@ -62,37 +62,6 @@ def exception_handler(e: BaseException):
 
 # Cache for 5 minutes the topics list
 @st.cache_resource(ttl=300)
-def set_global_exception_handler(custom_handler: Callable, debug: bool = False):
-    import sys
-
-    script_runner = sys.modules["streamlit.runtime.scriptrunner.script_runner"]
-    original_fn: Callable = script_runner.handle_uncaught_app_exception
-
-    def combined_fn(e: BaseException):
-        if not debug:  # run custom error handling only in production
-            custom_handler(e)
-        original_fn(e)
-
-    script_runner.handle_uncaught_app_exception = combined_fn
-
-
-def exception_handler(e: BaseException):
-    # Custom error handling
-    BOT_OAUTH_TOKEN = "xoxb-7362589208226-7719097315238-curwvsQxH1PbDjnQGQstR3JN"
-    try:
-        client = WebClient(token=BOT_OAUTH_TOKEN)
-        client.chat_postMessage(
-            channel="production-errors-student-app",
-            text=f"An error occurred in the student app: {e}",
-            username="Bot User",
-        )
-    except Exception as e:
-        print(e)
-        pass
-
-
-# Cache for 5 minutes the topics list
-@st.cache_resource(ttl=300)
 def connect_to_openai() -> OpenAI:
     if st.session_state.openai_model == "learnloop-4o":
         print("Using UvA instance of OpenAI GPT-4o")
@@ -156,36 +125,64 @@ def upload_progress():
 
 def evaluate_answer():
     """Evaluates the answer of the student and returns a score and feedback."""
-    if not use_dummy_openai_calls:
-        # Create user prompt with the question, correct answer and student answer
-        prompt = f"""Input:\n
-        Vraag: {st.session_state.segment_content['question']}\n
-        Antwoord student: {st.session_state.student_answer}\n
-        Beoordelingsrubriek: {st.session_state.segment_content['answer']}\n
-        Output:\n"""
+    # Create user prompt with the question, correct answer and student answer
+    prompt = f"""Input:\n
+    Vraag: {st.session_state.segment_content['question']}\n
+    Antwoord student: {st.session_state.student_answer}\n
+    Beoordelingsrubriek: {st.session_state.segment_content['answer']}\n
+    Output:\n"""
 
-        # Read the role prompt from a file
-        with open(
-            "./src/assets/prompts/direct_feedback_prompt.txt", "r", encoding="utf-8"
-        ) as f:
-            role_prompt = f.read()
+    # Read the role prompt from a file
+    with open(
+        "./src/assets/prompts/direct_feedback_prompt_v2.txt", "r", encoding="utf-8"
+    ) as f:
+        role_prompt = f.read()
 
-        response = st.session_state.openai_client.chat.completions.create(
-            model=st.session_state.openai_model,
-            messages=[
-                {"role": "system", "content": role_prompt},
-                {"role": "user", "content": prompt},
-            ],
-            max_tokens=500,
-            response_format={"type": "json_object"},
-        )
-        feedback_json = json.loads(response.choices[0].message.content)
+    response = st.session_state.openai_client.chat.completions.create(
+        model=st.session_state.openai_model,
+        messages=[
+            {"role": "system", "content": role_prompt},
+            {"role": "user", "content": prompt},
+        ],
+        max_tokens=500,
+        response_format={"type": "json_object"},
+    )
+    st.session_state.feedback = json.loads(response.choices[0].message.content)
+    st.session_state.score = st.session_state.feedback["score"]
 
-        st.session_state.feedback = feedback_json["feedback"]
-        st.session_state.score = feedback_json["score"]
-    else:
-        st.session_state.feedback = "O"
-        st.session_state.score = "0/2"
+
+# def evaluate_answer():
+#     """Evaluates the answer of the student and returns a score and feedback."""
+#     if not use_dummy_openai_calls:
+#         # Create user prompt with the question, correct answer and student answer
+#         prompt = f"""Input:\n
+#         Vraag: {st.session_state.segment_content['question']}\n
+#         Antwoord student: {st.session_state.student_answer}\n
+#         Beoordelingsrubriek: {st.session_state.segment_content['answer']}\n
+#         Output:\n"""
+
+#         # Read the role prompt from a file
+#         with open(
+#             "./src/assets/prompts/direct_feedback_prompt.txt", "r", encoding="utf-8"
+#         ) as f:
+#             role_prompt = f.read()
+
+#         response = st.session_state.openai_client.chat.completions.create(
+#             model=st.session_state.openai_model,
+#             messages=[
+#                 {"role": "system", "content": role_prompt},
+#                 {"role": "user", "content": prompt},
+#             ],
+#             max_tokens=500,
+#             response_format={"type": "json_object"},
+#         )
+#         feedback_json = json.loads(response.choices[0].message.content)
+
+#         st.session_state.feedback = feedback_json
+#         st.session_state.score = feedback_json["score"]
+#     else:
+#         st.session_state.feedback = "O"
+#         st.session_state.score = "0/2"
 
 
 def score_to_percentage():
@@ -227,38 +224,130 @@ def render_mc_feedback(question):
     st.markdown(result_html, unsafe_allow_html=True)
 
 
+# def render_feedback():
+#     """Renders the feedback box with the score and feedback."""
+#     # Calculate the score percentage
+#     score_percentage = score_to_percentage()
+
+#     # Determine color of box based on score percentage
+#     if score_percentage is None:
+#         pass
+#     elif score_percentage > 75:
+#         color = "rgba(0, 128, 0, 0.2)"  # Green
+#     elif score_percentage > 49:
+#         color = "rgba(255, 165, 0, 0.2)"  # Orange
+#     else:
+#         color = "rgba(255, 0, 0, 0.2)"  # Red
+
+#     feedback_items = [
+#         f"<li style='font-size: 17px; margin: 5px 0; margin-top: 10px'>{feedback}</li>"
+#         for feedback in st.session_state.feedback
+#     ]
+#     feedback_html = f"<ul style='padding-left: 0px; list-style-type: none;'>{''.join(feedback_items)}</ul>"
+
+
+#     result_html = f"""
+#     <h1 style='font-size: 20px; margin: 25px 0 10px 10px; padding: 0;'>Feedback:</h1>
+#     {feedback_html}
+#     <div style='background-color: {color}; padding: 10px; margin-bottom: 0px; margin-top: 28px; border-radius: 7px; display: flex; align-items: center;'> <!-- Verhoogd naar 50px voor meer ruimte -->
+#         <h1 style='font-size: 20px; margin: 8px 0 8px 10px; padding: 0;'>Score: {st.session_state.score}</h1>
+#     </div>
+#     <span style="font-size: 0.9em; color: darkgray;">LearnLoop kan fouten maken. Check het antwoordmodel als je twijfelt.</span>
+#     <br>
+#     <br>
+#     """
+#     st.markdown(result_html, unsafe_allow_html=True)
+
+
 def render_feedback():
-    """Renders the feedback box with the score and feedback."""
-    # Calculate the score percentage
-    score_percentage = score_to_percentage()
+    color_mapping = {
+        "Juist": "#63f73",  # Lichter groen
+        "Gedeeltelijk juist": "#ffb84d",  # Lichter oranje
+        "Onjuist": "#ff8080",  # Lichter rood
+    }
 
-    # Determine color of box based on score percentage
-    if score_percentage is None:
-        pass
-    elif score_percentage > 75:
-        color = "rgba(0, 128, 0, 0.2)"  # Green
-    elif score_percentage > 49:
-        color = "rgba(255, 165, 0, 0.2)"  # Orange
+    # CSS styling voor de gemarkeerde delen en tooltips
+    st.markdown(
+        """
+        <style>
+        .highlight {
+            position: relative;
+            cursor: pointer;
+            border-radius: 3px;
+            padding: 2px 4px;
+        }
+
+        .highlight:hover::after {
+            content: attr(data-feedback);
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 8px;
+            border-radius: 5px;
+            top: 100%;
+            left: 0;
+            white-space: pre-wrap;
+            z-index: 10;
+            width: max-content;
+            max-width: 300px;
+            font-size: 12px;
+        }
+
+        /* Optionele overgangseffecten */
+        .highlight::after {
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .highlight:hover::after {
+            opacity: 1;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+    deelantwoorden = st.session_state.feedback["deelantwoorden"]
+
+    html_content = ""
+
+    for idx, deel in enumerate(deelantwoorden, 1):
+        beoordeling = deel["beoordeling"]
+        tekst = deel["tekst"]
+        feedback = deel["feedback"]
+        kleur = color_mapping.get(
+            beoordeling, "#ffffff"
+        )  # Default to white if not found
+
+        # Create HTML for the inline text with tooltip
+        html_content += f"""<span style="background-color: {kleur}" class="highlight" data-feedback="{feedback}">{tekst.strip()}</span>"""
+
+    # Display the combined HTML content
+    st.markdown(html_content, unsafe_allow_html=True)
+    score = st.session_state.score
+    behaalde_punten, max_punten = score.split("/")
+    punten_html = f"""
+            <div style="background-color: #f0f0f0; border-radius: 5px; padding: 10px; margin-top: 10px;">
+                <strong>Punten:</strong> {behaalde_punten} / {max_punten}
+            </div>
+        """
+    st.markdown(punten_html, unsafe_allow_html=True)
+
+    # Display algemene feedback
+    ontbrekende_elementen = st.session_state.feedback["ontbrekende_elementen"]
+    if ontbrekende_elementen == "niks":
+        feedback_html = """
+            <div style="background-color: #e7f3f8; border-radius: 5px; padding: 10px; margin: 10px 0px 10px 0px;">
+                <strong>Je antwoord was helemaal goed! Ga zo door 🏆 ✅</strong>
+            </div>
+        """
     else:
-        color = "rgba(255, 0, 0, 0.2)"  # Red
-
-    feedback_items = [
-        f"<li style='font-size: 17px; margin: 5px 0; margin-top: 10px'>{feedback}</li>"
-        for feedback in st.session_state.feedback
-    ]
-    feedback_html = f"<ul style='padding-left: 0px; list-style-type: none;'>{''.join(feedback_items)}</ul>"
-
-    result_html = f"""
-    <h1 style='font-size: 20px; margin: 25px 0 10px 10px; padding: 0;'>Feedback:</h1>
-    {feedback_html}
-    <div style='background-color: {color}; padding: 10px; margin-bottom: 0px; margin-top: 28px; border-radius: 7px; display: flex; align-items: center;'> <!-- Verhoogd naar 50px voor meer ruimte -->
-        <h1 style='font-size: 20px; margin: 8px 0 8px 10px; padding: 0;'>Score: {st.session_state.score}</h1>
-    </div>
-    <span style="font-size: 0.9em; color: darkgray;">LearnLoop kan fouten maken. Check het antwoordmodel als je twijfelt.</span>
-    <br>
-    <br>
-    """
-    st.markdown(result_html, unsafe_allow_html=True)
+        feedback_html = f"""
+                <div style="background-color: #e7f3f8; border-radius: 5px; padding: 10px; margin: 10px 0px 10px 0px;">
+                    <strong>🧩 🔍 Ontbrekende Elementen:</strong>
+                    <p>{ontbrekende_elementen}</p>
+                </div>
+            """
+    st.markdown(feedback_html, unsafe_allow_html=True)
 
 
 def render_progress_bar():
@@ -561,11 +650,8 @@ def add_to_practice_phase():
 
 
 def render_student_answer():
-    student_answer = f"""
-    <h1 style='font-size: 20px; margin: 15px 0 10px 10px; padding: 0;'>Jouw antwoord:</h1>
-    <div style='background-color: #F5F5F5; padding: 20px; border-radius: 7px; margin-bottom: 0px;'>
-        <p style='color: #333; margin: 0px 0'>{st.session_state.student_answer}</p>
-    </div>
+    student_answer = """
+    <p style="color: grey; font-size: 16px"> Beweeg je muis over elk deel van je antwoord om feedback te zien.</p>
     """
     st.markdown(student_answer, unsafe_allow_html=True)
 
@@ -747,9 +833,9 @@ def show_feedback_overview():
             f"{question['question']}"
         )  # TODO get question content not from DB but from DatabaseAccess
         if "feedback" in question:
-            st.session_state.feedback = question["feedback"]
-            st.session_state.student_answer = question["student_answer"]
-            st.session_state.score = question["score"]
+            st.session_state.feedback = question.get("feedback", "")
+            st.session_state.student_answer = question.get("student_answer", "")
+            st.session_state.score = question.get("score", "")
             render_student_answer()
             render_feedback()
         else:
@@ -894,10 +980,9 @@ def render_learning_page():
                                 van LLM's op de pagina **'Uitleg mogelijkheden & limitaties LLM's'** onder \
                                 het kopje 'Extra info' in de sidebar."
                 ):
-                    render_student_answer()
                     evaluate_answer()
                     add_date_to_progress_counter()
-
+                render_student_answer()
                 render_feedback()
                 save_feedback_on_open_question()
                 add_to_practice_phase()
@@ -1834,8 +1919,6 @@ if __name__ == "__main__":
 
     st.session_state.use_keyvault = args.use_keyvault
 
-    # Use dummy LLM feedback as response to save openai costs and time during testing
-    use_dummy_openai_calls = False
     # Give the name of the test user when giving one. !! If not using a test username, set to None
     test_username = args.test_username
 

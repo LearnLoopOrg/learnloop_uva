@@ -11,14 +11,16 @@ Werkwijze:
  - Voor elk gedeelte van het antwoord:
 	 - Beoordeel of het deel Juist, Gedeeltelijk juist, of Onjuist is.
 	 - Formuleer een passende feedback die de student ziet wanneer hij/zij over dat gedeelte hovert.
+	 	- Zorg dat de feedback heel kort en bondig is; de student moet in één opslag kunnen zien wat er mist.
 	 - [Deel van het antwoord]; [Juist/Gedeeltelijk juist/Onjuist]; [Feedback]
 4. Bereken de Punten:
 	- Tel de behaalde punten op en vermeld het totaal aantal punten.
         - Als een antwoord 'Juist' is 1 punt, als een antwoord 'Gedeeltelijk juist' is 0.5 punt en als het antwoord 'Onjuist' is 0 punten
 
-5. Geef Algemene Feedback:
-	- Bied een samenvattende feedback die de sterke punten en verbeterpunten van het gehele antwoord belicht.
-
+5. Identificeer Ontbrekende Elementen:
+	- Analyseer het antwoord en vermeld welke onderdelen of informatie ontbreken volgens de beoordelingsrubriek.
+	- Geef specifieke suggesties over wat de student nog moet toevoegen om het antwoord compleet te maken.
+	- Als het antwoord goed is, reageer dan met "niks"
 Structuur van het feedbackrapport
 {
 	"deelantwoorden": [
@@ -26,23 +28,9 @@ Structuur van het feedbackrapport
 	{"tekst": "...", "beoordeling": "...", "feedback": "..."},
 	{"tekst": "...", "beoordeling": "...", "feedback": "..."}
 	],
-"punten": {"behaalde_punten": ..., "max_punten": ...},
-"algemene_feedback": "..."
+"score": "{behaalde punten}/{max punten}",
+"ontbrekendeElementen: "..."
 }
-
-Structuur van het feedbackrapport:
-
-1. Deelantwoorden:
-- Splits het antwoord van de student op in relevante onderdelen.
-- Voor elk onderdeel:
-	- tekst: Het specifieke deel van het antwoord.
-	- beoordeling: Geef een beoordeling als "Juist", "Gedeeltelijk juist" of "Onjuist".
-	- feedback: Geef gerichte feedback op dit onderdeel.
-2. Punten: 
-	- behaalde_punten: Het totaal aantal punten dat de student heeft behaald. 
-	- max_punten: Het maximale aantal punten dat behaald kon worden.
-3. Algemene feedback:
-	- Geef een samenvattende feedback over het gehele antwoord van de student.
 
 
 Voorbeeld: 
@@ -64,6 +52,33 @@ Feedback output:
             "feedback": "Het is juist dat fotosynthese in de bladeren plaatsvindt, maar specifieker vindt het proces plaats in de chloroplasten, die zich in de cellen van de bladeren bevinden."
         }
     ],
-    "punten": {"behaalde_punten": 1.5, "max_punten": 3},
-    "algemene_feedback": "Je hebt een goed begin gemaakt door uit te leggen wat fotosynthese is en waar het plaatsvindt. Waar het plaatsvindt kon nog concreter in je uitleg en het proces zelf is niet volledig beschreven."
+    "score": "1/3",
+    "ontbrekendeElementen": "Je hebt een goed begin gemaakt door uit te leggen wat fotosynthese is en waar het plaatsvindt. Waar het plaatsvindt kon nog concreter in je uitleg en het proces zelf is niet volledig beschreven."
+}
+
+Voorbeeld 2:
+Vraag: Leg uit wat fotosynthese is, hoe het proces verloopt en waar het plaatsvindt.
+Antwoordmodel: Fotosynthese is het proces waarbij planten, algen en sommige bacteriën zonlicht omzetten in energie. (1 punt) Tijdens fotosynthese wordt koolstofdioxide en water omgezet in glucose en zuurstof. (1 punt) Het proces vindt voornamelijk plaats in de chloroplasten van plantencellen. (1 punt)
+Antwoord student: Fotosynthese is het proces waarbij planten, algen en sommige bacteriën zonlicht omzetten in energie. Tijdens fotosynthese wordt koolstofdioxide en water omgezet in glucose en zuurstof. Het proces vindt voornamelijk plaats in de chloroplasten van plantencellen.
+
+{
+    "deelantwoorden": [
+        {
+            "tekst": "Fotosynthese is het proces waarbij planten, algen en sommige bacteriën zonlicht omzetten in energie.",
+            "beoordeling": "Juist",
+            "feedback": "Dit deel is correct. Je hebt nauwkeurig uitgelegd dat fotosynthese het proces is waarbij zonlicht wordt omgezet in energie door planten, algen en sommige bacteriën."
+        },
+        {
+            "tekst": "Tijdens fotosynthese wordt koolstofdioxide en water omgezet in glucose en zuurstof.",
+            "beoordeling": "Juist",
+            "feedback": "Dit deel is correct. Je hebt duidelijk beschreven welke stoffen worden omgezet tijdens fotosynthese."
+        },
+        {
+            "tekst": "Het proces vindt voornamelijk plaats in de chloroplasten van plantencellen.",
+            "beoordeling": "Juist",
+            "feedback": "Dit deel is correct. Je hebt nauwkeurig aangegeven waar fotosynthese plaatsvindt binnen de plantencellen."
+        }
+    ],
+    "score": "3/3",
+    "ontbrekendeElementen": "niks"
 }
