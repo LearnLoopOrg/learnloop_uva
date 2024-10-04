@@ -14,12 +14,6 @@ class QualityCheck:
         self.db_dal = DatabaseAccess()
         self.image_handler = ImageHandler()
 
-        # NOTE: Remove self.module_name, otherwise it will continually have the same value after the first run
-        # self.module_name = st.session_state.selected_module
-
-        # Only runs at beginning when no segments are in the session state, else error
-        self._initialise_segments_in_qualitycheck()
-
     def _initialise_segments_in_qualitycheck(self):
         module_name = st.session_state.selected_module
         content = self.db_dal.fetch_corrected_module_content(module_name)
@@ -43,8 +37,9 @@ class QualityCheck:
         st.session_state.segments_in_qualitycheck = self.segments
 
     def run(self):
-        self.init_segments_on_module_switch()
-        # Set previous module so on the next run the init_segments function can check if user opened new modiule
+        # self.init_segments_on_module_switch()
+        self._initialise_segments_in_qualitycheck()
+        # Set previous module so on the next run the init_segments function can check if user opened new module
         st.session_state.previous_module = st.session_state.selected_module
         self.db_dal.update_last_phase("quality_check")
         self.display_header()
