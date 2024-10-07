@@ -120,66 +120,65 @@ def upload_progress():
     )
 
 
-def evaluate_answer():
+def evaluate_answer(max_retries=3):
     """Evaluates the answer of the student and returns a score and feedback."""
-    # Create user prompt with the question, correct answer and student answer
+    # Creëer de user prompt met de vraag, correct antwoord en student antwoord
     prompt = f"""Input:\n
     Vraag: {st.session_state.segment_content['question']}\n
     Antwoord student: {st.session_state.student_answer}\n
     Beoordelingsrubriek: {st.session_state.segment_content['answer']}\n
     Output:\n"""
 
-    # Read the role prompt from a file
+    # Lees de role prompt uit een bestand
     with open(
         "./src/assets/prompts/direct_feedback_prompt_v2.txt", "r", encoding="utf-8"
     ) as f:
         role_prompt = f.read()
 
-    response = st.session_state.openai_client.chat.completions.create(
-        model=st.session_state.openai_model,
-        messages=[
-            {"role": "system", "content": role_prompt},
-            {"role": "user", "content": prompt},
-        ],
-        max_tokens=500,
-        response_format={"type": "json_object"},
-    )
-    st.session_state.feedback = json.loads(response.choices[0].message.content)
+    attempt = 0
+    while attempt < max_retries:
+        try:
+            response = st.session_state.openai_client.chat.completions.create(
+                model=st.session_state.openai_model,
+                messages=[
+                    {"role": "system", "content": role_prompt},
+                    {"role": "user", "content": prompt},
+                ],
+                max_tokens=500,
+                response_format={"type": "json_object"},
+            )
+
+            # Probeer de JSON response te laden
+            feedback = json.loads(response.choices[0].message.content)
+
+            # Definieer de vereiste velden
+            required_fields = ["deelantwoorden", "score", "ontbrekende_elementen"]
+
+            # Controleer of alle vereiste velden aanwezig zijn
+            if all(field in feedback for field in required_fields):
+                st.session_state.feedback = feedback
+                st.session_state.score = feedback["score"]
+                return  # Succes, verlaat de functie
+            else:
+                attempt += 1
+                print(
+                    f"Attempt {attempt}: Ontbrekende velden gedetecteerd. Proberen opnieuw..."
+                )
+
+        except (json.JSONDecodeError, KeyError) as e:
+            # Fout bij het parsen van JSON of toegang tot velden
+            attempt += 1
+            print(
+                f"Attempt {attempt}: Fout bij verwerken van feedback: {e}. Proberen opnieuw..."
+            )
+
+    # Als na max_retries pogingen nog steeds niet alle velden aanwezig zijn
+    st.session_state.feedback = {
+        "deelantwoorden": [],
+        "score": "0/3",
+        "ontbrekende_elementen": "Er is een fout opgetreden bij het genereren van de feedback. Probeer het later opnieuw.",
+    }
     st.session_state.score = st.session_state.feedback["score"]
-
-
-# def evaluate_answer():
-#     """Evaluates the answer of the student and returns a score and feedback."""
-#     if not use_dummy_openai_calls:
-#         # Create user prompt with the question, correct answer and student answer
-#         prompt = f"""Input:\n
-#         Vraag: {st.session_state.segment_content['question']}\n
-#         Antwoord student: {st.session_state.student_answer}\n
-#         Beoordelingsrubriek: {st.session_state.segment_content['answer']}\n
-#         Output:\n"""
-
-#         # Read the role prompt from a file
-#         with open(
-#             "./src/assets/prompts/direct_feedback_prompt.txt", "r", encoding="utf-8"
-#         ) as f:
-#             role_prompt = f.read()
-
-#         response = st.session_state.openai_client.chat.completions.create(
-#             model=st.session_state.openai_model,
-#             messages=[
-#                 {"role": "system", "content": role_prompt},
-#                 {"role": "user", "content": prompt},
-#             ],
-#             max_tokens=500,
-#             response_format={"type": "json_object"},
-#         )
-#         feedback_json = json.loads(response.choices[0].message.content)
-
-#         st.session_state.feedback = feedback_json
-#         st.session_state.score = feedback_json["score"]
-#     else:
-#         st.session_state.feedback = "O"
-#         st.session_state.score = "0/2"
 
 
 def score_to_percentage():
