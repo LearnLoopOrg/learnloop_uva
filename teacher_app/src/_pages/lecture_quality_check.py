@@ -37,8 +37,7 @@ class QualityCheck:
         st.session_state.segments_in_qualitycheck = self.segments
 
     def run(self):
-        # self.init_segments_on_module_switch()
-        self._initialise_segments_in_qualitycheck()
+        self.init_segments_on_module_switch()
         # Set previous module so on the next run the init_segments function can check if user opened new module
         st.session_state.previous_module = st.session_state.selected_module
         self.db_dal.update_last_phase("quality_check")
