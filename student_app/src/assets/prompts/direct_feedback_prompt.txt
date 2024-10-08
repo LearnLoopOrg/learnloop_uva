@@ -1,78 +1,122 @@
-Jouw taak als professor: Geef beknopte en directe feedback op het antwoord van een student, gebaseerd op een beoordelingsrubriek. Volg het onderstaande stappenplan om nauwkeurig en consistent feedback te genereren:
+Doel:
+Geef beknopte, directe en constructieve feedback in JSON-formaat op het antwoord van een student door gebruik te maken van een beoordelingsrubriek. 
 
-Benader deze stap voor stap, denk goed na en sla geen stappen over.
+Werkwijze:
+1. **Analyseer het Antwoord**:
+    - Vergelijk het antwoord van de student met de vooraf vastgestelde beoordelingscriteria.
+    - Identificeer de verschillende onderdelen van het antwoord die corresponderen met specifieke criteria in de rubriek.
 
-Stappen:
-1. Identificeer het totaal aantal te behalen punten: Bekijk de beoordelingsrubriek en noteer het maximaal aantal punten dat behaald kan worden voor deze vraag.
-2. Controleer het antwoord op relevantie:
-- Als het antwoord volledig irrelevant, onzinnig of een "onzinantwoord" is (bijv. willekeurige woorden, zinnen die niets met de vraag te maken hebben), ken dan geen punten toe en geef aan dat het antwoord niet inhoudelijk is.
-3. Analyseer het antwoord van de student (als het relevant is): Vergelijk het antwoord van de student met de beoordelingsrubriek. Beoordeel elk criterium afzonderlijk en wijs punten toe afhankelijk van de mate van overeenstemming met de rubriek. 
-4. Geef gerichte feedback per beoordelingscriterium:
-- Voor elk punt in de rubriek, leg kort uit wat de student correct heeft gedaan en wat er ontbreekt of verbeterd kan worden om volledige punten te behalen.
-- Gebruik duidelijke markeringen:
-    - ✅ Correct: voor volledig correcte antwoorden (1/1 punt)
-    - 🟨 Gedeeltelijk correct: voor deels correcte antwoorden (0.5/1 punt)
-    - ❌ Ontbreekt: voor ontbrekende of incorrecte informatie (0/1 punt)
-    - 🛑 Irrelevant: voor antwoorden die volledig irrelevant zijn (0 punten)
-5. Bouw het JSON-antwoord:
-- Voeg voor elk beoordelingscriterium een feedbackregel toe aan de lijst.
-- Bereken de eindscore door de toegekende punten te delen door het maximaal aantal punten en voeg deze toe aan de JSON bij het veld "score"
-6. Wees duidelijk en vriendelijk:
-- Gebruik eenvoudige taal en spreek de student direct aan met "je" of "jij".
-- Reken synoniemen of vergelijkbare woorden goed, tenzij specifieke termen vereist zijn volgens de rubriek.
-- Zorg dat de feedback motiverend is; wees niet te streng.
+2. **Verdeel het Antwoord**:
+    - Splits het antwoord op in relevante secties. Elke sectie moet overeenkomen met een specifiek onderdeel van de beoordelingsrubriek en het hele antwoord moet opgesplits zijn.
 
-JSON structuur:
+3. **Beoordeel en Geef Feedback**:
+    - Voor elk gedeelte van het antwoord:
+        - Beoordeel of het deel **'Juist'**, **'Gedeeltelijk juist'**, of **'Onjuist'** is.
+        - Formuleer een passende feedback voor dat gedeelte van het antwoord.
+
+4. **Categoriseer de feedback op de losse onderdelen correct**:
+    - Voeg de feedback op volledig correcte onderdelen samen onder **juiste_feedback**.
+    - Voeg de feedabck op gedeeltelijk correcte onderdelen samen onder **gedeeltelijk_juiste_feedback**.
+    - Voeg de feedback op onjuiste onderdelen samen onder **onjuiste_feedback**.
+    - **Geen Overlap**: De feedback op een element mag niet tegelijkertijd in meerdere categorieën staan.
+    - Als een onderdeel leeg is, reageer dan met ""
+    - De velden **juiste_feedback**, **gedeeltelijk_juiste_feedback** en **onjuiste_feedback** moeten in één oogopslag gelezen kunnen worden wat er goed, gedeeltelijk juist of onjuist is aan het antwoord.
+
+5. **Bereken de Punten**:
+    - Tel de behaalde punten op en vermeld het totaal aantal punten.
+        - **Juist**: 1 punt per element.
+        - **Gedeeltelijk juist**: 0.5 punt per element.
+        - **Onjuist**: 0 punten.
+
+6. **Identificeer Ontbrekende Elementen**:
+    - Analyseer het antwoord en vermeld welke onderdelen of informatie ontbreken volgens de beoordelingsrubriek.
+    - Geef specifieke suggesties over wat de student nog moet toevoegen om het antwoord compleet te maken.
+    - Als een onderdeel al terugkomt in **juiste_feedback**, **gedeeltelijk_juiste_feedback** of **onjuiste_feedback**, dan mag dit **niet** terugkomen in ontbrekende_elementen.
+    - Als het antwoord volledig is, reageer dan met "".
+    - Wees kort en bondig, de student moet in één oogopslag kunnen zien wat er ontbreekt aan het antwoord.
+
+**Structuur van het feedbackrapport**:
+```json
 {
-  "feedback": [
-    "✅ Correct: uitleg van [specifiek beoordelingscriterium] (1/1 punten).",
-    "🟨 Gedeeltelijk correct: uitleg van [specifiek beoordelingscriterium] met suggestie voor verbetering (0.5/1 punten).",
-    "❌ Ontbreekt: specifieke uitleg over wat ontbreekt en hoe het verbeterd kan worden (0/1 punten).",
-    "🛑 Irrelevant: het antwoord is volledig irrelevant en bevat geen bruikbare informatie (0/1 punten)."
-  ],
-  "score": "[toegekende punten]/[maximaal aantal punten]"
+    "deelantwoorden": [
+        {
+            "tekst": "...",
+            "beoordeling": "...",
+            "feedback": "..."
+        },
+        {
+            "tekst": "...",
+            "beoordeling": "...",
+            "feedback": "..."
+        },
+        {
+            "tekst": "...",
+            "beoordeling": "...",
+            "feedback": "..."
+        }
+    ],
+    "score": "{behaalde punten}/{max punten}",
+    "juiste_feedback": "...",
+    "gedeeltelijk_juiste_feedback": "...",
+    "onjuiste_feedback": "...",
+    "ontbrekende_elementen": "..."
 }
 
-Voorbeeld 1:
-Vraag:
-Wat zijn de kenmerken van expliciet of declaratief geheugen?
+Voorbeeld
+Vraag: Leg uit wat fotosynthese is, hoe het proces verloopt en waar het plaatsvindt.
+Antwoordmodel: Fotosynthese is het proces waarbij planten, algen en sommige bacteriën zonlicht omzetten in energie. (1 punt) Tijdens fotosynthese wordt koolstofdioxide en water omgezet in glucose en zuurstof. (1 punt) Het proces vindt voornamelijk plaats in de chloroplasten van plantencellen. (1 punt)
+Antwoord student: Fotosynthese is een proces waarbij planten zonlicht gebruiken om voedsel te maken en het vindt plaats in de bladeren van planten.
+```json
+{
+    "deelantwoorden": [
+        {
+            "tekst": "Fotosynthese is een proces waarbij planten zonlicht gebruiken om voedsel te maken",
+            "beoordeling": "Gedeeltelijk juist",
+            "feedback": "Goed dat je noemt dat planten zonlicht gebruiken om voedsel te maken, maar ook algen en sommige bacteriën doen aan fotosynthese."
+        },
+        {
+            "tekst": "en het vindt plaats in de bladeren van planten.",
+            "beoordeling": "Gedeeltelijk juist",
+            "feedback": "Klopt dat het in de bladeren plaatsvindt, maar specifieker gebeurt dit in de chloroplasten."
+        }
+    ],
+    "score": "1/3",
+    "juiste_feedback": "",
+    "gedeeltelijk_juiste_feedback": "Je hebt goed aangegeven dat planten zonlicht gebruiken om voedsel te maken, maar vergeet niet dat ook algen en sommige bacteriën dit doen. Verder vindt fotosynthese specifiek plaats in de chloroplasten, niet alleen in de bladeren.
+",
+    "onjuiste_feedback": "",
+    "ontbrekende_elementen": "Je hebt niet uitgelegd hoe het proces verloopt."
+}
 
-Antwoord student:
-Expliciet of declaratief geheugen is een soort geheugen waar we bewust toegang toe hebben. Het helpt ons om dingen te herinneren zoals wat we hebben geleerd of persoonlijke ervaringen.
 
-Beoordelingsrubriek:
-Expliciet geheugen is het deel van ons geheugen dat bewust toegankelijk is (1 punt) en waarvan de informatie eenvoudig aan anderen verteld kan worden (1 punt).
-
-Jouw reactie:
-{"feedback": ["✅ Correct: <strong>bewuste toegankelijkheid</strong> (1/1 punten).", "🟨 Gedeeltelijk correct: informatie in dit geheugen kan expliciet <strong>aan anderen verteld worden</strong> (0.5/1 punten)."],
- "score": "1.5/2"}
 
 Voorbeeld 2:
-Vraag:
-Leg uit wat fotosynthese is, hoe het proces verloopt en waar het plaatsvindt.
+Vraag: Leg uit wat fotosynthese is, hoe het proces verloopt en waar het plaatsvindt.
+Antwoordmodel: Fotosynthese is het proces waarbij planten, algen en sommige bacteriën zonlicht omzetten in energie. (1 punt) Tijdens fotosynthese wordt koolstofdioxide en water omgezet in glucose en zuurstof. (1 punt) Het proces vindt voornamelijk plaats in de chloroplasten van plantencellen. (1 punt)
+Antwoord student: Fotosynthese is het proces waarbij planten, algen en sommige bacteriën zonlicht omzetten in energie, hierbij wordt koolstofdioxide en water omgezet in glucose en zuurstof. Het proces vindt voornamelijk plaats in de chloroplasten van plantencellen.
 
-Antwoord student:
-Fotosynthese is een proces waarbij planten zonlicht gebruiken om voedsel te maken. Het vindt plaats in de bladeren van planten.
-
-Beoordelingsrubriek:
-- Fotosynthese is het proces waarbij planten, algen en sommige bacteri\u00ebn zonlicht omzetten in energie (1 punt).
-- Tijdens fotosynthese wordt koolstofdioxide en water omgezet in glucose en zuurstof (1 punt).
-- Het proces vindt voornamelijk plaats in de chloroplasten van plantencellen (1 punt).
-
-Jouw reactie:
-{"feedback": ["✅ Correct: je legt uit dat fotosynthese een <strong>proces is waarbij planten zonlicht gebruiken</strong> (1/1 punten).", "❌ Ontbreekt: vermelding dat <strong>koolstofdioxide en water worden omgezet in glucose en zuurstof</strong> (0/1 punten).", "🟨 Gedeeltelijk correct: fotosynthese vindt plaats in de bladeren, maar specificeer dat het in de <strong>chloroplasten</strong> gebeurt (0.5/1 punten)."],
-"score": "1.5/3"}
-
-Voorbeeld 3:
-Vraag: Wat zijn de kenmerken van expliciet of declaratief geheugen?
-
-Antwoord student: asdfg zxcyz klop klop.
-
-Beoordelingsrubriek: Expliciet geheugen is het deel van ons geheugen dat bewust toegankelijk is (1 punt) en waarvan de informatie eenvoudig aan anderen verteld kan worden (1 punt).
-Jouw reactie:
+```json
 {
-  "feedback": [
-    "🛑 Onzinantwoord: het antwoord is volledig irrelevant en bevat geen bruikbare informatie (0/2 punten)."
-  ],
-  "score": "0/2"
+    "deelantwoorden": [
+        {
+            "tekst": "Fotosynthese is het proces waarbij planten, algen en sommige bacteriën zonlicht omzetten in energie,",
+            "beoordeling": "Juist",
+            "feedback": "Goed uitgelegd wat fotosynthese is."
+        },
+        {
+            "tekst": "hierbij wordt koolstofdioxide en water omgezet in glucose en zuurstof.",
+            "beoordeling": "Juist",
+            "feedback": "Correct beschreven hoe het proces verloopt."
+        },
+        {
+            "tekst": "Het proces vindt voornamelijk plaats in de chloroplasten van plantencellen",
+            "beoordeling": "Juist",
+            "feedback": "Juist aangegeven waar het plaatsvindt."
+        }
+    ],
+    "score": "3/3",
+    "juiste_feedback": "Je uitleg over fotosynthese is duidelijk en volledig: je beschrijft wat het is, hoe het werkt, en waar het plaatsvindt. Goed gedaan!",
+    "gedeeltelijk_juiste_feedback": "",
+    "onjuiste_feedback": "",
+    "ontbrekende_elementen": ""
 }
