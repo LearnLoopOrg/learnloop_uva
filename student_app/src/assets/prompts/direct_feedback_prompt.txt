@@ -9,31 +9,36 @@ Werkwijze:
 2. **Verdeel het Antwoord**:
     - Splits het antwoord op in relevante secties. Elke sectie moet overeenkomen met een specifiek onderdeel van de beoordelingsrubriek en het hele antwoord moet opgesplits zijn.
 
-3. **Beoordeel en Geef Feedback**:
+3. **Identificeer Ontbrekende Elementen**:
+    - Analyseer het antwoord en vermeld welke onderdelen of informatie ontbreken volgens de beoordelingsrubriek.
+    - Geef specifieke suggesties over wat de student nog moet toevoegen om het antwoord compleet te maken.
+    - Als een onderdeel al terugkomt in **juiste_feedback**, **gedeeltelijk_juiste_feedback** of **onjuiste_feedback**, dan mag dit **niet** terugkomen in ontbrekende_elementen.
+    - Als het antwoord volledig is, reageer dan met "".
+    - Wees kort en bondig, de student moet in één oogopslag kunnen zien wat er ontbreekt aan het antwoord.
+    - Begin dit onderdeel met: "Benoem in je antwoord ook..."
+
+4. **Beoordeel en Geef Feedback**:
     - Voor elk gedeelte van het antwoord:
         - Beoordeel of het deel **'Juist'**, **'Gedeeltelijk juist'**, of **'Onjuist'** is.
         - Formuleer een passende feedback voor dat gedeelte van het antwoord.
-
-4. **Categoriseer de feedback op de losse onderdelen correct**:
-    - Voeg de feedback op volledig correcte onderdelen samen onder **juiste_feedback**.
-    - Voeg de feedabck op gedeeltelijk correcte onderdelen samen onder **gedeeltelijk_juiste_feedback**.
-    - Voeg de feedback op onjuiste onderdelen samen onder **onjuiste_feedback**.
-    - **Geen Overlap**: De feedback op een element mag niet tegelijkertijd in meerdere categorieën staan.
-    - Als een onderdeel leeg is, reageer dan met ""
-    - De velden **juiste_feedback**, **gedeeltelijk_juiste_feedback** en **onjuiste_feedback** moeten in één oogopslag gelezen kunnen worden wat er goed, gedeeltelijk juist of onjuist is aan het antwoord.
-
+        - Gebruik eenvoudige taal en spreek de student direct aan met "je" of "jij".
+        - Reken synoniemen, spelfouten en vergelijkbare woorden goed, tenzij specifieke termen vereist zijn volgens de rubriek.
+        - Zorg dat de feedback motiverend is; wees niet te streng.
 5. **Bereken de Punten**:
     - Tel de behaalde punten op en vermeld het totaal aantal punten.
         - **Juist**: 1 punt per element.
         - **Gedeeltelijk juist**: 0.5 punt per element.
         - **Onjuist**: 0 punten.
 
-6. **Identificeer Ontbrekende Elementen**:
-    - Analyseer het antwoord en vermeld welke onderdelen of informatie ontbreken volgens de beoordelingsrubriek.
-    - Geef specifieke suggesties over wat de student nog moet toevoegen om het antwoord compleet te maken.
-    - Als een onderdeel al terugkomt in **juiste_feedback**, **gedeeltelijk_juiste_feedback** of **onjuiste_feedback**, dan mag dit **niet** terugkomen in ontbrekende_elementen.
-    - Als het antwoord volledig is, reageer dan met "".
-    - Wees kort en bondig, de student moet in één oogopslag kunnen zien wat er ontbreekt aan het antwoord.
+6. **Categoriseer de feedback op de losse onderdelen correct**:
+    - Voeg de deelantwoorden met als beoordeling "Juist" samen onder **juiste_feedback**.
+    - Voeg de deelantwoorden met als beoordeling "Gedeeltelijk juist" samen onder **gedeeltelijk_juiste_feedback**. Geef bij alle gedeeltelijk correcte onderdelen ook wat er goed is, maar ook vooral wat er mist om het een goed antwoord te maken. 
+    - Voeg de deelantwoorden met als beoordeling "Onjuist" samen samen onder **onjuiste_feedback**.
+    - **Geen Overlap**: De feedback op een element mag niet tegelijkertijd in meerdere categorieën staan.
+    - Als een onderdeel leeg is, reageer dan met ""
+    - De velden **juiste_feedback**, **gedeeltelijk_juiste_feedback** en **onjuiste_feedback** moeten in één oogopslag gelezen kunnen worden.
+
+
 
 **Structuur van het feedbackrapport**:
 ```json
@@ -77,7 +82,7 @@ Antwoord student: Fotosynthese is een proces waarbij planten zonlicht gebruiken 
         {
             "tekst": "en het vindt plaats in de bladeren van planten.",
             "beoordeling": "Gedeeltelijk juist",
-            "feedback": "Klopt dat het in de bladeren plaatsvindt, maar specifieker gebeurt dit in de chloroplasten."
+            "feedback": "Specifieker gebeurt dit in de chloroplasten."
         }
     ],
     "score": "1/3",
@@ -85,7 +90,7 @@ Antwoord student: Fotosynthese is een proces waarbij planten zonlicht gebruiken 
     "gedeeltelijk_juiste_feedback": "Je hebt goed aangegeven dat planten zonlicht gebruiken om voedsel te maken, maar vergeet niet dat ook algen en sommige bacteriën dit doen. Verder vindt fotosynthese specifiek plaats in de chloroplasten, niet alleen in de bladeren.
 ",
     "onjuiste_feedback": "",
-    "ontbrekende_elementen": "Je hebt niet uitgelegd hoe het proces verloopt."
+    "ontbrekende_elementen": "Benoem in je antwoord ook hoe het proces verloopt."
 }
 
 

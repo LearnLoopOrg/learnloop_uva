@@ -7,119 +7,217 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def render_student_answer():
-    student_answer = """
-    <h1 style='font-size: 20px; margin: 15px 0 10px 10px; padding: 0;'>Jouw antwoord:</h1>
-    """
-    st.markdown(student_answer, unsafe_allow_html=True)
-
-
-def evaluate_answer():
+def evaluate_answer(max_retries=3):
     """Evaluates the answer of the student and returns a score and feedback."""
-    # Create user prompt with the question, correct answer and student answer
+    # Creëer de user prompt met de vraag, correct antwoord en student antwoord
     prompt = f"""Input:\n
     Vraag: {st.session_state.segment_content['question']}\n
     Antwoord student: {st.session_state.student_answer}\n
     Beoordelingsrubriek: {st.session_state.segment_content['answer']}\n
     Output:\n"""
 
-    # Read the role prompt from a file
-    with open("./experiments/feedback_prompt.txt", "r", encoding="utf-8") as f:
+    # Lees de role prompt uit een bestand
+    with open(
+        "../student_app/src/assets/prompts/direct_feedback_prompt.txt",
+        "r",
+        encoding="utf-8",
+    ) as f:
         role_prompt = f.read()
+    attempt = 0
+    while attempt < max_retries:
+        try:
+            response = st.session_state.openai_client.chat.completions.create(
+                model=st.session_state.openai_model,
+                messages=[
+                    {"role": "system", "content": role_prompt},
+                    {"role": "user", "content": prompt},
+                ],
+                max_tokens=500,
+                response_format={"type": "json_object"},
+            )
 
-    response = st.session_state.openai_client.chat.completions.create(
-        model=st.session_state.openai_model,
-        messages=[
-            {"role": "system", "content": role_prompt},
-            {"role": "user", "content": prompt},
-        ],
-        max_tokens=500,
-        response_format={"type": "json_object"},
-    )
-    st.session_state.feedback_response = json.loads(response.choices[0].message.content)
+            # Probeer de JSON response te laden
+            feedback = json.loads(response.choices[0].message.content)
+
+            # Definieer de vereiste top-level velden
+            required_top_fields = [
+                "deelantwoorden",
+                "score",
+                "juiste_feedback",
+                "gedeeltelijk_juiste_feedback",
+                "onjuiste_feedback",
+                "ontbrekende_elementen",
+            ]
+
+            # Controleer of alle vereiste top-level velden aanwezig zijn
+            if not all(field in feedback for field in required_top_fields):
+                raise ValueError("Niet alle vereiste top-level velden zijn aanwezig.")
+
+            # Controleer of 'deelantwoorden' een lijst is
+            if not isinstance(feedback["deelantwoorden"], list):
+                raise TypeError("'deelantwoorden' moet een lijst zijn.")
+
+            # Definieer de vereiste velden voor elk deelantwoord
+            required_sub_fields = ["tekst", "beoordeling", "feedback"]
+
+            # Controleer elk deelantwoord
+            for idx, deelantwoord in enumerate(feedback["deelantwoorden"], start=1):
+                if not isinstance(deelantwoord, dict):
+                    raise TypeError(f"Deelantwoord {idx} moet een object zijn.")
+                if not all(
+                    sub_field in deelantwoord for sub_field in required_sub_fields
+                ):
+                    raise ValueError(
+                        f"Deelantwoord {idx} mist een van de vereiste velden: {required_sub_fields}"
+                    )
+                # Optioneel: Controleer of de waarden van de subvelden strings zijn
+                for sub_field in required_sub_fields:
+                    if not isinstance(deelantwoord[sub_field], str):
+                        raise TypeError(
+                            f"De waarde van '{sub_field}' in deelantwoord {idx} moet een string zijn."
+                        )
+
+            # Controleer het formaat van 'score' (bijvoorbeeld "2/3")
+            if (
+                not isinstance(feedback["score"], str)
+                or not feedback["score"].count("/") == 1
+            ):
+                raise ValueError(
+                    "'score' moet een string zijn in het formaat 'behaalde punten/max punten', bijvoorbeeld '2/3'."
+                )
+            punten_behaald, punten_max = feedback["score"].split("/")
+
+            # Optioneel: Controleer dat de overige feedbackvelden strings zijn
+            additional_feedback_fields = [
+                "juiste_feedback",
+                "gedeeltelijk_juiste_feedback",
+                "onjuiste_feedback",
+                "ontbrekende_elementen",
+            ]
+            for field in additional_feedback_fields:
+                if not isinstance(feedback[field], str):
+                    raise TypeError(f"'{field}' moet een string zijn.")
+
+            # Als alle controles slagen, sla de feedback op en beëindig de retry-lus
+            st.session_state.feedback = feedback
+            st.session_state.score = feedback["score"]
+            break  # Succes, verlaat de while-lus
+
+        except (json.JSONDecodeError, KeyError, ValueError, TypeError) as e:
+            # Fout bij het parsen van JSON of bij validatie van de velden
+            attempt += 1
+            print(f"Feedback: {feedback}")
+            print(
+                f"Attempt {attempt}: Fout bij verwerken van feedback: {e}. Proberen opnieuw..."
+            )
+
+    else:
+        # Als na max_retries pogingen nog steeds niet alle velden correct zijn
+        st.session_state.feedback = {
+            "deelantwoorden": [],
+            "score": "0/3",
+            "juiste_feedback": "",
+            "gedeeltelijk_juiste_feedback": "",
+            "onjuiste_feedback": "",
+            "ontbrekende_elementen": "Er is een fout opgetreden bij het genereren van de feedback. Probeer het later opnieuw.",
+        }
+        st.session_state.score = st.session_state.feedback["score"]
 
 
 def render_feedback():
+    kleur_ontbrekend = "#c0c0c0"
+    kleur_groen_licht = "#d5fdcd"
+    kleur_oranje_licht = "#ffebbf"
+    kleur_rood_licht = "#ffd4d8"
+    kleur_groen = "#99eb89"
+    kleur_oranje = "#ffd16b"
+    kleur_rood = "#ff8691"
+    # Gecombineerde color mapping
     color_mapping = {
-        "Juist": "#63f730",  # Groen
-        "Gedeeltelijk juist": "#ff9900",  # Oranje
-        "Fout": "#f74444",  # Rood
+        "Juist": kleur_groen_licht,
+        "Gedeeltelijk juist": kleur_oranje_licht,
+        "Onjuist": kleur_rood_licht,
+        "juiste_feedback": kleur_groen_licht,
+        "gedeeltelijk_juiste_feedback": kleur_oranje_licht,
+        "onjuiste_feedback": kleur_rood,
+        "ontbrekende_elementen": kleur_ontbrekend,
     }
 
-    # CSS styling voor de gemarkeerde delen en tooltips
-    st.markdown(
-        """
-        <style>
-        .highlight {
-            position: relative;
-            cursor: pointer;
-            border-radius: 5px;
-            padding: 2px 4px;
-        }
-
-        .highlight:hover::after {
-            content: attr(data-feedback);
-            position: absolute;
-            background-color: rgba(0, 0, 0, 0.85);
-            color: white;
-            padding: 8px;
-            border-radius: 5px;
-            top: 100%;
-            left: 0;
-            white-space: pre-wrap;
-            z-index: 10;
-            width: max-content;
-            max-width: 300px;
-            font-size: 12px;
-        }
-
-        /* Optionele overgangseffecten */
-        .highlight::after {
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .highlight:hover::after {
-            opacity: 1;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
-    deelantwoorden = st.session_state.feedback_response["deelantwoorden"]
-
+    feedback_data = st.session_state.get("feedback", {})
+    deelantwoorden = feedback_data.get("deelantwoorden", [])
+    st.write(feedback_data)
+    # html_content = """<span><strong>Jouw antwoord: </strong></span><br>"""
     html_content = ""
-
-    for idx, deel in enumerate(deelantwoorden, 1):
-        beoordeling = deel["beoordeling"]
-        tekst = deel["tekst"]
-        feedback = deel["feedback"]
+    for deel in deelantwoorden:
+        beoordeling = deel.get("beoordeling", "")
+        tekst = deel.get("tekst", "")
         kleur = color_mapping.get(
             beoordeling, "#ffffff"
-        )  # Default to white if not found
+        )  # Default naar wit als niet gevonden
 
-        # Create HTML for the inline text with tooltip
-        html_content += f"""<span style="background-color: {kleur}" class="highlight" data-feedback="{feedback}">{tekst.strip()}</span>"""
-
-    # Display the combined HTML content
+        # HTML creëren voor de inline tekst met tooltip
+        html_content += f"""<span style="background-color: {kleur}; border-radius: 3px; padding: 2px 5px 2px 5px; font-size: 18px;">{tekst.strip()}</span> """
     st.markdown(html_content, unsafe_allow_html=True)
-    punten = st.session_state.feedback_response["punten"]
-    punten_html = f"""
-            <div style="background-color: #f0f0f0; border-radius: 5px; padding: 10px; margin-top: 20px;">
-                <strong>Punten:</strong> {punten["behaalde_punten"]} / {punten["max_punten"]}
-            </div>
-        """
-    st.markdown(punten_html, unsafe_allow_html=True)
 
-    # Display algemene feedback
-    algemene_feedback = st.session_state.feedback_response["algemene_feedback"]
-    feedback_html = f"""
-            <div style="background-color: #e7f3f8; border-radius: 5px; padding: 10px; margin-top: 10px;">
-                <strong>Algemene Feedback:</strong>
-                <p>{algemene_feedback}</p>
+    feedback_header = """<hr style="margin: 3px 0px 3px 0px; border-top: 1px solid #ccc;" />
+    <h5 style="margin-top: 3px;">Feedback: </h5>"""
+    st.markdown(feedback_header, unsafe_allow_html=True)
+
+    # Toon de gecombineerde HTML-content
+    ontbrekende_elementen_html = ""
+    ontbrekende_elementen = feedback_data.get("ontbrekende_elementen", "")
+    if ontbrekende_elementen != "":
+        if "Benoem in je antwoord ook" in ontbrekende_elementen:
+            ontbrekende_elementen = ontbrekende_elementen.replace(
+                "Benoem in je antwoord ook",
+                "<strong>Benoem in je antwoord ook</strong>",
+            )
+        ontbrekende_elementen_html += f"""
+            <div style="border-left: 7px solid {kleur_ontbrekend}; border-radius: 5px; padding: 5px 10px; margin-bottom: 10px;">
+                🗣️  {ontbrekende_elementen}
             </div>
-        """
+            """
+        st.markdown(
+            ontbrekende_elementen_html,
+            unsafe_allow_html=True,
+        )
+    # Functie om feedbacksecties te renderen
+    feedback_keys = {
+        "juiste_feedback": "✅",
+        "gedeeltelijk_juiste_feedback": "🔶",
+        "onjuiste_feedback": "❌",
+    }
+    feedback_html = ""
+    for feedback_key, emoji in feedback_keys.items():
+        feedback_content = feedback_data.get(feedback_key, "")
+        if feedback_content != "":
+            kleur = color_mapping.get(feedback_key, "#ffffff")
+            # ALLEEN DE LINKERKANT HEEFT EEN KLEUR
+            feedback_html += f"""
+                <div style="border-left: 7px solid {kleur}; border-radius: 5px; padding: 5px 10px; margin-bottom: 10px;">
+                    {emoji}  {feedback_content}
+                </div>
+            """
+            # DE LINKERKANT EN DE BOVENKANT HEBBEN EEN KLEUR
+            # feedback_html = f"""
+            #     <div style="border-left: 7px solid {kleur}; border-right: 7px solid {kleur}; border-radius: 5px; padding: 5px 10px; margin-bottom: 10px;">
+            #         {feedback_content}
+            #     </div>
+            # """
     st.markdown(feedback_html, unsafe_allow_html=True)
+    # Toon score
+    score = st.session_state.get("score", "0/0")
+    try:
+        behaalde_punten, max_punten = score.split("/")
+    except ValueError:
+        behaalde_punten, max_punten = "0", "0"
+
+    punten_html = f"""
+        <div style="background-color: #f0f0f0; border-radius: 5px; padding: 10px; margin-bottom: 10px">
+            <strong>Punten:</strong> {behaalde_punten} / {max_punten}
+        </div>
+    """
+    st.markdown(punten_html, unsafe_allow_html=True)
 
 
 # Data die het antwoord van de student vertegenwoordigt
@@ -196,7 +294,6 @@ if __name__ == "__main__":
                         van LLM's op de pagina **'Uitleg mogelijkheden & limitaties LLM's'** onder \
                         het kopje 'Extra info' in de sidebar."
         ):
-            render_student_answer()
             evaluate_answer()
 
         render_feedback()
