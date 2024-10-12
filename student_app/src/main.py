@@ -275,28 +275,29 @@ def render_mc_feedback(question):
 
 
 def render_feedback():
-    # Definieer kleurvariabelen
-    kleur_groen = "#baffc9"  # Lichter groen
-    kleur_oranje = "#ffdfba"  # Lichter oranje
-    kleur_rood = "#ffb3ba"  # Lichter rood
-    kleur_blauw = "#bae1ff"  # Lichter blauw
-
+    kleur_ontbrekend = "#c0c0c0"
+    kleur_groen_licht = "#d5fdcd"
+    kleur_oranje_licht = "#ffebbf"
+    kleur_rood_licht = "#ffd4d8"
+    kleur_groen = "#99eb89"
+    kleur_oranje = "#ffd16b"
+    kleur_rood = "#ff8691"
     # Gecombineerde color mapping
     color_mapping = {
-        "Juist": kleur_groen,
-        "Gedeeltelijk juist": kleur_oranje,
-        "Onjuist": kleur_rood,
+        "Juist": kleur_groen_licht,
+        "Gedeeltelijk juist": kleur_oranje_licht,
+        "Onjuist": kleur_rood_licht,
         "juiste_feedback": kleur_groen,
         "gedeeltelijk_juiste_feedback": kleur_oranje,
         "onjuiste_feedback": kleur_rood,
-        "ontbrekende_elementen": kleur_blauw,
+        "ontbrekende_elementen": kleur_ontbrekend,
     }
 
     feedback_data = st.session_state.get("feedback", {})
     deelantwoorden = feedback_data.get("deelantwoorden", [])
 
-    html_content = """<span><strong>Jouw antwoord: </strong></span><br>"""
-
+    # html_content = """<span><strong>Jouw antwoord: </strong></span><br>"""
+    html_content = ""
     for deel in deelantwoorden:
         beoordeling = deel.get("beoordeling", "")
         tekst = deel.get("tekst", "")
@@ -305,11 +306,55 @@ def render_feedback():
         )  # Default naar wit als niet gevonden
 
         # HTML creëren voor de inline tekst met tooltip
-        html_content += f"""<span style="background-color: {kleur}; border-radius: 3px; padding: 2px 5px 2px 5px;">{tekst.strip()}</span> """
-
-    # Toon de gecombineerde HTML-content
+        html_content += f"""<span style="background-color: {kleur}; border-radius: 3px; padding: 2px 5px 2px 5px; font-size: 18px;">{tekst.strip()}</span> """
     st.markdown(html_content, unsafe_allow_html=True)
 
+    feedback_header = """<hr style="margin: 3px 0px 3px 0px; border-top: 1px solid #ccc;" />
+    <h5 style="margin-top: 3px;">Feedback: </h5>"""
+    st.markdown(feedback_header, unsafe_allow_html=True)
+
+    # Toon de gecombineerde HTML-content
+    ontbrekende_elementen_html = ""
+    ontbrekende_elementen = feedback_data.get("ontbrekende_elementen", "")
+    if ontbrekende_elementen != "":
+        if "Benoem in je antwoord ook" in ontbrekende_elementen:
+            ontbrekende_elementen = ontbrekende_elementen.replace(
+                "Benoem in je antwoord ook",
+                "<strong>Benoem in je antwoord ook</strong>",
+            )
+        ontbrekende_elementen_html += f"""
+            <div style="border-left: 7px solid {kleur_ontbrekend}; border-radius: 5px; padding: 5px 10px; margin-bottom: 10px;">
+                🗣️  {ontbrekende_elementen}
+            </div>
+            """
+        st.markdown(
+            ontbrekende_elementen_html,
+            unsafe_allow_html=True,
+        )
+    # Functie om feedbacksecties te renderen
+    feedback_keys = {
+        "juiste_feedback": "✅",
+        "gedeeltelijk_juiste_feedback": "🔶",
+        "onjuiste_feedback": "❌",
+    }
+    feedback_html = ""
+    for feedback_key, emoji in feedback_keys.items():
+        feedback_content = feedback_data.get(feedback_key, "")
+        if feedback_content != "":
+            kleur = color_mapping.get(feedback_key, "#ffffff")
+            # ALLEEN DE LINKERKANT HEEFT EEN KLEUR
+            feedback_html += f"""
+                <div style="border-left: 7px solid {kleur}; border-radius: 5px; padding: 5px 10px; margin-bottom: 10px;">
+                    {emoji}  {feedback_content}
+                </div>
+            """
+            # DE LINKERKANT EN DE BOVENKANT HEBBEN EEN KLEUR
+            # feedback_html = f"""
+            #     <div style="border-left: 7px solid {kleur}; border-right: 7px solid {kleur}; border-radius: 5px; padding: 5px 10px; margin-bottom: 10px;">
+            #         {feedback_content}
+            #     </div>
+            # """
+    st.markdown(feedback_html, unsafe_allow_html=True)
     # Toon score
     score = st.session_state.get("score", "0/0")
     try:
@@ -323,24 +368,6 @@ def render_feedback():
         </div>
     """
     st.markdown(punten_html, unsafe_allow_html=True)
-
-    # Functie om feedbacksecties te renderen
-    feedback_keys = [
-        "juiste_feedback",
-        "gedeeltelijk_juiste_feedback",
-        "onjuiste_feedback",
-        "ontbrekende_elementen",
-    ]
-    for feedback_key in feedback_keys:
-        feedback_content = feedback_data.get(feedback_key, "")
-        if feedback_content != "":
-            kleur = color_mapping.get(feedback_key, "#ffffff")
-            feedback_html = f"""
-                <div style="background-color: {kleur}; border-radius: 5px; padding: 5px 10px 5px 10px; margin-bottom: 10px">
-                    {feedback_content}
-                </div>
-            """
-            st.markdown(feedback_html, unsafe_allow_html=True)
 
 
 def render_progress_bar():
@@ -1231,7 +1258,6 @@ def render_practice_page():
                                 van LLM's op de pagina **'Uitleg mogelijkheden & limitaties LLM's'** onder \
                                 het kopje 'Extra info' in de sidebar."
                 ):
-                    render_student_answer()
                     evaluate_answer()
 
                 render_feedback()
