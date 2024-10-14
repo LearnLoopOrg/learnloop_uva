@@ -130,7 +130,6 @@ class Controller:
                 <h1> 
                     <strong>Welkom Erwin</strong>
                 </h1>
-                <hr class="closer-line">
             """,
                 unsafe_allow_html=True,
             )
