@@ -21,6 +21,9 @@ from utils.utils import Utils
 from utils.utils import AzureUtils
 from slack_sdk import WebClient
 
+current_directory = os.getcwd()
+print(f"CURRENT WORKING DIRECTORY: {current_directory}")
+st.write(f"CURRENT WORKING DIRECTORY: {current_directory}")
 
 # Must be called first
 st.set_page_config(page_title="LearnLoop", layout="wide")
@@ -1706,6 +1709,7 @@ def try_login():
         "eensupergeheimecode": None,
     }
     vu_users = {"anderecode": None}
+    print(f"USERNAME: {input_username}")
     if input_username in uva_users:
         st.session_state.username = input_username
         st.session_state.logged_in = True
@@ -1713,14 +1717,12 @@ def try_login():
             use_LL_cosmosdb=st.session_state.use_LL_cosmosdb,
             database_name="UvA_KNP",
         )
-        st.session_state.db = (
-            st.session_state.db
-        )  # Ensure the correct database is selected
+        st.session_state.admin_login = True
         print("Logged in as UvA student with username: ", input_username)
         # Print list of collections in db
         print("Collections in db: ", st.session_state.db.list_collection_names())
 
-    if input_username in vu_users:
+    elif input_username in vu_users:
         if vu_users[input_username] == st.session_state.streamlit_password:
             st.session_state.username = input_username
             st.session_state.logged_in = True
@@ -1740,7 +1742,7 @@ def render_login_page():
     prompts the user to login via SURFconext."""
     print(f"deployment_type: {st.session_state.deployment_type}")
 
-    st.session_state.deployment_type = "uva"  # REMOVE: hardcoded for testing
+    # st.session_state.deployment_type = "uva"  # REMOVE: hardcoded for testing
     if st.session_state.deployment_type == "uva":
         columns = st.columns([1, 0.9, 1])
         with columns[1]:
@@ -1822,6 +1824,9 @@ def determine_selected_module():
 
 
 def initialise_session_states():
+    if "admin_login" not in st.session_state:
+        st.session_state.admin_login = False
+
     if "use_LL_openai_deployment" not in st.session_state:
         st.session_state.use_LL_openai_deployment = None
 
@@ -2015,7 +2020,7 @@ def get_commandline_arguments() -> argparse.Namespace:
 
 def is_deployed_in_streamlit_cloud():
     # Check if the app is deployed in Streamlit Cloud by checking if the /mount directory exists
-    return
+    return os.path.exists("/mount")
 
 
 def is_running_locally():
@@ -2027,19 +2032,22 @@ def set_correct_settings_for_deployment_type():
         st.session_state.deployment_type = None
 
     # Set the correct arguments for the deployment type
-    if is_deployed_in_streamlit_cloud() or is_running_locally():
-        print("App is deployed in the cloud or runs locally, use cloud arguments.")
-        args.use_LL_blob_storage = True
-        args.use_LL_cosmosdb = True
-        args.use_LL_openai_deployment = True
-        args.debug = True
-        args.no_login_page = True
-        base_path = ""
-        deployment_type = "streamlit_or_local"
-    else:
-        print("App draait lokaal, gebruik lokale argumenten.")
-        base_path = "src/"
-        deployment_type = "uva"
+    # if is_deployed_in_streamlit_cloud() or is_running_locally():
+    #     print("App is deployed in the cloud or runs locally, use cloud arguments.")
+    #     args.use_LL_blob_storage = True
+    #     args.use_LL_cosmosdb = True
+    #     args.use_LL_openai_deployment = True
+    #     args.debug = True
+    #     args.no_login_page = False
+    #     base_path = ""
+    #     deployment_type = "streamlit_or_local"
+    # elif st.session_state.deployment_type == "uva":
+    #     print("App draait lokaal, gebruik lokale argumenten.")
+    #     base_path = "src/"
+    #     deployment_type = "uva"
+
+    base_path = "src/"
+    deployment_type = "uva"
 
     st.session_state.deployment_type = deployment_type
 
@@ -2059,6 +2067,7 @@ if __name__ == "__main__":
     # )
 
     args, base_path = set_correct_settings_for_deployment_type()
+    st.session_state.deployment_type = "uva"
 
     # Turn on 'testing' to use localhost instead of learnloop.datanose.nl for authentication
     surf_test_env = args.surf_test_env
@@ -2123,11 +2132,17 @@ if __name__ == "__main__":
     # Login page renders if only if the user is not logged in
     if (
         no_login_page is False
-        or
+        and
         # When deployed in streamlit cloud, the fetch nonce function is not used
-        (st.session_state.deployment_type == "uva" and fetch_nonce_from_query() is None)
-        or st.session_state.username is None
-        or st.session_state.logged_in is False
+        (
+            (
+                st.session_state.deployment_type == "uva"
+                and fetch_nonce_from_query() is None
+                and st.session_state.admin_login is False
+            )
+            or st.session_state.username is None
+            or st.session_state.logged_in is False
+        )
     ):
         print("Rendering login page")
         render_login_page()

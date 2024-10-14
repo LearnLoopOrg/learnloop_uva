@@ -36,7 +36,7 @@
                 "question": "What are the main symptoms of Parkinson's?",
                 "status": "not asked",
                 "level": 1,
-                "score": null,
+                "score": "0/2",
                 "answer": "The main symptoms include tremors (1 punt), slowness of movement (1 punt), muscle stiffness (1 punt), and issues with balance (1 punt).",
                 "student_answer": [
                     "Ja de belangrijkste symptomen zijn beven, traagheid van bewegen, spierstijfheid en problemen met balans"
@@ -46,7 +46,7 @@
                 "question": "How do the symptoms of Parkinson's disease progress?",
                 "status": "not asked",
                 "level": 2,
-                "score": null,
+                "score": "0/4",
                 "answer": "Symptoms usually begin on one side of the body (1 punt) and gradually increase over time (1 punt). Motor symptoms like tremors and stiffness may become more noticeable (1 punt), and non-motor issues like changes in thinking ability can develop (1 punt).",
                 "student_answer": [
                     "Symptoms usually begin on one side of the body (1 punt) and gradually increase over time (1 punt). Motor symptoms like tremors and stiffness may become more noticeable (1 punt), and non-motor issues like changes in thinking ability can develop (1 punt)."
@@ -56,7 +56,7 @@
                 "question": "What are the non-motor symptoms of Parkinson's?",
                 "status": "not asked",
                 "level": 3,
-                "score": null,
+                "score": "0/5",
                 "answer": "Non-motor symptoms may include sleep challenges (1 punt), low mood (1 punt), worry (1 punt), difficulties with thinking (1 punt), and issues with automatic body functions (1 punt).",
                 "student_answer": [
                     "slaapstoornissen, laag humeur, zorgen, moeilijkheden met denken en problemen met automatische lichaamsfuncties"
