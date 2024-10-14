@@ -1,2 +1,3 @@
 [server]
-baseUrlPath = "/student"
+headless = true
+script_path = "src/main.py"
