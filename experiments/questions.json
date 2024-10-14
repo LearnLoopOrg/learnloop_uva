@@ -34,9 +34,9 @@
         "questions": [
             {
                 "question": "What are the main symptoms of Parkinson's?",
-                "status": "done",
+                "status": "not asked",
                 "level": 1,
-                "score": "4/4",
+                "score": null,
                 "answer": "The main symptoms include tremors (1 punt), slowness of movement (1 punt), muscle stiffness (1 punt), and issues with balance (1 punt).",
                 "student_answer": [
                     "Ja de belangrijkste symptomen zijn beven, traagheid van bewegen, spierstijfheid en problemen met balans"
@@ -44,9 +44,9 @@
             },
             {
                 "question": "How do the symptoms of Parkinson's disease progress?",
-                "status": "done",
+                "status": "not asked",
                 "level": 2,
-                "score": "4/4",
+                "score": null,
                 "answer": "Symptoms usually begin on one side of the body (1 punt) and gradually increase over time (1 punt). Motor symptoms like tremors and stiffness may become more noticeable (1 punt), and non-motor issues like changes in thinking ability can develop (1 punt).",
                 "student_answer": [
                     "Symptoms usually begin on one side of the body (1 punt) and gradually increase over time (1 punt). Motor symptoms like tremors and stiffness may become more noticeable (1 punt), and non-motor issues like changes in thinking ability can develop (1 punt)."
@@ -54,9 +54,9 @@
             },
             {
                 "question": "What are the non-motor symptoms of Parkinson's?",
-                "status": "done",
+                "status": "not asked",
                 "level": 3,
-                "score": "5/5",
+                "score": null,
                 "answer": "Non-motor symptoms may include sleep challenges (1 punt), low mood (1 punt), worry (1 punt), difficulties with thinking (1 punt), and issues with automatic body functions (1 punt).",
                 "student_answer": [
                     "slaapstoornissen, laag humeur, zorgen, moeilijkheden met denken en problemen met automatische lichaamsfuncties"
@@ -71,9 +71,9 @@
         "questions": [
             {
                 "question": "How is Parkinson's disease diagnosed?",
-                "status": "done",
+                "status": "not asked",
                 "level": 1,
-                "score": "1/4",
+                "score": null,
                 "answer": "Parkinson's is diagnosed based on observed symptoms (1 punt), personal health history (1 punt), and a neurological assessment (1 punt), as there isn't a single test to confirm the condition (1 punt).",
                 "student_answer": [
                     "Er is geen specifieke diagnose test voor Parkinson"
@@ -81,9 +81,9 @@
             },
             {
                 "question": "What are the diagnostic criteria for Parkinson's?",
-                "status": "done",
+                "status": "not asked",
                 "level": 2,
-                "score": "2/4",
+                "score": null,
                 "answer": "The diagnostic criteria involve having two or more movement-related symptoms (1 punt), improvement with dopamine medication (1 punt), and excluding other possible causes (1 punt) for the symptoms (1 punt).",
                 "student_answer": [
                     "iets met trillende patienten."
@@ -91,9 +91,9 @@
             },
             {
                 "question": "What tests are used to diagnose Parkinson's?",
-                "status": "done",
+                "status": "not asked",
                 "level": 3,
-                "score": "3/4",
+                "score": null,
                 "answer": "There are no specific tests for Parkinson's (1 punt), but imaging techniques like DaT scans (1 punt) may be used to check dopamine function (1 punt) and rule out other conditions (1 punt).",
                 "student_answer": [
                     "Die zijn er dus niet echt"
@@ -101,9 +101,9 @@
             },
             {
                 "question": "How is the progression of Parkinson's measured?",
-                "status": "asked",
+                "status": "not asked",
                 "level": 2,
-                "score": "0/3",
+                "score": null,
                 "answer": "The progression of Parkinson's is measured through clinical evaluations (1 punt), monitoring symptoms over time (1 punt), and using specific scales like the Unified Parkinson's Disease Rating Scale (UPDRS) (1 punt).",
                 "student_answer": []
             }
