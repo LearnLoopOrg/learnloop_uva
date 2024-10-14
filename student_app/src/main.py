@@ -1523,24 +1523,31 @@ def render_sidebar():
     """
     Function to render the sidebar with the modules and login module.
     """
-
+    student_name = (
+        "student"
+        if st.session_state.deployment_type == "uva"
+        else st.session_state.username
+    )
     with st.sidebar:
-        st.image(
-            f"{base_path}data/content/images/logo.png",
-            use_column_width=False,
-            width=150,
-        )
+        img_cols = st.columns([1, 3])
+        with img_cols[1]:
+            st.image(
+                f"{base_path}data/content/images/logo.png",
+                use_column_width=False,
+                width=110,
+            )
 
+        st.write("\n\n")
         st.markdown(
-            """
+            f"""
             <style>
-                .closer-line {
+                .closer-line {{
                     margin-top: -5px;
-                }
+                }}
             </style>
 
             <h1> 
-                <strong>Welkom Student</strong>
+                <strong>Hi {student_name}</strong>
             </h1>
             <hr class="closer-line">
         """,
@@ -1594,6 +1601,17 @@ def create_empty_progress_dict(module):
     return {str(i): None for i in range(number_of_segments)}
 
 
+def fetch_module_status(module_name):
+    lecture = db.content.find_one({"lecture_name": module_name})
+    print(f"Fetching status for module {module_name}")
+
+    if lecture:
+        return lecture["status"]
+    else:
+        print(f"Module {module_name} not found in db")
+        return None
+
+
 # Cache for 10 minutes only, so it checks every 10 minutes if there is a new lecture available
 @st.cache_data(show_spinner=False, ttl=600)
 def check_user_doc_and_add_missing_fields():
@@ -1622,42 +1640,45 @@ def check_user_doc_and_add_missing_fields():
     for course in course_catalog.courses:
         course_modules = db_dal.get_lectures_for_course(course.title, course_catalog)
         for module in course_modules:
-            if module.title not in user_doc.get("progress", {}):
-                user_doc["progress"][module.title] = create_default_progress_structure(
-                    module.title
-                )
-                print(
-                    f"Added progess structure for 'module' {module.title} to user_doc['progress']"
-                )
+            if fetch_module_status(module.title) == "corrected":
+                if module.title not in user_doc.get("progress", {}):
+                    user_doc["progress"][module.title] = (
+                        create_default_progress_structure(module.title)
+                    )
+                    print(
+                        f"Added progess structure for 'module' {module.title} to user_doc['progress']"
+                    )
 
-            if "practice" not in user_doc.get("progress", {}).get(module.title, {}):
-                print(f"practice zit niet in de db voor module {module.title}")
+                if "practice" not in user_doc.get("progress", {}).get(module.title, {}):
+                    print(f"practice zit niet in de db voor module {module.title}")
 
-                user_doc["progress"][module.title]["practice"] = {
-                    "segment_index": -1,
-                    "ordered_segment_sequence": [],
-                }
+                    user_doc["progress"][module.title]["practice"] = {
+                        "segment_index": -1,
+                        "ordered_segment_sequence": [],
+                    }
 
-                print(
-                    f"Added 'practice' field for module {module.title} to user_doc['progress']"
-                )
+                    print(
+                        f"Added 'practice' field for module {module.title} to user_doc['progress']"
+                    )
 
-            if "learning" not in user_doc.get("progress", {}).get(module.title, {}):
-                user_doc["progress"][module.title]["learning"] = {"segment_index": -1}
-                print(
-                    f"Added 'learning' field for module {module.title} to user_doc['progress']"
-                )
+                if "learning" not in user_doc.get("progress", {}).get(module.title, {}):
+                    user_doc["progress"][module.title]["learning"] = {
+                        "segment_index": -1
+                    }
+                    print(
+                        f"Added 'learning' field for module {module.title} to user_doc['progress']"
+                    )
 
-            if "progress_counter" not in user_doc.get("progress", {}).get(
-                module.title, {}
-            ).get("learning", {}):
-                empty_dict = create_empty_progress_dict(module.title)
-                user_doc["progress"][module.title]["learning"]["progress_counter"] = (
-                    empty_dict
-                )
-                print(
-                    f"Added 'progress_counter' field for module {module.title} to user_doc['progress']"
-                )
+                if "progress_counter" not in user_doc.get("progress", {}).get(
+                    module.title, {}
+                ).get("learning", {}):
+                    empty_dict = create_empty_progress_dict(module.title)
+                    user_doc["progress"][module.title]["learning"][
+                        "progress_counter"
+                    ] = empty_dict
+                    print(
+                        f"Added 'progress_counter' field for module {module.title} to user_doc['progress']"
+                    )
 
     if "last_module" not in user_doc:
         # Zorg ervoor dat je een default module hebt als er geen modules in user_doc zijn
@@ -1675,58 +1696,123 @@ def convert_image_base64(image_path):
         return base64.b64encode(image_file.read()).decode()
 
 
+def try_login():
+    st.session_state.wrong_credentials = False
+    # Checks if the user is in the list below
+    input_username = st.session_state.streamlit_username
+    uva_users = {
+        "Luc Mahieu": "abc123",
+        "Milan van Roessel": "lala321",
+        "eensupergeheimecode": None,
+    }
+    vu_users = {"anderecode": None}
+    if input_username in uva_users:
+        st.session_state.username = input_username
+        st.session_state.logged_in = True
+        st.session_state.db = db_config.connect_db(
+            use_LL_cosmosdb=st.session_state.use_LL_cosmosdb,
+            database_name="UvA_KNP",
+        )
+        st.session_state.db = (
+            st.session_state.db
+        )  # Ensure the correct database is selected
+        print("Logged in as UvA student with username: ", input_username)
+        # Print list of collections in db
+        print("Collections in db: ", st.session_state.db.list_collection_names())
+
+    if input_username in vu_users:
+        if vu_users[input_username] == st.session_state.streamlit_password:
+            st.session_state.username = input_username
+            st.session_state.logged_in = True
+            st.session_state.db = db_config.connect_db(
+                use_LL_cosmosdb=st.session_state.use_LL_cosmosdb,
+                database_name="VU_Bouw_en_Bewegen",
+            )
+            print("Logged in as VU student with username: ", input_username)
+            print("COLLECTIONS in db: ", st.session_state.db.list_collection_names())
+
+    else:
+        st.session_state.wrong_credentials = True
+
+
 def render_login_page():
     """This is the first page the user sees when visiting the website and
     prompts the user to login via SURFconext."""
-    columns = st.columns([1, 0.9, 1])
-    with columns[1]:
-        welcome_title = "Klinische Neuropsychologie"
-        logo_base64 = convert_image_base64(f"{base_path}data/content/images/logo.png")
+    print(f"deployment_type: {st.session_state.deployment_type}")
 
-        if surf_test_env:
-            href = "http://localhost:3000/"
-        else:
-            href = "https://learnloop.datanose.nl/"
+    st.session_state.deployment_type = "uva"  # REMOVE: hardcoded for testing
+    if st.session_state.deployment_type == "uva":
+        columns = st.columns([1, 0.9, 1])
+        with columns[1]:
+            welcome_title = "Klinische Neuropsychologie"
+            logo_base64 = convert_image_base64(
+                f"{base_path}data/content/images/logo.png"
+            )
 
-        html_content = f"""
-        <div style="text-align: center; margin: 20px;">
-            <img src="data:image/png;base64,{logo_base64}" alt="Logo" style="max-width: 25%; height: auto; margin-bottom: 20px;">
-            <div style="font-size: 36px; margin-bottom: 20px;"><strong>{welcome_title}</strong></div>
-            <a href="{href}" target="_self" style="text-decoration: none;">
-                <button style="font-size: 20px; border: none; color: white; padding: 10px 20px; 
-                text-align: center; text-decoration: none; display: block; width: 100%; margin: 
-                4px 0; cursor: pointer; background-color: #4CAF50; border-radius: 12px;">SURF Login</button>
-            </a>
-            <br>
-            <div style="padding: 5px; max-width: 400px; margin: 5px auto 0; border-radius: 12px; background-color: #f5f5f5;">
-                <p style="font-size: 12px; margin: 10px 0; color: #333; text-align: left;">
-                    ⚠️ Om in te loggen met SURF, moet je eerst de uitnodiging accepteren die je per e-mail hebt ontvangen van SURF <br>
-                    (<i>Uitnodiging voor uva_fnwi_learnloop</i>).<br><br>Kun je de e-mail niet vinden? Controleer dan je spamfolder.<br><br>
-                    Staat de e-mail daar ook niet in? Stuur dan een bericht naar <br> <strong>+31 6 20192794</strong> met je volledige naam en je UvA e-mailadres.
-                </p>
-            </div>
-        </div>"""
+            if surf_test_env:
+                href = "http://localhost:3000/"
+            else:
+                href = "https://learnloop.datanose.nl/"
 
-        # html_content = f"""
-        # <div style="display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
-        #     <div style="text-align: center;">
-        #         <div style="font-size: 24px; font-weight: bold; margin-bottom: 20px;">
-        #             <img src='data:image/png;base64,{logo_base64}' alt="LearnLoop Logo" style="vertical-align: middle; margin-right: 10px;">
-        #         LearnLoop
-        #     </div>
-        #     <div style="font-size: 36px; margin-bottom: 20px;">Klinische Neuropsychologie</div>
-        #         <a href={href} style="display: inline-block; padding: 10px 20px; font-size: 18px; color: white; background-color: #4CAF50; border: none; border-radius: 10px; text-decoration: none; cursor: pointer;">UvA Login</a>
-        #     </div>
-        # </div>
-        # """
+            html_content = f"""
+            <div style="text-align: center; margin: 20px;">
+                <img src="data:image/png;base64,{logo_base64}" alt="Logo" style="max-width: 25%; height: auto; margin-bottom: 20px;">
+                <div style="font-size: 36px; margin-bottom: 20px;"><strong>{welcome_title}</strong></div>
+                <a href="{href}" target="_self" style="text-decoration: none;">
+                    <button style="font-size: 20px; border: none; color: white; padding: 10px 20px; 
+                    text-align: center; text-decoration: none; display: block; width: 100%; margin: 
+                    4px 0; cursor: pointer; background-color: #4CAF50; border-radius: 12px;">SURF Login</button>
+                </a>
+                <br>
+                <div style="padding: 5px; max-width: 400px; margin: 5px auto 0; border-radius: 12px; background-color: #f5f5f5;">
+                    <p style="font-size: 12px; margin: 10px 0; color: #333; text-align: left;">
+                        ⚠️ Om in te loggen met SURF, moet je eerst de uitnodiging accepteren die je per e-mail hebt ontvangen van SURF <br>
+                        (<i>Uitnodiging voor uva_fnwi_learnloop</i>).<br><br>Kun je de e-mail niet vinden? Controleer dan je spamfolder.<br><br>
+                        Staat de e-mail daar ook niet in? Stuur dan een bericht naar <br> <strong>+31 6 20192794</strong> met je volledige naam en je UvA e-mailadres.
+                    </p>
+                </div>
+            </div>"""
 
-        st.markdown(html_content, unsafe_allow_html=True)
+            st.markdown(html_content, unsafe_allow_html=True)
+            st.write("\n\n")
+            with st.expander("Admin login", expanded=False):
+                st.text_input("Credentials", key="streamlit_username")
+                if st.session_state.wrong_credentials:
+                    st.warning("Onjuiste credentials.")
+                st.button("Log in", use_container_width=True, on_click=try_login)
+
+    elif st.session_state.deployment_type == "streamlit_or_local":
+        print("Rendering login page: streamlit_or_local")
+        columns = st.columns([1, 0.7, 1])
+        with columns[1]:
+            img_cols = st.columns([1, 0.9, 1])
+            with img_cols[1]:
+                logo_path = f"{base_path}data/content/images/logo.png"
+                st.image(logo_path, use_column_width=True)
+            title_cols = st.columns([1, 0.5])
+            with title_cols[0]:
+                welcome_title = "Bouw en Bewegen"
+                st.title(welcome_title)
+            with title_cols[1]:
+                st.write("\n\n")
+                st.write("\n\n")
+                st.write("\n\n")
+                vu_logo_base64 = f"{base_path}data/content/images/vu_logo.png"
+                st.image(vu_logo_base64, use_column_width=True)
+
+            st.text_input("Gebruikersnaam", key="streamlit_username")
+            st.text_input("Wachtwoord", type="password", key="streamlit_password")
+
+            if st.session_state.wrong_credentials:
+                st.warning("Gebruikersnaam of wachtwoord is onjuist.")
+
+            st.button("Login", use_container_width=True, on_click=try_login)
 
 
 @st.cache_resource(show_spinner=False)
 def initialise_data_access_layer():
     db_dal = DatabaseAccess()
-    return db_dal, db_dal
+    return db_dal
 
 
 def determine_selected_module():
@@ -1736,6 +1822,18 @@ def determine_selected_module():
 
 
 def initialise_session_states():
+    if "use_LL_openai_deployment" not in st.session_state:
+        st.session_state.use_LL_openai_deployment = None
+
+    if "use_LL_cosmosdb" not in st.session_state:
+        st.session_state.use_LL_cosmosdb = None
+
+    if "use_keyvault" not in st.session_state:
+        st.session_state.use_keyvault = None
+
+    if "use_LL_blob_storage" not in st.session_state:
+        st.session_state.use_LL_blob_storage = None
+
     if "db" not in st.session_state:
         st.session_state.db = db_config.connect_db(
             use_LL_cosmosdb=st.session_state.use_LL_cosmosdb
@@ -1818,13 +1916,27 @@ def initialise_session_states():
     if "use_LL_blob_storage" not in st.session_state:
         st.session_state.use_LL_blob_storage = False
 
+    if "username" not in st.session_state:
+        st.session_state.username = None
+
+    if "deployment_type" not in st.session_state:
+        st.session_state.deployment_type = None
+
+    if "wrong_credentials" not in st.session_state:
+        st.session_state.wrong_credentials = False
+
+    if "logged_in" not in st.session_state:
+        st.session_state.logged_in = False
+
+    if "streamlit_username" not in st.session_state:
+        st.session_state.streamlit_username = None
+
+    if "streamlit_password" not in st.session_state:
+        st.session_state.streamlit_username = None
+
 
 def fetch_nonce_from_query():
     return st.query_params.get("nonce", None)
-
-
-def initialise_image_handler():
-    return ImageHandler()
 
 
 def determine_username_from_nonce():
@@ -1903,7 +2015,35 @@ def get_commandline_arguments() -> argparse.Namespace:
 
 def is_deployed_in_streamlit_cloud():
     # Check if the app is deployed in Streamlit Cloud by checking if the /mount directory exists
-    return os.path.exists("/mount")
+    return
+
+
+def is_running_locally():
+    return os.getenv("LOCAL_DEV", False)
+
+
+def set_correct_settings_for_deployment_type():
+    if "deployment_type" not in st.session_state:
+        st.session_state.deployment_type = None
+
+    # Set the correct arguments for the deployment type
+    if is_deployed_in_streamlit_cloud() or is_running_locally():
+        print("App is deployed in the cloud or runs locally, use cloud arguments.")
+        args.use_LL_blob_storage = True
+        args.use_LL_cosmosdb = True
+        args.use_LL_openai_deployment = True
+        args.debug = True
+        args.no_login_page = True
+        base_path = ""
+        deployment_type = "streamlit_or_local"
+    else:
+        print("App draait lokaal, gebruik lokale argumenten.")
+        base_path = "src/"
+        deployment_type = "uva"
+
+    st.session_state.deployment_type = deployment_type
+
+    return args, base_path
 
 
 if __name__ == "__main__":
@@ -1914,23 +2054,11 @@ if __name__ == "__main__":
     # SET ALL TO FALSE WHEN DEPLOYING
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     args = get_commandline_arguments()
-    set_global_exception_handler(
-        exception_handler, debug=args.debug
-    )  # set custom exception handler
+    # set_global_exception_handler(
+    #     exception_handler, debug=args.debug
+    # )
 
-    if is_deployed_in_streamlit_cloud():
-        print("App is gedeployed in de cloud, overschrijven van argumenten...")
-
-        # Overschrijf de argumenten die gelden voor de cloudomgeving
-        args.no_login_page = True
-        args.use_LL_blob_storage = True
-        args.use_LL_cosmosdb = True
-        args.use_LL_openai_deployment = True
-        args.debug = True
-        base_path = ""
-    else:
-        print("App draait lokaal, gebruik lokale argumenten.")
-        base_path = "src/"
+    args, base_path = set_correct_settings_for_deployment_type()
 
     # Turn on 'testing' to use localhost instead of learnloop.datanose.nl for authentication
     surf_test_env = args.surf_test_env
@@ -1961,16 +2089,17 @@ if __name__ == "__main__":
     no_login_page = args.no_login_page
     # ---------------------------------------------------------
 
+    db_dal = initialise_data_access_layer()
+
+    image_handler = ImageHandler()
+    utils = Utils()
+
+    db = db_config.connect_db(st.session_state.use_LL_cosmosdb)
+    initialise_session_states()
+
     # Create a mid column with margins in which everything one a
     # page is displayed (referenced to mid_col in functions)
     left_col, mid_col, right_col = st.columns([1, 3, 1])
-
-    db_dal, db_dal = initialise_data_access_layer()
-    db = db_config.connect_db(st.session_state.use_LL_cosmosdb)
-
-    initialise_session_states()
-    image_handler = initialise_image_handler()
-    utils = Utils()
 
     st.session_state.openai_client = connect_to_openai()
 
@@ -1986,16 +2115,26 @@ if __name__ == "__main__":
         st.session_state.username = test_username
 
     print(f"Username: {st.session_state.username}")
+    print(st.session_state.deployment_type)
+    print(f"Deployment type: {st.session_state.deployment_type}")
+    print(f"Logged in: {st.session_state.logged_in}")
+    print(f"No login page: {no_login_page}")
+
     # Login page renders if only if the user is not logged in
     if (
         no_login_page is False
-        and fetch_nonce_from_query() is None
-        and st.session_state.username is None
+        or
+        # When deployed in streamlit cloud, the fetch nonce function is not used
+        (st.session_state.deployment_type == "uva" and fetch_nonce_from_query() is None)
+        or st.session_state.username is None
+        or st.session_state.logged_in is False
     ):
+        print("Rendering login page")
         render_login_page()
 
     # Render the actual app when the username is determined
     else:
+        print("Rendering the app")
         check_user_doc_and_add_missing_fields()
 
         if st.session_state.warned is None:
