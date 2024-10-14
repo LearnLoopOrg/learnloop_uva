@@ -1901,6 +1901,11 @@ def get_commandline_arguments() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def is_deployed_in_streamlit_cloud():
+    # Check if the app is deployed in Streamlit Cloud by checking if the /mount directory exists
+    return os.path.exists("/mount")
+
+
 if __name__ == "__main__":
     # ---------------------------------------------------------
     # SETTINGS for DEVELOPMENT & DEPLOYMENT:
@@ -1912,6 +1917,17 @@ if __name__ == "__main__":
     set_global_exception_handler(
         exception_handler, debug=args.debug
     )  # set custom exception handler
+
+    if is_deployed_in_streamlit_cloud():
+        print("App is gedeployed in de cloud, overschrijven van argumenten...")
+
+        # Overschrijf de argumenten die gelden voor de cloudomgeving
+        args.no_login_page = True
+        args.use_LL_blob_storage = True
+        args.use_LL_cosmosdb = True
+        args.use_LL_openai_deployment = True
+    else:
+        print("App draait lokaal, gebruik lokale argumenten.")
 
     # Turn on 'testing' to use localhost instead of learnloop.datanose.nl for authentication
     surf_test_env = args.surf_test_env
