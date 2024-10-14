@@ -21,37 +21,37 @@ from utils.utils import Utils
 from utils.utils import AzureUtils
 from slack_sdk import WebClient
 
-# Huidige werkdirectory ophalen
-current_directory = os.getcwd()
-st.write(f"**Current Working Directory:** `{current_directory}`")
+# # Huidige werkdirectory ophalen
+# current_directory = os.getcwd()
+# st.write(f"**Current Working Directory:** `{current_directory}`")
 
 
-# Functie om de directorystructuur te genereren en weer te geven
-def get_directory_structure(startpath):
-    structure = []
-    for root, dirs, files in os.walk(startpath):
-        level = root.replace(startpath, "").count(os.sep)
-        indent = " " * 4 * level
-        structure.append(
-            f"{indent}📂 **{os.path.basename(root)}/**"
-        )  # Markeer directories met een folder icoon
-        subindent = " " * 4 * (level + 1)
-        for f in files:
-            structure.append(
-                f"{subindent}📄 {f}"
-            )  # Markeer bestanden met een bestand icoon
-    return "\n".join(structure)
+# # Functie om de directorystructuur te genereren en weer te geven
+# def get_directory_structure(startpath):
+#     structure = []
+#     for root, dirs, files in os.walk(startpath):
+#         level = root.replace(startpath, "").count(os.sep)
+#         indent = " " * 4 * level
+#         structure.append(
+#             f"{indent}📂 **{os.path.basename(root)}/**"
+#         )  # Markeer directories met een folder icoon
+#         subindent = " " * 4 * (level + 1)
+#         for f in files:
+#             structure.append(
+#                 f"{subindent}📄 {f}"
+#             )  # Markeer bestanden met een bestand icoon
+#     return "\n".join(structure)
 
 
-# Titel van de app
-st.title("Directory Structure Viewer")
+# # Titel van de app
+# st.title("Directory Structure Viewer")
 
-# Directorystructuur ophalen en weergeven
-startpath = os.getcwd()
-directory_structure = get_directory_structure(startpath)
+# # Directorystructuur ophalen en weergeven
+# startpath = os.getcwd()
+# directory_structure = get_directory_structure(startpath)
 
-# Weergeven van de directorystructuur in een codeblok voor betere leesbaarheid
-st.code(directory_structure, language="markdown")
+# # Weergeven van de directorystructuur in een codeblok voor betere leesbaarheid
+# st.code(directory_structure, language="markdown")
 
 # Must be called first
 st.set_page_config(page_title="LearnLoop", layout="wide")
