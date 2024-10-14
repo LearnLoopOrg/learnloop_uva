@@ -2,6 +2,7 @@ import streamlit as st
 from openai import AzureOpenAI
 import os
 from dotenv import load_dotenv
+import json
 
 load_dotenv()
 
@@ -31,125 +32,103 @@ class SamenvattenInDialoog:
         if "messages" not in st.session_state:
             st.session_state.messages = []
 
+        if "knowledge_levels" not in st.session_state:
+            st.session_state.knowledge_levels = {
+                "Introduction to Parkinson's": 3,
+                "Symptoms": 3,
+                "Diagnosis": 2,
+                "Treatment": 1,
+            }
+
     def display_chat_messages(self):
         """
-        Display chat messages in the Streamlit app.
+        Display chat messages (text or image) in the Streamlit app.
         """
         for message in st.session_state.messages:
-            with st.chat_message(
-                message["role"], avatar="🔵" if message["role"] == "assistant" else "🔘"
-            ):
-                st.markdown(message["content"])
+            if message["type"] == "text":
+                # Display text message
+                with st.chat_message(
+                    message["role"],
+                    avatar="🔵" if message["role"] == "assistant" else "🔘",
+                ):
+                    st.markdown(message["content"])
+            elif message["type"] == "image":
+                # Display image
+                with st.chat_message(
+                    message["role"],
+                    avatar="🔵" if message["role"] == "assistant" else "🔘",
+                ):
+                    st.image(message["content"])
 
     def add_to_assistant_responses(self, response):
-        """
-        Add the response message to the chat.
-        """
-        st.session_state.messages.append({"role": "assistant", "content": response})
+        st.session_state.messages.append(
+            {"role": "assistant", "content": response, "type": "text"}
+        )
+
+    def add_image_to_assistant_responses(self, image_path):
+        st.session_state.messages.append(
+            {"role": "assistant", "content": image_path, "type": "image"}
+        )
 
     def add_to_user_responses(self, user_input):
-        """
-        Add the user input to the chat.
-        """
-        st.session_state.messages.append({"role": "user", "content": user_input})
+        st.session_state.messages.append(
+            {"role": "user", "content": user_input, "type": "text"}
+        )
 
     def generate_assistant_response(self):
         """
         Generate a response from the assistant.
         """
-        samenvatting = """
-
-#### ## Zuur-Base Reactie
-- Een zuur doneert protonen (1 punt) aan een base (1 punt) tijdens de reactie (1 punt).
-
-#### ## Productie van Insuline en Glycogeen
-- De productie van insuline (1 punt) en glycogeen (1 punt) door de lever (1 punt).
-
-#### ## Watercyclus
-- **Verdamping:** Water verdampt uit oceanen en meren (1 punt).  
-- **Condensatie:** Waterdamp vormt wolken (1 punt).  
-- **Neerslag:** Water valt terug naar de aarde als regen of sneeuw (1 punt).  
-- **Infiltratie:** Water sijpelt de bodem in (1 punt).
-
-#### ## Fotosynthese
-- Fotosynthese vindt plaats in chloroplasten (1 punt) en gebruikt lichtenergie (1 punt) om kooldioxide (1 punt) en water (1 punt) om te zetten in glucose (1 punt) en zuurstof (1 punt).
-
-#### ## Nucleotiden
-- Nucleotiden bestaan uit een suiker (1 punt), een fosfaatgroep (1 punt) en een stikstofbase (1 punt).
-
-#### ## Circulatiesysteem
-- Het circulatiesysteem omvat het hart (1 punt), bloedvaten (1 punt) en bloed (1 punt).
-
-#### ## Celdeling
-- **Profase:** Chromosomen condenseren (1 punt).  
-- **Metafase:** Chromosomen lijnen zich op in het midden van de cel (1 punt).  
-- **Anafase:** Zusterchromatiden worden gescheiden (1 punt).  
-- **Telofase:** Kernomhulsels vormen zich rond de gescheiden chromatiden (1 punt).
-
-#### ## Genexpressie
-- **Stap 1:** DNA wordt omgezet in mRNA (1 punt).  
-- **Stap 2:** mRNA wordt gesponnen en bewerkt (1 punt).  
-- **Stap 3:** mRNA wordt vertaald naar een eiwit in het ribosoom (1 punt).  
-- **Stap 4:** Eiwit wordt gevouwen en geactiveerd (1 punt).
-
-#### ## Verschillen tussen Plantencellen en Diercellen
-- Plantencellen bevatten chloroplasten (1 punt), diercellen niet (1 punt).
-
-#### ## Enzymen
-- Enzymen versnellen chemische reacties (1 punt) door het verlagen van de activeringsenergie (1 punt).
-
-#### ## DNA
-- DNA bevat genetische informatie (1 punt) in de vorm van basenparen (1 punt) die coderingsinstructies (1 punt) leveren.
-
-#### ## Verschil tussen Prokaryoten en Eukaryoten
-- Prokaryoten hebben geen kern (1 punt), terwijl eukaryoten een goed gedefinieerde kern hebben (1 punt).
-
-#### ## Leverziekten
-- Leverziekten hebben weinig invloed (1 punt) op de spijsvertering (1 punt) en stofwisseling (1 punt).
-
-#### ## Anaërobe en Aerobe Ademhaling
-- Anaërobe ademhaling vindt plaats zonder zuurstof (1 punt), terwijl aerobe ademhaling zuurstof vereist (1 punt).
-
-#### ## Symptomen van Griep
-- **Hoge koorts** (1 punt).  
-- **Hoofdpijn** (1 punt).  
-- **Spierpijn** (1 punt).  
-- **Vermoeidheid** (1 punt).
-- **Keelpijn** (1 punt).
-
-"""
-        role_prompt = f"""
+        role_prompt_old = f"""
 Je gaat een socratische dialoog voeren met een student die een onderwerp probeert samen te vatten. De samenvatting die je moet begeleiden is opgedeeld in verschillende onderwerpen en subonderwerpen. Elk belangrijk element is voorzien van punten, die aangeven wat de student moet noemen om de volledige samenvatting goed te hebben. Je doel is om de student te helpen alle punten te benoemen, zonder deze direct voor te zeggen.
 
 **Hoe gebruik je de samenvatting tijdens het gesprek?**
 
 1. **Start met een algemene vraag:** Begin elk onderwerp door een brede vraag te stellen over dat onderwerp. Bijvoorbeeld: "Wat weet je over de zuur-base reactie?" Hierdoor stimuleer je de student om zijn huidige kennis uit te leggen.
 
-2. **Vergelijk de antwoorden:** Vergelijk het antwoord van de student met de punten in de samenvatting. Als de student één of meerdere punten correct benoemt, markeer je deze mentaal als 'behandeld'.
+2. **Vergelijk de antwoorden:** Vergelijk het antwoord van de student met de punten in de samenvatting. Als de student één of meerdere punten correct benoemt, noteer je deze als 'behandeld'.
 
 3. **Identificeer ontbrekende elementen:** Zodra je merkt dat bepaalde punten nog niet genoemd zijn, stel je vragen die de student naar deze ontbrekende elementen leiden. Begin met abstracte vragen en maak ze steeds concreter als de student de antwoorden niet meteen weet.
    - **Voorbeeld abstracte vraag:** "Hoe denk je dat een zuur reageert met een base in een reactie?"  
    - **Voorbeeld concretere vraag:** "Wat gebeurt er met de protonen tijdens de zuur-base reactie?"
 
-4. **Herhaal het proces:** Zodra alle punten voor een onderwerp besproken zijn, vraag dan of de student het onderwerp zou willen samenvatting in zijn eigen woorden. Daarna ga je door naar het volgende onderwerp in de samenvatting. Stel weer een brede vraag om te beginnen en werk op dezelfde manier totdat de student alle onderwerpen en punten heeft besproken.
+4. **Herhaal het proces:** Zodra alle punten voor een onderwerp besproken zijn, vraag dan of de student het onderwerp zou willen samenvatten in zijn eigen woorden. Daarna ga je door naar het volgende onderwerp in de samenvatting. Stel weer een brede vraag om te beginnen en werk op dezelfde manier totdat de student alle onderwerpen en punten heeft besproken.
 
 5. **Check je werk:** Vraag regelmatig aan de student of hij of zij denkt dat alle belangrijke punten besproken zijn. Indien nodig, geef een korte samenvatting van wat al behandeld is en vraag of er nog iets ontbreekt.
 
 6. **Sluit af:** Vraag de student aan het eind om een korte samenvatting te geven van alles wat besproken is. Bevestig dat de student nu alle punten van de samenvatting heeft geraakt.
 
-**Voorbeeld:**
+**Belangrijk:** Na elk antwoord van de student, structureer je jouw reactie in JSON format als volgt:
 
-Uitvoerder: "Wat weet je al over de watercyclus?"
+- **student_knowledge:** [Hier noteer je de correcte kennis die de student heeft gegeven, in volledige zinnen als een string.] Als er geen relevante kennis is, antwoord dan met lege string.
+- **response:** [Hier schrijf je jouw reactie terug naar de student om het gesprek voort te zetten als een string.]
 
-Student: "Water verdampt uit de oceanen en vormt wolken."
-
-Uitvoerder: "Goed, dat is de verdamping en condensatie. Wat gebeurt er daarna in de cyclus?" (student kan vervolgens verder praten over neerslag en infiltratie).
+**Geef geen extra tekst buiten deze twee velden.**
 
 ### Samenvatting:
-{samenvatting}
+{open("samenvatting.txt").read()}
 
 ### Gesprek met student:
 
+"""
+        role_prompt = f"""
+You will conduct a Socratic dialogue with a student who is trying to summarize a topic. Each topic has multiple levels of questions, with higher-level questions being more advanced. Your task is to:
+
+1. Ask the student an initial, broad question about the topic (e.g., "What do you know about Parkinson's?").
+2. Evaluate the student's response to determine which questions can be skipped based on their existing knowledge.
+3. For each question, track its status (either "not asked", "asked", or "done").
+4. If the student's response covers more advanced material, skip lower-level questions and mark them as "done".
+5. After each correct answer, increment the student's knowledge level for the current topic.
+6. Move to the next topic once all questions for the current topic are marked as "done".
+7. Provide your responses and updates in JSON format with the following structure:
+   - **student_knowledge:** [A string summarizing the student's correct knowledge based on their response.]
+   - **response:** [The next question or follow-up response as a string.]
+   - **question_status:** [A list of questions for the current topic, each with a status of either "not asked", "asked", or "done".]
+
+The list of questions for the current topic is as follows:
+{json.dumps(self.get_questions(topic), indent=2)}
+
+Conversation with the student:
 """
         stream = self.client.chat.completions.create(
             model=st.session_state.openai_model,
@@ -161,28 +140,198 @@ Uitvoerder: "Goed, dat is de verdamping en condensatie. Wat gebeurt er daarna in
                 ),
             ],
             stream=True,
+            response_format={"type": "json_object"},
         )
 
         return stream
 
+    def select_segments(self, student_knowledge_file, summary_file):
+        prompt = f"""
+        Gegeven is een tekstbestand met de kennis van de student en een samenvatting van het college. Jouw taak is om alleen de elementen uit de summary terug te geven die de student nog niet correct heeft genoemd. Deze segmenten moet je teruggeven in de volgorde waarin ze in de samenvatting voorkomen.
+        
+        ### Kennis van de student:
+        {open(student_knowledge_file).read()}
+
+        ### Samenvatting:
+        {open(summary_file).read()}
+
+        """
+        response = self.client.chat.completions.create(
+            model=st.session_state.openai_model,
+            messages=[
+                {"role": "system", "content": prompt},
+            ],
+            response_format={"type": "text"},
+        )
+
+        return response.choices[0].message.content
+
+    def get_next_incomplete_topic(self):
+        """
+        Get the next topic that still has unanswered questions.
+        """
+        for topic, questions in self.get_all_topics_with_questions().items():
+            if any(q["status"] != "done" for q in questions):
+                return topic
+        return None  # All topics are complete
+
     def handle_user_input(self):
-        """
-        Process user input and generate a response.
-        """
         if user_input := st.chat_input("Jouw antwoord"):
             self.add_to_user_responses(user_input)
+
+            # Display the user input in the chat
             with st.chat_message("user", avatar="🔘"):
                 st.markdown(f"{user_input}")
 
-            with st.chat_message("assistant", avatar="🔵"):
-                response = st.write_stream(self.generate_assistant_response())
-                self.add_to_assistant_responses(response)
+            if user_input.strip().upper() == "STOP":
+                # selected_segments = self.select_segments(
+                #     "student_knowledge.txt", "samenvatting.txt"
+                # )
+                selected_segments = "TEST"
 
-                if (
-                    st.session_state.messages[-1]["content"]
-                    == "Top! Laten we doorgaan naar de volgende fase."
-                ):
-                    st.write("Einde van de sessie. Bedankt voor het samenvatten!")
+                self.add_to_assistant_responses(
+                    f"### Samenvatting:\n\n{selected_segments}"
+                )
+                # Voeg een afbeelding toe aan de chatgeschiedenis (bijvoorbeeld een relevant diagram)
+                image_path = "test_image.jpg"  # Vervang dit door je eigen afbeelding
+                self.add_image_to_assistant_responses(image_path)
+                st.rerun()
+
+            else:
+                with st.chat_message("assistant", avatar="🔵"):
+                    # Get the response from the assistant using streaming
+                    response = st.write_stream(self.generate_assistant_response())
+                    response = response["choices"][0]["message"]["content"]
+                    json_response = json.loads(response)
+
+                    # Save the student's correct knowledge to file or state
+                    open("student_knowledge.txt", "a").write(
+                        json_response["student_knowledge"]
+                    )
+
+                    # Get the score and update knowledge level
+                    if "score" in json_response:
+                        score = json_response["score"]
+                        self.update_knowledge_level(
+                            st.session_state.current_topic, score
+                        )
+
+                    # Update the question status based on the response
+                    if "question_status" in json_response:
+                        for question in json_response["question_status"]:
+                            if question["status"] == "done":
+                                self.update_question_status(
+                                    st.session_state.current_topic,
+                                    question["question"],
+                                    "done",
+                                )
+
+                    # Check if the current topic is complete (all questions are "done")
+                    if all(
+                        q["status"] == "done" for q in json_response["question_status"]
+                    ):
+                        next_topic = self.get_next_incomplete_topic()
+                        if next_topic:
+                            st.session_state.current_topic = next_topic
+                            self.add_to_assistant_responses(f"Next topic: {next_topic}")
+
+                            # Ask the first question of the next topic
+                            first_question = self.get_question(
+                                next_topic,
+                                st.session_state.knowledge_levels[next_topic],
+                            )
+                            self.add_to_assistant_responses(first_question)
+                        else:
+                            self.add_to_assistant_responses("All topics complete!")
+                    else:
+                        # Ask the next question in the current topic
+                        next_question = self.get_question(
+                            st.session_state.current_topic,
+                            st.session_state.knowledge_levels[
+                                st.session_state.current_topic
+                            ],
+                        )
+                        self.add_to_assistant_responses(next_question)
+
+                    # Add the assistant's response to the conversation
+                    self.add_to_assistant_responses(json_response["response"])
+
+    def update_knowledge_level(topic, score):
+        current_score = st.session_state.knowledge_levels[topic]
+        if score > current_score:
+            st.session_state.knowledge_levels[topic] = score
+
+    def get_questions(self, topic):
+        questions = {
+            "Introduction to Parkinson's": [
+                {"question": "What is Parkinson's?", "status": None, "level": 1},
+                {
+                    "question": "Can you explain how Parkinson's develops?",
+                    "status": None,
+                    "level": 2,
+                },
+                {
+                    "question": "What is dopamine's role in Parkinson's disease?",
+                    "status": None,
+                    "level": 3,
+                },
+            ],
+            "Symptoms": [
+                {
+                    "question": "What are the main symptoms of Parkinson's?",
+                    "status": None,
+                    "level": 1,
+                },
+                {
+                    "question": "How do the symptoms of Parkinson's disease progress?",
+                    "status": None,
+                    "level": 2,
+                },
+                {
+                    "question": "What are the non-motor symptoms of Parkinson's?",
+                    "status": None,
+                    "level": 3,
+                },
+            ],
+            "Diagnosis": [
+                {
+                    "question": "How is Parkinson's disease diagnosed?",
+                    "status": None,
+                    "level": 1,
+                },
+                {
+                    "question": "What are the diagnostic criteria for Parkinson's?",
+                    "status": None,
+                    "level": 2,
+                },
+                {
+                    "question": "What tests are used to diagnose Parkinson's?",
+                    "status": None,
+                    "level": 3,
+                },
+            ],
+            "Treatment": [
+                {
+                    "question": "What are the treatment options for Parkinson's?",
+                    "status": None,
+                    "level": 1,
+                },
+                {
+                    "question": "How does medication help manage Parkinson's symptoms?",
+                    "status": None,
+                    "level": 2,
+                },
+                {
+                    "question": "What are the surgical treatments for Parkinson's?",
+                    "status": None,
+                    "level": 3,
+                },
+            ],
+        }
+        # return next(
+        #     (q["question"] for q in questions[topic] if q["level"] == level), None
+        # )
+        return questions.get(topic, [])
 
     def run(self):
         self.initialize_session_state()
@@ -196,7 +345,17 @@ Uitvoerder: "Goed, dat is de verdamping en condensatie. Wat gebeurt er daarna in
         self.display_chat_messages()
         self.handle_user_input()
 
+        with st.sidebar:
+            colors = {1: "red", 2: "orange", 3: "green"}
+            for topic, score in st.session_state.knowledge_levels.items():
+                color = colors[score]
+                st.markdown(
+                    f'<span style="color:{color}">{topic}</span>',
+                    unsafe_allow_html=True,
+                )
+
 
 if __name__ == "__main__":
+    open("student_knowledge.txt", "w").close()
     probleemstelling = SamenvattenInDialoog()
     probleemstelling.run()
