@@ -21,28 +21,37 @@ from utils.utils import Utils
 from utils.utils import AzureUtils
 from slack_sdk import WebClient
 
+# Huidige werkdirectory ophalen
 current_directory = os.getcwd()
-print(f"CURRENT WORKING DIRECTORY: {current_directory}")
-st.write(f"CURRENT WORKING DIRECTORY: {current_directory}")
+st.write(f"**Current Working Directory:** `{current_directory}`")
 
 
-def print_directory_structure(startpath):
-    structure = ""
+# Functie om de directorystructuur te genereren en weer te geven
+def get_directory_structure(startpath):
+    structure = []
     for root, dirs, files in os.walk(startpath):
         level = root.replace(startpath, "").count(os.sep)
         indent = " " * 4 * level
-        structure += f"{indent}{os.path.basename(root)}/\n"
+        structure.append(
+            f"{indent}📂 **{os.path.basename(root)}/**"
+        )  # Markeer directories met een folder icoon
         subindent = " " * 4 * (level + 1)
         for f in files:
-            structure += f"{subindent}{f}\n"
-    return structure
+            structure.append(
+                f"{subindent}📄 {f}"
+            )  # Markeer bestanden met een bestand icoon
+    return "\n".join(structure)
 
 
+# Titel van de app
 st.title("Directory Structure Viewer")
-startpath = os.getcwd()
-structure = print_directory_structure(startpath)
-st.write(structure)
 
+# Directorystructuur ophalen en weergeven
+startpath = os.getcwd()
+directory_structure = get_directory_structure(startpath)
+
+# Weergeven van de directorystructuur in een codeblok voor betere leesbaarheid
+st.code(directory_structure, language="markdown")
 
 # Must be called first
 st.set_page_config(page_title="LearnLoop", layout="wide")
