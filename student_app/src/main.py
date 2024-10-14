@@ -25,6 +25,25 @@ current_directory = os.getcwd()
 print(f"CURRENT WORKING DIRECTORY: {current_directory}")
 st.write(f"CURRENT WORKING DIRECTORY: {current_directory}")
 
+
+def print_directory_structure(startpath):
+    structure = ""
+    for root, dirs, files in os.walk(startpath):
+        level = root.replace(startpath, "").count(os.sep)
+        indent = " " * 4 * level
+        structure += f"{indent}{os.path.basename(root)}/\n"
+        subindent = " " * 4 * (level + 1)
+        for f in files:
+            structure += f"{subindent}{f}\n"
+    return structure
+
+
+st.title("Directory Structure Viewer")
+startpath = os.getcwd()
+structure = print_directory_structure(startpath)
+st.write(structure)
+
+
 # Must be called first
 st.set_page_config(page_title="LearnLoop", layout="wide")
 
