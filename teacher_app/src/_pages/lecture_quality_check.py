@@ -35,6 +35,7 @@ class QualityCheck:
                     print(f"Warning: segment index {idx} is out of range")
 
         st.session_state.segments_in_qualitycheck = self.segments
+        st.session_state.topics_in_qualitycheck = self.topics
 
     def run(self):
         self.init_segments_on_module_switch()
@@ -43,26 +44,58 @@ class QualityCheck:
         self.db_dal.update_last_phase("quality_check")
         self.display_header()
         self.display_segments()
+        self.display_sidebar()
         self.display_save_buttons()
         self.scroll_to_segment()
+
+    def display_sidebar(self):
+        with st.sidebar:
+            st.html("""
+                <div style="border-top: 2px solid grey; padding: 10px 10px 0px 10px; margin-bottom: -25px">
+                    <p><i>🔗 Klik op een onderwerp om direct er naartoe te navigeren.</i></p>
+                </div>
+                    """)
+            for i, topic in enumerate(st.session_state.topics_in_qualitycheck):
+                topic_title = topic["topic_title"]
+                st.html(f"""
+                    <a href="#{topic_title}" style="color: black; text-decoration: none;">
+                        →  {topic_title}
+                    </a>
+                """)
 
     def init_segments_on_module_switch(self):
         if st.session_state.selected_module != st.session_state.previous_module:
             self._initialise_segments_in_qualitycheck()
 
     def display_save_buttons(self):
-        if st.button("Tussentijds opslaan", use_container_width=True):
+        st.write("---")
+        st.write(
+            "_Klik op **Tussentijds opslaan** om later terug te kunnen komen bij de kwaliteitscheck; Wanneer je op **Definitief opslaan** drukt, zal het leertraject beschikbaar komen voor de studenten (en worden alle items gemarkeerd voor verwijderen worden **definitief** verwijderd)._"
+        )
+        if st.button("💾 Tussentijds opslaan", use_container_width=True):
             self.save_updates(draft_correction=True, save_to_db=True)
             st.success("Voortgang opgeslagen.")
 
-        if st.button("Definitief opslaan", use_container_width=True):
+        if st.button(
+            "📁 Definitief opslaan",
+            use_container_width=True,
+        ):
             self.save_updates(draft_correction=False, save_to_db=True)
             st.session_state.selected_phase = "lectures"
             st.rerun()
 
     def display_segments(self):
         segments = st.session_state.segments_in_qualitycheck
+        previous_topic_title = None
+
         for segment_id, segment in enumerate(segments):
+            current_topic_title = segment.get("topic_title", "")
+            if current_topic_title != previous_topic_title:
+                st.header(
+                    f"{current_topic_title}",
+                    anchor=current_topic_title,
+                )
+                previous_topic_title = current_topic_title
             with st.container(border=True):
                 st.markdown(
                     f'<div id="segment_{segment_id}"></div>', unsafe_allow_html=True
@@ -73,22 +106,58 @@ class QualityCheck:
         self.display_segment_content(segment_id, segment)
         flagged_for_deletion = segment.get("flagged_for_deletion")
 
-        if segment.get("flagged_for_deletion"):
-            st.warning("Dit segment is gemarkeerd voor verwijdering.")
-
         if segment.get("image"):
+            image_flagged_for_deletion = segment.get("image_flagged_for_deletion")
             self.image_handler.render_image(segment, max_height=300)
+            if segment.get("image_flagged_for_deletion"):
+                st.warning("Deze **afbeelding** is gemarkeerd voor verwijdering.")
+            if segment.get("flagged_for_deletion"):
+                st.warning("Dit **segment** is gemarkeerd voor verwijdering.")
+            delete_image_button_key = f"delete_image_button_{segment_id}"
+            if not image_flagged_for_deletion and segment.get("image"):
+                if st.button(
+                    "Verwijder afbeelding",
+                    key=delete_image_button_key,
+                    use_container_width=True,
+                ):
+                    st.session_state.segments_in_qualitycheck[segment_id][
+                        "image_flagged_for_deletion"
+                    ] = True
+                    st.session_state.last_deleted_segment_id = segment_id
+                    st.rerun()
+            elif segment.get("image"):
+                if st.button(
+                    "Verwijder afbeelding ongedaan maken",
+                    key=delete_image_button_key,
+                    use_container_width=True,
+                ):
+                    del st.session_state.segments_in_qualitycheck[segment_id][
+                        "image_flagged_for_deletion"
+                    ]
+                    st.session_state.last_deleted_segment_id = segment_id
+                    st.rerun()
+
         # Add Delete/Undo Delete button
         delete_button_key = f"delete_button_{segment_id}"
+
+        # Handle the case when the segment is flagged for deletion, but the segment has no image
+        if not segment.get("image") and flagged_for_deletion:
+            st.warning("Dit **segment** is gemarkeerd voor verwijdering.")
         if not flagged_for_deletion:
-            if st.button("Verwijderen", key=delete_button_key):
+            if st.button(
+                "Verwijder segment", key=delete_button_key, use_container_width=True
+            ):
                 st.session_state.segments_in_qualitycheck[segment_id][
                     "flagged_for_deletion"
                 ] = True
                 st.session_state.last_deleted_segment_id = segment_id
                 st.rerun()
         else:
-            if st.button("Verwijderen ongedaan maken", key=delete_button_key):
+            if st.button(
+                "Segment verwijderen ongedaan maken",
+                key=delete_button_key,
+                use_container_width=True,
+            ):
                 del st.session_state.segments_in_qualitycheck[segment_id][
                     "flagged_for_deletion"
                 ]
@@ -105,7 +174,7 @@ class QualityCheck:
             self.display_MC_question(segment_id, segment)
 
     def display_theory_segment(self, segment_id, segment):
-        st.markdown("##### Theorie")
+        st.markdown("##### 📖 Theorie")
         # st.subheader("Theorie")
         title_key = f"segment_{segment_id}_title"
         text_key = f"segment_{segment_id}_text"
@@ -116,14 +185,14 @@ class QualityCheck:
             on_change=self.save_updates(draft_correction=True, save_to_db=False),
         )
         st.text_area(
-            "Theorie",
+            "Tekst",
             value=segment.get("text", ""),
             key=text_key,
             on_change=self.save_updates(draft_correction=True, save_to_db=False),
         )
 
     def display_question_segment(self, segment_id, segment):
-        st.markdown("##### Open vraag")
+        st.markdown("##### ❓ Open vraag")
         question_key = f"segment_{segment_id}_question"
         answer_key = f"segment_{segment_id}_answer"
         st.text_area(
@@ -140,7 +209,7 @@ class QualityCheck:
         )
 
     def display_MC_question(self, segment_id, segment):
-        st.markdown("##### Meerkeuzevraag")
+        st.markdown("##### ❓ Meerkeuzevraag")
         question_key = f"segment_{segment_id}_question"
         correct_answer_key = f"segment_{segment_id}_correct_answer"
         wrong_answers_key = f"segment_{segment_id}_wrong_answers"
@@ -158,7 +227,7 @@ class QualityCheck:
             on_change=self.save_updates(draft_correction=True, save_to_db=False),
         )
         st.text_area(
-            "Foute antwoord(en)",
+            "Foute antwoord(en), scheid de opties een nieuwe regel",
             value="\n".join(segment.get("answers").get("wrong_answers")),
             key=wrong_answers_key,
             on_change=self.save_updates(draft_correction=True, save_to_db=False),
@@ -171,6 +240,9 @@ class QualityCheck:
         for segment_id, segment in enumerate(segments):
             if not draft_correction and segment.get("flagged_for_deletion"):
                 continue
+            if not draft_correction and segment.get("image_flagged_for_deletion"):
+                del segment["image_flagged_for_deletion"]
+                segment["image"] = None
             segment_type = segment["type"]
             if segment_type == "theory":
                 title_key = f"segment_{segment_id}_title"
@@ -313,7 +385,6 @@ class QualityCheck:
 
     def scroll_to_segment(self):
         if "last_deleted_segment_id" in st.session_state:
-            print(f"Scrolling to segment {st.session_state.last_deleted_segment_id}")
             segment_id = st.session_state.last_deleted_segment_id
             # Inject JavaScript to scroll to the element after a 10-second delay
             js = """
