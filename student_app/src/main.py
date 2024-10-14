@@ -2060,22 +2060,19 @@ def set_correct_settings_for_deployment_type():
         st.session_state.deployment_type = None
 
     # Set the correct arguments for the deployment type
-    # if is_deployed_in_streamlit_cloud() or is_running_locally():
-    #     print("App is deployed in the cloud or runs locally, use cloud arguments.")
-    #     args.use_LL_blob_storage = True
-    #     args.use_LL_cosmosdb = True
-    #     args.use_LL_openai_deployment = True
-    #     args.debug = True
-    #     args.no_login_page = False
-    #     base_path = ""
-    #     deployment_type = "streamlit_or_local"
-    # elif st.session_state.deployment_type == "uva":
-    #     print("App draait lokaal, gebruik lokale argumenten.")
-    #     base_path = "src/"
-    #     deployment_type = "uva"
-
-    base_path = "src/"
-    deployment_type = "uva"
+    if is_deployed_in_streamlit_cloud() or is_running_locally():
+        print("App is deployed in the cloud or runs locally, use cloud arguments.")
+        args.use_LL_blob_storage = True
+        args.use_LL_cosmosdb = True
+        args.use_LL_openai_deployment = True
+        args.debug = True
+        args.no_login_page = False
+        base_path = "student_app/src/"
+        deployment_type = "streamlit_or_local"
+    elif st.session_state.deployment_type == "uva":
+        print("App draait lokaal, gebruik lokale argumenten.")
+        base_path = "src/"
+        deployment_type = "uva"
 
     st.session_state.deployment_type = deployment_type
 
@@ -2095,7 +2092,6 @@ if __name__ == "__main__":
     # )
 
     args, base_path = set_correct_settings_for_deployment_type()
-    st.session_state.deployment_type = "uva"
 
     # Turn on 'testing' to use localhost instead of learnloop.datanose.nl for authentication
     surf_test_env = args.surf_test_env
