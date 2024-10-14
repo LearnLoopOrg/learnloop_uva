@@ -131,7 +131,7 @@ def evaluate_answer(max_retries=3):
 
     # Lees de role prompt uit een bestand
     with open(
-        f"{base_path}/assets/prompts/direct_feedback_prompt.txt", "r", encoding="utf-8"
+        f"{base_path}assets/prompts/direct_feedback_prompt.txt", "r", encoding="utf-8"
     ) as f:
         role_prompt = f.read()
     attempt = 0
@@ -1408,7 +1408,7 @@ def render_LLM_info_page():
     """
     Renders the info page that contains the explanation of the learning and practice phases.
     """
-    with open(f"{base_path}/data/uitleg_llms_voor_student.txt", "r") as f:
+    with open(f"{base_path}data/uitleg_llms_voor_student.txt", "r") as f:
         info_page = f.read()
     with mid_col:
         st.markdown(info_page, unsafe_allow_html=True)
@@ -1472,7 +1472,7 @@ def render_feedback_form():
 
 def render_info_page():
     """Renders the info page that contains the explanation of the learning and practice phases."""
-    with open(f"{base_path}/data/uitleg_llms_voor_student.txt", "r") as f:
+    with open(f"{base_path}data/uitleg_llms_voor_student.txt", "r") as f:
         info_page = f.read()
     with mid_col:
         st.markdown(info_page, unsafe_allow_html=True)
@@ -1526,7 +1526,7 @@ def render_sidebar():
 
     with st.sidebar:
         st.image(
-            f"{base_path}/data/content/images/logo.png",
+            f"{base_path}data/content/images/logo.png",
             use_column_width=False,
             width=150,
         )
@@ -1681,7 +1681,7 @@ def render_login_page():
     columns = st.columns([1, 0.9, 1])
     with columns[1]:
         welcome_title = "Klinische Neuropsychologie"
-        logo_base64 = convert_image_base64(f"{base_path}/data/content/images/logo.png")
+        logo_base64 = convert_image_base64(f"{base_path}data/content/images/logo.png")
 
         if surf_test_env:
             href = "http://localhost:3000/"
@@ -1926,10 +1926,11 @@ if __name__ == "__main__":
         args.use_LL_blob_storage = True
         args.use_LL_cosmosdb = True
         args.use_LL_openai_deployment = True
-        base_path = "."
+        args.debug = True
+        base_path = ""
     else:
         print("App draait lokaal, gebruik lokale argumenten.")
-        base_path = "./src"
+        base_path = "src/"
 
     # Turn on 'testing' to use localhost instead of learnloop.datanose.nl for authentication
     surf_test_env = args.surf_test_env
