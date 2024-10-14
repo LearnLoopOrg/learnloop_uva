@@ -5,7 +5,6 @@
         "questions": [
             {
                 "question": "What is Parkinson's?",
-                "image": "test_image.jpg",
                 "status": "done",
                 "level": 1,
                 "score": "2/2",
@@ -13,6 +12,7 @@
             },
             {
                 "question": "Can you explain how Parkinson's develops?",
+                "image": "test_image.jpg",
                 "status": "done",
                 "level": 2,
                 "score": "3/3",
@@ -66,12 +66,12 @@
         "status": "diagnosed"
     },
     "Diagnosis": {
-        "student_knowledge": "De student begrijpt dat er geen specifieke diagnose test is voor Parkinson en dat het vaak pas in een vergevorderd stadium duidelijk wordt.",
-        "response": "Goed, je hebt correct vermeld dat er geen specifieke diagnose test is voor Parkinson. Laten we dieper ingaan op de diagnosecriteria. Wat weet je over de specifieke symptomen die artsen kijken voor tijdens de diagnose?",
+        "response": "Ik zie dat je een foto hebt gedeeld. Het lijkt alsof je liever verder wil gaan met een ander onderwerp, maar laten we eerst deze laatste vraag over Parkinson's beantwoorden, zodat we dit onderwerp volledig kunnen afronden. Kun je een poging doen om te beantwoorden hoe artsen de voortgang van Parkinson's meten?",
+        "student_knowledge": "De student weet nog niet hoe de voortgang van Parkinson's wordt gemeten.",
         "questions": [
             {
                 "question": "How is Parkinson's disease diagnosed?",
-                "status": "asked",
+                "status": "done",
                 "level": 1,
                 "score": "1/4",
                 "answer": "Parkinson's is diagnosed based on observed symptoms (1 punt), personal health history (1 punt), and a neurological assessment (1 punt), as there isn't a single test to confirm the condition (1 punt).",
@@ -81,18 +81,30 @@
             },
             {
                 "question": "What are the diagnostic criteria for Parkinson's?",
-                "status": "not asked",
+                "status": "done",
                 "level": 2,
-                "score": "0/4",
+                "score": "2/4",
                 "answer": "The diagnostic criteria involve having two or more movement-related symptoms (1 punt), improvement with dopamine medication (1 punt), and excluding other possible causes (1 punt) for the symptoms (1 punt).",
-                "student_answer": []
+                "student_answer": [
+                    "iets met trillende patienten."
+                ]
             },
             {
                 "question": "What tests are used to diagnose Parkinson's?",
-                "status": "not asked",
+                "status": "done",
                 "level": 3,
-                "score": "0/4",
+                "score": "3/4",
                 "answer": "There are no specific tests for Parkinson's (1 punt), but imaging techniques like DaT scans (1 punt) may be used to check dopamine function (1 punt) and rule out other conditions (1 punt).",
+                "student_answer": [
+                    "Die zijn er dus niet echt"
+                ]
+            },
+            {
+                "question": "How is the progression of Parkinson's measured?",
+                "status": "asked",
+                "level": 2,
+                "score": "0/3",
+                "answer": "The progression of Parkinson's is measured through clinical evaluations (1 punt), monitoring symptoms over time (1 punt), and using specific scales like the Unified Parkinson's Disease Rating Scale (UPDRS) (1 punt).",
                 "student_answer": []
             }
         ],

@@ -3,6 +3,7 @@ from openai import AzureOpenAI
 import os
 from dotenv import load_dotenv
 import json
+import base64
 
 load_dotenv()
 
@@ -41,39 +42,48 @@ class SamenvattenInDialoog:
         Display chat messages (text or image) in the Streamlit app.
         """
         for message in st.session_state.messages:
-            if message["type"] == "text":
-                # Display text message
-                with st.chat_message(
-                    message["role"],
-                    avatar="🔵" if message["role"] == "assistant" else "🔘",
-                ):
-                    st.markdown(message["content"])
-            elif message["type"] == "image":
-                # Display image
-                with st.chat_message(
-                    message["role"],
-                    avatar="🔵" if message["role"] == "assistant" else "🔘",
-                ):
-                    st.image(message["content"])
+            with st.chat_message(
+                message["role"],
+                avatar="🔵" if message["role"] == "assistant" else "🔘",
+            ):
+                st.markdown(message["content"])
+                if "image" in message:
+                    st.image(open(message["image"], "rb").read())
 
-    def add_to_assistant_responses(self, response):
+    def add_to_assistant_responses(self, response, image_path):
         # Hash the response to avoid duplicates in the chat
         message_id = hash(response)
         if message_id not in st.session_state.message_ids:
-            st.session_state.messages.append(
-                {"role": "assistant", "content": response, "type": "text"}
-            )
-        st.session_state.message_ids.append(message_id)
+            st.session_state.message_ids.append(message_id)
 
-    def add_image_to_assistant_responses(self, image_path):
-        st.session_state.messages.append(
-            {"role": "assistant", "content": image_path, "type": "image"}
-        )
+            if image_path:
+                image_id = hash(image_path)
+                if image_id not in st.session_state.message_ids:
+                    st.session_state.messages.append(
+                        {
+                            "role": "assistant",
+                            "content": response,
+                            "image": image_path,
+                        }
+                    )
+            else:
+                st.session_state.messages.append(
+                    {
+                        "role": "assistant",
+                        "content": response,
+                    }
+                )
 
     def add_to_user_responses(self, user_input):
-        st.session_state.messages.append(
-            {"role": "user", "content": user_input, "type": "text"}
-        )
+        st.session_state.messages.append({"role": "user", "content": user_input})
+
+    def encode_image_to_base64(self, image_path):
+        """Leest een afbeelding in en encodeert deze naar base64."""
+        if image_path:
+            with open(image_path, "rb") as image_file:
+                return base64.b64encode(image_file.read()).decode("utf-8")
+
+        return None
 
     def generate_assistant_response(self, topic):
         example_output_diagnosed = {
@@ -204,6 +214,8 @@ The JSON response must include the following fields:
 
 Always react with a new question or feedback based on the student's response. Continue until all questions are answered correctly. If the student has answered a question correctly, move on to the next unanswered question and directly ask it after soliciting the student's response to the previous question.
 
+Never return your old response, always provide a new one based on the student's answer.
+
 Example JSON response:
 {example_output_diagnosed}
 
@@ -225,10 +237,28 @@ Conversation history:
             model="LLgpt-4o",
             messages=[
                 {"role": "system", "content": instructions},
-                *(
-                    {"role": m["role"], "content": m["content"]}
+                *[
+                    # Voeg het tekstbericht toe
+                    {
+                        "role": m["role"],
+                        "content": [{"type": "text", "text": m["content"]}],
+                    }
                     for m in st.session_state.messages
-                ),
+                ]
+                + [
+                    # Voeg een apart bericht toe voor de afbeelding, als die er is
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "image_url",
+                                "image": self.encode_image_to_base64(m["image"]),
+                            }
+                        ],
+                    }
+                    for m in st.session_state.messages
+                    if m.get("image")
+                ],
             ],
             stream=False,
             response_format={"type": "json_object"},
@@ -251,7 +281,27 @@ Conversation history:
             next_topic = self.get_next_incomplete_topic()
             if next_topic:
                 st.session_state.current_topic = next_topic
-                self.get_next_incomplete_topic()
+            else:
+                st.write("Alle onderwerpen zijn voltooid!")
+
+    def get_next_question_with_image(self, file_path="questions.json"):
+        # Openen en inlezen van de JSON-file
+        with open(file_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        # Doorloop de content en zoek naar de vraag met een scorebreuk
+        for topic, content in data.items():
+            questions = content.get("questions", [])
+            for question in questions:
+                score = question.get("score", "")
+                # Check of de score een breuk is (dus niet gelijk zoals 1/1, 2/2 etc.)
+                if "/" in score:
+                    score_parts = score.split("/")
+                    if score_parts[0] != score_parts[1]:  # Score breuk nog niet gelijk
+                        image = question.get("image")
+                        if image:  # Check of er een afbeelding aanwezig is
+                            return image  # Retourneer het pad van de afbeelding
+        return None  # Geen afbeelding gevonden
 
     def handle_user_input(self):
         if user_input := st.chat_input("Jouw antwoord"):
@@ -266,6 +316,10 @@ Conversation history:
                 # response = st.write_stream(
                 #     self.generate_assistant_response(st.session_state.current_topic)
                 # )
+                # Render image if available
+                if image_path := self.get_next_question_with_image():
+                    st.image(image_path)
+
                 response = self.generate_assistant_response(
                     st.session_state.current_topic
                 )
@@ -276,33 +330,11 @@ Conversation history:
             question_data = self.get_questions()[st.session_state.current_topic]
             question_data["questions"] = json_response
 
-            # Display assistant's response
-            self.add_to_assistant_responses(json_response["response"])
+            self.update_question_data(json_response)
 
-            # Check and update question statuses
-            if "question_status" in json_response:
-                for question in json_response["question_status"]:
-                    question_status = question.get("status", "not asked")
-                    # Mark questions as "done" if they were successfully answered
-                    if question_status == "done":
-                        self.update_question_status(
-                            st.session_state.current_topic,
-                            question["question"],
-                            "done",
-                        )
-
-                    if question_status == "not asked":
-                        self.update_question_status(
-                            st.session_state.current_topic,
-                            question["question"],
-                            "not asked",
-                        )
+            self.add_to_assistant_responses(json_response["response"], image_path)
 
             self.update_current_topic(question_data)
-
-            self.add_to_assistant_responses(json_response["response"])
-
-            self.update_question_data(json_response)
 
     def update_question_data(self, json_response):
         question_data = self.get_questions()
@@ -344,7 +376,7 @@ Conversation history:
                 elif 25 < completion_percentage <= 70:
                     color = "orange"
                 elif 70 < completion_percentage < 100:
-                    color = "yellow"
+                    color = "orange"
                 elif completion_percentage == 100:
                     color = "green"
 
@@ -397,11 +429,8 @@ Conversation history:
 
         st.title("Parkinson's - Samenvatten in dialoog")
 
-        if st.session_state.messages == []:
-            intro_text = "We gaan samen de belangrijkste punten van het college samenvatten. Zullen we beginnen?"
-            self.add_to_assistant_responses(intro_text)
-
         self.display_chat_messages()
+
         self.handle_user_input()
 
         self.render_sidebar()
