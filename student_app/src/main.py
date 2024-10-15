@@ -2025,7 +2025,7 @@ def is_running_locally():
 
 def set_correct_settings_for_deployment_type():
     if "deployment_type" not in st.session_state:
-        st.session_state.deployment_type = None
+        st.session_state.deployment_type = "uva"
 
     # Set the correct arguments for the deployment type
     if is_deployed_in_streamlit_cloud() or is_running_locally():
