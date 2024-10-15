@@ -163,7 +163,6 @@ class DatabaseAccess:
 
     def fetch_module_content(self, module):
         page_content = self.db.content.find_one({"lecture_name": module})
-        print(f"\n\nModule to fetch: {module}\n\n")
         return page_content["corrected_lecturepath_content"] if page_content else None
 
     def fetch_module_topics(self, module):

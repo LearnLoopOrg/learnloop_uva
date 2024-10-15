@@ -1602,7 +1602,6 @@ def create_empty_progress_dict(module):
 
 def fetch_module_status(module_name):
     lecture = db.content.find_one({"lecture_name": module_name})
-    print(f"Fetching status for module {module_name}")
 
     if lecture:
         return lecture["status"]
@@ -1619,7 +1618,6 @@ def check_user_doc_and_add_missing_fields():
     """
     print("Checking user doc and adding missing fields")
     user_doc = db_dal.find_user_doc()
-    print(f"user_doc before insert one: {user_doc}")
     if not user_doc:
         db.users.insert_one({"username": st.session_state.username})
         user_doc = db_dal.find_user_doc()
@@ -1696,6 +1694,7 @@ def convert_image_base64(image_path):
 
 
 def try_login():
+    print("\n\nTRY LOGIN\n\n")
     st.session_state.wrong_credentials = False
     # Checks if the user is in the list below
     input_username = st.session_state.streamlit_username
@@ -1717,6 +1716,7 @@ def try_login():
         print("Logged in as UvA student with username: ", input_username)
         # Print list of collections in db
         print("Collections in db: ", st.session_state.db.list_collection_names())
+        print(f"WRONG CREDENTIALS?: {st.session_state.wrong_credentials}")
 
     elif input_username in vu_users:
         if vu_users[input_username] == st.session_state.streamlit_password:
@@ -1774,10 +1774,10 @@ def render_login_page():
             st.markdown(html_content, unsafe_allow_html=True)
             st.write("\n\n")
             with st.expander("Admin login", expanded=False):
-                st.text_input("Credentials", key="streamlit_username")
+                st.text_input("Credentials", key="streamlit_username", type="password")
                 if st.session_state.wrong_credentials:
                     st.warning("Onjuiste credentials.")
-                st.button("Log in", use_container_width=True, on_click=try_login)
+                st.button("Log in", on_click=try_login)
 
     elif st.session_state.deployment_type == "streamlit_or_local":
         print("Rendering login page: streamlit_or_local")
@@ -2024,8 +2024,7 @@ def is_running_locally():
 
 
 def set_correct_settings_for_deployment_type():
-    if "deployment_type" not in st.session_state:
-        st.session_state.deployment_type = "uva"
+    st.session_state.deployment_type = "uva"
 
     # Set the correct arguments for the deployment type
     if is_deployed_in_streamlit_cloud() or is_running_locally():
@@ -2038,7 +2037,7 @@ def set_correct_settings_for_deployment_type():
         base_path = "student_app/src/"
         deployment_type = "streamlit_or_local"
     elif st.session_state.deployment_type == "uva":
-        print("App draait lokaal, gebruik lokale argumenten.")
+        print("App draait op uva servers, gebruik uva path.")
         base_path = "src/"
         deployment_type = "uva"
 
