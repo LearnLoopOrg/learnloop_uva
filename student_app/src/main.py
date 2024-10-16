@@ -1616,7 +1616,6 @@ def check_user_doc_and_add_missing_fields():
     """
     Initializes the user database with missing fields and modules.
     """
-    print("Checking user doc and adding missing fields")
     user_doc = db_dal.find_user_doc()
     if not user_doc:
         db.users.insert_one({"username": st.session_state.username})
@@ -1694,7 +1693,6 @@ def convert_image_base64(image_path):
 
 
 def try_login():
-    print("\n\nTRY LOGIN\n\n")
     st.session_state.wrong_credentials = False
     # Checks if the user is in the list below
     input_username = st.session_state.streamlit_username
@@ -1704,7 +1702,6 @@ def try_login():
         "eensupergeheimecode": None,
     }
     vu_users = {"anderecode": None}
-    print(f"USERNAME: {input_username}")
     if input_username in uva_users:
         st.session_state.username = input_username
         st.session_state.logged_in = True
@@ -1712,11 +1709,6 @@ def try_login():
             use_LL_cosmosdb=st.session_state.use_LL_cosmosdb,
             database_name="UvA_KNP",
         )
-        st.session_state.admin_login = True
-        print("Logged in as UvA student with username: ", input_username)
-        # Print list of collections in db
-        print("Collections in db: ", st.session_state.db.list_collection_names())
-        print(f"WRONG CREDENTIALS?: {st.session_state.wrong_credentials}")
 
     elif input_username in vu_users:
         if vu_users[input_username] == st.session_state.streamlit_password:
@@ -1726,8 +1718,6 @@ def try_login():
                 use_LL_cosmosdb=st.session_state.use_LL_cosmosdb,
                 database_name="VU_Bouw_en_Bewegen",
             )
-            print("Logged in as VU student with username: ", input_username)
-            print("COLLECTIONS in db: ", st.session_state.db.list_collection_names())
 
     else:
         st.session_state.wrong_credentials = True
@@ -1736,12 +1726,9 @@ def try_login():
 def render_login_page():
     """This is the first page the user sees when visiting the website and
     prompts the user to login via SURFconext."""
-    print(
-        f"Deployment_type when rendering login page: {st.session_state.deployment_type}"
-    )
-
     if st.session_state.deployment_type == "uva":
         st.session_state.logged_in = True
+
         columns = st.columns([1, 0.9, 1])
         with columns[1]:
             welcome_title = "Klinische Neuropsychologie"
@@ -1822,9 +1809,6 @@ def determine_selected_module():
 
 
 def initialise_session_states():
-    if "admin_login" not in st.session_state:
-        st.session_state.admin_login = False
-
     if "use_LL_openai_deployment" not in st.session_state:
         st.session_state.use_LL_openai_deployment = None
 
@@ -2107,40 +2091,24 @@ if __name__ == "__main__":
 
     st.session_state.openai_client = connect_to_openai()
 
-    # Directly after logging in via SURF, the nonce is fetched from the query parameters
+    # If there is a test_username specified, overwrite the st.session_state
+    if test_username:
+        st.session_state.username = test_username
+
     if fetch_nonce_from_query() is not None:
         st.session_state.logged_in = True
+
+    if no_login_page is False and st.session_state.logged_in is False:
+        print("Rendering login page")
+        render_login_page()
+    # Render the actual app when the user is logged in
+    else:
+        print("Rendering the app")
         # The username is fetched from the database with this nonce
         determine_username_from_nonce()
         # The nonce is removed from the query params, the session state and the database
         remove_nonce_from_memories()
 
-    # If there is a test_username specified, overwrite the st.session_state
-    if test_username:
-        st.session_state.username = test_username
-
-    print(f"Username: {st.session_state.username}")
-    print(f"Deployment type: {st.session_state.deployment_type}")
-    print(f"Logged in: {st.session_state.logged_in}")
-    print(f"No login page: {no_login_page}")
-
-    # Login page renders if only if the user is not logged in
-    if (
-        no_login_page is False
-        and
-        # When deployed in streamlit cloud, the fetch nonce function is not used
-        (
-            st.session_state.admin_login is False
-            or st.session_state.username is None
-            or st.session_state.logged_in is False
-        )
-    ):
-        print("Rendering login page")
-        render_login_page()
-
-    # Render the actual app when the username is determined
-    else:
-        print("Rendering the app")
         check_user_doc_and_add_missing_fields()
 
         if st.session_state.warned is None:

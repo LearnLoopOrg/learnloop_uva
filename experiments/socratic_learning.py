@@ -120,7 +120,6 @@ class SamenvattenInDialoog:
 
         example_output_undiagnosed = {
             "student_knowledge": "De student weet dat insuline de bloedsuikerspiegel verlaagt door de opname van glucose in cellen te stimuleren.",
-            "response": "Wat weet je al over insuline en de bloedsuikerspiegel?",
             "questions": [
                 {
                     "question": "Welk effect heeft insuline op de bloedsuikerspiegel?",
@@ -177,10 +176,12 @@ At the start of a new topic: **{st.session_state.current_topic}**, ask the stude
 - **status:** Update the status of the topic from 'undiagnosed' to 'diagnosed' once you've recieved the student's response.
 
 **Example Output**:
+Wat weet je al over insuline en de bloedsuikerspiegel?
+```json
 {example_output_undiagnosed}
+```
 
 ### Current Topic Questions and Answer Models:
-
 {self.get_questions()[topic]}
 
 ### Conversation History:
@@ -217,7 +218,10 @@ Always react with a new question or feedback based on the student's response. Co
 Never return your old response, always provide a new one based on the student's answer.
 
 Example JSON response:
+Hoe beïnvloedt insuline de bloedsuikerspiegel tijdens maaltijden of fysieke inspanning?
+```json
 {example_output_diagnosed}
+```
 
 Question data:
 {self.get_questions()[topic]}
@@ -260,11 +264,65 @@ Conversation history:
                     if m.get("image")
                 ],
             ],
-            stream=False,
-            response_format={"type": "json_object"},
+            stream=True,
+            response_format={"type": "text"},
         )
 
-        return stream
+        json_response = {}
+        is_collecting_json = (
+            False  # Flag om te detecteren wanneer we JSON gaan verzamelen
+        )
+        json_buffer = ""  # Buffer om de JSON-data op te slaan
+
+        for chunk in stream:
+            if chunk.choices and (
+                chunk_content := chunk.choices[0].delta.get("content", "")
+            ):
+                # Check of we JSON-collectie moeten starten
+                if "```json" in chunk_content:
+                    is_collecting_json = True  # Start met het verzamelen van JSON
+                    json_buffer += chunk_content.split("```json")[
+                        -1
+                    ]  # Begin na de marker
+                    continue  # Ga naar de volgende chunk, skip streaming
+
+                # Als we bezig zijn met JSON-collectie
+                if is_collecting_json:
+                    # Controleer of het einde van de JSON-sectie is bereikt
+                    if (
+                        "```" in chunk_content
+                    ):  # Verondersteld dat de JSON afsluit met ```
+                        json_buffer += chunk_content.split("```")[
+                            0
+                        ]  # Voeg de laatste chunk toe
+                        try:
+                            # Probeer de JSON-data te verwerken
+                            json_data = json.loads(json_buffer)
+                            json_response.update(
+                                json_data
+                            )  # Voeg toe aan json_response
+                            st.write(
+                                "JSON succesvol verzameld!"
+                            )  # Meld dat JSON is verzameld
+                        except json.JSONDecodeError:
+                            st.write("Ongeldige JSON-structuur")
+                        break  # Stop verdere verwerking omdat we klaar zijn met JSON
+                    else:
+                        json_buffer += (
+                            chunk_content  # Voeg de JSON-gegevens toe aan de buffer
+                        )
+                else:
+                    # Stream de tekst zolang er geen JSON wordt verzameld
+                    st.write(chunk_content)
+
+        # for chunk in stream:
+        #     st.write(chunk)
+        #     if chunk.choices and (chunk_content := chunk.choices[0].delta.content):
+        #         st.write(chunk_content)
+
+        # json_response = st.write(stream)
+
+        return json_response
 
     def get_next_incomplete_topic(self):
         for topic, questions in self.get_questions().items():
@@ -322,11 +380,12 @@ Conversation history:
                 if image_path := self.get_next_question_with_image():
                     st.image(image_path)
 
-                response = self.generate_assistant_response(
+                json_response = self.generate_assistant_response(
                     st.session_state.current_topic
                 )
-                json_response = json.loads(response.choices[0].message.content)
-                response = st.write(json_response["response"])
+
+                # json_response = json.loads(response.choices[0].message.content)
+                # response = st.write(json_response["response"])
 
             question_data = self.get_questions()[st.session_state.current_topic]
             question_data["questions"] = json_response

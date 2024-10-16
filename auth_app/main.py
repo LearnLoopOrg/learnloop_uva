@@ -137,6 +137,7 @@ def authorize():
 
     if surf_test_env:
         url = "http://localhost:8501/"
+        user_info["eduperson_affiliation"] = "student"  # For testing purposes only
     else:
         url = "https://learnloop.datanose.nl/"
 
@@ -145,6 +146,8 @@ def authorize():
         redirect_url = f"{url}teacher?nonce={nonce}"
     else:
         redirect_url = f"{url}student?nonce={nonce}"
+
+    print(f"\n\nRedirecting to {redirect_url}\n\n")
 
     return redirect(redirect_url, code=302)
 
