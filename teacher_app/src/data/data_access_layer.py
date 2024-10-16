@@ -49,27 +49,14 @@ class DatabaseAccess:
             if course.title == selected_course:
                 return course.lectures
 
-    def determine_modules(self):
+    def determine_modules(self, course_name: str) -> List[str]:
         """
         Function to determine which names of modules to display in the sidebar
         based on the JSON module files.
         """
-        # Read the modules from the modules directory
-        modules = os.listdir("src/data/content/modules")
-
-        # Remove the json extension and replace the underscores with spaces
-        modules = [module.replace(".json", "") for module in modules]
-
-        # Sort the modules based on the number in the name except for the practice exams
-        modules.sort(
-            key=lambda module: int(module.split(" ")[0])
-            if module.split(" ")[0].isdigit()
-            else 1000
-        )
-
-        st.session_state.modules = modules
-
-        return modules
+        course_catalog = self.get_course_catalog()
+        lectures = self.get_lectures_for_course(course_name, course_catalog)
+        return [lecture.title for lecture in lectures]
 
     def get_segment_type(self, segment_index):
         return self.get_segments_list_from_db(self.get_module_name_underscored())[
@@ -373,3 +360,11 @@ class DatabaseAccess:
             return None
         else:
             return module["status"]
+
+    def fetch_module_content(self, module):
+        page_content = self.db.content.find_one({"lecture_name": module})
+        return page_content["corrected_lecturepath_content"] if page_content else None
+
+    def fetch_module_topics(self, module):
+        page_content = self.db.content.find_one({"lecture_name": module})
+        return page_content["corrected_lecturepath_topics"]
