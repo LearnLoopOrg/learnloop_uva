@@ -1,0 +1,29 @@
+{
+    "title": "LearnLoop",
+    "scopes": [
+        "https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly"
+    ],
+    "extensions": [
+        {
+            "platform": "canvas.instructure.com",
+            "settings": {
+                "platform": "canvas.instructure.com",
+                "placements": [
+                    {
+                        "placement": "course_navigation",
+                        "message_type": "LtiResourceLinkRequest"
+                    }
+                ]
+            },
+            "privacy_level": "public"
+        }
+    ],
+    "public_jwk": {},
+    "description": "LearnLoop is an interactive learning tool that helps students learn more effectively.",
+    "custom_fields": {
+        "courseId": "$Canvas.course.id"
+    },
+    "public_jwk_url": "https://localhost:3000/jwks",
+    "target_link_uri": "https://localhost:3000/launch",
+    "oidc_initiation_url": "https://localhost:3000/oidc"
+}

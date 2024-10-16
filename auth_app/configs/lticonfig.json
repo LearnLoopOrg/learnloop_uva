@@ -1,0 +1,83 @@
+{
+    "https://canvas.instructure.com": [
+        {
+            "client_id": "104400000000000343",
+            "auth_login_url": "https://canvas.instructure.com/api/lti/authorize_redirect",
+            "auth_token_url": "https://canvas.instructure.com/login/oauth2/token",
+            "key_set_url": "https://canvas.instructure.com/api/lti/security/jwks",
+            "private_key_file": "private.key",
+            "public_key_file": "public.key",
+            "deployment_ids": [
+                "your-deployment-id"
+            ],
+            "scopes": [
+                "https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly"
+            ],
+            "extensions": [
+                {
+                    "platform": "canvas.instructure.com",
+                    "settings": {
+                        "platform": "canvas.instructure.com",
+                        "placements": [
+                            {
+                                "placement": "course_navigation",
+                                "message_type": "LtiResourceLinkRequest"
+                            }
+                        ]
+                    },
+                    "privacy_level": "public"
+                }
+            ],
+            "public_jwk_url": "https://localhost:3000/jwks",
+            "target_link_uri": "https://localhost:3000/launch",
+            "oidc_initiation_url": "https://localhost:3000/oidc",
+            "custom_fields": {
+                "courseId": "$Canvas.course.id"
+            }
+        }
+    ],
+    "https://partners.brightspace.com": [
+        {
+            "default": true,
+            "client_id": "your-client-id",
+            "auth_login_url": "https://partners.brightspace.com/d2l/lti/authenticate",
+            "auth_token_url": "https://auth.brightspace.com/core/connect/token",
+            "auth_audience": "https://api.brightspace.com/auth/token",
+            "key_set_url": "https://partners.brightspace.com/d2l/.well-known/jwks",
+            "private_key_file": "private2.key",
+            "public_key_file": "public2.key",
+            "deployment_ids": [
+                "your-deployment-id"
+            ]
+        }
+    ],
+    "https://blackboard.com": [
+        {
+            "default": true,
+            "client_id": "your-client-id",
+            "auth_login_url": "https://developer.blackboard.com/api/v1/gateway/oidcauth",
+            "auth_token_url": "https://developer.blackboard.com/api/v1/gateway/oauth2/jwttoken",
+            "key_set_url": "https://developer.blackboard.com/api/v1/management/applications/<your-client-id>/jwks.json",
+            "private_key_file": "private.key",
+            "public_key_file": "public.key",
+            "deployment_ids": [
+                "your-deployment-id"
+            ]
+        }
+    ],
+    "http://moodle.test": [
+        {
+            "default": true,
+            "client_id": "your-client-id",
+            "auth_login_url": "http://moodle.test/mod/lti/auth.php",
+            "auth_token_url": "http://moodle.test/mod/lti/token.php",
+            "auth_audience": null,
+            "key_set_url": "http://moodle.test/mod/lti/certs.php",
+            "private_key_file": "private.key",
+            "public_key_file": "public.key",
+            "deployment_ids": [
+                "your-deployment-id"
+            ]
+        }
+    ]
+}
