@@ -1947,7 +1947,6 @@ def determine_username_from_nonce():
     st.session_state.nonce = (
         fetch_nonce_from_query()
     )  # ? Why save nonce in session state? Pass a param?
-
     db_dal.fetch_info()
 
 
@@ -2109,6 +2108,8 @@ if __name__ == "__main__":
         determine_username_from_nonce()
         # The nonce is removed from the query params, the session state and the database
         remove_nonce_from_memories()
+        # The user is logged in
+        st.session_state.logged_in = True
 
     # If there is a test_username specified, overwrite the st.session_state
     if test_username:
