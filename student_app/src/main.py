@@ -2109,7 +2109,7 @@ if __name__ == "__main__":
 
     # Directly after logging in via SURF, the nonce is fetched from the query parameters
     if fetch_nonce_from_query() is not None:
-        print("Fetched nonce from query")
+        st.session_state.logged_in = True
         # The username is fetched from the database with this nonce
         determine_username_from_nonce()
         # The nonce is removed from the query params, the session state and the database
@@ -2130,16 +2130,9 @@ if __name__ == "__main__":
         and
         # When deployed in streamlit cloud, the fetch nonce function is not used
         (
-            (
-                st.session_state.deployment_type == "uva"
-                and fetch_nonce_from_query() is None
-                and st.session_state.admin_login is False
-            )
+            st.session_state.admin_login is False
             or st.session_state.username is None
-            or (
-                st.session_state.deployment_type == "streamlit_or_local"
-                and st.session_state.logged_in is False
-            )
+            or st.session_state.logged_in is False
         )
     ):
         print("Rendering login page")

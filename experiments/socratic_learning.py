@@ -294,6 +294,8 @@ Conversation history:
             questions = content.get("questions", [])
             for question in questions:
                 score = question.get("score", "")
+                if score is None:
+                    continue
                 # Check of de score een breuk is (dus niet gelijk zoals 1/1, 2/2 etc.)
                 if "/" in score:
                     score_parts = score.split("/")
@@ -325,7 +327,6 @@ Conversation history:
                 )
                 json_response = json.loads(response.choices[0].message.content)
                 response = st.write(json_response["response"])
-                print(f"JSON response: {json_response}")
 
             question_data = self.get_questions()[st.session_state.current_topic]
             question_data["questions"] = json_response
