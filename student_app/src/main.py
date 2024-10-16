@@ -1736,10 +1736,12 @@ def try_login():
 def render_login_page():
     """This is the first page the user sees when visiting the website and
     prompts the user to login via SURFconext."""
-    print(f"deployment_type: {st.session_state.deployment_type}")
+    print(
+        f"Deployment_type when rendering login page: {st.session_state.deployment_type}"
+    )
 
-    # st.session_state.deployment_type = "uva"  # REMOVE: hardcoded for testing
     if st.session_state.deployment_type == "uva":
+        st.session_state.logged_in = True
         columns = st.columns([1, 0.9, 1])
         with columns[1]:
             welcome_title = "Klinische Neuropsychologie"
@@ -2024,7 +2026,9 @@ def is_running_locally():
 
 def set_correct_settings_for_deployment_type():
     st.session_state.deployment_type = "uva"
-
+    print(
+        f"Setting correct settings for deployment type: {st.session_state.deployment_type}"
+    )
     # Set the correct arguments for the deployment type
     if is_deployed_in_streamlit_cloud() or is_running_locally():
         print("App is deployed in the cloud or runs locally, use cloud arguments.")
@@ -2039,6 +2043,7 @@ def set_correct_settings_for_deployment_type():
         print("App draait op uva servers, gebruik uva path.")
         base_path = "src/"
         deployment_type = "uva"
+        args.no_login_page = False
 
     st.session_state.deployment_type = deployment_type
 
@@ -2104,19 +2109,17 @@ if __name__ == "__main__":
 
     # Directly after logging in via SURF, the nonce is fetched from the query parameters
     if fetch_nonce_from_query() is not None:
+        print("Fetched nonce from query")
         # The username is fetched from the database with this nonce
         determine_username_from_nonce()
         # The nonce is removed from the query params, the session state and the database
         remove_nonce_from_memories()
-        # The user is logged in
-        st.session_state.logged_in = True
 
     # If there is a test_username specified, overwrite the st.session_state
     if test_username:
         st.session_state.username = test_username
 
     print(f"Username: {st.session_state.username}")
-    print(st.session_state.deployment_type)
     print(f"Deployment type: {st.session_state.deployment_type}")
     print(f"Logged in: {st.session_state.logged_in}")
     print(f"No login page: {no_login_page}")
@@ -2133,7 +2136,10 @@ if __name__ == "__main__":
                 and st.session_state.admin_login is False
             )
             or st.session_state.username is None
-            or st.session_state.logged_in is False
+            or (
+                st.session_state.deployment_type == "streamlit_or_local"
+                and st.session_state.logged_in is False
+            )
         )
     ):
         print("Rendering login page")
