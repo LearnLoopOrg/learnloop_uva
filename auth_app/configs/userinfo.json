@@ -1,0 +1,101 @@
+{
+    "https://purl.imsglobal.org/spec/lti/claim/message_type": "LtiResourceLinkRequest",
+    "https://purl.imsglobal.org/spec/lti/claim/version": "1.3.0",
+    "https://purl.imsglobal.org/spec/lti/claim/resource_link": {
+        "id": "bd72c342a4f9ceda8130c9e0db3c9bddabe05c08",
+        "description": null,
+        "title": "Energie uit onverwachte hoek",
+        "validation_context": null,
+        "errors": {
+            "errors": {}
+        }
+    },
+    "aud": "104400000000000343",
+    "azp": "104400000000000343",
+    "https://purl.imsglobal.org/spec/lti/claim/deployment_id": "511:bd72c342a4f9ceda8130c9e0db3c9bddabe05c08",
+    "exp": 1729175255,
+    "iat": 1729171655,
+    "iss": "https://canvas.test.instructure.com",
+    "nonce": "f5a2c0e7e16a42e7ab7373b8ac51a52a9f4aa5bc8c8b11ef9f5f1661b5595586",
+    "sub": "320965c7-0946-42b6-b805-8272dd0b4a22",
+    "https://purl.imsglobal.org/spec/lti/claim/target_link_uri": "http://localhost:3000/launch",
+    "picture": "https://canvas.instructure.com/images/messages/avatar-50.png",
+    "email": "l.mahieu@uva.nl",
+    "name": "Luc Mahieu",
+    "given_name": "Luc",
+    "family_name": "Mahieu",
+    "https://purl.imsglobal.org/spec/lti/claim/lis": {
+        "person_sourcedid": "lmahieu",
+        "course_offering_sourcedid": "1800.1043",
+        "validation_context": null,
+        "errors": {
+            "errors": {}
+        }
+    },
+    "https://purl.imsglobal.org/spec/lti/claim/context": {
+        "id": "bd72c342a4f9ceda8130c9e0db3c9bddabe05c08",
+        "label": "50921ENO6Y",
+        "title": "Energie uit onverwachte hoek",
+        "type": [
+            "http://purl.imsglobal.org/vocab/lis/v2/course#CourseOffering"
+        ],
+        "validation_context": null,
+        "errors": {
+            "errors": {}
+        }
+    },
+    "https://purl.imsglobal.org/spec/lti/claim/tool_platform": {
+        "guid": "2P5yRkwsOW7Z8urswonQ7vnilZGbGsRUrkotD3Hy:canvas-lms",
+        "name": "University of Amsterdam - Development",
+        "version": "cloud",
+        "product_family_code": "canvas",
+        "validation_context": null,
+        "errors": {
+            "errors": {}
+        }
+    },
+    "https://purl.imsglobal.org/spec/lti/claim/launch_presentation": {
+        "document_target": "iframe",
+        "return_url": "https://uvadlo-dev.test.instructure.com/courses/5288/external_content/success/external_tool_redirect",
+        "locale": "en-GB",
+        "height": 400,
+        "width": 800,
+        "validation_context": null,
+        "errors": {
+            "errors": {}
+        }
+    },
+    "locale": "en-GB",
+    "https://purl.imsglobal.org/spec/lti/claim/roles": [
+        "http://purl.imsglobal.org/vocab/lis/v2/institution/person#Instructor",
+        "http://purl.imsglobal.org/vocab/lis/v2/membership#Instructor",
+        "http://purl.imsglobal.org/vocab/lis/v2/system/person#User"
+    ],
+    "https://purl.imsglobal.org/spec/lti/claim/custom": {
+        "courseid": "5288"
+    },
+    "https://purl.imsglobal.org/spec/lti-nrps/claim/namesroleservice": {
+        "context_memberships_url": "https://uvadlo-dev.test.instructure.com/api/lti/courses/5288/names_and_roles",
+        "service_versions": [
+            "2.0"
+        ],
+        "validation_context": null,
+        "errors": {
+            "errors": {}
+        }
+    },
+    "https://purl.imsglobal.org/spec/lti/claim/lti11_legacy_user_id": "a0f9e2193db72cb99432ad37b57077411b9eccab",
+    "https://purl.imsglobal.org/spec/lti/claim/lti1p1": {
+        "user_id": "a0f9e2193db72cb99432ad37b57077411b9eccab",
+        "validation_context": null,
+        "errors": {
+            "errors": {}
+        },
+        "oauth_consumer_key": "abc",
+        "oauth_consumer_key_sign": "761Sy5cMXgC/pXvW8IcnisxsKK+/lE9+Zkxg13WEF9E="
+    },
+    "errors": {
+        "errors": {}
+    },
+    "https://www.instructure.com/placement": "course_navigation"
+}

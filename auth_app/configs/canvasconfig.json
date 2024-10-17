@@ -11,7 +11,8 @@
                 "placements": [
                     {
                         "placement": "course_navigation",
-                        "message_type": "LtiResourceLinkRequest"
+                        "message_type": "LtiResourceLinkRequest",
+                        "target_link_uri": "http://localhost:3000/launch"
                     }
                 ]
             },
@@ -23,7 +24,7 @@
     "custom_fields": {
         "courseId": "$Canvas.course.id"
     },
-    "public_jwk_url": "https://localhost:3000/jwks",
-    "target_link_uri": "https://localhost:3000/launch",
-    "oidc_initiation_url": "https://localhost:3000/oidc"
+    "public_jwk_url": "http://localhost:3000/jwks",
+    "target_link_uri": "http://localhost:3000/launch",
+    "oidc_initiation_url": "http://localhost:3000/oidc"
 }

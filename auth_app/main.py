@@ -10,10 +10,20 @@ import requests
 import datetime
 import os
 import pprint
+from flask_caching import Cache
 
+import os, pprint, datetime
 from tempfile import mkdtemp
-from flask import Flask, jsonify, request, render_template, url_for
+
+# from questions import questions
+# from dbmethods import drop_db_table, create_db_table, get_questions, get_question_by_id, insert_quiz_question, update_question, delete_question
+
+from flask import Flask, request, jsonify, render_template, url_for
+from flask_cors import CORS
+from flask_caching import Cache
+
 from werkzeug.exceptions import Forbidden
+from werkzeug.utils import redirect
 from pylti1p3.contrib.flask import (
     FlaskOIDCLogin,
     FlaskMessageLaunch,
@@ -38,7 +48,7 @@ load_dotenv()
 
 # Don't forget to re-build the image again after changing the code.
 
-use_LL_cosmosdb = False
+use_LL_cosmosdb = True
 surf_test_env = False
 # --------------------------------------------
 
@@ -47,7 +57,7 @@ db = db_config.connect_db(use_LL_cosmosdb)
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET")
 
-app = Flask("LearnLoop-LTI", template_folder="templates", static_folder="static")
+app = Flask("LearnLoop-LTI")
 
 config = {
     "DEBUG": True,
@@ -65,6 +75,7 @@ config = {
 }
 app.config.from_mapping(config)
 # cache = Cache(app)
+cache = Cache(app)
 
 PAGE_TITLE = "LearnLoop LTI1.3"
 
@@ -73,8 +84,8 @@ def get_lti_config_path():
     return os.path.join(app.root_path, "configs", "lticonfig.json")
 
 
-# def get_launch_data_storage():
-#     return FlaskCacheDataStorage(cache)
+def get_launch_data_storage():
+    return FlaskCacheDataStorage(cache)
 
 
 def get_jwk_from_public_key(key_name):
@@ -86,13 +97,26 @@ def get_jwk_from_public_key(key_name):
     return jwk
 
 
+def save_id_to_db(user_id):
+    global db
+    user = db.users.find_one({"username": user_id})
+    if not user:
+        db.users.insert_one({"username": user_id})
+
+
+def save_nonce_to_db(user_id, nonce):
+    global db
+    db.users.update_one({"username": user_id}, {"$set": {"nonce": nonce}})
+    return nonce
+
+
 @app.route("/jwks/", methods=["GET"])
 def get_jwks():
     tool_conf = ToolConfJsonFile(get_lti_config_path())
     return jsonify({"keys": tool_conf.get_jwks()})
 
 
-@app.route("/oidc", methods=["GET"])
+@app.route("/oidc", methods=["GET", "POST"])
 def oidc_login():
     tool_conf = ToolConfJsonFile(get_lti_config_path())
     # launch_data_storage = get_launch_data_storage()
@@ -107,93 +131,54 @@ def oidc_login():
     # oidc_login = FlaskOIDCLogin(
     #     flask_request, tool_conf, launch_data_storage=launch_data_storage
     # )
-    oidc_login = FlaskOIDCLogin(flask_request, tool_conf)
+    launch_data_storage = get_launch_data_storage()
+    print("OIDC Login")
+    oidc_login = FlaskOIDCLogin(
+        flask_request, tool_conf, launch_data_storage=launch_data_storage
+    )
+    print("OIDC Login succesfull")
     return oidc_login.enable_check_cookies().redirect(target_link_uri)
 
 
 @app.route("/launch", methods=["POST"])
 def launch():
+    print("Launching")
     # Laad de LTI-configuratie en start een sessie
     tool_conf = ToolConfJsonFile(get_lti_config_path())
-    flask_request = FlaskRequest(request)
+    request = FlaskRequest()
+    launch_data_storage = get_launch_data_storage()
+    message_launch = FlaskMessageLaunch(
+        request, tool_conf, launch_data_storage=launch_data_storage
+    )
+    message_launch_data = message_launch.get_launch_data()
+    user_name = message_launch_data.get("name", "")
+    sub = message_launch_data.get("sub", "")
+    nonce = message_launch_data.get("nonce", "")
+    print(f"User '{user_name}' with sub '{sub}' launched the app")
+    print(f"Nonce: {nonce}")
 
-    # Start de LTI launch
-    message_launch = FlaskMessageLaunch(flask_request, tool_conf)
+    save_id_to_db(sub)
+    save_nonce_to_db(sub, nonce)
 
-    try:
-        # Valideer de launch data en haal gebruikersinformatie op
-        message_launch_data = message_launch.get_launch_data()
-        user_id = message_launch_data.get("sub")
-        roles = message_launch_data.get(
-            "https://purl.imsglobal.org/spec/lti/claim/roles", []
-        )
+    # try:
+    #     # Valideer de launch data en haal gebruikersinformatie op
+    #     message_launch_data = message_launch.get_launch_data()
+    #     user_id = message_launch_data.get("sub")
+    #     roles = message_launch_data.get(
+    #         "https://purl.imsglobal.org/spec/lti/claim/roles", []
+    #     )
 
-        # Maak aangepaste redirect gebaseerd op de rol van de gebruiker
-        if "Instructor" in roles:
-            return redirect("https://learnloop.datanose.nl/teacher")
-        else:
-            return redirect("https://learnloop.datanose.nl/student")
+    #     # Maak aangepaste redirect gebaseerd op de rol van de gebruiker
+    #     if "Instructor" in roles:
+    #         return redirect("https://learnloop.datanose.nl/teacher")
+    #     else:
+    #         return redirect("https://learnloop.datanose.nl/student")
 
-    except Exception as e:
-        return f"Launch failed: {str(e)}", 500
+    # return redirect("http://learnloop.datanose.nl/student")
+    return redirect(f"http://localhost:8501/student?nonce={nonce}")
 
-
-# @app.route("/")
-# def login():
-#     global surf_test_env
-#     if surf_test_env:
-#         scheme = "http"
-#     else:
-#         scheme = "https"
-
-#     redirect_uri = url_for("authorize", _external=True, _scheme=scheme)
-
-#     return auth.surfconext.authorize_redirect(redirect_uri)
-
-
-# def save_id_to_db(user_id):
-#     global db
-#     user = db.users.find_one({"username": user_id})
-#     if not user:
-#         db.users.insert_one({"username": user_id})
-
-
-# def generate_nonce(length=16):
-#     """Generates a random sequence of values."""
-#     characters = string.ascii_letters + string.digits
-#     nonce = "".join(random.choice(characters) for _ in range(length))
-#     return nonce
-
-
-# def save_nonce_to_db(user_id, nonce):
-#     global db
-#     db.users.update_one({"username": user_id}, {"$set": {"nonce": nonce}})
-#     return nonce
-
-
-# def save_info_and_nonce(user_id, info, nonce):
-#     global db
-#     print(f"Saving nonce {nonce} for user {user_id}")
-#     db.users.update_one(
-#         {"username": user_id},
-#         {
-#             "$set": {
-#                 "user_description": info["user_description"],
-#                 "courses": info["courses"],
-#                 "nonce": nonce,
-#             }
-#         },
-#     )
-
-
-# def save_user_info_to_db(user_id, user_info):
-#     global db
-#     user_info = user_info.json()
-#     db.users.update_one(
-#         {"username": user_id},
-#         {"$set": {"userinfo": user_info, "progress": {}}},
-#     )
-#     return user_info
+    # except Exception as e:
+    #     return f"Launch failed: {str(e)}", 500
 
 
 # @app.route("/auth")
