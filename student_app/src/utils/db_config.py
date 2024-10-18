@@ -8,7 +8,7 @@ from utils.utils import AzureUtils
 load_dotenv()
 
 
-@st.cache_resource(show_spinner=False)
+# @st.cache_resource(show_spinner=False)
 def connect_db(use_LL_cosmosdb, database_name="UvA_KNP"):
     """
     Connect to either MongoDB or CosmosDB and ping to check connection.

@@ -1701,7 +1701,13 @@ def try_login():
         "Milan van Roessel": "lala321",
         "eensupergeheimecode": None,
     }
-    vu_users = {"anderecode": None}
+    vu_users = {
+        "098ncopkwo2": {
+            "Mare van der Vegt": "123abc",
+            "courses": ["Bouw en Bewegen"],
+        },
+    }
+
     if input_username in uva_users:
         st.session_state.username = input_username
         st.session_state.logged_in = True
@@ -1716,7 +1722,7 @@ def try_login():
             st.session_state.logged_in = True
             st.session_state.db = db_config.connect_db(
                 use_LL_cosmosdb=st.session_state.use_LL_cosmosdb,
-                database_name="VU_Bouw_en_Bewegen",
+                database_name="VU",
             )
 
     else:
@@ -1727,8 +1733,6 @@ def render_login_page():
     """This is the first page the user sees when visiting the website and
     prompts the user to login via SURFconext."""
     if st.session_state.deployment_type == "uva":
-        st.session_state.logged_in = True
-
         columns = st.columns([1, 0.9, 1])
         with columns[1]:
             welcome_title = "Klinische Neuropsychologie"
@@ -1770,22 +1774,19 @@ def render_login_page():
 
     elif st.session_state.deployment_type == "streamlit_or_local":
         print("Rendering login page: streamlit_or_local")
-        columns = st.columns([1, 0.7, 1])
-        with columns[1]:
-            img_cols = st.columns([1, 0.9, 1])
-            with img_cols[1]:
+        cols = st.columns([1, 0.7, 1])
+        with cols[1]:
+            img_cols = st.columns([1, 3, 1])
+            with img_cols[0]:
                 logo_path = f"{base_path}data/content/images/logo.png"
                 st.image(logo_path, use_column_width=True)
-            title_cols = st.columns([1, 0.4])
-            with title_cols[0]:
-                welcome_title = "Bouw en Bewegen"
-                st.title(welcome_title)
-            with title_cols[1]:
-                st.write("\n\n")
-                st.write("\n\n")
-                st.write("\n\n")
+            with img_cols[2]:
                 vu_logo_base64 = f"{base_path}data/content/images/vu_logo.png"
                 st.image(vu_logo_base64, use_column_width=True)
+
+            st.write("\n\n")
+            st.write("\n\n")
+            st.write("\n\n")
 
             st.text_input("Gebruikersnaam", key="streamlit_username")
             st.text_input("Wachtwoord", type="password", key="streamlit_password")
@@ -1823,7 +1824,7 @@ def initialise_session_states():
 
     if "db" not in st.session_state:
         st.session_state.db = db_config.connect_db(
-            use_LL_cosmosdb=st.session_state.use_LL_cosmosdb
+            use_LL_cosmosdb=st.session_state.use_LL_cosmosdb, database_name="LearnLoop"
         )
     if "selected_course" not in st.session_state:
         st.session_state.selected_course = None
@@ -1913,7 +1914,7 @@ def initialise_session_states():
         st.session_state.wrong_credentials = False
 
     if "logged_in" not in st.session_state:
-        st.session_state.logged_in = False
+        st.session_state.logged_in = None
 
     if "streamlit_username" not in st.session_state:
         st.session_state.streamlit_username = None
@@ -2082,7 +2083,6 @@ if __name__ == "__main__":
     image_handler = ImageHandler()
     utils = Utils()
 
-    db = db_config.connect_db(st.session_state.use_LL_cosmosdb)
     initialise_session_states()
 
     # Create a mid column with margins in which everything one a
@@ -2096,7 +2096,9 @@ if __name__ == "__main__":
         st.session_state.username = test_username
 
     if fetch_nonce_from_query() is not None:
+        print("Fetched nonce from query params")
         st.session_state.logged_in = True
+        print("Logged in")
 
     if no_login_page is False and st.session_state.logged_in is False:
         print("Rendering login page")

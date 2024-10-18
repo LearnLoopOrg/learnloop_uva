@@ -275,9 +275,7 @@ Conversation history:
         json_buffer = ""  # Buffer om de JSON-data op te slaan
 
         for chunk in stream:
-            if chunk.choices and (
-                chunk_content := chunk.choices[0].delta.get("content", "")
-            ):
+            if chunk.choices and (chunk_content := chunk.choices[0].delta.content):
                 # Check of we JSON-collectie moeten starten
                 if "```json" in chunk_content:
                     is_collecting_json = True  # Start met het verzamelen van JSON
@@ -313,6 +311,9 @@ Conversation history:
                         )
                 else:
                     # Stream de tekst zolang er geen JSON wordt verzameld
+                    chunk_content = chunk_content.strip() + " ".join(
+                        chunk_content.split().strip()
+                    )
                     st.write(chunk_content)
 
         # for chunk in stream:
@@ -326,6 +327,9 @@ Conversation history:
 
     def get_next_incomplete_topic(self):
         for topic, questions in self.get_questions().items():
+            print(f"Checking topic: {topic}")
+            print(f"Questions: {questions}")
+
             if any(q["status"] != "done" for q in questions["questions"]):
                 return topic
 

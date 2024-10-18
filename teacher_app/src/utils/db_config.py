@@ -7,7 +7,7 @@ load_dotenv()
 
 
 # @st.cache_resource(show_spinner=False)
-def connect_db(MONGO_URI):
+def connect_db(MONGO_URI, database_name="UvA_KNP"):
     """
     Connect to demo database of MongoDB
     """
@@ -16,7 +16,7 @@ def connect_db(MONGO_URI):
         MONGO_URI, tlsCAFile=certifi.where()
     )
 
-    db = db_client.get_database("UvA_KNP")
+    db = db_client.get_database(database_name)
 
     # Ping database to check if it's connected
     try:

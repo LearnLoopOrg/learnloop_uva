@@ -28,8 +28,7 @@
         ],
         "status": "diagnosed"
     },
-    "Symptoms": null,
-    "Diagnosis": {
+    "Symptoms": {
         "response": "Ik zie dat je een foto hebt gedeeld. Het lijkt alsof je liever verder wil gaan met een ander onderwerp, maar laten we eerst deze laatste vraag over Parkinson's beantwoorden, zodat we dit onderwerp volledig kunnen afronden. Kun je een poging doen om te beantwoorden hoe artsen de voortgang van Parkinson's meten?",
         "student_knowledge": "De student weet nog niet hoe de voortgang van Parkinson's wordt gemeten.",
         "questions": [

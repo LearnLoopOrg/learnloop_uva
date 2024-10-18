@@ -251,8 +251,6 @@ class ImageHandler:
         self.blob_service_client = BlobServiceClient.from_connection_string(
             self.connection_string
         )
-        # self.container_name = None
-        # self.blob_name = None
         self.container_name = "uva-knp"
         self.blob_name = "Dementie/images/uva_knp_Dementie_slide_00014_1.jpg"
 
