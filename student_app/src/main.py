@@ -2015,8 +2015,12 @@ def set_correct_settings_for_deployment_type():
         f"Setting correct settings for deployment type: {st.session_state.deployment_type}"
     )
     # Set the correct arguments for the deployment type
-    if is_deployed_in_streamlit_cloud() or is_running_locally():
-        print("App is deployed in the cloud or runs locally, use cloud arguments.")
+    streamlit_deployment = is_deployed_in_streamlit_cloud()
+    print(f"Streamlit deployment: {streamlit_deployment}")
+    running_locally = is_running_locally()
+    print(f"Running locally: {running_locally}")
+    if streamlit_deployment is True or running_locally is True:
+        print("App is deployed in Streamlit or runs locally, use cloud arguments.")
         args.use_LL_blob_storage = True
         args.use_LL_cosmosdb = True
         args.use_LL_openai_deployment = True
