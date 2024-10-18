@@ -9,7 +9,7 @@ from models.uni_database import Course, CourseCatalog, Lecture
 class DatabaseAccess:
     def __init__(self):
         self.db = db_config.connect_db(
-            st.session_state.use_LL_cosmosdb, database_name="UvA"
+            st.session_state.use_LL_cosmosdb
         )  # database connection
         self.users_collection_name = "users"
         self.segments_list = None

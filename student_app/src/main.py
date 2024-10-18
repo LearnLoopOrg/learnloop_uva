@@ -1824,7 +1824,7 @@ def initialise_session_states():
 
     if "db" not in st.session_state:
         st.session_state.db = db_config.connect_db(
-            use_LL_cosmosdb=st.session_state.use_LL_cosmosdb, database_name="LearnLoop"
+            use_LL_cosmosdb=st.session_state.use_LL_cosmosdb
         )
     if "selected_course" not in st.session_state:
         st.session_state.selected_course = None
@@ -2078,6 +2078,7 @@ if __name__ == "__main__":
     no_login_page = args.no_login_page
     # ---------------------------------------------------------
 
+    db = db_config.connect_db(st.session_state.use_LL_cosmosdb)
     db_dal = initialise_data_access_layer()
 
     image_handler = ImageHandler()
