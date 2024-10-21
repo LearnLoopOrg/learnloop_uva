@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 import json
 import base64
+import database_access_layer as db_dal
 
 load_dotenv()
 
@@ -22,6 +23,57 @@ class SamenvattenInDialoog:
     def __init__(self):
         self.client = connect_to_openai()
         self.initialize_session_state()
+        self.create_questions_file()
+
+    def create_questions_json_from_content_and_topic_json(self):
+        topics_data = db_dal.fetch_module_topics(st.session_state.selected_module)[
+            "topics"
+        ]
+
+        final_data = {}
+
+        # Loop door de topics en verzamel de bijbehorende segmenten
+        for topic in topics_data["topics"]:
+            topic_title = topic["topic_title"]
+            segment_indexes = topic["segment_indexes"]
+
+            # Maak een lijst voor vragen en verzamel alle theorie-segmenten en vragen voor dit topic
+            topic_content = {
+                "response": None,
+                "student_knowledge": None,
+                "questions": [],
+            }
+
+            # Voeg de relevante segmenten toe
+            for index in segment_indexes:
+                if index < len(segments_data["segments"]):
+                    segment = segments_data["segments"][index]
+
+                    # Voeg theorie-segment toe als response
+                    if segment["type"] == "theory":
+                        topic_content["response"] = segment["text"]
+                        topic_content["student_knowledge"] = segment["title"]
+
+                    # Voeg vragen toe
+                    if segment["type"] == "question":
+                        question_data = {
+                            "question": segment.get("question"),
+                            "status": None,  # Kan worden bijgewerkt indien nodig
+                            "level": 1,  # Kan worden aangepast indien nodig
+                            "score": None,  # Kan worden berekend of toegevoegd
+                            "answer": segment.get("answer")
+                            or segment.get("answers", {}).get("correct_answer"),
+                        }
+                        topic_content["questions"].append(question_data)
+
+            # Voeg dit topic toe aan de uiteindelijke data
+            final_data[topic_title] = topic_content
+
+        # Schrijf het resultaat naar een nieuw JSON-bestand
+        with open(output_file, "w") as f:
+            json.dump(final_data, f, indent=4)
+
+        print(f"Gecombineerde JSON is opgeslagen in {output_file}")
 
     def initialize_session_state(self):
         """
