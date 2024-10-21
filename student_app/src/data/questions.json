@@ -1,0 +1,98 @@
+{
+    "Introduction to Parkinson's": {
+        "response": "Je hebt een volledig en correct antwoord gegeven! Dopamine is inderdaad een chemische boodschapper die helpt bij het doorgeven van signalen tussen hersencellen om beweging te co\u00f6rdineren. Een vermindering van dopamine kan leiden tot de motorsymptomen die bij Parkinson's te zien zijn.",
+        "student_knowledge": "De student begrijpt dat dopamine een chemische boodschapper is die signalen tussen hersencellen helpt over te brengen en beweging co\u00f6rdineert. Ze begrijpen ook dat een vermindering van dopamine leidt tot motorsymptomen in de ziekte van Parkinson.",
+        "questions": [
+            {
+                "question": "What is Parkinson's?",
+                "status": "done",
+                "level": 1,
+                "score": "2/2",
+                "answer": "Parkinson's is a condition that affects the nervous system (1 punt), impacting movement (1 punt) and is linked to a reduction in dopamine-producing neurons (1 punt)."
+            },
+            {
+                "question": "Can you explain how Parkinson's develops?",
+                "image": "test_image.jpg",
+                "status": "done",
+                "level": 2,
+                "score": "3/3",
+                "answer": "Parkinson's tends to develop when dopamine-producing neurons in a specific part of the brain decrease (1 punt), resulting in lower dopamine levels (1 punt), which influences movement control (1 punt)."
+            },
+            {
+                "question": "What is dopamine's role in Parkinson's disease?",
+                "status": "done",
+                "level": 3,
+                "score": "4/4",
+                "answer": "Dopamine is a chemical messenger (1 punt) that helps transmit signals between brain cells (1 punt) to coordinate movement (1 punt). A reduction in dopamine can lead to motor symptoms seen in Parkinson's (1 punt)."
+            }
+        ],
+        "status": "diagnosed"
+    },
+    "Symptoms": {
+        "response": "Ik zie dat je een foto hebt gedeeld. Het lijkt alsof je liever verder wil gaan met een ander onderwerp, maar laten we eerst deze laatste vraag over Parkinson's beantwoorden, zodat we dit onderwerp volledig kunnen afronden. Kun je een poging doen om te beantwoorden hoe artsen de voortgang van Parkinson's meten?",
+        "student_knowledge": "De student weet nog niet hoe de voortgang van Parkinson's wordt gemeten.",
+        "questions": [
+            {
+                "question": "How is Parkinson's disease diagnosed?",
+                "status": "not asked",
+                "level": 1,
+                "score": null,
+                "answer": "Parkinson's is diagnosed based on observed symptoms (1 punt), personal health history (1 punt), and a neurological assessment (1 punt), as there isn't a single test to confirm the condition (1 punt).",
+                "student_answer": [
+                    "Er is geen specifieke diagnose test voor Parkinson"
+                ]
+            },
+            {
+                "question": "What are the diagnostic criteria for Parkinson's?",
+                "status": "not asked",
+                "level": 2,
+                "score": null,
+                "answer": "The diagnostic criteria involve having two or more movement-related symptoms (1 punt), improvement with dopamine medication (1 punt), and excluding other possible causes (1 punt) for the symptoms (1 punt).",
+                "student_answer": [
+                    "iets met trillende patienten."
+                ]
+            },
+            {
+                "question": "What tests are used to diagnose Parkinson's?",
+                "status": "not asked",
+                "level": 3,
+                "score": null,
+                "answer": "There are no specific tests for Parkinson's (1 punt), but imaging techniques like DaT scans (1 punt) may be used to check dopamine function (1 punt) and rule out other conditions (1 punt).",
+                "student_answer": [
+                    "Die zijn er dus niet echt"
+                ]
+            },
+            {
+                "question": "How is the progression of Parkinson's measured?",
+                "status": "not asked",
+                "level": 2,
+                "score": null,
+                "answer": "The progression of Parkinson's is measured through clinical evaluations (1 punt), monitoring symptoms over time (1 punt), and using specific scales like the Unified Parkinson's Disease Rating Scale (UPDRS) (1 punt).",
+                "student_answer": []
+            }
+        ],
+        "status": "diagnosed"
+    },
+    "Treatment": {
+        "questions": [
+            {
+                "question": "What are the treatment options for Parkinson's?",
+                "status": null,
+                "level": 1,
+                "answer": "Treatment options include medications (1 punt), physical therapy (1 punt), and for more advanced cases, procedures such as deep brain stimulation (1 punt)."
+            },
+            {
+                "question": "How does medication help manage Parkinson's symptoms?",
+                "status": null,
+                "level": 2,
+                "answer": "Medications like Levodopa (1 punt) can increase dopamine levels (1 punt) or mimic its action (1 punt) to help reduce movement-related symptoms (1 punt)."
+            },
+            {
+                "question": "What are the surgical treatments for Parkinson's?",
+                "status": null,
+                "level": 3,
+                "answer": "Surgical treatments, such as deep brain stimulation (1 punt), involve placing electrodes in the brain (1 punt) to help regulate abnormal activity (1 punt) and improve motor control (1 punt)."
+            }
+        ]
+    }
+}

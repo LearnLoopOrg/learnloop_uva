@@ -66,7 +66,12 @@ class LectureOverview:
                         f"{lecture_title}",
                         phase="theory-overview",
                     )
-
+                    if st.session_state.username == "TESTING":  # To for Mare
+                        self.render_page_button(
+                            "📝 Socratisch Dialoog",
+                            f"{lecture_title}",
+                            phase="socratic-dialogue",
+                        )
             with cols[0]:
                 st.subheader(lecture_title)
                 st.write(lecture_description)

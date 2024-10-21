@@ -17,6 +17,7 @@ from datetime import datetime, timedelta, timezone
 from _pages.lecture_overview import LectureOverview
 from _pages.course_overview import CoursesOverview
 from _pages.theory_overview import TheoryOverview
+from _pages.socratic_learning import SocraticDialogue
 from utils.utils import Utils
 from utils.utils import AzureUtils
 from slack_sdk import WebClient
@@ -111,10 +112,10 @@ def upload_progress():
         )
 
     # The data dict contains the paths and data
-    db.users.update_one(
+    st.session_state.db.users.update_one(
         {"username": st.session_state.username}, {"$set": learning_path}
     )
-    db.users.update_one(
+    st.session_state.db.users.update_one(
         {"username": st.session_state.username}, {"$set": practice_data}
     )
 
@@ -130,7 +131,9 @@ def evaluate_answer(max_retries=3):
 
     # Lees de role prompt uit een bestand
     with open(
-        f"{base_path}assets/prompts/direct_feedback_prompt.txt", "r", encoding="utf-8"
+        f"{st.session_state.base_path}assets/prompts/direct_feedback_prompt.txt",
+        "r",
+        encoding="utf-8",
     ) as f:
         role_prompt = f.read()
     attempt = 0
@@ -633,7 +636,9 @@ def render_question():
 
 def fetch_ordered_segment_sequence():
     """Fetches the practice segments from the database."""
-    user_doc = db.users.find_one({"username": st.session_state.username})
+    user_doc = st.session_state.db.users.find_one(
+        {"username": st.session_state.username}
+    )
     st.session_state.ordered_segment_sequence = user_doc["progress"][
         st.session_state.selected_module
     ]["practice"]["ordered_segment_sequence"]
@@ -641,7 +646,7 @@ def fetch_ordered_segment_sequence():
 
 def update_ordered_segment_sequence(ordered_segment_sequence):
     """Updates the practice segments in the database."""
-    db.users.update_one(
+    st.session_state.db.users.update_one(
         {"username": st.session_state.username},
         {
             "$set": {
@@ -745,7 +750,7 @@ def reset_feedback():
         "$set": {f"progress.{st.session_state.selected_module}.feedback.questions": []}
     }
 
-    db.users.update_one(user_query, set_empty_array)
+    st.session_state.db.users.update_one(user_query, set_empty_array)
 
 
 # render the page at the end of the learning phase (after the last question)
@@ -823,7 +828,7 @@ def get_feedback_questions_from_db():
         "_id": 0,
     }
 
-    user_document = db.users.find_one(query, projection)
+    user_document = st.session_state.db.users.find_one(query, projection)
 
     if user_document is None:
         return []
@@ -871,7 +876,7 @@ def render_oefententamen_final_page():
 
 def reset_progress():
     """Resets the progress of the user in the current phase to the database."""
-    db.users.update_one(
+    st.session_state.db.users.update_one(
         {"username": st.session_state.username},
         {
             "$set": {
@@ -1093,7 +1098,7 @@ def save_feedback_on_open_question():
     }
 
     # Execute the pull operation
-    db.users.update_one(user_query, pull_query)
+    st.session_state.db.users.update_one(user_query, pull_query)
 
     # Prepare the new question data to be pushed
     # TODO remove question as it should come from DatabaseAccess
@@ -1113,7 +1118,7 @@ def save_feedback_on_open_question():
     }
 
     # Execute the push operation
-    db.users.update_one(user_query, push_query)
+    st.session_state.db.users.update_one(user_query, push_query)
 
 
 def save_feedback_on_mc_question():
@@ -1134,7 +1139,7 @@ def save_feedback_on_mc_question():
     }
 
     # Execute the pull operation
-    db.users.update_one(user_query, pull_query)
+    st.session_state.db.users.update_one(user_query, pull_query)
 
     # Prepare the new question data to be pushed
     # TODO remove question and correct_answer as they should come from DatabaseAccess
@@ -1154,7 +1159,7 @@ def save_feedback_on_mc_question():
     }
 
     # Execute the push operation
-    db.users.update_one(user_query, push_query)
+    st.session_state.db.users.update_one(user_query, push_query)
 
 
 def reset_submitted_if_page_changed():
@@ -1407,11 +1412,18 @@ def render_LLM_info_page():
     """
     Renders the info page that contains the explanation of the learning and practice phases.
     """
-    with open(f"{base_path}data/uitleg_llms_voor_student.txt", "r") as f:
+    with open(
+        f"{st.session_state.base_path}data/uitleg_llms_voor_student.txt", "r"
+    ) as f:
         info_page = f.read()
     with mid_col:
         st.markdown(info_page, unsafe_allow_html=True)
     return
+
+
+def render_socratic_learning_page():
+    socratic_dialogue_page = SocraticDialogue(base_path=st.session_state.base_path)
+    socratic_dialogue_page.run()
 
 
 def render_selected_page():
@@ -1441,13 +1453,15 @@ def render_selected_page():
             render_generated_page()
         case "LLM_info":
             render_LLM_info_page()
+        case "socratic-dialogue":
+            render_socratic_learning_page()
         case _:  # Show courses page if no phase is selected
             render_courses_page()
 
 
 def upload_feedback():
     """Uploads feedback to the database."""
-    db.feedback.insert_one({"feedback": st.session_state.feedback_box})
+    st.session_state.db.feedback.insert_one({"feedback": st.session_state.feedback_box})
     st.session_state.feedback_submitted = True
 
 
@@ -1471,7 +1485,9 @@ def render_feedback_form():
 
 def render_info_page():
     """Renders the info page that contains the explanation of the learning and practice phases."""
-    with open(f"{base_path}data/uitleg_llms_voor_student.txt", "r") as f:
+    with open(
+        f"{st.session_state.base_path}data/uitleg_llms_voor_student.txt", "r"
+    ) as f:
         info_page = f.read()
     with mid_col:
         st.markdown(info_page, unsafe_allow_html=True)
@@ -1485,7 +1501,7 @@ def set_info_page_true():
 
 def track_visits():
     """Tracks the visits to the modules."""
-    db.users.update_one(
+    st.session_state.db.users.update_one(
         {"username": st.session_state.username},
         {
             "$inc": {
@@ -1524,14 +1540,14 @@ def render_sidebar():
     """
     student_name = (
         "student"
-        if st.session_state.deployment_type == "uva"
+        if st.session_state.deployment_type == "uva_servers"
         else st.session_state.username
     )
     with st.sidebar:
         img_cols = st.columns([1, 3])
         with img_cols[1]:
             st.image(
-                f"{base_path}data/content/images/logo.png",
+                f"{st.session_state.base_path}data/content/images/logo.png",
                 use_column_width=False,
                 width=110,
             )
@@ -1601,7 +1617,7 @@ def create_empty_progress_dict(module):
 
 
 def fetch_module_status(module_name):
-    lecture = db.content.find_one({"lecture_name": module_name})
+    lecture = st.session_state.db.content.find_one({"lecture_name": module_name})
 
     if lecture:
         return lecture["status"]
@@ -1618,7 +1634,7 @@ def check_user_doc_and_add_missing_fields():
     """
     user_doc = db_dal.find_user_doc()
     if not user_doc:
-        db.users.insert_one({"username": st.session_state.username})
+        st.session_state.db.users.insert_one({"username": st.session_state.username})
         user_doc = db_dal.find_user_doc()
         print("Inserted new user doc in db: ", user_doc)
 
@@ -1682,7 +1698,9 @@ def check_user_doc_and_add_missing_fields():
         print("Added 'last_module' field to user_doc")
 
     # Update user_doc in db
-    db.users.update_one({"username": st.session_state.username}, {"$set": user_doc})
+    st.session_state.db.users.update_one(
+        {"username": st.session_state.username}, {"$set": user_doc}
+    )
 
 
 def convert_image_base64(image_path):
@@ -1696,10 +1714,11 @@ def try_login():
     st.session_state.wrong_credentials = False
     # Checks if the user is in the list below
     input_username = st.session_state.streamlit_username
-    uva_users = {
+    uva_servers_users = {
         "Luc Mahieu": "abc123",
         "Milan van Roessel": "lala321",
         "eensupergeheimecode": None,
+        "supergeheimecode": None,
     }
     vu_users = {
         "098ncopkwo2": {
@@ -1708,36 +1727,39 @@ def try_login():
         },
     }
 
-    if input_username in uva_users:
+    if input_username in uva_servers_users:
         st.session_state.username = input_username
         st.session_state.logged_in = True
-        st.session_state.db = db_config.connect_db(
-            use_LL_cosmosdb=st.session_state.use_LL_cosmosdb,
-            database_name="UvA_KNP",
-        )
+        if input_username == "supergeheimecode":
+            st.session_state.db_name = "LearnLoop"
+        else:
+            st.session_state.db_name = "UvA_KNP"
 
     elif input_username in vu_users:
         if vu_users[input_username] == st.session_state.streamlit_password:
             st.session_state.username = input_username
             st.session_state.logged_in = True
-            st.session_state.db = db_config.connect_db(
-                use_LL_cosmosdb=st.session_state.use_LL_cosmosdb,
-                database_name="VU",
-            )
+            st.session_state.db_name = "VU"
 
     else:
         st.session_state.wrong_credentials = True
+        return
+
+    st.session_state.db = db_config.connect_db(
+        use_LL_cosmosdb=st.session_state.use_LL_cosmosdb,
+        database_name=st.session_state.db_name,
+    )
 
 
 def render_login_page():
     """This is the first page the user sees when visiting the website and
     prompts the user to login via SURFconext."""
-    if st.session_state.deployment_type == "uva":
+    if st.session_state.deployment_type == "uva_servers":
         columns = st.columns([1, 0.9, 1])
         with columns[1]:
             welcome_title = "Klinische Neuropsychologie"
             logo_base64 = convert_image_base64(
-                f"{base_path}data/content/images/logo.png"
+                f"{st.session_state.base_path}data/content/images/logo.png"
             )
 
             if surf_test_env:
@@ -1778,10 +1800,12 @@ def render_login_page():
         with cols[1]:
             img_cols = st.columns([1, 3, 1])
             with img_cols[0]:
-                logo_path = f"{base_path}data/content/images/logo.png"
+                logo_path = f"{st.session_state.base_path}data/content/images/logo.png"
                 st.image(logo_path, use_column_width=True)
             with img_cols[2]:
-                vu_logo_base64 = f"{base_path}data/content/images/vu_logo.png"
+                vu_logo_base64 = (
+                    f"{st.session_state.base_path}data/content/images/vu_logo.png"
+                )
                 st.image(vu_logo_base64, use_column_width=True)
 
             st.write("\n\n")
@@ -1810,6 +1834,9 @@ def determine_selected_module():
 
 
 def initialise_session_states():
+    if "base_path" not in st.session_state:
+        st.session_state.base_path = None
+
     if "use_LL_openai_deployment" not in st.session_state:
         st.session_state.use_LL_openai_deployment = None
 
@@ -1823,9 +1850,11 @@ def initialise_session_states():
         st.session_state.use_LL_blob_storage = None
 
     if "db" not in st.session_state:
-        st.session_state.db = db_config.connect_db(
-            use_LL_cosmosdb=st.session_state.use_LL_cosmosdb
-        )
+        st.session_state.db = None
+
+    if "db_name" not in st.session_state:
+        st.session_state.db_name = None
+
     if "selected_course" not in st.session_state:
         st.session_state.selected_course = None
 
@@ -1869,7 +1898,7 @@ def initialise_session_states():
         st.session_state.segment_index = 0
 
     if "modules" not in st.session_state:
-        st.session_state.modules = db_dal.initialise_modules()
+        st.session_state.modules = None
 
     if "selected_module" not in st.session_state:
         st.session_state.selected_module = None
@@ -2010,15 +2039,13 @@ def is_running_locally():
 
 
 def set_correct_settings_for_deployment_type():
-    st.session_state.deployment_type = "uva"
-    print(
-        f"Setting correct settings for deployment type: {st.session_state.deployment_type}"
-    )
-    # Set the correct arguments for the deployment type
+    st.session_state.deployment_type = "uva_servers"
+
     streamlit_deployment = is_deployed_in_streamlit_cloud()
     print(f"Streamlit deployment: {streamlit_deployment}")
     running_locally = is_running_locally()
     print(f"Running locally: {running_locally}")
+
     if streamlit_deployment is True or running_locally is True:
         print("App is deployed in Streamlit or runs locally, use cloud arguments.")
         args.use_LL_blob_storage = True
@@ -2028,10 +2055,10 @@ def set_correct_settings_for_deployment_type():
         args.no_login_page = False
         base_path = "student_app/src/"
         deployment_type = "streamlit_or_local"
-    elif st.session_state.deployment_type == "uva":
+    elif st.session_state.deployment_type == "uva_servers":
         print("App draait op uva servers, gebruik uva path.")
         base_path = "src/"
-        deployment_type = "uva"
+        deployment_type = "uva_servers"
         args.no_login_page = False
 
     st.session_state.deployment_type = deployment_type
@@ -2051,7 +2078,7 @@ if __name__ == "__main__":
     #     exception_handler, debug=args.debug
     # )
 
-    args, base_path = set_correct_settings_for_deployment_type()
+    args, st.session_state.base_path = set_correct_settings_for_deployment_type()
 
     # Turn on 'testing' to use localhost instead of learnloop.datanose.nl for authentication
     surf_test_env = args.surf_test_env
@@ -2069,9 +2096,6 @@ if __name__ == "__main__":
 
     st.session_state.use_keyvault = args.use_keyvault
 
-    # Give the name of the test user when giving one. !! If not using a test username, set to None
-    test_username = args.test_username
-
     if args.use_LL_openai_deployment:
         st.session_state.openai_model = "LLgpt-4o"
     else:
@@ -2081,24 +2105,33 @@ if __name__ == "__main__":
     # st.session_state.skip_authentication = True
     no_login_page = args.no_login_page
     # ---------------------------------------------------------
+    initialise_session_states()
 
-    db = db_config.connect_db(st.session_state.use_LL_cosmosdb)
+    # Give the name of the test user when giving one. !! If not using a test username, set to None
+    if st.session_state.username is None and args.test_username is not None:
+        st.session_state.username = args.test_username
+
+    if st.session_state.username == "supergeheimecode":
+        st.session_state.db_name = "LearnLoop"
+    else:
+        st.session_state.db_name = "UvA_KNP"
+
+    st.session_state.db = db_config.connect_db(
+        st.session_state.use_LL_cosmosdb, database_name=st.session_state.db_name
+    )
+
     db_dal = initialise_data_access_layer()
+    st.session_state.modules = db_dal.initialise_modules()
 
     image_handler = ImageHandler()
     utils = Utils()
-
-    initialise_session_states()
 
     # Create a mid column with margins in which everything one a
     # page is displayed (referenced to mid_col in functions)
     left_col, mid_col, right_col = st.columns([1, 3, 1])
 
     st.session_state.openai_client = connect_to_openai()
-
-    # If there is a test_username specified, overwrite the st.session_state
-    if test_username:
-        st.session_state.username = test_username
+    print("Username: ", st.session_state.username)
 
     if fetch_nonce_from_query() is not None:
         print("Fetched nonce from query params")

@@ -7,7 +7,7 @@ from utils.utils import Utils
 
 class TopicOverview:
     def __init__(self) -> None:
-        self.db = db_config.connect_db(st.session_state.use_LL_cosmosdb)
+        self.db = st.session_state.db
         self.db_dal = DatabaseAccess()
         self.utils = Utils()
         self.module_name = st.session_state.selected_module

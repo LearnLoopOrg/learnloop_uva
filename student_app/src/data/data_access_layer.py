@@ -8,9 +8,7 @@ from models.uni_database import Course, CourseCatalog, Lecture
 
 class DatabaseAccess:
     def __init__(self):
-        self.db = db_config.connect_db(
-            st.session_state.use_LL_cosmosdb
-        )  # database connection
+        self.db = st.session_state.db
         self.users_collection_name = "users"
         self.segments_list = None
         self.topics_list = None
@@ -240,11 +238,14 @@ class DatabaseAccess:
 
     def fetch_info(self):
         user_doc = self.db.users.find_one({"nonce": st.session_state.nonce})
-        if user_doc is not None:
+        if user_doc is not None and st.session_state.nonce is not None:
             st.session_state.username = user_doc["username"]
-        else:
+            print("User found with the nonce:", st.session_state.nonce)
+        elif st.session_state.username is None:
             st.session_state.username = None
             print("No user found with the nonce.")
+        elif user_doc is None and st.session_state.username is not None:
+            print("User doc exists with username", st.session_state.username)
 
     def invalidate_nonce(self):
         self.db.users.update_one(
