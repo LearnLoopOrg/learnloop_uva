@@ -47,26 +47,9 @@ class DatabaseAccess:
         """
         Loads lectures from the database into the session state.
         """
-        print(
-            "Selected course before getting course catalog: ",
-            st.session_state.selected_course,
-        )
         course_catalog = self.get_course_catalog()
-        print(
-            "Selected course after getting course catalog: ",
-            st.session_state.selected_course,
-        )
         if st.session_state.selected_course is None:
             st.session_state.selected_course = course_catalog.courses[0].title
-
-        print("Selected course: ", st.session_state.selected_course)
-        print("Course catalog: ", course_catalog)
-        print(
-            "Lectures for course: ",
-            self.get_lectures_for_course(
-                st.session_state.selected_course, course_catalog
-            ),
-        )
 
         return [
             module.title
@@ -113,8 +96,6 @@ class DatabaseAccess:
                 return course.lectures
 
     def get_segment_type(self, segment_index):
-        print("Selected module: ", st.session_state.selected_module)
-        print("Segment index: ", segment_index)
         return self.get_segments_list_from_db(st.session_state.selected_module)[
             segment_index
         ].get("type", None)
@@ -208,22 +189,15 @@ class DatabaseAccess:
     def get_topic_segment_indexes(_self, module, topic_index):
         return _self.get_topics_list_from_db(module)[topic_index]["segment_indexes"]
 
-    # @st.cache_data(ttl=timedelta(hours=4))
+    @st.cache_data(ttl=timedelta(hours=4))
     def get_segments_list_from_db(_self, module):
         query = {"lecture_name": module}
         doc = st.session_state.db.content.find_one(query)
-
-        print("Doc: ", doc)
-        print("db: ", st.session_state.db)
-        print("Module: ", module)
-        print("Query: ", query)
 
         if doc and "corrected_lecturepath_content" in doc:
             _self.segments_list = doc["corrected_lecturepath_content"]["segments"]
         else:
             _self.segments_list = None
-
-        print("Segments list: ", _self.segments_list)
 
         return _self.segments_list
 
@@ -288,7 +262,6 @@ class DatabaseAccess:
         return list(collection.find({}))
 
     def find_user_doc(self):
-        print("DLA db: ", st.session_state.db)
         return st.session_state.db.users.find_one(
             {"username": st.session_state.username}
         )
