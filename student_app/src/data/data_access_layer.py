@@ -208,15 +208,22 @@ class DatabaseAccess:
     def get_topic_segment_indexes(_self, module, topic_index):
         return _self.get_topics_list_from_db(module)[topic_index]["segment_indexes"]
 
-    @st.cache_data(ttl=timedelta(hours=4))
+    # @st.cache_data(ttl=timedelta(hours=4))
     def get_segments_list_from_db(_self, module):
         query = {"lecture_name": module}
         doc = st.session_state.db.content.find_one(query)
+
+        print("Doc: ", doc)
+        print("db: ", st.session_state.db)
+        print("Module: ", module)
+        print("Query: ", query)
 
         if doc and "corrected_lecturepath_content" in doc:
             _self.segments_list = doc["corrected_lecturepath_content"]["segments"]
         else:
             _self.segments_list = None
+
+        print("Segments list: ", _self.segments_list)
 
         return _self.segments_list
 

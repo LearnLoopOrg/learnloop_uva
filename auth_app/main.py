@@ -40,7 +40,7 @@ load_dotenv()
 # use_LL_cosmosdb = args.use_LL_cosmosdb
 # surf_test_env = args.surf_test_env
 use_LL_cosmosdb = False
-surf_test_env = True
+surf_test_env = False
 
 if surf_test_env:
     print(f"WARNING: Using Surf Test Environment: {surf_test_env}")

@@ -1807,14 +1807,14 @@ def render_login_page():
 
             st.markdown(html_content, unsafe_allow_html=True)
             st.write("\n\n")
-            st.warning(
-                "⚠️ Accepteer eerst de uitnodiging van SURF (e-mail: 'Uitnodiging voor uva_fnwi_learnloop') om in te loggen. Niet gevonden? Check je spam. \n\nNog geen mail? Stuur een bericht met je naam en UvA e-mailadres naar **+31 6 20192794**."
+            st.info(
+                "Log je voor het eerst in? Check dan eerst of je de uitnodiging van SURF hebt geaccepteerd (e-mail: *'Uitnodiging voor uva_fnwi_learnloop'*) om in te loggen. Niet gevonden? Check je spam. \n\nNog geen mail? Stuur een berichtje naar **+31 6 2019 2794**, dan zorgt Milan ervoor dat je toegang krijgt. 😊"
             )
             with st.expander("Admin login", expanded=False):
                 st.text_input("Credentials", key="streamlit_username", type="password")
                 if st.session_state.wrong_credentials:
                     st.warning("Onjuiste credentials.")
-                st.button("Log in", on_click=try_login)
+                st.button("Log in", on_click=try_login, use_container_width=True)
 
     elif st.session_state.deployment_type == "streamlit_or_local":
         print("Rendering login page: streamlit_or_local")
