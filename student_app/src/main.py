@@ -1040,7 +1040,7 @@ def render_learning_page():
             wrong_answers = st.session_state.segment_content["answers"]["wrong_answers"]
 
             # Check if the answers have already been shuffled and stored
-            if st.session_state.shuffled_answers == None:
+            if st.session_state.shuffled_answers is None:
                 answers = [correct_answer] + wrong_answers
                 random.shuffle(answers)
                 st.session_state.shuffled_answers = answers
@@ -1399,7 +1399,7 @@ def render_generated_page():
     Renders the page that shows the student that the lecture is not recorded.
     """
     st.title(f"College — {st.session_state.selected_module}")
-    utils.add_spacing(1)
+    st.session_state.utils.add_spacing(1)
     st.subheader("Nog niet nagekeken door docent")
     st.write(
         "De docent moet de content van het college nog nakijken voordat je er hiermee kunt oefenen."
@@ -1528,7 +1528,7 @@ def render_page_button(page_title, module, phase):
             reset_feedback()
 
         st.session_state.selected_module = module
-        utils.set_phase_to_match_lecture_status(phase)
+        st.session_state.utils.set_phase_to_match_lecture_status(phase)
 
         st.session_state.info_page = False
         track_visits()
@@ -1553,7 +1553,7 @@ def render_sidebar():
     Function to render the sidebar with the modules and login module.
     """
     student_name = (
-        "student"
+        "Student"
         if st.session_state.deployment_type == "uva_servers"
         else st.session_state.username
     )
