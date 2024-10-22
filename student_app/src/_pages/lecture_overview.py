@@ -1,6 +1,4 @@
 import streamlit as st
-from data.data_access_layer import DatabaseAccess
-from utils.utils import Utils
 
 
 class LectureOverview:
@@ -96,7 +94,7 @@ class LectureOverview:
 
     def track_visits(self):
         """Tracks the visits to the modules."""
-        self.db_dal.db.users.update_one(
+        self.db.users.update_one(
             {"username": st.session_state.username},
             {
                 "$inc": {
@@ -129,6 +127,7 @@ class LectureOverview:
     def run(self):
         self.db_dal = st.session_state.db_dal
         self.utils = st.session_state.utils
+        self.db = st.session_state.db
 
         self.db_dal.update_last_phase("lectures")
         self.load_lectures()
