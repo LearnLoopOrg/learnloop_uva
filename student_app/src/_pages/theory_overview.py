@@ -49,8 +49,11 @@ class TheoryOverview:
                     st.write(text)
 
                 with content_cols[1]:
-                    if segment["image"] is not None:
-                        _self.image_handler.render_image(segment, max_height=300)
+                    if "image" in segment:
+                        if segment["image"] is not None:
+                            st.session_state.image_handler.render_image(
+                                segment, max_height=300
+                            )
 
             elif segment["type"] == "question":
                 with content_cols[0]:
@@ -72,6 +75,7 @@ class TheoryOverview:
         lecture in seperate containers that allow the user to look at the contents
         and to select the topics they want to learn.
         """
+        self.db_dal = st.session_state.db_dal
         self.render_title()
 
         self.set_styling()  # for texts

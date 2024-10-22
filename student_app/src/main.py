@@ -955,7 +955,7 @@ def render_image_if_available():
     segment = st.session_state.segment_content
 
     if segment.get("image"):
-        image_handler.render_image(segment, max_height=600)
+        st.session_state.image_handler.render_image(segment, max_height=600)
 
 
 def render_learning_page():

@@ -40,7 +40,12 @@ load_dotenv()
 # use_LL_cosmosdb = args.use_LL_cosmosdb
 # surf_test_env = args.surf_test_env
 use_LL_cosmosdb = False
-surf_test_env = False
+surf_test_env = True
+
+if surf_test_env:
+    print(f"WARNING: Using Surf Test Environment: {surf_test_env}")
+if use_LL_cosmosdb:
+    print(f"WARNING: Using LearnLoop CosmosDB: {use_LL_cosmosdb}")
 # --------------------------------------------
 
 db = db_config.connect_db(use_LL_cosmosdb)
