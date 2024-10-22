@@ -5,8 +5,7 @@ from utils.utils import Utils
 
 class LectureOverview:
     def __init__(self):
-        self.db_dal = DatabaseAccess()
-        self.utils = Utils()
+        pass
 
     def display_courses(self):
         """Displays available courses as buttons."""
@@ -128,6 +127,9 @@ class LectureOverview:
         )
 
     def run(self):
+        self.db_dal = st.session_state.db_dal
+        self.utils = st.session_state.utils
+
         self.db_dal.update_last_phase("lectures")
         self.load_lectures()
         st.title("Collegeoverzicht")

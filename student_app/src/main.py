@@ -89,7 +89,9 @@ def upload_progress():
     Uploads the progress of the user in the current phase to the database.
     """
     # Store path and data in variables for clarity
-    topics = db_dal.fetch_module_topics(st.session_state.selected_module)["topics"]
+    topics = st.session_state.db_dal.fetch_module_topics(
+        st.session_state.selected_module
+    )["topics"]
     topic = topics[st.session_state.topic_index]
     segment_indices = topic["segment_indexes"]
     segment_index_to_save_progress_for_topic = st.session_state.segment_index
@@ -888,7 +890,7 @@ def reset_progress():
 
 def set_if_warned_true():
     """Sets the warned variable in the database and session state to True."""
-    db_dal.update_if_warned(True)
+    st.session_state.db_dal.update_if_warned(True)
     st.session_state.warned = True
 
 
@@ -919,7 +921,9 @@ def progress_date_tracking_format():
     """
     date = datetime.now(timezone.utc).date()
     return {
-        "type": db_dal.get_segment_type(st.session_state.segment_index),
+        "type": st.session_state.db_dal.get_segment_type(
+            st.session_state.segment_index
+        ),
         "entries": [date.isoformat()],
     }
 
@@ -929,9 +933,9 @@ def add_date_to_progress_counter():
     Counts how many times a person answered the current question and updates database.
     """
     module = st.session_state.selected_module
-    user_doc = db_dal.find_user_doc()
+    user_doc = st.session_state.db_dal.find_user_doc()
 
-    progress_counter = db_dal.get_progress_counter(module, user_doc)
+    progress_counter = st.session_state.db_dal.get_progress_counter(module, user_doc)
 
     segment_progress_count = progress_counter.get(str(st.session_state.segment_index))
 
@@ -942,7 +946,9 @@ def add_date_to_progress_counter():
         date = datetime.now(timezone.utc).date()
         segment_progress_count["entries"].append(date.isoformat())
 
-    db_dal.update_progress_counter_for_segment(module, segment_progress_count)
+    st.session_state.db_dal.update_progress_counter_for_segment(
+        module, segment_progress_count
+    )
 
 
 def render_image_if_available():
@@ -1204,7 +1210,7 @@ def initialise_practice_page():
     if it's the first time."""
 
     # Fetch the last segment index from db
-    st.session_state.segment_index = db_dal.fetch_segment_index()
+    st.session_state.segment_index = st.session_state.db_dal.fetch_segment_index()
 
     if st.session_state.segment_index == -1:
         fetch_ordered_segment_sequence()
@@ -1430,7 +1436,7 @@ def render_selected_page():
     """
     Determines what type of page to display based on which module the user selected.
     """
-    st.session_state.page_content = db_dal.fetch_module_content(
+    st.session_state.page_content = st.session_state.db_dal.fetch_module_content(
         st.session_state.selected_module
     )
 
@@ -1531,7 +1537,15 @@ def render_page_button(page_title, module, phase):
 def set_selected_phase(phase):
     st.session_state.selected_phase = phase
     # update the selected phase in the database
-    db_dal.update_last_phase(phase)
+    st.session_state.db_dal.update_last_phase(phase)
+
+
+def logout():
+    st.session_state.username = None
+    st.session_state.selected_module = None
+    st.session_state.selected_phase = None
+    st.session_state.logged_in = False
+    return
 
 
 def render_sidebar():
@@ -1586,6 +1600,8 @@ def render_sidebar():
             key="info_button_sidebar",
         )
 
+        st.button("Log uit", on_click=logout, use_container_width=True)
+
 
 def create_default_progress_structure(module):
     """
@@ -1607,7 +1623,7 @@ def create_empty_progress_dict(module):
     """
     Creates an empty dictionary with segment indices as keys and None as values for progress tracking.
     """
-    st.session_state.page_content = db_dal.fetch_module_content(module)
+    st.session_state.page_content = st.session_state.db_dal.fetch_module_content(module)
     number_of_segments = (
         len(st.session_state.page_content["segments"])
         if st.session_state.page_content
@@ -1632,10 +1648,13 @@ def check_user_doc_and_add_missing_fields():
     """
     Initializes the user database with missing fields and modules.
     """
-    user_doc = db_dal.find_user_doc()
+    user_doc = st.session_state.db_dal.find_user_doc()
+    print("User doc: ", user_doc)
+    print("Username: ", st.session_state.username)
+    print("DB: ", st.session_state.db)
     if not user_doc:
         st.session_state.db.users.insert_one({"username": st.session_state.username})
-        user_doc = db_dal.find_user_doc()
+        user_doc = st.session_state.db_dal.find_user_doc()
         print("Inserted new user doc in db: ", user_doc)
 
     # General fields initialization
@@ -1648,9 +1667,11 @@ def check_user_doc_and_add_missing_fields():
         print("Added 'progress' field to user_doc")
 
     # Check of alle course modules in user_doc["progress"] zitten
-    course_catalog = db_dal.get_course_catalog()
+    course_catalog = st.session_state.db_dal.get_course_catalog()
     for course in course_catalog.courses:
-        course_modules = db_dal.get_lectures_for_course(course.title, course_catalog)
+        course_modules = st.session_state.db_dal.get_lectures_for_course(
+            course.title, course_catalog
+        )
         for module in course_modules:
             if fetch_module_status(module.title) == "corrected":
                 if module.title not in user_doc.get("progress", {}):
@@ -1745,11 +1766,6 @@ def try_login():
         st.session_state.wrong_credentials = True
         return
 
-    st.session_state.db = db_config.connect_db(
-        use_LL_cosmosdb=st.session_state.use_LL_cosmosdb,
-        database_name=st.session_state.db_name,
-    )
-
 
 def render_login_page():
     """This is the first page the user sees when visiting the website and
@@ -1757,7 +1773,7 @@ def render_login_page():
     if st.session_state.deployment_type == "uva_servers":
         columns = st.columns([1, 0.9, 1])
         with columns[1]:
-            welcome_title = "Klinische Neuropsychologie"
+            # welcome_title = "Klinische Neuropsychologie"
             logo_base64 = convert_image_base64(
                 f"{st.session_state.base_path}data/content/images/logo.png"
             )
@@ -1767,27 +1783,33 @@ def render_login_page():
             else:
                 href = "https://learnloop.datanose.nl/"
 
+            # html_content = f"""
+            # <div style="text-align: center; margin: 20px;">
+            #     <img src="data:image/png;base64,{logo_base64}" alt="Logo" style="max-width: 25%; height: auto; margin-bottom: 20px;">
+            #     <div style="font-size: 36px; margin-bottom: 20px;"><strong>{welcome_title}</strong></div>
+            #     <a href="{href}" target="_self" style="text-decoration: none;">
+            #         <button style="font-size: 20px; border: none; color: white; padding: 10px 20px;
+            #         text-align: center; text-decoration: none; display: block; width: 100%; cursor: pointer; background-color: #4CAF50; border-radius: 10px;">SURF Login</button>
+            #     </a>
+            # </div>"""
+
             html_content = f"""
-            <div style="text-align: center; margin: 20px;">
-                <img src="data:image/png;base64,{logo_base64}" alt="Logo" style="max-width: 25%; height: auto; margin-bottom: 20px;">
-                <div style="font-size: 36px; margin-bottom: 20px;"><strong>{welcome_title}</strong></div>
+            <div style="text-align: center; margin: 20px; width=100%;">
+                <div style="text-align: center;">
+                    <img src="data:image/png;base64,{logo_base64}" alt="Logo" style="max-width: 35%; height: auto; margin-bottom: 60px; margin-top: 40px">
+                </div>
+                <div style="height: 20px;"></div>
                 <a href="{href}" target="_self" style="text-decoration: none;">
                     <button style="font-size: 20px; border: none; color: white; padding: 10px 20px; 
-                    text-align: center; text-decoration: none; display: block; width: 100%; margin: 
-                    4px 0; cursor: pointer; background-color: #4CAF50; border-radius: 12px;">SURF Login</button>
+                    text-align: center; text-decoration: none; display: block; width: 100%; cursor: pointer; background-color: #4CAF50; border-radius: 10px;">SURF Login</button>
                 </a>
-                <br>
-                <div style="padding: 5px; max-width: 400px; margin: 5px auto 0; border-radius: 12px; background-color: #f5f5f5;">
-                    <p style="font-size: 12px; margin: 10px 0; color: #333; text-align: left;">
-                        ⚠️ Om in te loggen met SURF, moet je eerst de uitnodiging accepteren die je per e-mail hebt ontvangen van SURF <br>
-                        (<i>Uitnodiging voor uva_fnwi_learnloop</i>).<br><br>Kun je de e-mail niet vinden? Controleer dan je spamfolder.<br><br>
-                        Staat de e-mail daar ook niet in? Stuur dan een bericht naar <br> <strong>+31 6 20192794</strong> met je volledige naam en je UvA e-mailadres.
-                    </p>
-                </div>
             </div>"""
 
             st.markdown(html_content, unsafe_allow_html=True)
             st.write("\n\n")
+            st.warning(
+                "⚠️ Accepteer eerst de uitnodiging van SURF (e-mail: 'Uitnodiging voor uva_fnwi_learnloop') om in te loggen. Niet gevonden? Check je spam. \n\nNog geen mail? Stuur een bericht met je naam en UvA e-mailadres naar **+31 6 20192794**."
+            )
             with st.expander("Admin login", expanded=False):
                 st.text_input("Credentials", key="streamlit_username", type="password")
                 if st.session_state.wrong_credentials:
@@ -1828,12 +1850,12 @@ def initialise_data_access_layer():
 
 
 def determine_selected_module():
-    st.session_state.selected_module = db_dal.fetch_last_module()
+    st.session_state.selected_module = st.session_state.db_dal.fetch_last_module()
     if st.session_state.selected_module is None:
         st.session_state.selected_module = st.session_state.modules[0]
 
 
-def initialise_session_states():
+def initialise_variables():
     if "base_path" not in st.session_state:
         st.session_state.base_path = None
 
@@ -1848,9 +1870,6 @@ def initialise_session_states():
 
     if "use_LL_blob_storage" not in st.session_state:
         st.session_state.use_LL_blob_storage = None
-
-    if "db" not in st.session_state:
-        st.session_state.db = None
 
     if "db_name" not in st.session_state:
         st.session_state.db_name = None
@@ -1884,9 +1903,6 @@ def initialise_session_states():
 
     if "current_page" not in st.session_state:
         st.session_state.current_page = None
-
-    if "ordered_segment_sequence" not in st.session_state:
-        st.session_state.ordered_segment_sequence = []
 
     if "ordered_segment_sequence" not in st.session_state:
         st.session_state.ordered_segment_sequence = []
@@ -1927,12 +1943,6 @@ def initialise_session_states():
     if "questions_only" not in st.session_state:
         st.session_state.questions_only = False
 
-    if "use_keyvault" not in st.session_state:
-        st.session_state.use_keyvault = False
-
-    if "use_LL_blob_storage" not in st.session_state:
-        st.session_state.use_LL_blob_storage = False
-
     if "username" not in st.session_state:
         st.session_state.username = None
 
@@ -1943,7 +1953,7 @@ def initialise_session_states():
         st.session_state.wrong_credentials = False
 
     if "logged_in" not in st.session_state:
-        st.session_state.logged_in = None
+        st.session_state.logged_in = False
 
     if "streamlit_username" not in st.session_state:
         st.session_state.streamlit_username = None
@@ -1963,13 +1973,13 @@ def determine_username_from_nonce():
     st.session_state.nonce = (
         fetch_nonce_from_query()
     )  # ? Why save nonce in session state? Pass a param?
-    db_dal.fetch_info()
+    st.session_state.db_dal.fetch_info()
 
 
 def remove_nonce_from_memories():
     """Removes the nonce from the query parameters and session state."""
     st.query_params.pop("nonce", None)
-    db_dal.invalidate_nonce()
+    st.session_state.db_dal.invalidate_nonce()
     st.session_state.nonce = None
 
 
@@ -2067,12 +2077,6 @@ def set_correct_settings_for_deployment_type():
 
 
 if __name__ == "__main__":
-    # ---------------------------------------------------------
-    # SETTINGS for DEVELOPMENT & DEPLOYMENT:
-
-    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    # SET ALL TO FALSE WHEN DEPLOYING
-    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     args = get_commandline_arguments()
     # set_global_exception_handler(
     #     exception_handler, debug=args.debug
@@ -2082,9 +2086,6 @@ if __name__ == "__main__":
 
     # Turn on 'testing' to use localhost instead of learnloop.datanose.nl for authentication
     surf_test_env = args.surf_test_env
-
-    # Reset db for current user every time the webapp is loaded
-    reset_user_doc = False
 
     # Your current IP has to be accepted by Gerrit to use CosmosDB (Gerrit controls this)
     st.session_state.use_LL_cosmosdb = args.use_LL_cosmosdb
@@ -2105,32 +2106,65 @@ if __name__ == "__main__":
     # st.session_state.skip_authentication = True
     no_login_page = args.no_login_page
     # ---------------------------------------------------------
-    initialise_session_states()
+    initialise_variables()
 
     # Give the name of the test user when giving one. !! If not using a test username, set to None
     if st.session_state.username is None and args.test_username is not None:
         st.session_state.username = args.test_username
 
-    if st.session_state.username == "supergeheimecode":
-        st.session_state.db_name = "LearnLoop"
-    else:
-        st.session_state.db_name = "UvA_KNP"
+    def initialise_tools():
+        if "db_dal" not in st.session_state:
+            st.session_state.db_dal = DatabaseAccess()
 
-    st.session_state.db = db_config.connect_db(
-        st.session_state.use_LL_cosmosdb, database_name=st.session_state.db_name
-    )
+        if "image_handler" not in st.session_state:
+            st.session_state.image_handler = ImageHandler()
 
-    db_dal = initialise_data_access_layer()
-    st.session_state.modules = db_dal.initialise_modules()
+        if "utils" not in st.session_state:
+            st.session_state.utils = Utils()
 
-    image_handler = ImageHandler()
-    utils = Utils()
+        if "openai" not in st.session_state:
+            st.session_state.openai_client = connect_to_openai()
+
+        if "azure_utils" not in st.session_state:
+            st.session_state.azure_utils = AzureUtils()
+
+        if "db" not in st.session_state:
+            st.session_state.db = db_config.connect_db(database_name="UvA_KNP")
+
+    def initialise_pages():
+        if "courses_page" not in st.session_state:
+            st.session_state.courses_page = CoursesOverview()
+
+        if "lectures_page" not in st.session_state:
+            st.session_state.lectures_page = LectureOverview()
+
+        if "topics_page" not in st.session_state:
+            st.session_state.topics_page = TopicOverview()
+
+        if "theory_overview_page" not in st.session_state:
+            st.session_state.theory_overview_page = TheoryOverview()
+
+        if "socratic_dialogue_page" not in st.session_state:
+            st.session_state.socratic_dialogue_page = SocraticDialogue()
+
+    initialise_tools()
+    initialise_pages()
+
+    # Reconnect to the correct database when the user is logged in
+    print("Logged in: ", st.session_state.logged_in)
+    print("Username: ", st.session_state.username)
+    if (
+        st.session_state.logged_in is True
+        and st.session_state.username == "supergeheimecode"
+    ):
+        st.session_state.db = db_config.connect_db(database_name="LearnLoop")
+
+    print("Selected course in main: ", st.session_state.selected_course)
 
     # Create a mid column with margins in which everything one a
     # page is displayed (referenced to mid_col in functions)
     left_col, mid_col, right_col = st.columns([1, 3, 1])
 
-    st.session_state.openai_client = connect_to_openai()
     print("Username: ", st.session_state.username)
 
     if fetch_nonce_from_query() is not None:
@@ -2138,12 +2172,17 @@ if __name__ == "__main__":
         st.session_state.logged_in = True
         print("Logged in")
 
-    if no_login_page is False and st.session_state.logged_in is False:
+    if (
+        no_login_page is False
+        and st.session_state.logged_in is False
+        and st.session_state.username is None
+    ):
         print("Rendering login page")
         render_login_page()
     # Render the actual app when the user is logged in
     else:
         print("Rendering the app")
+        st.session_state.modules = st.session_state.db_dal.initialise_modules()
         # The username is fetched from the database with this nonce
         determine_username_from_nonce()
         # The nonce is removed from the query params, the session state and the database
@@ -2152,12 +2191,12 @@ if __name__ == "__main__":
         check_user_doc_and_add_missing_fields()
 
         if st.session_state.warned is None:
-            if warned := db_dal.fetch_if_warned() is True:
+            if warned := st.session_state.db_dal.fetch_if_warned() is True:
                 st.session_state.warned = True
             else:
                 st.session_state.warned = False
 
-            db_dal.update_if_warned(warned)
+            st.session_state.db_dal.update_if_warned(warned)
 
         if st.session_state.selected_module is None:
             determine_selected_module()

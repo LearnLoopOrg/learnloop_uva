@@ -1,12 +1,9 @@
 import streamlit as st
-from data.data_access_layer import DatabaseAccess
-from utils.utils import Utils
 
 
 class CoursesOverview:
     def __init__(self):
-        self.db_dal = DatabaseAccess()
-        self.utils = Utils()
+        pass
 
     def go_to_course(self, course_name):
         """
@@ -48,6 +45,9 @@ class CoursesOverview:
                     self.render_course_card(course.title, course.description)
 
     def run(self):
+        self.db_dal = st.session_state.db_dal
+        self.utils = st.session_state.utils
+
         # Ensure this page is ran from the main controller and last visited page is displayed when user returns
         self.db_dal.update_last_phase("lectures")
 

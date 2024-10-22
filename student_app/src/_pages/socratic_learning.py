@@ -1,32 +1,11 @@
 import streamlit as st
-from openai import AzureOpenAI
-import os
-from dotenv import load_dotenv
 import json
 import base64
-import data.data_access_layer as DatabaseAccess
-
-load_dotenv()
-
-
-def connect_to_openai():
-    OPENAI_API_KEY = os.getenv("LL_AZURE_OPENAI_API_KEY")
-    OPENAI_API_ENDPOINT = os.getenv("LL_AZURE_OPENAI_API_ENDPOINT")
-    return AzureOpenAI(
-        api_key=OPENAI_API_KEY,
-        api_version="2024-04-01-preview",
-        azure_endpoint=OPENAI_API_ENDPOINT,
-    )
 
 
 class SocraticDialogue:
-    def __init__(self, base_path):
-        self.db = st.session_state.db
-        self.base_path = base_path
-        self.db_dal = DatabaseAccess()
-        self.client = connect_to_openai()
-        self.initialize_session_state()
-        self.create_questions_json_from_content_and_topic_json()
+    def __init__(self):
+        pass
 
     def create_questions_json_from_content_and_topic_json(self):
         topics_data = self.db_dal.fetch_module_topics(st.session_state.selected_module)[
@@ -292,7 +271,7 @@ Conversation history:
         elif status == "undiagnosed":
             instructions = undiagnosed_prompt
 
-        stream = self.client.chat.completions.create(
+        stream = self.openai_client.chat.completions.create(
             model="LLgpt-4o",
             messages=[
                 {"role": "system", "content": instructions},
@@ -545,7 +524,15 @@ Conversation history:
                 st.write("\n")
 
     def run(self):
+        self.db_dal = st.session_state.db_dal
+        self.db = st.session_state.db
+        self.utils = st.session_state.utils
+        self.openai_client = st.session_state.openai_client
+        self.base_path = st.session_state.base_path
+
         self.initialize_session_state()
+
+        self.create_questions_json_from_content_and_topic_json()
 
         st.title("Parkinson's - Samenvatten in dialoog")
 

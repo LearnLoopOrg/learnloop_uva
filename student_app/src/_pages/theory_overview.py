@@ -7,11 +7,7 @@ from data.data_access_layer import DatabaseAccess
 
 class TheoryOverview:
     def __init__(self) -> None:
-        self.db = st.session_state.db
-        self.db_dal = DatabaseAccess()
-        self.utils = Utils()
-        self.image_handler = ImageHandler()
-        self.module_name = st.session_state.selected_module
+        pass
 
     def set_styling(self):
         st.markdown(
@@ -31,7 +27,7 @@ class TheoryOverview:
         )
 
     def render_title(self):
-        st.title(f"Theorie overzicht: {self.module_name}")
+        st.title(f"Theorie overzicht: {st.session_state.selected_module}")
         st.write("\n")
 
     def render_theory_for_segments(_self, segment_indices: list[int]):
@@ -76,14 +72,15 @@ class TheoryOverview:
         lecture in seperate containers that allow the user to look at the contents
         and to select the topics they want to learn.
         """
-
         self.render_title()
 
         self.set_styling()  # for texts
         self.db_dal.update_last_phase("theory-overiew")
 
-        self.topics = self.db_dal.fetch_module_topics(self.module_name)
-        self.content = self.db_dal.fetch_module_content(self.module_name)
+        self.topics = self.db_dal.fetch_module_topics(st.session_state.selected_module)
+        self.content = self.db_dal.fetch_module_content(
+            st.session_state.selected_module
+        )
 
         for topic in self.topics["topics"]:
             st.header(topic["topic_title"])

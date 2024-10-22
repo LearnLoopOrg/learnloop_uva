@@ -8,7 +8,6 @@ from models.uni_database import Course, CourseCatalog, Lecture
 
 class DatabaseAccess:
     def __init__(self):
-        self.db = st.session_state.db
         self.users_collection_name = "users"
         self.segments_list = None
         self.topics_list = None
@@ -22,7 +21,7 @@ class DatabaseAccess:
         """
         # Read the modules from the modules directory
         modules = []
-        lectures = _self.db.content.find()
+        lectures = st.session_state.db.content.find()
         for lecture in lectures:
             try:
                 modules.append(lecture["lecture_name"])
@@ -48,9 +47,26 @@ class DatabaseAccess:
         """
         Loads lectures from the database into the session state.
         """
+        print(
+            "Selected course before getting course catalog: ",
+            st.session_state.selected_course,
+        )
         course_catalog = self.get_course_catalog()
+        print(
+            "Selected course after getting course catalog: ",
+            st.session_state.selected_course,
+        )
         if st.session_state.selected_course is None:
             st.session_state.selected_course = course_catalog.courses[0].title
+
+        print("Selected course: ", st.session_state.selected_course)
+        print("Course catalog: ", course_catalog)
+        print(
+            "Lectures for course: ",
+            self.get_lectures_for_course(
+                st.session_state.selected_course, course_catalog
+            ),
+        )
 
         return [
             module.title
@@ -65,8 +81,9 @@ class DatabaseAccess:
         """
         Load the course catalog from the (dummy) university database.
         """
-        data = self.db.courses.find_one({"university_name": university_name})
-        # print(f"Data (courses doc): {data}")
+        data = st.session_state.db.courses.find_one(
+            {"university_name": university_name}
+        )
 
         courses = [
             Course(
@@ -96,6 +113,8 @@ class DatabaseAccess:
                 return course.lectures
 
     def get_segment_type(self, segment_index):
+        print("Selected module: ", st.session_state.selected_module)
+        print("Segment index: ", segment_index)
         return self.get_segments_list_from_db(st.session_state.selected_module)[
             segment_index
         ].get("type", None)
@@ -116,7 +135,7 @@ class DatabaseAccess:
         )
 
         if not segment_indices:
-            self.db.users.update_one(
+            st.session_state.db.users.update_one(
                 {"username": st.session_state.username},
                 {
                     "$set": {
@@ -142,7 +161,9 @@ class DatabaseAccess:
         if phase == "topics":
             phase = "learning"
 
-        user_doc = self.db.users.find_one({"username": st.session_state.username})
+        user_doc = st.session_state.db.users.find_one(
+            {"username": st.session_state.username}
+        )
         return user_doc["progress"][st.session_state.selected_module][phase][
             "segment_index"
         ]
@@ -160,15 +181,15 @@ class DatabaseAccess:
         return self.segments_list[segment_index].get("answers", None)
 
     def fetch_module_content(self, module):
-        page_content = self.db.content.find_one({"lecture_name": module})
+        page_content = st.session_state.db.content.find_one({"lecture_name": module})
         return page_content["corrected_lecturepath_content"] if page_content else None
 
     def fetch_module_topics(self, module):
-        page_content = self.db.content.find_one({"lecture_name": module})
+        page_content = st.session_state.db.content.find_one({"lecture_name": module})
         return page_content["corrected_lecturepath_topics"]
 
     def get_lecture(self, lecture_name):
-        return self.db.content.find_one({"lecture_name": lecture_name})
+        return st.session_state.db.content.find_one({"lecture_name": lecture_name})
 
     def get_image_path(self, image_file_name):
         return f"src/data/content/images/{image_file_name}"
@@ -190,7 +211,7 @@ class DatabaseAccess:
     @st.cache_data(ttl=timedelta(hours=4))
     def get_segments_list_from_db(_self, module):
         query = {"lecture_name": module}
-        doc = _self.db.content.find_one(query)
+        doc = st.session_state.db.content.find_one(query)
 
         if doc and "corrected_lecturepath_content" in doc:
             _self.segments_list = doc["corrected_lecturepath_content"]["segments"]
@@ -202,7 +223,7 @@ class DatabaseAccess:
     @st.cache_data(ttl=timedelta(hours=4))
     def get_topics_list_from_db(_self, module):
         query = {"lecture_name": module}
-        doc = _self.db.content.find_one(query)
+        doc = st.session_state.db.content.find_one(query)
 
         if doc and "corrected_lecturepath_topics" in doc:
             _self.topics_list = doc["corrected_lecturepath_topics"]["topics"]
@@ -213,13 +234,15 @@ class DatabaseAccess:
 
     def update_if_warned(self, boolean):
         """Callback function for a button that turns of the LLM warning message."""
-        self.db.users.update_one(
+        st.session_state.db.users.update_one(
             {"username": st.session_state.username}, {"$set": {"warned": boolean}}
         )
 
     def fetch_if_warned(self):
         """Fetches from database if the user has been warned about LLM."""
-        user_doc = self.db.users.find_one({"username": st.session_state.username})
+        user_doc = st.session_state.db.users.find_one(
+            {"username": st.session_state.username}
+        )
         if user_doc is None:
             return None
         return user_doc.get("warned", None)
@@ -231,13 +254,13 @@ class DatabaseAccess:
         return user_doc.get("last_module", None)
 
     def update_last_module(self):
-        self.db.users.update_one(
+        st.session_state.db.users.update_one(
             {"username": st.session_state.username},
             {"$set": {"last_module": st.session_state.selected_module}},
         )
 
     def fetch_info(self):
-        user_doc = self.db.users.find_one({"nonce": st.session_state.nonce})
+        user_doc = st.session_state.db.users.find_one({"nonce": st.session_state.nonce})
         if user_doc is not None and st.session_state.nonce is not None:
             st.session_state.username = user_doc["username"]
             print("User found with the nonce:", st.session_state.nonce)
@@ -248,17 +271,20 @@ class DatabaseAccess:
             print("User doc exists with username", st.session_state.username)
 
     def invalidate_nonce(self):
-        self.db.users.update_one(
+        st.session_state.db.users.update_one(
             {"username": st.session_state.username}, {"$set": {"nonce": None}}
         )
         st.session_state.nonce = None
 
     def fetch_all_documents(self):
-        collection = self.db[self.users_collection_name]
+        collection = st.session_state.db[self.users_collection_name]
         return list(collection.find({}))
 
     def find_user_doc(self):
-        return self.db.users.find_one({"username": st.session_state.username})
+        print("DLA db: ", st.session_state.db)
+        return st.session_state.db.users.find_one(
+            {"username": st.session_state.username}
+        )
 
     def get_progress_counter(self, module, user_doc) -> dict:
         progress_counter = (
@@ -270,7 +296,7 @@ class DatabaseAccess:
         return progress_counter if progress_counter is not None else {}
 
     def update_progress_counter_for_segment(self, module, new_progress_count):
-        self.db.users.update_one(
+        st.session_state.db.users.update_one(
             {"username": st.session_state.username},
             {
                 "$set": {
@@ -284,7 +310,7 @@ class DatabaseAccess:
         Add the json to the database that contains the count of how
         many times the user answered a certain question.
         """
-        self.db.users.update_one(
+        st.session_state.db.users.update_one(
             {"username": st.session_state.username},
             {"$set": {f"progress.{module}.learning.progress_counter": empty_dict}},
         )
@@ -300,7 +326,7 @@ class DatabaseAccess:
         """
         Update the last phase the user visitied, such as 'courses', 'practice' etc.
         """
-        self.db.users.update_one(
+        st.session_state.db.users.update_one(
             {"username": st.session_state.username}, {"$set": {"last_phase": phase}}
         )
 
@@ -308,7 +334,7 @@ class DatabaseAccess:
         """
         Update the status of the module, such as 'not_recorded', 'generated', 'corrected' etc.
         """
-        self.db.content.update_one(
+        st.session_state.db.content.update_one(
             {"lecture_name": st.session_state.selected_module},
             {"$set": {"status": status}},
         )
@@ -317,6 +343,6 @@ class DatabaseAccess:
         """
         Fetches if the module has been generated and checked on quality by teacher.
         """
-        return self.db.content.find_one(
+        return st.session_state.db.content.find_one(
             {"lecture_name": st.session_state.selected_module}
         )["status"]

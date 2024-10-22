@@ -5,7 +5,7 @@ import certifi
 import db_config
 import streamlit as st
 
-db = db_config.connect_db(st.session_state.use_LL_cosmosdb)
+db = db_config.connect_db()
 
 # Access the specific database and collection
 users_collection = db.users

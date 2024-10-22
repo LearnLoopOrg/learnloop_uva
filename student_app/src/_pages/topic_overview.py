@@ -1,16 +1,10 @@
 import streamlit as st
 import base64
-import utils.db_config as db_config
-from data.data_access_layer import DatabaseAccess
-from utils.utils import Utils
 
 
 class TopicOverview:
     def __init__(self) -> None:
-        self.db = st.session_state.db
-        self.db_dal = DatabaseAccess()
-        self.utils = Utils()
-        self.module_name = st.session_state.selected_module
+        pass
 
     def convert_image_base64(self, image_path):
         """
@@ -93,26 +87,26 @@ class TopicOverview:
 
         return True
 
-    def get_module_data(_self, module_name_underscored):
-        _self.db_dal.topics_list = _self.db_dal.get_topics_list_from_db(
+    def get_module_data(self, module_name_underscored):
+        self.db_dal.topics_list = self.db_dal.get_topics_list_from_db(
             module_name_underscored
         )
 
         topics_data = []
 
-        for topic in _self.db_dal.topics_list:
+        for topic in self.db_dal.topics_list:
             topic_data = {
                 "topic_title": topic["topic_title"],
                 "segment_indexes": topic["segment_indexes"],
                 "segments": [],
             }
 
-            _self.db_dal.get_segments_list_from_db(module_name_underscored)
+            self.db_dal.get_segments_list_from_db(module_name_underscored)
             for segment_index in topic["segment_indexes"]:
-                segments_list = _self.db_dal.get_segments_list_from_db(
+                segments_list = self.db_dal.get_segments_list_from_db(
                     module_name_underscored
                 )
-                segment_type = _self.db_dal.get_segment_type(segment_index)
+                segment_type = self.db_dal.get_segment_type(segment_index)
                 segment_title = (
                     segments_list[segment_index]["title"]
                     if segment_type == "theory"
@@ -142,7 +136,7 @@ class TopicOverview:
                     "image", None
                 )
                 segment_image_path = (
-                    _self.db_dal.get_image_path(segment_image_file_name)
+                    self.db_dal.get_image_path(segment_image_file_name)
                     if segment_image_file_name
                     else None
                 )
@@ -201,6 +195,10 @@ class TopicOverview:
         lecture in seperate containers that allow the user to look at the contents
         and to select the topics they want to learn.
         """
+        self.db_dal = st.session_state.db_dal
+        self.utils = st.session_state.utils
+        self.module_name = st.session_state.selected_module
+
         self.set_styling()  # for texts
         self.db_dal.update_last_phase("topics")
 
