@@ -14,38 +14,42 @@ load_dotenv()
 # --------------------------------------------
 # SETTINGS for DEVELOPMENT and DEPLOYMENT
 
-# Test before deployment by runing in docker with the following commands:
+# Test before deployment by running in docker with the following commands:
 # docker build -t flask-app .
 # docker run --env-file .env -p 3000:3000 flask-app
 
 # Don't forget to re-build the image again after changing the code.
 
-# parser = argparse.ArgumentParser(description="Flask App Configuration")
+# Define the argument parser for command-line arguments
+parser = argparse.ArgumentParser(description="Flask App Configuration")
 
-# parser.add_argument(
-#     "--surf_test_env",
-#     action="store_true",
-#     help="Enable Surf Test Environment",
-#     default=False,
-# )
-# parser.add_argument(
-#     "--use_LL_cosmosdb",
-#     action="store_true",
-#     help="Use LearnLoop instance of CosmosDB, otherwise use the UvA's",
-#     default=False,
-# )
+parser.add_argument(
+    "--surf_test_env",
+    action="store_true",
+    help="Enable Surf Test Environment",
+    default=False,
+)
+parser.add_argument(
+    "--use_LL_cosmosdb",
+    action="store_true",
+    help="Use LearnLoop instance of CosmosDB, otherwise use the UvA's",
+    default=False,
+)
 
-# args = parser.parse_args()
+args = parser.parse_args()
 
-# use_LL_cosmosdb = args.use_LL_cosmosdb
-# surf_test_env = args.surf_test_env
-use_LL_cosmosdb = False
-surf_test_env = False
+# Use the command-line arguments instead of hardcoded values
+use_LL_cosmosdb = args.use_LL_cosmosdb
+surf_test_env = args.surf_test_env
 
 if surf_test_env:
-    print(f"WARNING: Using Surf Test Environment: {surf_test_env}")
+    print(
+        f"WARNING: Development settings active: Using Surf Test Environment: {surf_test_env}"
+    )
 if use_LL_cosmosdb:
-    print(f"WARNING: Using LearnLoop CosmosDB: {use_LL_cosmosdb}")
+    print(
+        f"WARNING: Development settings active: Using LearnLoop CosmosDB: {use_LL_cosmosdb}"
+    )
 # --------------------------------------------
 
 db = db_config.connect_db(use_LL_cosmosdb)

@@ -1560,11 +1560,13 @@ def render_sidebar():
     with st.sidebar:
         img_cols = st.columns([1, 3])
         with img_cols[1]:
-            st.image(
-                f"{st.session_state.base_path}data/content/images/logo.png",
-                use_column_width=False,
-                width=110,
+            logo_base64 = convert_image_base64(
+                f"{st.session_state.base_path}data/content/images/logo.png"
             )
+            img_html = f"""
+            <img src="data:image/png;base64,{logo_base64}" style="width: 110px;" />
+            """
+            st.markdown(img_html, unsafe_allow_html=True)
 
         st.write("\n\n")
         st.markdown(
