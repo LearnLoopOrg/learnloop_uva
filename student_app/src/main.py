@@ -1742,6 +1742,7 @@ def try_login():
         "Milan van Roessel": "lala321",
         "eensupergeheimecode": None,
         "supergeheimecode": None,
+        "famkesgeheimecode": None,
     }
     vu_users = {
         "098ncopkwo2": {
