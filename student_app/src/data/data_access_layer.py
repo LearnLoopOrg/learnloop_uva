@@ -43,7 +43,7 @@ class DatabaseAccess:
 
         return modules
 
-    def initialise_modules(self):
+    def initialise_course_and_modules(self):
         """
         Loads lectures from the database into the session state.
         """

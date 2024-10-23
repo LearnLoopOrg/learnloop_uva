@@ -1,37 +1,23 @@
 import streamlit as st
-from openai import AzureOpenAI
-import os
-from dotenv import load_dotenv
 import json
 import base64
-import database_access_layer as db_dal
-
-load_dotenv()
 
 
-def connect_to_openai():
-    OPENAI_API_KEY = os.getenv("LL_AZURE_OPENAI_API_KEY")
-    OPENAI_API_ENDPOINT = os.getenv("LL_AZURE_OPENAI_API_ENDPOINT")
-    return AzureOpenAI(
-        api_key=OPENAI_API_KEY,
-        api_version="2024-04-01-preview",
-        azure_endpoint=OPENAI_API_ENDPOINT,
-    )
-
-
-class SamenvattenInDialoog:
+class SocraticDialogue:
     def __init__(self):
-        self.client = connect_to_openai()
-        self.initialize_session_state()
-        self.create_questions_file()
+        pass
 
     def create_questions_json_from_content_and_topic_json(self):
-        topics_data = db_dal.fetch_module_topics(st.session_state.selected_module)[
-            "topics"
-        ]
+        print("Creating questions JSON from content and topic JSON...")
+        topics_data = self.db_dal.fetch_module_topics(st.session_state.selected_module)
+        segments_data = self.db_dal.fetch_module_content(
+            st.session_state.selected_module
+        )
+
+        print(f"TOPICS DATA: {topics_data}")
+        print(f"SEGMENTS DATA: {segments_data}")
 
         final_data = {}
-
         # Loop door de topics en verzamel de bijbehorende segmenten
         for topic in topics_data["topics"]:
             topic_title = topic["topic_title"]
@@ -69,16 +55,18 @@ class SamenvattenInDialoog:
             # Voeg dit topic toe aan de uiteindelijke data
             final_data[topic_title] = topic_content
 
+        output_file = f"{self.base_path}data/questions.json"
         # Schrijf het resultaat naar een nieuw JSON-bestand
         with open(output_file, "w") as f:
             json.dump(final_data, f, indent=4)
 
         print(f"Gecombineerde JSON is opgeslagen in {output_file}")
 
-    def initialize_session_state(self):
+    def initialize_session_states(self):
         """
         Initialize session variables if they don't exist.
         """
+        print("Initializing session states...")
 
         if "messages" not in st.session_state:
             st.session_state.messages = []
@@ -227,6 +215,12 @@ At the start of a new topic: **{st.session_state.current_topic}**, ask the stude
     - **student_answer**: Add each answer of the student to this list for each question.
 - **status:** Update the status of the topic from 'undiagnosed' to 'diagnosed' once you've recieved the student's response.
 
+Response format is partly normal text and partly JSON:
+[Your response text]
+```json
+[Your JSON response]
+```
+
 **Example Output**:
 Wat weet je al over insuline en de bloedsuikerspiegel?
 ```json
@@ -269,6 +263,12 @@ Always react with a new question or feedback based on the student's response. Co
 
 Never return your old response, always provide a new one based on the student's answer.
 
+Response format is partly normal text and partly JSON:
+[Your response text]
+```json
+[Your JSON response]
+```
+
 Example JSON response:
 Hoe beïnvloedt insuline de bloedsuikerspiegel tijdens maaltijden of fysieke inspanning?
 ```json
@@ -289,28 +289,21 @@ Conversation history:
         elif status == "undiagnosed":
             instructions = undiagnosed_prompt
 
-        stream = self.client.chat.completions.create(
-            model="LLgpt-4o",
+        stream = st.session_state.openai_client.chat.completions.create(
+            model=st.session_state.openai_model,
             messages=[
                 {"role": "system", "content": instructions},
                 *[
-                    # Voeg het tekstbericht toe
                     {
                         "role": m["role"],
-                        "content": [{"type": "text", "text": m["content"]}],
+                        "content": m["content"],
                     }
                     for m in st.session_state.messages
-                ]
-                + [
-                    # Voeg een apart bericht toe voor de afbeelding, als die er is
+                ],
+                *[
                     {
                         "role": "user",
-                        "content": [
-                            {
-                                "type": "image_url",
-                                "image": self.encode_image_to_base64(m["image"]),
-                            }
-                        ],
+                        "content": f'<img src="data:image/png;base64,{self.encode_image_to_base64(m["image"])}">',
                     }
                     for m in st.session_state.messages
                     if m.get("image")
@@ -320,60 +313,52 @@ Conversation history:
             response_format={"type": "text"},
         )
 
+        text_placeholder = st.empty()
+        text_buffer = ""
+        json_buffer = ""
         json_response = {}
-        is_collecting_json = (
-            False  # Flag om te detecteren wanneer we JSON gaan verzamelen
-        )
-        json_buffer = ""  # Buffer om de JSON-data op te slaan
+        is_collecting_json = False
 
         for chunk in stream:
             if chunk.choices and (chunk_content := chunk.choices[0].delta.content):
-                # Check of we JSON-collectie moeten starten
                 if "```json" in chunk_content:
-                    is_collecting_json = True  # Start met het verzamelen van JSON
-                    json_buffer += chunk_content.split("```json")[
-                        -1
-                    ]  # Begin na de marker
-                    continue  # Ga naar de volgende chunk, skip streaming
+                    is_collecting_json = True
+                    parts = chunk_content.split("```json")
+                    text_before_json = parts[0]
+                    text_buffer += text_before_json
+                    text_placeholder.markdown(text_buffer)
+                    if len(parts) > 1:
+                        json_buffer += parts[1]
+                    continue
 
-                # Als we bezig zijn met JSON-collectie
                 if is_collecting_json:
-                    # Controleer of het einde van de JSON-sectie is bereikt
-                    if (
-                        "```" in chunk_content
-                    ):  # Verondersteld dat de JSON afsluit met ```
-                        json_buffer += chunk_content.split("```")[
-                            0
-                        ]  # Voeg de laatste chunk toe
+                    if "```" in chunk_content:
+                        parts = chunk_content.split("```")
+                        json_buffer += parts[0]
                         try:
-                            # Probeer de JSON-data te verwerken
                             json_data = json.loads(json_buffer)
-                            json_response.update(
-                                json_data
-                            )  # Voeg toe aan json_response
-                            st.write(
-                                "JSON succesvol verzameld!"
-                            )  # Meld dat JSON is verzameld
+                            json_response.update(json_data)
+                            st.write("JSON succesvol verzameld!")
                         except json.JSONDecodeError:
                             st.write("Ongeldige JSON-structuur")
-                        break  # Stop verdere verwerking omdat we klaar zijn met JSON
+                        is_collecting_json = False
+                        if len(parts) > 1:
+                            text_after_json = parts[1]
+                            text_buffer += text_after_json
+                            text_placeholder.markdown(text_buffer)
+                        continue
                     else:
-                        json_buffer += (
-                            chunk_content  # Voeg de JSON-gegevens toe aan de buffer
-                        )
+                        json_buffer += chunk_content
                 else:
-                    # Stream de tekst zolang er geen JSON wordt verzameld
-                    chunk_content = chunk_content.strip() + " ".join(
-                        chunk_content.split().strip()
-                    )
-                    st.write(chunk_content)
+                    text_buffer += chunk_content
+                    text_placeholder.markdown(text_buffer)
 
-        # for chunk in stream:
-        #     st.write(chunk)
-        #     if chunk.choices and (chunk_content := chunk.choices[0].delta.content):
-        #         st.write(chunk_content)
-
-        # json_response = st.write(stream)
+        # Ga verder met het verwerken van json_response['response']
+        m = st.session_state.messages[-1]
+        image_path = m["image"] if m.get("image") else None
+        self.add_to_assistant_responses(
+            json.loads(json_response)["response"], image_path
+        )
 
         return json_response
 
@@ -398,7 +383,8 @@ Conversation history:
             else:
                 st.write("Alle onderwerpen zijn voltooid!")
 
-    def get_next_question_with_image(self, file_path="questions.json"):
+    def get_next_question_with_image(self):
+        file_path = f"{self.base_path}data/questions.json"
         # Openen en inlezen van de JSON-file
         with open(file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -455,11 +441,11 @@ Conversation history:
     def update_question_data(self, json_response):
         question_data = self.get_questions()
         question_data[st.session_state.current_topic] = json_response
-        with open("questions.json", "w") as file:
+        with open(f"{self.base_path}data/questions.json", "w") as file:
             json.dump(question_data, file, indent=4)
 
     def get_questions(self):
-        with open("questions.json", "r") as file:
+        with open(f"{self.base_path}data/questions.json", "r") as file:
             return json.load(file)
 
     def calculate_topic_completion(self, topic):
@@ -478,7 +464,7 @@ Conversation history:
 
     def render_sidebar(self):
         with st.sidebar:
-            st.title("Parkinson's")
+            st.title(st.session_state.selected_module)
             st.write("\n")
             for topic, questions in self.get_questions().items():
                 # Bereken het percentage voltooide vragen
@@ -541,9 +527,24 @@ Conversation history:
                 st.write("\n")
 
     def run(self):
-        self.initialize_session_state()
+        self.db_dal = st.session_state.db_dal
+        self.db = st.session_state.db
+        self.utils = st.session_state.utils
+        self.openai_client = st.session_state.openai_client
+        self.base_path = st.session_state.base_path
 
-        st.title("Parkinson's - Samenvatten in dialoog")
+        self.initialize_session_states()
+
+        self.create_questions_json_from_content_and_topic_json()
+
+        st.title("Samenvatten in dialoog")
+
+        st.session_state.messages.append(
+            {
+                "role": "assistant",
+                "content": f"Zullen we beginnen? Wat weet je over {st.session_state.current_topic}?",
+            }
+        )
 
         self.display_chat_messages()
 
@@ -554,5 +555,5 @@ Conversation history:
 
 if __name__ == "__main__":
     open("student_knowledge.txt", "w").close()
-    probleemstelling = SamenvattenInDialoog()
+    probleemstelling = SocraticDialogue()
     probleemstelling.run()

@@ -1,97 +1,144 @@
 {
-    "Introduction to Parkinson's": {
-        "response": "Je hebt een volledig en correct antwoord gegeven! Dopamine is inderdaad een chemische boodschapper die helpt bij het doorgeven van signalen tussen hersencellen om beweging te co\u00f6rdineren. Een vermindering van dopamine kan leiden tot de motorsymptomen die bij Parkinson's te zien zijn.",
-        "student_knowledge": "De student begrijpt dat dopamine een chemische boodschapper is die signalen tussen hersencellen helpt over te brengen en beweging co\u00f6rdineert. Ze begrijpen ook dat een vermindering van dopamine leidt tot motorsymptomen in de ziekte van Parkinson.",
+    "Argumenten voor substantiedualisme": {
+        "response": "Op basis van de verschillende eigenschappen van **geest** en **lichaam**\u2014zoals ruimtelijke locatie, rationaliteit, intentionaliteit en fenomenale kwaliteit\u2014concludeert het **substantiedualisme** dat de geest en het lichaam aparte substanties zijn. De **geest** is niet identiek aan het lichaam en kan niet worden gereduceerd tot **fysieke processen**. Dit dualisme vormt een fundament voor discussies over de aard van **bewustzijn** en **mentale toestanden** binnen de **filosofie van de geest**.",
+        "student_knowledge": "Conclusie van substantiedualisme",
         "questions": [
             {
-                "question": "What is Parkinson's?",
-                "status": "done",
+                "question": "Wat houdt substantiedualisme in?",
+                "status": null,
                 "level": 1,
-                "score": "2/2",
-                "answer": "Parkinson's is a condition that affects the nervous system (1 punt), impacting movement (1 punt) and is linked to a reduction in dopamine-producing neurons (1 punt)."
+                "score": null,
+                "answer": "Volgens het substantiedualisme hebben mentale toestanden eigenschappen die niet fysiek zijn (1 punt), wat betekent dat ze niet kunnen worden gereduceerd tot louter fysieke processen (1 punt)."
             },
             {
-                "question": "Can you explain how Parkinson's develops?",
-                "image": "test_image.jpg",
-                "status": "done",
-                "level": 2,
-                "score": "3/3",
-                "answer": "Parkinson's tends to develop when dopamine-producing neurons in a specific part of the brain decrease (1 punt), resulting in lower dopamine levels (1 punt), which influences movement control (1 punt)."
+                "question": "Hoe be\u00efnvloedt Leibniz' wet het argument voor substantiedualisme?",
+                "status": null,
+                "level": 1,
+                "score": null,
+                "answer": "Leibniz' wet ondersteunt het substantiedualisme (1 punt) door te stellen dat geest en lichaam niet identiek kunnen zijn als ze verschillende eigenschappen hebben (1 punt)."
             },
             {
-                "question": "What is dopamine's role in Parkinson's disease?",
-                "status": "done",
-                "level": 3,
-                "score": "4/4",
-                "answer": "Dopamine is a chemical messenger (1 punt) that helps transmit signals between brain cells (1 punt) to coordinate movement (1 punt). A reduction in dopamine can lead to motor symptoms seen in Parkinson's (1 punt)."
+                "question": "Wat betekent het voor de relatie tussen lichaam en geest dat ze volgens Descartes verschillende eigenschappen hebben?",
+                "status": null,
+                "level": 1,
+                "score": null,
+                "answer": "Het lichaam en de geest zijn fundamenteel verschillend (1 punt). De geest is niet onderworpen aan fysieke wetten (1 punt), terwijl het lichaam dat wel is (1 punt)."
+            },
+            {
+                "question": "Welke eigenschappen missen materi\u00eble entiteiten volgens Descartes, en waarom zijn deze eigenschappen belangrijk voor rationeel denken?",
+                "status": null,
+                "level": 1,
+                "score": null,
+                "answer": "Materi\u00eble entiteiten missen rationaliteit en intentionaliteit (1 punt). Deze eigenschappen zijn belangrijk voor rationeel denken omdat ze het vermogen omvatten om te redeneren en gedachten over dingen te hebben (1 punt)."
+            },
+            {
+                "question": "Wat illustreert het voorbeeld van pijn voelen of kleuren zien volgens Chalmers en waarom?",
+                "status": null,
+                "level": 1,
+                "score": null,
+                "answer": "Het voorbeeld van pijn voelen of kleuren zien illustreert qualia (1 punt), omdat het de subjectieve ervaring van deze mentale toestanden weergeeft (1 punt)."
+            },
+            {
+                "question": "Hoe argumenteert het substantiedualisme dat de geest en het lichaam aparte substanties zijn?",
+                "status": null,
+                "level": 1,
+                "score": null,
+                "answer": "Het substantiedualisme stelt dat de geest en het lichaam verschillende eigenschappen hebben (1 punt), zoals ruimtelijke locatie (1 punt), rationaliteit (1 punt), intentionaliteit (1 punt), en fenomenale kwaliteit (1 punt)."
             }
-        ],
-        "status": "diagnosed"
+        ]
     },
-    "Symptoms": {
-        "response": "Ik zie dat je een foto hebt gedeeld. Het lijkt alsof je liever verder wil gaan met een ander onderwerp, maar laten we eerst deze laatste vraag over Parkinson's beantwoorden, zodat we dit onderwerp volledig kunnen afronden. Kun je een poging doen om te beantwoorden hoe artsen de voortgang van Parkinson's meten?",
-        "student_knowledge": "De student weet nog niet hoe de voortgang van Parkinson's wordt gemeten.",
+    "Interactieprobleem en alternatieven": {
+        "response": "**Occasionalisme** biedt een andere oplossing door te stellen dat **God** de tussenkomst verzorgt tussen **geest** en **lichaam**. Bij elke gelegenheid dat een **mentale gebeurtenis** een **fysieke reactie** lijkt te veroorzaken (of omgekeerd), is het God die zorgt voor de correspondentie. Er is geen directe interactie tussen geest en lichaam; God overbrugt de kloof tussen de twee.",
+        "student_knowledge": "Dualistische alternatieven: occasionalisme",
         "questions": [
             {
-                "question": "How is Parkinson's disease diagnosed?",
-                "status": "not asked",
+                "question": "Hoe kan het interactieprobleem vragen oproepen over de causale relatie tussen geest en lichaam?",
+                "status": null,
                 "level": 1,
                 "score": null,
-                "answer": "Parkinson's is diagnosed based on observed symptoms (1 punt), personal health history (1 punt), and a neurological assessment (1 punt), as there isn't a single test to confirm the condition (1 punt).",
-                "student_answer": [
-                    "Er is geen specifieke diagnose test voor Parkinson"
-                ]
+                "answer": "Het interactieprobleem roept vragen op over hoe mentale intenties fysieke acties kunnen veroorzaken (1 punt) en hoe fysieke acties mentale intenties kunnen be\u00efnvloeden (1 punt)."
             },
             {
-                "question": "What are the diagnostic criteria for Parkinson's?",
-                "status": "not asked",
-                "level": 2,
+                "question": "Wat zijn de belangrijkste kritiekpunten op Descartes' theorie van de interactie tussen geest en lichaam?",
+                "status": null,
+                "level": 1,
                 "score": null,
-                "answer": "The diagnostic criteria involve having two or more movement-related symptoms (1 punt), improvement with dopamine medication (1 punt), and excluding other possible causes (1 punt) for the symptoms (1 punt).",
-                "student_answer": [
-                    "iets met trillende patienten."
-                ]
+                "answer": "De belangrijkste kritiek op Descartes' theorie is het gebrek aan duidelijkheid (1 punt) over hoe een niet-fysieke substantie invloed kan uitoefenen op een fysiek orgaan (1 punt)."
             },
             {
-                "question": "What tests are used to diagnose Parkinson's?",
-                "status": "not asked",
-                "level": 3,
+                "question": "Hoe verklaart het parallelisme de schijnbare interactie tussen geest en lichaam zonder causale koppeling?",
+                "status": null,
+                "level": 1,
                 "score": null,
-                "answer": "There are no specific tests for Parkinson's (1 punt), but imaging techniques like DaT scans (1 punt) may be used to check dopamine function (1 punt) and rule out other conditions (1 punt).",
-                "student_answer": [
-                    "Die zijn er dus niet echt"
-                ]
+                "answer": "Parallelisme verklaart de schijnbare interactie door te stellen dat mentale en fysieke gebeurtenissen gesynchroniseerd zijn (1 punt) door een hogere macht (1 punt) of vooraf ingestelde harmonie (1 punt)."
             },
             {
-                "question": "How is the progression of Parkinson's measured?",
-                "status": "not asked",
-                "level": 2,
+                "question": "Hoe verschilt occasionalisme van andere dualistische theorie\u00ebn over de interactie tussen geest en lichaam?",
+                "status": null,
+                "level": 1,
                 "score": null,
-                "answer": "The progression of Parkinson's is measured through clinical evaluations (1 punt), monitoring symptoms over time (1 punt), and using specific scales like the Unified Parkinson's Disease Rating Scale (UPDRS) (1 punt).",
-                "student_answer": []
+                "answer": "Occasionalisme verschilt van andere dualistische theorie\u00ebn doordat het stelt dat God (1 punt) de correspondentie verzorgt (1 punt) tussen geest en lichaam (1 punt), in plaats van een directe interactie (1 punt)."
             }
-        ],
-        "status": "diagnosed"
+        ]
     },
-    "Treatment": {
+    "Monisme en vormen": {
+        "response": "Een uitdaging voor het **materialistisch monisme** is het verklaren van **bewustzijn** en **subjectieve ervaring**. Het zogenoemde \"**moeilijke probleem van het bewustzijn**\" vraagt hoe **fysieke processen** in de **hersenen** leiden tot subjectieve ervaringen. Critici van het **materialisme** beweren dat niet alle aspecten van de **geest** kunnen worden verklaard door fysieke processen alleen.",
+        "student_knowledge": "Uitdagingen voor monisme",
         "questions": [
             {
-                "question": "What are the treatment options for Parkinson's?",
+                "question": "Wat is de hoofdoorzaak van de problemen die monisme probeert op te lossen in tegenstelling tot dualisme?",
                 "status": null,
                 "level": 1,
-                "answer": "Treatment options include medications (1 punt), physical therapy (1 punt), and for more advanced cases, procedures such as deep brain stimulation (1 punt)."
+                "score": null,
+                "answer": "Monisme probeert de problemen van dualisme te vermijden door het bestaan van aparte geestelijke en fysieke substanties te ontkennen (1 punt)."
             },
             {
-                "question": "How does medication help manage Parkinson's symptoms?",
+                "question": "Wat houdt de filosofische stroming van het idealisme in?",
                 "status": null,
-                "level": 2,
-                "answer": "Medications like Levodopa (1 punt) can increase dopamine levels (1 punt) or mimic its action (1 punt) to help reduce movement-related symptoms (1 punt)."
+                "level": 1,
+                "score": null,
+                "answer": "Het idealisme beweert dat de werkelijkheid fundamenteel mentaal van aard is (1 punt). Alle materi\u00eble objecten en fysieke verschijnselen zijn afhankelijk van de geest (1 punt)."
             },
             {
-                "question": "What are the surgical treatments for Parkinson's?",
+                "question": "Hoe onderscheidt fysiek monisme zich van andere filosofische benaderingen van de geest-lichaam relatie?",
                 "status": null,
-                "level": 3,
-                "answer": "Surgical treatments, such as deep brain stimulation (1 punt), involve placing electrodes in the brain (1 punt) to help regulate abnormal activity (1 punt) and improve motor control (1 punt)."
+                "level": 1,
+                "score": null,
+                "answer": "Fysiek monisme stelt dat alles wat bestaat materieel is (1 punt) en dat mentale toestanden kunnen worden gereduceerd tot fysieke processen (1 punt), wat het onderscheidt van dualistische of idealistische benaderingen."
+            },
+            {
+                "question": "Op welke manier draagt het materialistisch monisme bij aan ons begrip van mentale processen?",
+                "status": null,
+                "level": 1,
+                "score": null,
+                "answer": "Materialistisch monisme draagt bij aan ons begrip van mentale processen (1 punt) door deze te baseren op observeerbare en meetbare fysieke processen (1 punt)."
+            },
+            {
+                "question": "Hoe proberen materialistisch monisten het bewustzijn en subjectieve ervaring te verklaren?",
+                "status": null,
+                "level": 1,
+                "score": null,
+                "answer": "Materialistisch monisten proberen bewustzijn en subjectieve ervaring te verklaren door te stellen dat deze voortkomen uit fysieke processen in de hersenen (1 punt). Ze geloven dat alle aspecten van de geest uiteindelijk te herleiden zijn tot materi\u00eble processen (1 punt)."
+            }
+        ]
+    },
+    "Reflectie op geest-lichaam": {
+        "response": "Het begrijpen van deze **filosofische standpunten** is essentieel voor het analyseren van **psychologische kwesties** zoals **bewustzijn**, **vrije wil** en **identiteit**. Door kritisch te reflecteren op zowel **dualistische** als **monistische benaderingen**, kunnen studenten een dieper inzicht ontwikkelen in de **menselijke geest** en bijdragen aan lopende debatten in de **psychologie** en **neurofilosofie**.",
+        "student_knowledge": "Belang voor psychologische discussies",
+        "questions": [
+            {
+                "question": "Welke uitdagingen komen monistische benaderingen tegen bij het verklaren van de unieke kenmerken van mentale ervaringen?",
+                "status": null,
+                "level": 1,
+                "score": null,
+                "answer": "Monistische benaderingen moeten de unieke kenmerken van mentale ervaringen adequaat verklaren (1 punt), wat een uitdaging is omdat ze uitgaan van slechts \u00e9\u00e9n substantie (1 punt)."
+            },
+            {
+                "question": "Waarom is kritisch reflecteren op filosofische benaderingen belangrijk voor het begrijpen van menselijke identiteit?",
+                "status": null,
+                "level": 1,
+                "score": null,
+                "answer": "Kritisch reflecteren helpt een dieper inzicht te ontwikkelen (1 punt) in de concepten van identiteit (1 punt), en hoe deze worden be\u00efnvloed door dualistische en monistische standpunten (2 punten)."
             }
         ]
     }

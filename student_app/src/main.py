@@ -17,7 +17,7 @@ from datetime import datetime, timedelta, timezone
 from _pages.lecture_overview import LectureOverview
 from _pages.course_overview import CoursesOverview
 from _pages.theory_overview import TheoryOverview
-from _pages.socratic_learning import SocraticDialogue
+from _pages.socratic_dialogue import SocraticDialogue
 from utils.utils import Utils
 from utils.utils import AzureUtils
 from slack_sdk import WebClient
@@ -1427,8 +1427,8 @@ def render_LLM_info_page():
     return
 
 
-def render_socratic_learning_page():
-    socratic_dialogue_page = SocraticDialogue(base_path=st.session_state.base_path)
+def render_socratic_dialogue_page():
+    socratic_dialogue_page = SocraticDialogue()
     socratic_dialogue_page.run()
 
 
@@ -1460,9 +1460,9 @@ def render_selected_page():
         case "LLM_info":
             render_LLM_info_page()
         case "socratic-dialogue":
-            render_socratic_learning_page()
+            render_socratic_dialogue_page()
         case _:  # Show courses page if no phase is selected
-            render_courses_page()
+            render_lectures_page()
 
 
 def upload_feedback():
@@ -1545,6 +1545,8 @@ def logout():
     st.session_state.selected_module = None
     st.session_state.selected_phase = None
     st.session_state.logged_in = False
+    st.session_state.db_switched = False
+    st.session_state.db_name = "UvA_KNP"
     return
 
 
@@ -1564,26 +1566,30 @@ def render_sidebar():
                 f"{st.session_state.base_path}data/content/images/logo.png"
             )
             img_html = f"""
-            <img src="data:image/png;base64,{logo_base64}" style="width: 110px;" />
+            <div style="margin-top: 0px; margin-bottom: 40px">
+                <img src="data:image/png;base64,{logo_base64}" style="width: 110px;" />
+            </div>
             """
             st.markdown(img_html, unsafe_allow_html=True)
 
-        st.write("\n\n")
-        st.markdown(
-            f"""
-            <style>
-                .closer-line {{
-                    margin-top: -5px;
-                }}
-            </style>
+        st.divider()
 
-            <h1> 
-                <strong>Hi {student_name}</strong>
-            </h1>
-            <hr class="closer-line">
-        """,
-            unsafe_allow_html=True,
-        )
+        # st.markdown(
+        #     f"""
+        #     <style>
+        #         .closer-line {{
+        #             margin-top: -5px;
+        #         }}
+        #     </style>
+
+        #     <h1>
+        #         <strong>Hi {student_name}</strong>
+        #     </h1>
+        #     <hr class="closer-line">
+        # """,
+        #     unsafe_allow_html=True,
+        # )
+        # st.header(f"Hi {student_name}")
         st.button(
             "📚 Mijn vakken",
             on_click=set_selected_phase,
@@ -1591,12 +1597,14 @@ def render_sidebar():
             use_container_width=True,
         )
 
-        render_feedback_form()
+        if st.session_state.db_name == "UvA_KNP":
+            render_feedback_form()
 
-        st.subheader("Extra Info")
+        st.divider()
+        # st.subheader("Extra")
 
         st.button(
-            "Uitleg mogelijkheden & limitaties LLM's",
+            "Uitleg LLM's",
             on_click=set_info_page_true,
             use_container_width=True,
             key="info_button_sidebar",
@@ -1651,9 +1659,7 @@ def check_user_doc_and_add_missing_fields():
     Initializes the user database with missing fields and modules.
     """
     user_doc = st.session_state.db_dal.find_user_doc()
-    print("User doc: ", user_doc)
-    print("Username: ", st.session_state.username)
-    print("DB: ", st.session_state.db)
+
     if not user_doc:
         st.session_state.db.users.insert_one({"username": st.session_state.username})
         user_doc = st.session_state.db_dal.find_user_doc()
@@ -1733,10 +1739,9 @@ def convert_image_base64(image_path):
         return base64.b64encode(image_file.read()).decode()
 
 
-def try_login():
+def try_login(input_username):
     st.session_state.wrong_credentials = False
     # Checks if the user is in the list below
-    input_username = st.session_state.streamlit_username
     uva_servers_users = {
         "Luc Mahieu": "abc123",
         "Milan van Roessel": "lala321",
@@ -1751,6 +1756,9 @@ def try_login():
         },
     }
 
+    with open(f"{st.session_state.base_path}data/uu_users.json", "r") as f:
+        uu_users = json.load(f)
+
     if input_username in uva_servers_users:
         st.session_state.username = input_username
         st.session_state.logged_in = True
@@ -1763,11 +1771,29 @@ def try_login():
         if vu_users[input_username] == st.session_state.streamlit_password:
             st.session_state.username = input_username
             st.session_state.logged_in = True
-            st.session_state.db_name = "VU"
+            st.session_state.db_name = "test_users_1"
+
+    elif input_username in uu_users:
+        st.session_state.username = input_username
+        st.session_state.logged_in = True
+        st.session_state.db_name = "test_users_2"
 
     else:
         st.session_state.wrong_credentials = True
         return
+
+
+def inlog_terminal(uni):
+    st.text_input("", key=f"streamlit_username_{uni}")
+    if st.session_state.wrong_credentials:
+        st.warning("Onjuiste inloggegevens.")
+    st.button(
+        "Log in",
+        on_click=try_login,
+        args=(st.session_state.get(f"streamlit_username_{uni}", ""),),
+        use_container_width=True,
+        key=f"login_button_{uni}",
+    )
 
 
 def render_login_page():
@@ -1776,10 +1802,19 @@ def render_login_page():
     if st.session_state.deployment_type == "uva_servers":
         columns = st.columns([1, 0.9, 1])
         with columns[1]:
-            # welcome_title = "Klinische Neuropsychologie"
-            logo_base64 = convert_image_base64(
+            ll_logo_base64 = convert_image_base64(
                 f"{st.session_state.base_path}data/content/images/logo.png"
             )
+
+            html_ll_logo = f"""
+            <div style="text-align: center;">
+                <img src="data:image/png;base64,{ll_logo_base64}" alt="Logo" style="max-width: 25%; height: auto; margin-bottom: 10px; margin-top: 0px">
+            </div>
+            """
+
+            st.markdown(html_ll_logo, unsafe_allow_html=True)
+
+            st.divider()
 
             if surf_test_env:
                 href = "http://localhost:3000/"
@@ -1796,10 +1831,14 @@ def render_login_page():
             #     </a>
             # </div>"""
 
+            uva_logo_base64 = convert_image_base64(
+                f"{st.session_state.base_path}data/content/images/uva-logo-eng.png"
+            )
+
             html_content = f"""
             <div style="text-align: center; margin: 20px; width=100%;">
                 <div style="text-align: center;">
-                    <img src="data:image/png;base64,{logo_base64}" alt="Logo" style="max-width: 35%; height: auto; margin-bottom: 60px; margin-top: 40px">
+                    <img src="data:image/png;base64,{uva_logo_base64}" alt="Logo" style="max-width: 50%; height: auto; margin-bottom: 0px; margin-top: 0px">
                 </div>
                 <div style="height: 20px;"></div>
                 <a href="{href}" target="_self" style="text-decoration: none;">
@@ -1809,15 +1848,32 @@ def render_login_page():
             </div>"""
 
             st.markdown(html_content, unsafe_allow_html=True)
-            st.write("\n\n")
-            st.info(
-                "Log je voor het eerst in? Check dan eerst of je de uitnodiging van SURF hebt geaccepteerd (e-mail: *'Uitnodiging voor uva_fnwi_learnloop'*) om in te loggen. Niet gevonden? Check je spam. \n\nNog geen mail? Stuur een berichtje naar **+31 6 2019 2794**, dan zorgt Milan ervoor dat je toegang krijgt. 😊"
+
+            inlog_terminal("UvA")
+
+            st.divider()
+
+            uu_logo_base64 = convert_image_base64(
+                f"{st.session_state.base_path}data/content/images/uu-logo-nl.png"
             )
-            with st.expander("Admin login", expanded=False):
-                st.text_input("Credentials", key="streamlit_username", type="password")
-                if st.session_state.wrong_credentials:
-                    st.warning("Onjuiste credentials.")
-                st.button("Log in", on_click=try_login, use_container_width=True)
+
+            html_uu_logo = f"""
+                <div style="text-align: center;">
+                    <img src="data:image/png;base64,{uu_logo_base64}" alt="Logo" style="max-width: 48%; height: auto; margin-bottom: 0px; margin-top:0px">
+                </div>
+            """
+            st.markdown(html_uu_logo, unsafe_allow_html=True)
+
+            # st.info(
+            #     "Log je voor het eerst in? Check dan eerst of je de uitnodiging van SURF hebt geaccepteerd (e-mail: *'Uitnodiging voor uva_fnwi_learnloop'*) om in te loggen. Niet gevonden? Check je spam. \n\nNog geen mail? Stuur een berichtje naar **+31 6 2019 2794**, dan zorgt Milan ervoor dat je toegang krijgt. 😊"
+            # )
+            # with st.expander("Admin login", expanded=False):
+            #     st.text_input("Credentials", key="streamlit_username", type="password")
+            #     if st.session_state.wrong_credentials:
+            #         st.warning("Onjuiste credentials.")
+            #     st.button("Log in", on_click=try_login, use_container_width=True)
+
+            inlog_terminal("UU")
 
     elif st.session_state.deployment_type == "streamlit_or_local":
         print("Rendering login page: streamlit_or_local")
@@ -1859,6 +1915,9 @@ def determine_selected_module():
 
 
 def initialise_variables():
+    if "db_switched" not in st.session_state:
+        st.session_state.db_switched = False
+
     if "base_path" not in st.session_state:
         st.session_state.base_path = None
 
@@ -1881,7 +1940,7 @@ def initialise_variables():
         st.session_state.selected_course = None
 
     if "openai_model" not in st.session_state:
-        st.session_state.openai_model = "LLgpt-4o"
+        st.session_state.openai_model = None
 
     if "practice_exam_name" not in st.session_state:
         st.session_state.practice_exam_name = "Samenvattende vragen"
@@ -2156,11 +2215,18 @@ if __name__ == "__main__":
     # Reconnect to the correct database when the user is logged in
     print("Logged in: ", st.session_state.logged_in)
     print("Username: ", st.session_state.username)
-    if (
-        st.session_state.logged_in is True
-        and st.session_state.username == "supergeheimecode"
-    ):
-        st.session_state.db = db_config.connect_db(database_name="LearnLoop")
+    print("DB switched: ", st.session_state.db_switched)
+    print("DB name: ", st.session_state.db_name)
+
+    # Connect with the correct database after logging in. When rerouted to student app after SURF login, the session state is resetted
+    if st.session_state.logged_in is True and st.session_state.db_switched is False:
+        if st.session_state.db_name is None:
+            st.session_state.db_name = "UvA_KNP"
+        print("Switching database to ", st.session_state.db_name)
+        st.session_state.db = db_config.connect_db(
+            database_name=st.session_state.db_name
+        )
+        st.session_state.db_switched = True
 
     print("Selected course in main: ", st.session_state.selected_course)
 
@@ -2171,9 +2237,7 @@ if __name__ == "__main__":
     print("Username: ", st.session_state.username)
 
     if fetch_nonce_from_query() is not None:
-        print("Fetched nonce from query params")
         st.session_state.logged_in = True
-        print("Logged in")
 
     if (
         no_login_page is False
@@ -2185,7 +2249,11 @@ if __name__ == "__main__":
     # Render the actual app when the user is logged in
     else:
         print("Rendering the app")
-        st.session_state.modules = st.session_state.db_dal.initialise_modules()
+
+        if st.session_state.modules is None or st.session_state.selected_course is None:
+            st.session_state.modules = (
+                st.session_state.db_dal.initialise_course_and_modules()
+            )
         # The username is fetched from the database with this nonce
         determine_username_from_nonce()
         # The nonce is removed from the query params, the session state and the database
@@ -2205,7 +2273,7 @@ if __name__ == "__main__":
             determine_selected_module()
 
         if st.session_state.selected_phase is None:
-            st.session_state.selected_phase = "courses"
+            st.session_state.selected_phase = "lectures"
 
         render_sidebar()
         render_selected_page()

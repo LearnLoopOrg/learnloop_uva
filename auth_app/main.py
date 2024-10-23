@@ -12,6 +12,7 @@ load_dotenv()
 
 
 # --------------------------------------------
+# THIS ARG PARSER CODE DOES NOT WORK IN DEPLOYMENT FOR SOME REASON
 # SETTINGS for DEVELOPMENT and DEPLOYMENT
 
 # Test before deployment by running in docker with the following commands:
@@ -41,6 +42,9 @@ load_dotenv()
 # # Use the command-line arguments instead of hardcoded values
 # use_LL_cosmosdb = args.use_LL_cosmosdb
 # surf_test_env = args.surf_test_env
+
+# THIS ARG PARSER CODE DOES NOT WORK IN DEPLOYMENT FOR SOME REASON
+# --------------------------------------------
 
 use_LL_cosmosdb = False
 surf_test_env = False

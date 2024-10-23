@@ -16,12 +16,16 @@ def connect_db(database_name="UvA_KNP"):
     # in development, use CosmosDB of LearnLoop
     if st.session_state.use_LL_cosmosdb:
         if st.session_state.use_keyvault:
-            COSMOS_URI = AzureUtils.get_secret("LL-COSMOS-URI", "lluniappkv")
+            COSMOS_URI = st.session_state.AzureUtils.get_secret(
+                "LL-COSMOS-URI", "lluniappkv"
+            )
         else:
             COSMOS_URI = os.getenv("LL_COSMOS_URI")
     # in production, use CosmosDB of the UvA
     else:
         COSMOS_URI = os.getenv("COSMOS_URI")
+
+    print(f"Database name: {database_name}")
 
     db_client = MongoClient(COSMOS_URI, tlsCAFile=certifi.where())
     db = db_client.get_database(database_name)

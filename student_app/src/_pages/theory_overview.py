@@ -1,8 +1,4 @@
-from datetime import timedelta
 import streamlit as st
-from utils.utils import ImageHandler, Utils
-import utils.db_config as db_config
-from data.data_access_layer import DatabaseAccess
 
 
 class TheoryOverview:
@@ -76,6 +72,7 @@ class TheoryOverview:
         and to select the topics they want to learn.
         """
         self.db_dal = st.session_state.db_dal
+        self.base_path = st.session_state.base_path
         self.render_title()
 
         self.set_styling()  # for texts

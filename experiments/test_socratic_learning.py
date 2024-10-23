@@ -1,18 +1,42 @@
 import streamlit as st
+from openai import AzureOpenAI
+import os
+from dotenv import load_dotenv
 import json
 import base64
 
+load_dotenv()
 
-class SocraticDialogue:
+
+def connect_to_openai():
+    OPENAI_API_KEY = os.getenv("LL_AZURE_OPENAI_API_KEY")
+    OPENAI_API_ENDPOINT = os.getenv("LL_AZURE_OPENAI_API_ENDPOINT")
+    return AzureOpenAI(
+        api_key=OPENAI_API_KEY,
+        api_version="2024-04-01-preview",
+        azure_endpoint=OPENAI_API_ENDPOINT,
+    )
+
+
+class SamenvattenInDialoog:
     def __init__(self):
-        pass
+        self.client = connect_to_openai()
+        self.initialize_session_state()
 
     def create_questions_json_from_content_and_topic_json(self):
-        topics_data = self.db_dal.fetch_module_topics(st.session_state.selected_module)[
-            "topics"
-        ]
-        segments_data = st.session_state.page_content["segments"]
+        print("Creating questions JSON from content and topic JSON...")
+        topics_data = st.session_state.db_dal.fetch_module_topics(
+            st.session_state.selected_module
+        )["topics"]
+
+        segments_data = st.session_state.db_dal.fetch_module_content(
+            st.session_state.selected_module
+        )
+        print(f"SEGMENTS DATA: {segments_data}")
+        print(f"TOPICS DATA: {topics_data}")
+
         final_data = {}
+
         # Loop door de topics en verzamel de bijbehorende segmenten
         for topic in topics_data["topics"]:
             topic_title = topic["topic_title"]
@@ -50,14 +74,14 @@ class SocraticDialogue:
             # Voeg dit topic toe aan de uiteindelijke data
             final_data[topic_title] = topic_content
 
-        output_file = f"{self.base_path}data/questions.json"
-        # Schrijf het resultaat naar een nieuw JSON-bestand
-        with open(output_file, "w") as f:
+        print(f"QUESTIONS JSON: {final_data}")
+
+        output_path = "questions.json"
+        with open(output_path, "w") as f:
             json.dump(final_data, f, indent=4)
 
-        print(f"Gecombineerde JSON is opgeslagen in {output_file}")
-
-    def initialize_session_state(self):
+    def initialize_session_states(self):
+        print("Initializing session states...")
         """
         Initialize session variables if they don't exist.
         """
@@ -271,7 +295,7 @@ Conversation history:
         elif status == "undiagnosed":
             instructions = undiagnosed_prompt
 
-        stream = self.openai_client.chat.completions.create(
+        stream = self.client.chat.completions.create(
             model="LLgpt-4o",
             messages=[
                 {"role": "system", "content": instructions},
@@ -361,9 +385,6 @@ Conversation history:
 
     def get_next_incomplete_topic(self):
         for topic, questions in self.get_questions().items():
-            print(f"Checking topic: {topic}")
-            print(f"Questions: {questions}")
-
             if any(q["status"] != "done" for q in questions["questions"]):
                 return topic
 
@@ -380,8 +401,7 @@ Conversation history:
             else:
                 st.write("Alle onderwerpen zijn voltooid!")
 
-    def get_next_question_with_image(self):
-        file_path = f"{self.base_path}data/questions.json"
+    def get_next_question_with_image(self, file_path="questions.json"):
         # Openen en inlezen van de JSON-file
         with open(file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -438,11 +458,11 @@ Conversation history:
     def update_question_data(self, json_response):
         question_data = self.get_questions()
         question_data[st.session_state.current_topic] = json_response
-        with open(f"{self.base_path}data/questions.json", "w") as file:
+        with open("questions.json", "w") as file:
             json.dump(question_data, file, indent=4)
 
     def get_questions(self):
-        with open(f"{self.base_path}data/questions.json", "r") as file:
+        with open(f"{self.base_path}/data/questions.json", "r") as file:
             return json.load(file)
 
     def calculate_topic_completion(self, topic):
@@ -524,15 +544,9 @@ Conversation history:
                 st.write("\n")
 
     def run(self):
-        self.db_dal = st.session_state.db_dal
-        self.db = st.session_state.db
-        self.utils = st.session_state.utils
-        self.openai_client = st.session_state.openai_client
-        self.base_path = st.session_state.base_path
-
-        self.initialize_session_state()
-
         self.create_questions_json_from_content_and_topic_json()
+
+        self.initialize_session_states()
 
         st.title("Parkinson's - Samenvatten in dialoog")
 
@@ -545,5 +559,5 @@ Conversation history:
 
 if __name__ == "__main__":
     open("student_knowledge.txt", "w").close()
-    probleemstelling = SocraticDialogue()
+    probleemstelling = SamenvattenInDialoog()
     probleemstelling.run()

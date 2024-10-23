@@ -63,9 +63,9 @@ class LectureOverview:
                         f"{lecture_title}",
                         phase="theory-overview",
                     )
-                    if st.session_state.username == "TESTING":  # To for Mare
+                    if st.session_state.username == "supergeheimecode":
                         self.render_page_button(
-                            "📝 Socratisch Dialoog",
+                            "📝 Socratisch dialoog",
                             f"{lecture_title}",
                             phase="socratic-dialogue",
                         )
@@ -88,7 +88,6 @@ class LectureOverview:
             self.utils.set_phase_to_match_lecture_status(phase)
 
             st.session_state.info_page = False
-            print("Phase set to", st.session_state.selected_phase)
             self.track_visits()
             st.rerun()
 
@@ -131,7 +130,7 @@ class LectureOverview:
 
         self.db_dal.update_last_phase("lectures")
         self.load_lectures()
-        st.title("Collegeoverzicht")
+        st.title("Moduleoverzicht")
         self.utils.add_spacing(1)
         self.render_page()
 
