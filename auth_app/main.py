@@ -21,26 +21,29 @@ load_dotenv()
 # Don't forget to re-build the image again after changing the code.
 
 # Define the argument parser for command-line arguments
-parser = argparse.ArgumentParser(description="Flask App Configuration")
+# parser = argparse.ArgumentParser(description="Flask App Configuration")
 
-parser.add_argument(
-    "--surf_test_env",
-    action="store_true",
-    help="Enable Surf Test Environment",
-    default=False,
-)
-parser.add_argument(
-    "--use_LL_cosmosdb",
-    action="store_true",
-    help="Use LearnLoop instance of CosmosDB, otherwise use the UvA's",
-    default=False,
-)
+# parser.add_argument(
+#     "--surf_test_env",
+#     action="store_true",
+#     help="Enable Surf Test Environment",
+#     default=False,
+# )
+# parser.add_argument(
+#     "--use_LL_cosmosdb",
+#     action="store_true",
+#     help="Use LearnLoop instance of CosmosDB, otherwise use the UvA's",
+#     default=False,
+# )
 
-args = parser.parse_args()
+# args = parser.parse_args()
 
-# Use the command-line arguments instead of hardcoded values
-use_LL_cosmosdb = args.use_LL_cosmosdb
-surf_test_env = args.surf_test_env
+# # Use the command-line arguments instead of hardcoded values
+# use_LL_cosmosdb = args.use_LL_cosmosdb
+# surf_test_env = args.surf_test_env
+
+use_LL_cosmosdb = False
+surf_test_env = False
 
 if surf_test_env:
     print(
