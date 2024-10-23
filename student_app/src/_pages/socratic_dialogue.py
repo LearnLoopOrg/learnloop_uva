@@ -14,9 +14,6 @@ class SocraticDialogue:
             st.session_state.selected_module
         )
 
-        print(f"TOPICS DATA: {topics_data}")
-        print(f"SEGMENTS DATA: {segments_data}")
-
         final_data = {}
         # Loop door de topics en verzamel de bijbehorende segmenten
         for topic in topics_data["topics"]:
@@ -313,52 +310,72 @@ Conversation history:
             response_format={"type": "text"},
         )
 
-        text_placeholder = st.empty()
+        text_placeholder = st.empty()  # Placeholder for text output to user
         text_buffer = ""
         json_buffer = ""
         json_response = {}
         is_collecting_json = False
+        json_marker_buffer = ""  # Buffer to handle incomplete JSON markers
 
         for chunk in stream:
             if chunk.choices and (chunk_content := chunk.choices[0].delta.content):
-                if "```json" in chunk_content:
+                # Handle incomplete JSON markers like "```j" or "`"
+                json_marker_buffer += chunk_content.strip()
+
+                print(f"CHUNK CONTENT: {chunk_content}")
+                print(f"JSON MARKER BUFFER: {json_marker_buffer}")
+
+                # Check if the collected buffer indicates the start of JSON block
+                if "```json" in json_marker_buffer or json_marker_buffer.startswith(
+                    "```"
+                ):
                     is_collecting_json = True
+                    json_marker_buffer = ""  # Reset buffer
+                    # Split any text before the JSON block starts
                     parts = chunk_content.split("```json")
                     text_before_json = parts[0]
                     text_buffer += text_before_json
-                    text_placeholder.markdown(text_buffer)
+                    text_placeholder.markdown(text_buffer)  # Show the text so far
                     if len(parts) > 1:
                         json_buffer += parts[1]
                     continue
 
+                # If already collecting JSON
                 if is_collecting_json:
                     if "```" in chunk_content:
+                        # End of JSON block
                         parts = chunk_content.split("```")
                         json_buffer += parts[0]
                         try:
+                            # Parse the collected JSON data
                             json_data = json.loads(json_buffer)
-                            json_response.update(json_data)
-                            st.write("JSON succesvol verzameld!")
+                            json_response.update(json_data)  # Store in the backend
                         except json.JSONDecodeError:
                             st.write("Ongeldige JSON-structuur")
                         is_collecting_json = False
+                        json_buffer = ""  # Reset JSON buffer for future JSON blocks
                         if len(parts) > 1:
                             text_after_json = parts[1]
                             text_buffer += text_after_json
-                            text_placeholder.markdown(text_buffer)
+                            text_placeholder.markdown(
+                                text_buffer
+                            )  # Show text after JSON
                         continue
                     else:
-                        json_buffer += chunk_content
+                        json_buffer += chunk_content  # Continue collecting JSON data
                 else:
+                    # Normal text output, no JSON involved
                     text_buffer += chunk_content
                     text_placeholder.markdown(text_buffer)
 
-        # Ga verder met het verwerken van json_response['response']
-        m = st.session_state.messages[-1]
-        image_path = m["image"] if m.get("image") else None
-        self.add_to_assistant_responses(
-            json.loads(json_response)["response"], image_path
-        )
+        print(f"JSON response: {json_response}")
+
+        # Process the response stored in JSON without showing it
+        if "response" in json_response:
+            # Add response to assistant messages
+            m = st.session_state.messages[-1]
+            image_path = m["image"] if m.get("image") else None
+            self.add_to_assistant_responses(json_response["response"], image_path)
 
         return json_response
 
