@@ -174,7 +174,7 @@ class TopicOverview:
                 if self.is_topic_completed(topic_index, module_name_underscored):
                     topic_status = "✅"
                 else:
-                    topic_status = "⬜"
+                    topic_status = ""
 
                 topic_title = topic["topic_title"]
                 st.subheader(f"{topic_index + 1}. {topic_title} {topic_status}")
