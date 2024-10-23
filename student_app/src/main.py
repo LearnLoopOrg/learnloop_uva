@@ -1596,6 +1596,31 @@ def render_sidebar():
             args=("courses",),
             use_container_width=True,
         )
+        if (
+            st.session_state.selected_phase == "lectures"
+            or st.session_state.selected_phase == "topics"
+            or st.session_state.selected_phase == "learning"
+            or st.session_state.selected_phase == "practice"
+            or st.session_state.selected_phase == "theory-overview"
+        ):
+            st.button(
+                f"📖 Colleges | {st.session_state.selected_course}",
+                on_click=set_selected_phase,
+                args=("lectures",),
+                use_container_width=True,
+            )
+        if (
+            st.session_state.selected_phase == "topics"
+            or st.session_state.selected_phase == "learning"
+            or st.session_state.selected_phase == "practice"
+            or st.session_state.selected_phase == "theory-overview"
+        ):
+            st.button(
+                f"🗂 Topics | {st.session_state.selected_module}",
+                on_click=set_selected_phase,
+                args=("topics",),
+                use_container_width=True,
+            )
 
         if st.session_state.db_name == "UvA_KNP":
             render_feedback_form()
