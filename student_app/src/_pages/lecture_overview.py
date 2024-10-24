@@ -165,10 +165,22 @@ class LectureOverview:
         """
         Renders the lectures in the session state.
         """
-        print("st.session_state.lectures: ", st.session_state.lectures)
+        # Check if there are lectures loaded in the session state
+        if not st.session_state.lectures:
+            st.write("Er zijn geen colleges beschikbaar voor deze cursus.")
+            return
+
+        # Loop through each lecture and render it
         for lecture in st.session_state.lectures:
-            lecture_record = self.db_dal.get_lecture(lecture.title)
-            self.render_lecture(lecture.title, lecture.description, lecture_record)
+            try:
+                lecture_record = st.session_state.db.content.find_one(
+                    {"lecture_name": str(lecture.title)}
+                )
+                self.render_lecture(lecture.title, lecture.description, lecture_record)
+            except Exception as e:
+                st.error(
+                    f"Er is een fout opgetreden bij het laden van college '{lecture.title}': {e}"
+                )
 
     def run(self):
         self.db_dal = st.session_state.db_dal

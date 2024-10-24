@@ -93,7 +93,7 @@ class DatabaseAccess:
         Get the lectures for a given course from the course catalog.
         """
         for course in catalog.courses:
-            if course.title == selected_course:
+            if course.title.lower() == selected_course.lower():
                 return course.lectures
 
     def get_segment_type(self, segment_index):
@@ -229,9 +229,6 @@ class DatabaseAccess:
     def fetch_module_topics(self, module):
         page_content = st.session_state.db.content.find_one({"lecture_name": module})
         return page_content["corrected_lecturepath_topics"]
-
-    def get_lecture(self, lecture_name):
-        return st.session_state.db.content.find_one({"lecture_name": lecture_name})
 
     def generate_json_path(self, json_name):
         return f"src/data/content/modules/{json_name}"
