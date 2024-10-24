@@ -1,3 +1,4 @@
+import base64
 from datetime import timedelta
 import json
 import streamlit as st
@@ -283,7 +284,15 @@ class ImageHandler:
             if max_height:
                 image = self.resize_image_to_max_height(image, max_height)
 
-            st.image(image)
+            buffered = BytesIO()
+            image.save(buffered, format="PNG")
+            img_str = base64.b64encode(buffered.getvalue()).decode()
+            img_html = (
+                f'<img src="data:image/png;base64,{img_str}" alt="Segment Image"/>'
+            )
+
+            st.markdown(img_html, unsafe_allow_html=True)
+            # st.image(image)
         except Exception as e:
             # st.error("No image found for this segment.")
             if "container" in str(e):
