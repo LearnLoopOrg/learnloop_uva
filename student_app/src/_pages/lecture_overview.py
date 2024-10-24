@@ -151,12 +151,15 @@ class LectureOverview:
 
         print("selected_course: ", st.session_state.selected_course)
 
-        lectures = course_catalog.courses[0].lectures
+        # lectures = course_catalog.courses[0].lectures
 
-        st.session_state.lectures = [
-            lecture.title for lecture in lectures if lecture.title is not None
-        ]
-        print("lectures zelf uit de catalog gehaald: ", st.session_state.lectures)
+        # st.session_state.lectures = [
+        #     lecture.title for lecture in lectures if lecture.title is not None
+        # ]
+        # print("lectures zelf uit de catalog gehaald: ", st.session_state.lectures)
+        st.session_state.lectures = self.db_dal.get_lectures_for_course(
+            st.session_state.selected_course, course_catalog
+        )
 
     def render_lectures(self):
         """
