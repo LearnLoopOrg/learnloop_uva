@@ -1,300 +1,899 @@
 {
-    "groeneolifant": null,
-    "rodebes": null,
-    "blauwekrokodil": null,
-    "gelekanarie": null,
-    "bruineappel": null,
-    "grijzebanaan": null,
-    "groeneananas": null,
-    "lilabes": null,
-    "groenestruisvogel": null,
-    "limoenenmango": null,
-    "bruineananas": null,
-    "gelemuis": null,
-    "oranjekat": null,
-    "felroodetijger": null,
-    "donkerblauweaardbei": null,
-    "zilverenhaai": null,
-    "paarsekiwi": null,
-    "donkerblauwepanter": null,
-    "goudenbes": null,
-    "rozeolifant": null,
-    "rodestruisvogel": null,
-    "bruinespin": null,
-    "wittekat": null,
-    "turquoisekat": null,
-    "turquoisesinaasappel": null,
-    "paarsewalvis": null,
-    "rodeaardbei": null,
-    "grijzekanarie": null,
-    "zwartestruisvogel": null,
-    "donkerblauwehaai": null,
-    "blauwebanaan": null,
-    "felroodehaai": null,
-    "lichtgroenedolfijn": null,
-    "gelelama": null,
-    "lilahaai": null,
-    "lichtgroeneoctopus": null,
-    "limoenenbeer": null,
-    "oranjebes": null,
-    "zilverenhond": null,
-    "grijzelama": null,
-    "goudenkat": null,
-    "groenewalvis": null,
-    "blauwevogel": null,
-    "goudensinaasappel": null,
-    "violetkoala": null,
-    "paarsehaai": null,
-    "blauwespin": null,
-    "felroodepanter": null,
-    "lichtgroeneananas": null,
-    "oranjekoala": null,
-    "paarsedolfijn": null,
-    "paarsebanaan": null,
-    "blauwepalmboom": null,
-    "oranjeappel": null,
-    "bruinemango": null,
-    "wittepanda": null,
-    "groenehaai": null,
-    "rozehaai": null,
-    "lichtgroenemuis": null,
-    "rodezebra": null,
-    "rozevogel": null,
-    "oranjebeer": null,
-    "gelekiwi": null,
-    "oranjewalvis": null,
-    "zwarteolifant": null,
-    "groenelama": null,
-    "turquoisespin": null,
-    "blauweuil": null,
-    "wittehaai": null,
-    "paarsestruisvogel": null,
-    "paarseolifant": null,
-    "geleananas": null,
-    "grijzekrokodil": null,
-    "turquoisekanarie": null,
-    "groenebeer": null,
-    "lilaananas": null,
-    "geletijger": null,
-    "groeneleeuw": null,
-    "rodekanarie": null,
-    "rozepanda": null,
-    "violetpanda": null,
-    "grijzeoctopus": null,
-    "paarseaardbei": null,
-    "zwartesinaasappel": null,
-    "rodewalvis": null,
-    "kastanjebruinekanarie": null,
-    "zilverenpanda": null,
-    "felroodevogel": null,
-    "lichtgroeneolifant": null,
-    "bruinemuis": null,
-    "limoenenbes": null,
-    "oranjebanaan": null,
-    "rozepalmboom": null,
-    "kastanjebruineananas": null,
-    "turquoiseolifant": null,
-    "rozekiwi": null,
-    "bruinezebra": null,
-    "oranjevogel": null,
-    "gelesinaasappel": null,
-    "blauwekonijn": null,
-    "lilakoala": null,
-    "goudenvogel": null,
-    "rozehond": null,
-    "oranjeaardbei": null,
-    "bruinestruisvogel": null,
-    "kastanjebruineolifant": null,
-    "violetlama": null,
-    "turquoiseoctopus": null,
-    "paarseslang": null,
-    "wittekrokodil": null,
-    "turquoisemango": null,
-    "donkerblauwetijger": null,
-    "rodeuil": null,
-    "zwartekoala": null,
-    "rodesinaasappel": null,
-    "zilverenananas": null,
-    "violetwalvis": null,
-    "turquoisetijger": null,
-    "bruinekoala": null,
-    "violetbes": null,
-    "gelebanaan": null,
-    "zilverenappel": null,
-    "goudenmuis": null,
-    "geleleeuw": null,
-    "oranjeolifant": null,
-    "groenesinaasappel": null,
-    "grijzekat": null,
-    "violetzebra": null,
-    "blauwemango": null,
-    "rozeoctopus": null,
-    "lilapanter": null,
-    "rodehaai": null,
-    "goudenoctopus": null,
-    "rodeslang": null,
-    "witteaardbei": null,
-    "blauweananas": null,
-    "zilverenkiwi": null,
-    "kastanjebruinekonijn": null,
-    "turquoisepanda": null,
-    "lichtgroenepanter": null,
-    "zilverenbeer": null,
-    "goudenolifant": null,
-    "goudenmango": null,
-    "kastanjebruinestruisvogel": null,
-    "lilastruisvogel": null,
-    "groeneoctopus": null,
-    "grijzeolifant": null,
-    "rozeappel": null,
-    "goudentijger": null,
-    "bruinebes": null,
-    "rozepanter": null,
-    "grijzepanter": null,
-    "gelespin": null,
-    "grijzekiwi": null,
-    "groenekiwi": null,
-    "kastanjebruinebes": null,
-    "lilaolifant": null,
-    "blauwebes": null,
-    "gelebeer": null,
-    "kastanjebruinebanaan": null,
-    "grijzebeer": null,
-    "donkerblauwekat": null,
-    "lichtgroeneleeuw": null,
-    "oranjemango": null,
-    "rodeananas": null,
-    "rozespin": null,
-    "kastanjebruinehond": null,
-    "donkerblauweleeuw": null,
-    "geleappel": null,
-    "oranjehond": null,
-    "kastanjebruinemango": null,
-    "groenekonijn": null,
-    "bruinesinaasappel": null,
-    "limoenentijger": null,
-    "felroodekoala": null,
-    "zwartebes": null,
-    "kastanjebruineappel": null,
-    "gelevogel": null,
-    "zwartelama": null,
-    "grijzeuil": null,
-    "zilverenstruisvogel": null,
-    "violetspin": null,
-    "zwartemango": null,
-    "paarsekanarie": null,
-    "kastanjebruinedolfijn": null,
-    "bruineoctopus": null,
-    "limoenenolifant": null,
-    "wittekanarie": null,
-    "zilverensinaasappel": null,
-    "paarsekonijn": null,
-    "zwartekrokodil": null,
-    "lilazebra": null,
-    "felroodeslang": null,
-    "lichtgroenehaai": null,
-    "groenezebra": null,
-    "lichtgroenepanda": null,
-    "blauwekiwi": null,
-    "oranjespin": null,
-    "felroodekonijn": null,
-    "zilverenslang": null,
-    "kastanjebruinespin": null,
-    "limoenenpalmboom": null,
-    "lichtgroenebanaan": null,
-    "wittebanaan": null,
-    "goudenhond": null,
-    "zilverenmuis": null,
-    "goudenpanda": null,
-    "zilverenmango": null,
-    "zwartedolfijn": null,
-    "blauwehaai": null,
-    "zwarteoctopus": null,
-    "grijzepanda": null,
-    "rozeananas": null,
-    "lilakat": null,
-    "felroodekrokodil": null,
-    "lilamuis": null,
-    "violetbanaan": null,
-    "oranjedolfijn": null,
-    "goudenpanter": null,
-    "grijzezebra": null,
-    "lichtgroenevogel": null,
-    "witteuil": null,
-    "groenetijger": null,
-    "oranjehaai": null,
-    "donkerblauwebeer": null,
-    "felroodezebra": null,
-    "donkerblauweslang": null,
-    "donkerblauwebes": null,
-    "oranjepanter": null,
-    "lichtgroenekoala": null,
-    "bruinehond": null,
-    "violetoctopus": null,
-    "gelewalvis": null,
-    "lichtgroenelama": null,
-    "zwartehaai": null,
-    "goudendolfijn": null,
-    "paarsevogel": null,
-    "bruinetijger": null,
-    "felroodesinaasappel": null,
-    "wittesinaasappel": null,
-    "bruinevogel": null,
-    "blauwetijger": null,
-    "rodepalmboom": null,
-    "zwarteananas": null,
-    "rozekoala": null,
-    "groenemuis": null,
-    "donkerblauweuil": null,
-    "violetmuis": null,
-    "kastanjebruinepanter": null,
-    "gelebes": null,
-    "goudenpalmboom": null,
-    "lilabeer": null,
-    "oranjeoctopus": null,
-    "rodevogel": null,
-    "goudenananas": null,
-    "gelehond": null,
-    "gelezebra": null,
-    "felroodebanaan": null,
-    "zwartebanaan": null,
-    "goudenkiwi": null,
-    "zilverenkonijn": null,
-    "rodebanaan": null,
-    "paarselama": null,
-    "bruinedolfijn": null,
-    "oranjezebra": null,
-    "groenekrokodil": null,
-    "zwartezebra": null,
-    "lichtgroenekat": null,
-    "lilakonijn": null,
-    "turquoisebes": null,
-    "limoenenhond": null,
-    "paarsebeer": null,
-    "turquoiseananas": null,
-    "kastanjebruinekiwi": null,
-    "wittewalvis": null,
-    "limoenenslang": null,
-    "kastanjebruinehaai": null,
-    "blauwelama": null,
-    "bruinewalvis": null,
-    "lichtgroeneuil": null,
-    "turquoisezebra": null,
-    "felroodebeer": null,
-    "violetpalmboom": null,
-    "kastanjebruineaardbei": null,
-    "lilaaardbei": null,
-    "turquoiseappel": null,
-    "witteoctopus": null,
-    "lilakrokodil": null,
-    "oranjekrokodil": null,
-    "bruinehaai": null,
-    "grijzekonijn": null,
-    "limoenenwalvis": null,
-    "rodeoctopus": null,
-    "lilahond": null,
-    "rodekonijn": null,
-    "wittekonijn": null,
-    "lilakanarie": null,
-    "blauwekat": null
+    "Rondecelkern": {
+        "role": "teacher"
+    },
+    "groeneolifant": {
+        "role": "student"
+    },
+    "rodebes": {
+        "role": "student"
+    },
+    "blauwekrokodil": {
+        "role": "student"
+    },
+    "gelekanarie": {
+        "role": "student"
+    },
+    "bruineappel": {
+        "role": "student"
+    },
+    "grijzebanaan": {
+        "role": "student"
+    },
+    "groeneananas": {
+        "role": "student"
+    },
+    "lilabes": {
+        "role": "student"
+    },
+    "groenestruisvogel": {
+        "role": "student"
+    },
+    "limoenenmango": {
+        "role": "student"
+    },
+    "bruineananas": {
+        "role": "student"
+    },
+    "gelemuis": {
+        "role": "student"
+    },
+    "oranjekat": {
+        "role": "student"
+    },
+    "felroodetijger": {
+        "role": "student"
+    },
+    "donkerblauweaardbei": {
+        "role": "student"
+    },
+    "zilverenhaai": {
+        "role": "student"
+    },
+    "paarsekiwi": {
+        "role": "student"
+    },
+    "donkerblauwepanter": {
+        "role": "student"
+    },
+    "goudenbes": {
+        "role": "student"
+    },
+    "rozeolifant": {
+        "role": "student"
+    },
+    "rodestruisvogel": {
+        "role": "student"
+    },
+    "bruinespin": {
+        "role": "student"
+    },
+    "wittekat": {
+        "role": "student"
+    },
+    "turquoisekat": {
+        "role": "student"
+    },
+    "turquoisesinaasappel": {
+        "role": "student"
+    },
+    "paarsewalvis": {
+        "role": "student"
+    },
+    "rodeaardbei": {
+        "role": "student"
+    },
+    "grijzekanarie": {
+        "role": "student"
+    },
+    "zwartestruisvogel": {
+        "role": "student"
+    },
+    "donkerblauwehaai": {
+        "role": "student"
+    },
+    "blauwebanaan": {
+        "role": "student"
+    },
+    "felroodehaai": {
+        "role": "student"
+    },
+    "lichtgroenedolfijn": {
+        "role": "student"
+    },
+    "gelelama": {
+        "role": "student"
+    },
+    "lilahaai": {
+        "role": "student"
+    },
+    "lichtgroeneoctopus": {
+        "role": "student"
+    },
+    "limoenenbeer": {
+        "role": "student"
+    },
+    "oranjebes": {
+        "role": "student"
+    },
+    "zilverenhond": {
+        "role": "student"
+    },
+    "grijzelama": {
+        "role": "student"
+    },
+    "goudenkat": {
+        "role": "student"
+    },
+    "groenewalvis": {
+        "role": "student"
+    },
+    "blauwevogel": {
+        "role": "student"
+    },
+    "goudensinaasappel": {
+        "role": "student"
+    },
+    "violetkoala": {
+        "role": "student"
+    },
+    "paarsehaai": {
+        "role": "student"
+    },
+    "blauwespin": {
+        "role": "student"
+    },
+    "felroodepanter": {
+        "role": "student"
+    },
+    "lichtgroeneananas": {
+        "role": "student"
+    },
+    "oranjekoala": {
+        "role": "student"
+    },
+    "paarsedolfijn": {
+        "role": "student"
+    },
+    "paarsebanaan": {
+        "role": "student"
+    },
+    "blauwepalmboom": {
+        "role": "student"
+    },
+    "oranjeappel": {
+        "role": "student"
+    },
+    "bruinemango": {
+        "role": "student"
+    },
+    "wittepanda": {
+        "role": "student"
+    },
+    "groenehaai": {
+        "role": "student"
+    },
+    "rozehaai": {
+        "role": "student"
+    },
+    "lichtgroenemuis": {
+        "role": "student"
+    },
+    "rodezebra": {
+        "role": "student"
+    },
+    "rozevogel": {
+        "role": "student"
+    },
+    "oranjebeer": {
+        "role": "student"
+    },
+    "gelekiwi": {
+        "role": "student"
+    },
+    "oranjewalvis": {
+        "role": "student"
+    },
+    "zwarteolifant": {
+        "role": "student"
+    },
+    "groenelama": {
+        "role": "student"
+    },
+    "turquoisespin": {
+        "role": "student"
+    },
+    "blauweuil": {
+        "role": "student"
+    },
+    "wittehaai": {
+        "role": "student"
+    },
+    "paarsestruisvogel": {
+        "role": "student"
+    },
+    "paarseolifant": {
+        "role": "student"
+    },
+    "geleananas": {
+        "role": "student"
+    },
+    "grijzekrokodil": {
+        "role": "student"
+    },
+    "turquoisekanarie": {
+        "role": "student"
+    },
+    "groenebeer": {
+        "role": "student"
+    },
+    "lilaananas": {
+        "role": "student"
+    },
+    "geletijger": {
+        "role": "student"
+    },
+    "groeneleeuw": {
+        "role": "student"
+    },
+    "rodekanarie": {
+        "role": "student"
+    },
+    "rozepanda": {
+        "role": "student"
+    },
+    "violetpanda": {
+        "role": "student"
+    },
+    "grijzeoctopus": {
+        "role": "student"
+    },
+    "paarseaardbei": {
+        "role": "student"
+    },
+    "zwartesinaasappel": {
+        "role": "student"
+    },
+    "rodewalvis": {
+        "role": "student"
+    },
+    "kastanjebruinekanarie": {
+        "role": "student"
+    },
+    "zilverenpanda": {
+        "role": "student"
+    },
+    "felroodevogel": {
+        "role": "student"
+    },
+    "lichtgroeneolifant": {
+        "role": "student"
+    },
+    "bruinemuis": {
+        "role": "student"
+    },
+    "limoenenbes": {
+        "role": "student"
+    },
+    "oranjebanaan": {
+        "role": "student"
+    },
+    "rozepalmboom": {
+        "role": "student"
+    },
+    "kastanjebruineananas": {
+        "role": "student"
+    },
+    "turquoiseolifant": {
+        "role": "student"
+    },
+    "rozekiwi": {
+        "role": "student"
+    },
+    "bruinezebra": {
+        "role": "student"
+    },
+    "oranjevogel": {
+        "role": "student"
+    },
+    "gelesinaasappel": {
+        "role": "student"
+    },
+    "blauwekonijn": {
+        "role": "student"
+    },
+    "lilakoala": {
+        "role": "student"
+    },
+    "goudenvogel": {
+        "role": "student"
+    },
+    "rozehond": {
+        "role": "student"
+    },
+    "oranjeaardbei": {
+        "role": "student"
+    },
+    "bruinestruisvogel": {
+        "role": "student"
+    },
+    "kastanjebruineolifant": {
+        "role": "student"
+    },
+    "violetlama": {
+        "role": "student"
+    },
+    "turquoiseoctopus": {
+        "role": "student"
+    },
+    "paarseslang": {
+        "role": "student"
+    },
+    "wittekrokodil": {
+        "role": "student"
+    },
+    "turquoisemango": {
+        "role": "student"
+    },
+    "donkerblauwetijger": {
+        "role": "student"
+    },
+    "rodeuil": {
+        "role": "student"
+    },
+    "zwartekoala": {
+        "role": "student"
+    },
+    "rodesinaasappel": {
+        "role": "student"
+    },
+    "zilverenananas": {
+        "role": "student"
+    },
+    "violetwalvis": {
+        "role": "student"
+    },
+    "turquoisetijger": {
+        "role": "student"
+    },
+    "bruinekoala": {
+        "role": "student"
+    },
+    "violetbes": {
+        "role": "student"
+    },
+    "gelebanaan": {
+        "role": "student"
+    },
+    "zilverenappel": {
+        "role": "student"
+    },
+    "goudenmuis": {
+        "role": "student"
+    },
+    "geleleeuw": {
+        "role": "student"
+    },
+    "oranjeolifant": {
+        "role": "student"
+    },
+    "groenesinaasappel": {
+        "role": "student"
+    },
+    "grijzekat": {
+        "role": "student"
+    },
+    "violetzebra": {
+        "role": "student"
+    },
+    "blauwemango": {
+        "role": "student"
+    },
+    "rozeoctopus": {
+        "role": "student"
+    },
+    "lilapanter": {
+        "role": "student"
+    },
+    "rodehaai": {
+        "role": "student"
+    },
+    "goudenoctopus": {
+        "role": "student"
+    },
+    "rodeslang": {
+        "role": "student"
+    },
+    "witteaardbei": {
+        "role": "student"
+    },
+    "blauweananas": {
+        "role": "student"
+    },
+    "zilverenkiwi": {
+        "role": "student"
+    },
+    "kastanjebruinekonijn": {
+        "role": "student"
+    },
+    "turquoisepanda": {
+        "role": "student"
+    },
+    "lichtgroenepanter": {
+        "role": "student"
+    },
+    "zilverenbeer": {
+        "role": "student"
+    },
+    "goudenolifant": {
+        "role": "student"
+    },
+    "goudenmango": {
+        "role": "student"
+    },
+    "kastanjebruinestruisvogel": {
+        "role": "student"
+    },
+    "lilastruisvogel": {
+        "role": "student"
+    },
+    "groeneoctopus": {
+        "role": "student"
+    },
+    "grijzeolifant": {
+        "role": "student"
+    },
+    "rozeappel": {
+        "role": "student"
+    },
+    "goudentijger": {
+        "role": "student"
+    },
+    "bruinebes": {
+        "role": "student"
+    },
+    "rozepanter": {
+        "role": "student"
+    },
+    "grijzepanter": {
+        "role": "student"
+    },
+    "gelespin": {
+        "role": "student"
+    },
+    "grijzekiwi": {
+        "role": "student"
+    },
+    "groenekiwi": {
+        "role": "student"
+    },
+    "kastanjebruinebes": {
+        "role": "student"
+    },
+    "lilaolifant": {
+        "role": "student"
+    },
+    "blauwebes": {
+        "role": "student"
+    },
+    "gelebeer": {
+        "role": "student"
+    },
+    "kastanjebruinebanaan": {
+        "role": "student"
+    },
+    "grijzebeer": {
+        "role": "student"
+    },
+    "donkerblauwekat": {
+        "role": "student"
+    },
+    "lichtgroeneleeuw": {
+        "role": "student"
+    },
+    "oranjemango": {
+        "role": "student"
+    },
+    "rodeananas": {
+        "role": "student"
+    },
+    "rozespin": {
+        "role": "student"
+    },
+    "kastanjebruinehond": {
+        "role": "student"
+    },
+    "donkerblauweleeuw": {
+        "role": "student"
+    },
+    "geleappel": {
+        "role": "student"
+    },
+    "oranjehond": {
+        "role": "student"
+    },
+    "kastanjebruinemango": {
+        "role": "student"
+    },
+    "groenekonijn": {
+        "role": "student"
+    },
+    "bruinesinaasappel": {
+        "role": "student"
+    },
+    "limoenentijger": {
+        "role": "student"
+    },
+    "felroodekoala": {
+        "role": "student"
+    },
+    "zwartebes": {
+        "role": "student"
+    },
+    "kastanjebruineappel": {
+        "role": "student"
+    },
+    "gelevogel": {
+        "role": "student"
+    },
+    "zwartelama": {
+        "role": "student"
+    },
+    "grijzeuil": {
+        "role": "student"
+    },
+    "zilverenstruisvogel": {
+        "role": "student"
+    },
+    "violetspin": {
+        "role": "student"
+    },
+    "zwartemango": {
+        "role": "student"
+    },
+    "paarsekanarie": {
+        "role": "student"
+    },
+    "kastanjebruinedolfijn": {
+        "role": "student"
+    },
+    "bruineoctopus": {
+        "role": "student"
+    },
+    "limoenenolifant": {
+        "role": "student"
+    },
+    "wittekanarie": {
+        "role": "student"
+    },
+    "zilverensinaasappel": {
+        "role": "student"
+    },
+    "paarsekonijn": {
+        "role": "student"
+    },
+    "zwartekrokodil": {
+        "role": "student"
+    },
+    "lilazebra": {
+        "role": "student"
+    },
+    "felroodeslang": {
+        "role": "student"
+    },
+    "lichtgroenehaai": {
+        "role": "student"
+    },
+    "groenezebra": {
+        "role": "student"
+    },
+    "lichtgroenepanda": {
+        "role": "student"
+    },
+    "blauwekiwi": {
+        "role": "student"
+    },
+    "oranjespin": {
+        "role": "student"
+    },
+    "felroodekonijn": {
+        "role": "student"
+    },
+    "zilverenslang": {
+        "role": "student"
+    },
+    "kastanjebruinespin": {
+        "role": "student"
+    },
+    "limoenenpalmboom": {
+        "role": "student"
+    },
+    "lichtgroenebanaan": {
+        "role": "student"
+    },
+    "wittebanaan": {
+        "role": "student"
+    },
+    "goudenhond": {
+        "role": "student"
+    },
+    "zilverenmuis": {
+        "role": "student"
+    },
+    "goudenpanda": {
+        "role": "student"
+    },
+    "zilverenmango": {
+        "role": "student"
+    },
+    "zwartedolfijn": {
+        "role": "student"
+    },
+    "blauwehaai": {
+        "role": "student"
+    },
+    "zwarteoctopus": {
+        "role": "student"
+    },
+    "grijzepanda": {
+        "role": "student"
+    },
+    "rozeananas": {
+        "role": "student"
+    },
+    "lilakat": {
+        "role": "student"
+    },
+    "felroodekrokodil": {
+        "role": "student"
+    },
+    "lilamuis": {
+        "role": "student"
+    },
+    "violetbanaan": {
+        "role": "student"
+    },
+    "oranjedolfijn": {
+        "role": "student"
+    },
+    "goudenpanter": {
+        "role": "student"
+    },
+    "grijzezebra": {
+        "role": "student"
+    },
+    "lichtgroenevogel": {
+        "role": "student"
+    },
+    "witteuil": {
+        "role": "student"
+    },
+    "groenetijger": {
+        "role": "student"
+    },
+    "oranjehaai": {
+        "role": "student"
+    },
+    "donkerblauwebeer": {
+        "role": "student"
+    },
+    "felroodezebra": {
+        "role": "student"
+    },
+    "donkerblauweslang": {
+        "role": "student"
+    },
+    "donkerblauwebes": {
+        "role": "student"
+    },
+    "oranjepanter": {
+        "role": "student"
+    },
+    "lichtgroenekoala": {
+        "role": "student"
+    },
+    "bruinehond": {
+        "role": "student"
+    },
+    "violetoctopus": {
+        "role": "student"
+    },
+    "gelewalvis": {
+        "role": "student"
+    },
+    "lichtgroenelama": {
+        "role": "student"
+    },
+    "zwartehaai": {
+        "role": "student"
+    },
+    "goudendolfijn": {
+        "role": "student"
+    },
+    "paarsevogel": {
+        "role": "student"
+    },
+    "bruinetijger": {
+        "role": "student"
+    },
+    "felroodesinaasappel": {
+        "role": "student"
+    },
+    "wittesinaasappel": {
+        "role": "student"
+    },
+    "bruinevogel": {
+        "role": "student"
+    },
+    "blauwetijger": {
+        "role": "student"
+    },
+    "rodepalmboom": {
+        "role": "student"
+    },
+    "zwarteananas": {
+        "role": "student"
+    },
+    "rozekoala": {
+        "role": "student"
+    },
+    "groenemuis": {
+        "role": "student"
+    },
+    "donkerblauweuil": {
+        "role": "student"
+    },
+    "violetmuis": {
+        "role": "student"
+    },
+    "kastanjebruinepanter": {
+        "role": "student"
+    },
+    "gelebes": {
+        "role": "student"
+    },
+    "goudenpalmboom": {
+        "role": "student"
+    },
+    "lilabeer": {
+        "role": "student"
+    },
+    "oranjeoctopus": {
+        "role": "student"
+    },
+    "rodevogel": {
+        "role": "student"
+    },
+    "goudenananas": {
+        "role": "student"
+    },
+    "gelehond": {
+        "role": "student"
+    },
+    "gelezebra": {
+        "role": "student"
+    },
+    "felroodebanaan": {
+        "role": "student"
+    },
+    "zwartebanaan": {
+        "role": "student"
+    },
+    "goudenkiwi": {
+        "role": "student"
+    },
+    "zilverenkonijn": {
+        "role": "student"
+    },
+    "rodebanaan": {
+        "role": "student"
+    },
+    "paarselama": {
+        "role": "student"
+    },
+    "bruinedolfijn": {
+        "role": "student"
+    },
+    "oranjezebra": {
+        "role": "student"
+    },
+    "groenekrokodil": {
+        "role": "student"
+    },
+    "zwartezebra": {
+        "role": "student"
+    },
+    "lichtgroenekat": {
+        "role": "student"
+    },
+    "lilakonijn": {
+        "role": "student"
+    },
+    "turquoisebes": {
+        "role": "student"
+    },
+    "limoenenhond": {
+        "role": "student"
+    },
+    "paarsebeer": {
+        "role": "student"
+    },
+    "turquoiseananas": {
+        "role": "student"
+    },
+    "kastanjebruinekiwi": {
+        "role": "student"
+    },
+    "wittewalvis": {
+        "role": "student"
+    },
+    "limoenenslang": {
+        "role": "student"
+    },
+    "kastanjebruinehaai": {
+        "role": "student"
+    },
+    "blauwelama": {
+        "role": "student"
+    },
+    "bruinewalvis": {
+        "role": "student"
+    },
+    "lichtgroeneuil": {
+        "role": "student"
+    },
+    "turquoisezebra": {
+        "role": "student"
+    },
+    "felroodebeer": {
+        "role": "student"
+    },
+    "violetpalmboom": {
+        "role": "student"
+    },
+    "kastanjebruineaardbei": {
+        "role": "student"
+    },
+    "lilaaardbei": {
+        "role": "student"
+    },
+    "turquoiseappel": {
+        "role": "student"
+    },
+    "witteoctopus": {
+        "role": "student"
+    },
+    "lilakrokodil": {
+        "role": "student"
+    },
+    "oranjekrokodil": {
+        "role": "student"
+    },
+    "bruinehaai": {
+        "role": "student"
+    },
+    "grijzekonijn": {
+        "role": "student"
+    },
+    "limoenenwalvis": {
+        "role": "student"
+    },
+    "rodeoctopus": {
+        "role": "student"
+    },
+    "lilahond": {
+        "role": "student"
+    },
+    "rodekonijn": {
+        "role": "student"
+    },
+    "wittekonijn": {
+        "role": "student"
+    },
+    "lilakanarie": {
+        "role": "student"
+    },
+    "blauwekat": {
+        "role": "student"
+    }
 }

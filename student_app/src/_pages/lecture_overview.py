@@ -18,12 +18,13 @@ class LectureOverview:
         )  # TODO: Replace with actual username
         st.button("Uitloggen", use_container_width=True)
 
-    def go_to_lecture(self, lecture_title):
+    def go_to_lecture(self, lecture_title, new_phase):
         """
         Sets the selected page and lecture to the one that the student clicked on.
         """
         st.session_state.selected_module = lecture_title
-        self.utils.set_phase_to_match_lecture_status("topics")
+        self.utils.set_phase_to_match_lecture_status(new_phase)
+
         self.db_dal.update_last_module()
 
     def render_lecture(self, lecture_title, lecture_description, lecture_record):
@@ -32,43 +33,67 @@ class LectureOverview:
         """
         container = st.container(border=True)
         cols = container.columns([14, 6, 1])
+        st.session_state.selected_module = lecture_title
 
         with container:
-            if (
-                lecture_record is None
-                or lecture_record["status"] == "not_recorded"
-                or lecture_record["status"] == "generated"
-            ):
-                with cols[1]:
-                    st.write("\n\n")
-                    st.button(
-                        "Nog niet beschikbaar",
-                        key=lecture_title,
-                        on_click=self.go_to_lecture,
-                        args=(lecture_title,),
-                        use_container_width=True,
-                    )
-            else:
-                with cols[1]:
-                    st.write("\n\n")
-                    st.button(
-                        "📝 Leerstof oefenen",
-                        key=lecture_title,
-                        on_click=self.go_to_lecture,
-                        args=(lecture_title,),
-                        use_container_width=True,
-                    )
-                    self.render_page_button(
-                        "📚 Overzicht theorie",
-                        f"{lecture_title}",
-                        phase="theory-overview",
-                    )
-                    if st.session_state.username == "supergeheimecode":
+            role = st.session_state.username["role"]
+            lecture_status = (
+                lecture_record["status"] if lecture_record else "not_recorded"
+            )
+
+            with cols[1]:
+                st.write("\n\n")
+
+                print("role: ", role)
+                print("lecture_status: ", lecture_status)
+
+                match role, lecture_status:
+                    case "teacher", "not_recorded":
                         self.render_page_button(
-                            "📝 Socratisch dialoog",
-                            f"{lecture_title}",
-                            phase="socratic-dialogue",
+                            "⏳ Nog niet beschikbaar",
+                            lecture_title,
+                            phase="not_recorded",
                         )
+
+                    case "teacher", "corrected":
+                        self.render_page_button(
+                            "📊 Inzichten bekijken",
+                            lecture_title,
+                            phase="insights",
+                        )
+
+                    case "teacher", "generated":
+                        self.render_page_button(
+                            "✔️ Kwaliteitscheck",
+                            lecture_title,
+                            phase="quality-check",
+                        )
+
+                    case "student", "not_recorded" | "generated":
+                        self.render_page_button(
+                            "⏳ Nog niet beschikbaar",
+                            lecture_title,
+                            phase="not_recorded",
+                        )
+
+                    case "student", "corrected":
+                        self.render_page_button(
+                            "📝 Leerstof oefenen",
+                            f"{lecture_title}",
+                            phase="learning",
+                        )
+                        self.render_page_button(
+                            "📚 Overzicht theorie",
+                            f"{lecture_title}",
+                            phase="theory-overview",
+                        )
+                        if st.session_state.username["name"] == "supergeheimecode":
+                            self.render_page_button(
+                                "📝 Socratisch dialoog",
+                                f"{lecture_title}",
+                                phase="socratic-dialogue",
+                            )
+
             with cols[0]:
                 st.subheader(lecture_title)
                 st.write(lecture_description)
@@ -116,12 +141,15 @@ class LectureOverview:
         Loads lectures from the database into the session state.
         """
         course_catalog = self.db_dal.get_course_catalog()
+        print("course_catalog: ", course_catalog)
         if st.session_state.selected_course is None:
+            print("selected_course is None")
             st.session_state.selected_course = course_catalog.courses[0].title
 
         st.session_state.lectures = self.db_dal.get_lectures_for_course(
             st.session_state.selected_course, course_catalog
         )
+        print("lectures: ", st.session_state.lectures)
 
     def run(self):
         self.db_dal = st.session_state.db_dal
@@ -129,6 +157,7 @@ class LectureOverview:
         self.db = st.session_state.db
 
         self.db_dal.update_last_phase("lectures")
+
         self.load_lectures()
         st.title("Moduleoverzicht")
         self.utils.add_spacing(1)

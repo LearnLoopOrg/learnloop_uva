@@ -1,52 +1,61 @@
 {
-    "Algemene begrippen": {},
     "Substantiedualisme": {
-        "response": "Volgens **Descartes** bestaan mensen uit een **immateri\u00eble geest** (1 punt) en een **materieel lichaam** (1 punt), die onafhankelijk van elkaar kunnen bestaan (1 punt).",
-        "student_knowledge": "Substance dualism",
+        "response": "Goed gedaan! Je hebt correct aangegeven dat Descartes het meest bekend is met substantiedualisme. Descartes stelde dat mensen bestaan uit een immateri\u00eble geest en een materieel lichaam, die onafhankelijk van elkaar kunnen bestaan.",
+        "student_knowledge": "De student weet dat substantiedualisme inhoudt dat lichaam en geest twee verschillende substanties zijn en dat Descartes hiermee wordt geassocieerd.",
         "questions": [
             {
                 "question": "Wat houdt substance dualism precies in volgens Descartes?",
-                "status": null,
+                "status": "done",
                 "level": 1,
-                "score": null,
-                "answer": "Volgens Descartes bestaan mensen uit een immateri\u00eble geest (1 punt) en een materieel lichaam (1 punt), die onafhankelijk van elkaar kunnen bestaan (1 punt)."
+                "score": "2/3",
+                "answer": "Volgens Descartes bestaan mensen uit een immateri\u00eble geest (1 punt) en een materieel lichaam (1 punt), die onafhankelijk van elkaar kunnen bestaan (1 punt).",
+                "student_answer": [
+                    "Dat twee substanties er zijn dus lichaam is een en geest is een",
+                    "Descartes is het meest bekend ermee"
+                ]
             },
             {
                 "question": "Welke argumenten ondersteunen substance dualism, zoals Leibniz' Law (Identity of Indiscernibles)?",
-                "status": null,
+                "status": "not asked",
                 "level": 1,
-                "score": null,
-                "answer": "Als twee entiteiten identiek zijn, moeten ze dezelfde eigenschappen hebben (1 punt); verschillen wijzen op niet-identiteit (1 punt)."
+                "score": "0/2",
+                "answer": "Als twee entiteiten identiek zijn, moeten ze dezelfde eigenschappen hebben (1 punt); verschillen wijzen op niet-identiteit (1 punt).",
+                "student_answer": []
             },
             {
                 "question": "Welke argumenten ondersteunen substance dualism, zoals Phenomenal quality (Chalmers)?",
-                "status": null,
+                "status": "not asked",
                 "level": 1,
-                "score": null,
-                "answer": "Subjectieve ervaringen van bewustzijn, zoals hoe pijn of kleuren voelen, zijn niet fysiek te verklaren (1 punt)."
+                "score": "0/1",
+                "answer": "Subjectieve ervaringen van bewustzijn, zoals hoe pijn of kleuren voelen, zijn niet fysiek te verklaren (1 punt).",
+                "student_answer": []
             },
             {
                 "question": "Welke argumenten ondersteunen substance dualism, zoals Intentionality (Brentano)?",
-                "status": null,
+                "status": "not asked",
                 "level": 1,
-                "score": null,
-                "answer": "Mentale toestanden hebben de eigenschap intentionaliteit (1 punt), wat fysieke toestanden niet hebben (1 punt)."
+                "score": "0/2",
+                "answer": "Mentale toestanden hebben de eigenschap intentionaliteit (1 punt), wat fysieke toestanden niet hebben (1 punt).",
+                "student_answer": []
             },
             {
                 "question": "Welke argumenten ondersteunen substance dualism, zoals Rationality en doubting argument (Descartes)?",
-                "status": null,
+                "status": "not asked",
                 "level": 1,
-                "score": null,
-                "answer": "De geest kan twijfelen (1 punt) en rationeel denken (1 punt), eigenschappen die het lichaam niet bezit (1 punt)."
+                "score": "0/3",
+                "answer": "De geest kan twijfelen (1 punt) en rationeel denken (1 punt), eigenschappen die het lichaam niet bezit (1 punt).",
+                "student_answer": []
             },
             {
                 "question": "Wat zijn de centrale problemen van substance dualism?",
-                "status": null,
+                "status": "not asked",
                 "level": 1,
-                "score": null,
-                "answer": "Hoe kunnen een immateri\u00eble geest en een materieel lichaam met elkaar interageren? (1 punt)\nVerwarring tussen kennis over iets en het daadwerkelijk bestaan van iets (1 punt).\nParadoxen die voortkomen uit de veronderstelling dat een entiteit in verschillende gedaanten kan bestaan (1 punt)."
+                "score": "0/3",
+                "answer": "Hoe kunnen een immateri\u00eble geest en een materieel lichaam met elkaar interageren? (1 punt)\nVerwarring tussen kennis over iets en het daadwerkelijk bestaan van iets (1 punt).\nParadoxen die voortkomen uit de veronderstelling dat een entiteit in verschillende gedaanten kan bestaan (1 punt).",
+                "student_answer": []
             }
-        ]
+        ],
+        "status": "diagnosed"
     },
     "Eigenschapsdualisme en bewustzijn": {
         "response": "**Property Dualism** stelt dat er \u00e9\u00e9n **substantie** is (1 punt), maar dat deze zowel **fysieke** als **mentale eigenschappen** heeft (1 punt).",
@@ -82,7 +91,7 @@
             }
         ]
     },
-    "Identiteit en functionalisme": {
+    "Identiteitstheorie en functionalisme": {
         "response": "**Computationalism** ziet de **geest** als een **informatieverwerkend systeem** (1 punt), zoals een **computer** (1 punt).",
         "student_knowledge": "Computationalism",
         "questions": [
@@ -165,8 +174,8 @@
         ]
     },
     "Vrije wil en wetenschap": {
-        "response": "**Wetenschappelijke redenering** is gebaseerd op **empirisch bewijs** (1 punt) en **methodologie** (1 punt), terwijl **pseudowetenschap** ontestbare claims maakt (1 punt).",
-        "student_knowledge": "Filosofie van de wetenschap",
+        "response": "Concepten zoals **mentale stoornissen** (1 punt), **diagnostische criteria** (1 punt) en de rol van **sociale en biologische factoren** (1 punt).",
+        "student_knowledge": "Wat zijn de centrale concepten in de filosofie van de psychiatrie?",
         "questions": [
             {
                 "question": "Welke argumenten ondersteunen of weerleggen het bestaan van vrije wil?",

@@ -82,7 +82,11 @@ class DatabaseAccess:
         if phase == "overview":
             phase = "learning"
 
-        user_doc = self.db.users.find_one({"username": st.session_state.username})
+        user_doc = self.db.users.find_one(
+            {
+                "username": st.session_state.username["name"],
+            }
+        )
         return user_doc["progress"][st.session_state.selected_module][phase][
             "segment_index"
         ]
@@ -285,7 +289,7 @@ class DatabaseAccess:
         return list(collection.find({}))
 
     def find_user_doc(self):
-        return self.db.users.find_one({"username": st.session_state.username})
+        return self.db.users.find_one({"username": st.session_state.username["name"]})
 
     def fetch_progress_counter(self, module, user_doc):
         progress_counter = (
@@ -298,7 +302,7 @@ class DatabaseAccess:
 
     def update_progress_counter_for_segment(self, module, new_progress_count):
         self.db.users.update_one(
-            {"username": st.session_state.username},
+            {"username": st.session_state.username["name"]},
             {
                 "$set": {
                     f"progress.{module}.learning.progress_counter.{str(st.session_state.segment_index)}": new_progress_count
@@ -312,7 +316,7 @@ class DatabaseAccess:
         many times the user answered a certain question.
         """
         self.db.users.update_one(
-            {"username": st.session_state.username},
+            {"username": st.session_state.username["name"]},
             {"$set": {f"progress.{module}.learning.progress_counter": empty_dict}},
         )
 
@@ -336,7 +340,8 @@ class DatabaseAccess:
         Update the last phase the user visitied, such as 'courses', 'practice' etc.
         """
         self.db.users.update_one(
-            {"username": st.session_state.username}, {"$set": {"last_phase": phase}}
+            {"username": st.session_state.username["name"]},
+            {"$set": {"last_phase": phase}},
         )
 
     def update_module_status(self, status):

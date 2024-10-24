@@ -18,6 +18,9 @@ from _pages.lecture_overview import LectureOverview
 from _pages.course_overview import CoursesOverview
 from _pages.theory_overview import TheoryOverview
 from _pages.socratic_dialogue import SocraticDialogue
+from _pages.lecture_student_answers_insights import LectureInsights
+from _pages.lecture_quality_check import QualityCheck
+from _pages.record_lecture import Recorder
 from utils.utils import Utils
 from utils.utils import AzureUtils
 from slack_sdk import WebClient
@@ -115,10 +118,10 @@ def upload_progress():
 
     # The data dict contains the paths and data
     st.session_state.db.users.update_one(
-        {"username": st.session_state.username}, {"$set": learning_path}
+        {"username": st.session_state.username["name"]}, {"$set": learning_path}
     )
     st.session_state.db.users.update_one(
-        {"username": st.session_state.username}, {"$set": practice_data}
+        {"username": st.session_state.username["name"]}, {"$set": practice_data}
     )
 
 
@@ -639,7 +642,7 @@ def render_question():
 def fetch_ordered_segment_sequence():
     """Fetches the practice segments from the database."""
     user_doc = st.session_state.db.users.find_one(
-        {"username": st.session_state.username}
+        {"username": st.session_state.username["name"]}
     )
     st.session_state.ordered_segment_sequence = user_doc["progress"][
         st.session_state.selected_module
@@ -649,7 +652,7 @@ def fetch_ordered_segment_sequence():
 def update_ordered_segment_sequence(ordered_segment_sequence):
     """Updates the practice segments in the database."""
     st.session_state.db.users.update_one(
-        {"username": st.session_state.username},
+        {"username": st.session_state.username["name"]},
         {
             "$set": {
                 f"progress.{st.session_state.selected_module}.practice.ordered_segment_sequence": ordered_segment_sequence
@@ -747,7 +750,7 @@ def reset_segment_index_and_feedback():
 
 
 def reset_feedback():
-    user_query = {"username": st.session_state.username}
+    user_query = {"username": st.session_state.username["name"]}
     set_empty_array = {
         "$set": {f"progress.{st.session_state.selected_module}.feedback.questions": []}
     }
@@ -823,7 +826,7 @@ def calculate_score():
 
 # TODO move to db access class
 def get_feedback_questions_from_db():
-    query = {"username": st.session_state.username}
+    query = {"username": st.session_state.username["name"]}
 
     projection = {
         f"progress.{st.session_state.selected_module}.feedback.questions": 1,
@@ -879,7 +882,7 @@ def render_oefententamen_final_page():
 def reset_progress():
     """Resets the progress of the user in the current phase to the database."""
     st.session_state.db.users.update_one(
-        {"username": st.session_state.username},
+        {"username": st.session_state.username["name"]},
         {
             "$set": {
                 f"progress.{st.session_state.selected_module}.{st.session_state.selected_phase}.segment_index": -1
@@ -1092,7 +1095,7 @@ def save_feedback_on_open_question():
     there does not already exists a feedback entry in the database. If it does, it overwrites this one,
     if it doesn't it makes a new one.
     """
-    user_query = {"username": st.session_state.username}
+    user_query = {"username": st.session_state.username["name"]}
 
     # First, pull the existing question if it exists
     pull_query = {
@@ -1133,7 +1136,7 @@ def save_feedback_on_mc_question():
     there does not already exists a feedback entry in the database. If it does, it overwrites this one,
     if it doesn't it makes a new one.
     """
-    user_query = {"username": st.session_state.username}
+    user_query = {"username": st.session_state.username["name"]}
 
     # First, pull the existing question if it exists
     pull_query = {
@@ -1334,39 +1337,6 @@ def render_practice_page():
             render_navigation_buttons()
 
 
-def render_topics_page():
-    """
-    Renders the page that shows all the subjects in a lecture, which gives the
-    student insight into their progress.
-    """
-    topics_page = TopicOverview()
-    topics_page.render_page()
-
-
-def render_lectures_page():
-    """
-    Renders the page that renders the lectures of the course.
-    """
-    lectures_page = LectureOverview()
-    lectures_page.run()
-
-
-def render_courses_page():
-    """
-    Renders the page that shows the courses that the student can choose from.
-    """
-    courses_page = CoursesOverview()
-    courses_page.run()
-
-
-def render_theory_overview_page():
-    """
-    Renders the page that shows the theory overview of the course.
-    """
-    theory_overview_page = TheoryOverview()
-    theory_overview_page.run()
-
-
 def render_not_recorded_page():
     """
     Renders the page that shows the student that the lecture is not recorded.
@@ -1427,11 +1397,6 @@ def render_LLM_info_page():
     return
 
 
-def render_socratic_dialogue_page():
-    socratic_dialogue_page = SocraticDialogue()
-    socratic_dialogue_page.run()
-
-
 def render_selected_page():
     """
     Determines what type of page to display based on which module the user selected.
@@ -1442,27 +1407,33 @@ def render_selected_page():
 
     match st.session_state.selected_phase:
         case "courses":
-            render_courses_page()
+            st.session_state.courses_page.run()
         case "lectures":
-            render_lectures_page()
+            st.session_state.lectures_page.run()
         case "topics":
-            render_topics_page()
+            st.session_state.topics_page.run()
         case "learning":
-            render_learning_page()
+            st.session_state.learning_page.run()
         case "practice":
-            render_practice_page()
+            st.session_state.practice_page.run()
         case "theory-overview":
-            render_theory_overview_page()
+            st.session_state.theory_overview_page()
+        case "socratic-dialogue":
+            st.session_state.socratic_dialogue.run()
+        case "record":
+            st.session_state.record_page.run()
+        case "quality-check":
+            st.session_state.quality_check_page.run()
+        case "insights":
+            st.session_state.insights_page.run()
         case "not_recorded":
             render_not_recorded_page()
         case "generated":
             render_generated_page()
         case "LLM_info":
             render_LLM_info_page()
-        case "socratic-dialogue":
-            render_socratic_dialogue_page()
-        case _:  # Show courses page if no phase is selected
-            render_lectures_page()
+        case _:  # Render this page by default
+            st.session_state.lectures_page.run()
 
 
 def upload_feedback():
@@ -1508,7 +1479,7 @@ def set_info_page_true():
 def track_visits():
     """Tracks the visits to the modules."""
     st.session_state.db.users.update_one(
-        {"username": st.session_state.username},
+        {"username": st.session_state.username["name"]},
         {
             "$inc": {
                 f"progress.{st.session_state.selected_module}.visits.{st.session_state.selected_phase}": 1
@@ -1554,11 +1525,6 @@ def render_sidebar():
     """
     Function to render the sidebar with the modules and login module.
     """
-    student_name = (
-        "Student"
-        if st.session_state.deployment_type == "uva_servers"
-        else st.session_state.username
-    )
     with st.sidebar:
         img_cols = st.columns([1, 3])
         with img_cols[1]:
@@ -1574,47 +1540,37 @@ def render_sidebar():
 
         st.divider()
 
-        # st.markdown(
-        #     f"""
-        #     <style>
-        #         .closer-line {{
-        #             margin-top: -5px;
-        #         }}
-        #     </style>
-
-        #     <h1>
-        #         <strong>Hi {student_name}</strong>
-        #     </h1>
-        #     <hr class="closer-line">
-        # """,
-        #     unsafe_allow_html=True,
-        # )
-        # st.header(f"Hi {student_name}")
         st.button(
             "📚 Mijn vakken",
             on_click=set_selected_phase,
             args=("courses",),
             use_container_width=True,
         )
-        if (
-            st.session_state.selected_phase == "lectures"
-            or st.session_state.selected_phase == "topics"
-            or st.session_state.selected_phase == "learning"
-            or st.session_state.selected_phase == "practice"
-            or st.session_state.selected_phase == "theory-overview"
-        ):
+        if st.session_state.selected_phase in {
+            "topics",
+            "learning",
+            "practice",
+            "insights",
+            "socratic-dialogue",
+            "record",
+            "quality-check",
+            "theory-overview",
+        }:
             st.button(
-                f"📖 Colleges | {st.session_state.selected_course}",
+                f"📖 Modules | {st.session_state.selected_course}",
                 on_click=set_selected_phase,
                 args=("lectures",),
                 use_container_width=True,
             )
-        if (
-            st.session_state.selected_phase == "topics"
-            or st.session_state.selected_phase == "learning"
-            or st.session_state.selected_phase == "practice"
-            or st.session_state.selected_phase == "theory-overview"
-        ):
+        if st.session_state.selected_phase in {
+            "learning",
+            "practice",
+            "theory-overview",
+            "insights",
+            "socratic-dialogue",
+            "record",
+            "quality-check",
+        }:
             st.button(
                 f"🗂 Topics | {st.session_state.selected_module}",
                 on_click=set_selected_phase,
@@ -1622,11 +1578,13 @@ def render_sidebar():
                 use_container_width=True,
             )
 
-        if st.session_state.db_name == "UvA_KNP":
+        if (
+            st.session_state.db_name == "UvA_KNP"
+            and st.session_state.username["role"] == "student"
+        ):
             render_feedback_form()
 
         st.divider()
-        # st.subheader("Extra")
 
         st.button(
             "Uitleg LLM's",
@@ -1686,7 +1644,9 @@ def check_user_doc_and_add_missing_fields():
     user_doc = st.session_state.db_dal.find_user_doc()
 
     if not user_doc:
-        st.session_state.db.users.insert_one({"username": st.session_state.username})
+        st.session_state.db.users.insert_one(
+            {"username": st.session_state.username["name"]}
+        )
         user_doc = st.session_state.db_dal.find_user_doc()
         print("Inserted new user doc in db: ", user_doc)
 
@@ -1753,7 +1713,7 @@ def check_user_doc_and_add_missing_fields():
 
     # Update user_doc in db
     st.session_state.db.users.update_one(
-        {"username": st.session_state.username}, {"$set": user_doc}
+        {"username": st.session_state.username["name"]}, {"$set": user_doc}
     )
 
 
@@ -1767,25 +1727,25 @@ def convert_image_base64(image_path):
 def try_login(input_username):
     st.session_state.wrong_credentials = False
     # Checks if the user is in the list below
-    uva_servers_users = {
-        "Luc Mahieu": "abc123",
-        "Milan van Roessel": "lala321",
-        "eensupergeheimecode": None,
-        "supergeheimecode": None,
-        "famkesgeheimecode": None,
+    uva_users = {
+        "Luc Mahieu": {"role": "student"},
+        "Milan van Roessel": {"role": "student"},
+        "eensupergeheimecode": {"role", "student"},
+        "supergeheimecode": {"role": "student"},
+        "famkesgeheimecode": {"role": "student"},
+        "Erwin van Vliet": {"role": "teacher"},
     }
-    vu_users = {
-        "098ncopkwo2": {
-            "Mare van der Vegt": "123abc",
-            "courses": ["Bouw en Bewegen"],
-        },
-    }
+
+    vu_users = {}
 
     with open(f"{st.session_state.base_path}data/uu_users.json", "r") as f:
         uu_users = json.load(f)
 
-    if input_username in uva_servers_users:
-        st.session_state.username = input_username
+    if input_username in uva_users:
+        st.session_state.username = {
+            "name": input_username,
+            "role": uva_users[input_username]["role"],
+        }
         st.session_state.logged_in = True
         if input_username == "supergeheimecode":
             st.session_state.db_name = "LearnLoop"
@@ -1793,13 +1753,18 @@ def try_login(input_username):
             st.session_state.db_name = "UvA_KNP"
 
     elif input_username in vu_users:
-        if vu_users[input_username] == st.session_state.streamlit_password:
-            st.session_state.username = input_username
-            st.session_state.logged_in = True
-            st.session_state.db_name = "test_users_1"
+        st.session_state.username = {
+            "name": input_username,
+            "role": vu_users[input_username]["role"],
+        }
+        st.session_state.logged_in = True
+        st.session_state.db_name = "test_users_1"
 
     elif input_username in uu_users:
-        st.session_state.username = input_username
+        st.session_state.username = {
+            "name": input_username,
+            "role": uu_users[input_username]["role"],
+        }
         st.session_state.logged_in = True
         st.session_state.db_name = "test_users_2"
 
@@ -1809,7 +1774,12 @@ def try_login(input_username):
 
 
 def inlog_terminal(uni):
-    st.text_input("", key=f"streamlit_username_{uni}")
+    st.text_input(
+        "Log in",
+        label_visibility="collapsed",
+        placeholder="Jouw unieke gebruikersnaam",
+        key=f"streamlit_username_{uni}",
+    )
     if st.session_state.wrong_credentials:
         st.warning("Onjuiste inloggegevens.")
     st.button(
@@ -1846,16 +1816,6 @@ def render_login_page():
             else:
                 href = "https://learnloop.datanose.nl/"
 
-            # html_content = f"""
-            # <div style="text-align: center; margin: 20px;">
-            #     <img src="data:image/png;base64,{logo_base64}" alt="Logo" style="max-width: 25%; height: auto; margin-bottom: 20px;">
-            #     <div style="font-size: 36px; margin-bottom: 20px;"><strong>{welcome_title}</strong></div>
-            #     <a href="{href}" target="_self" style="text-decoration: none;">
-            #         <button style="font-size: 20px; border: none; color: white; padding: 10px 20px;
-            #         text-align: center; text-decoration: none; display: block; width: 100%; cursor: pointer; background-color: #4CAF50; border-radius: 10px;">SURF Login</button>
-            #     </a>
-            # </div>"""
-
             uva_logo_base64 = convert_image_base64(
                 f"{st.session_state.base_path}data/content/images/uva-logo-eng.png"
             )
@@ -1863,13 +1823,14 @@ def render_login_page():
             html_content = f"""
             <div style="text-align: center; margin: 20px; width=100%;">
                 <div style="text-align: center;">
-                    <img src="data:image/png;base64,{uva_logo_base64}" alt="Logo" style="max-width: 50%; height: auto; margin-bottom: 0px; margin-top: 0px">
+                    <img src="data:image/png;base64,{uva_logo_base64}" alt="Logo" style="max-width: 50%; height: auto; margin-bottom: 10px; margin-top: -20px">
                 </div>
-                <div style="height: 20px;"></div>
-                <a href="{href}" target="_self" style="text-decoration: none;">
-                    <button style="font-size: 20px; border: none; color: white; padding: 10px 20px; 
-                    text-align: center; text-decoration: none; display: block; width: 100%; cursor: pointer; background-color: #4CAF50; border-radius: 10px;">SURF Login</button>
-                </a>
+                <div style="height: 20px; margin-bottom: 50px">
+                    <a href="{href}" target="_self" style="text-decoration: none;">
+                        <button style="font-size: 20px; border: none; color: white; padding: 10px 20px; 
+                        text-align: center; text-decoration: none; display: block; width: 100%; cursor: pointer; background-color: #4CAF50; border-radius: 10px;">SURF Login</button>
+                    </a>
+                </div>
             </div>"""
 
             st.markdown(html_content, unsafe_allow_html=True)
@@ -1884,7 +1845,7 @@ def render_login_page():
 
             html_uu_logo = f"""
                 <div style="text-align: center;">
-                    <img src="data:image/png;base64,{uu_logo_base64}" alt="Logo" style="max-width: 48%; height: auto; margin-bottom: 0px; margin-top:0px">
+                    <img src="data:image/png;base64,{uu_logo_base64}" alt="Logo" style="max-width: 48%; height: auto; margin-bottom: 30px; margin-top:0px">
                 </div>
             """
             st.markdown(html_uu_logo, unsafe_allow_html=True)
@@ -1937,116 +1898,6 @@ def determine_selected_module():
     st.session_state.selected_module = st.session_state.db_dal.fetch_last_module()
     if st.session_state.selected_module is None:
         st.session_state.selected_module = st.session_state.modules[0]
-
-
-def initialise_variables():
-    if "db_switched" not in st.session_state:
-        st.session_state.db_switched = False
-
-    if "base_path" not in st.session_state:
-        st.session_state.base_path = None
-
-    if "use_LL_openai_deployment" not in st.session_state:
-        st.session_state.use_LL_openai_deployment = None
-
-    if "use_LL_cosmosdb" not in st.session_state:
-        st.session_state.use_LL_cosmosdb = None
-
-    if "use_keyvault" not in st.session_state:
-        st.session_state.use_keyvault = None
-
-    if "use_LL_blob_storage" not in st.session_state:
-        st.session_state.use_LL_blob_storage = None
-
-    if "db_name" not in st.session_state:
-        st.session_state.db_name = None
-
-    if "selected_course" not in st.session_state:
-        st.session_state.selected_course = None
-
-    if "openai_model" not in st.session_state:
-        st.session_state.openai_model = None
-
-    if "practice_exam_name" not in st.session_state:
-        st.session_state.practice_exam_name = "Samenvattende vragen"
-
-    if "info_page" not in st.session_state:
-        st.session_state.info_page = False
-
-    if "nonce" not in st.session_state:
-        st.session_state.nonce = None
-
-    if "username" not in st.session_state:
-        st.session_state.username = None
-
-    if "warned" not in st.session_state:
-        st.session_state.warned = None
-
-    if "feedback_submitted" not in st.session_state:
-        st.session_state.feedback_submitted = False
-
-    if "old_page" not in st.session_state:
-        st.session_state.old_page = None
-
-    if "current_page" not in st.session_state:
-        st.session_state.current_page = None
-
-    if "ordered_segment_sequence" not in st.session_state:
-        st.session_state.ordered_segment_sequence = []
-
-    if "page_content" not in st.session_state:
-        st.session_state.page_content = None
-
-    if "segment_index" not in st.session_state:
-        st.session_state.segment_index = 0
-
-    if "modules" not in st.session_state:
-        st.session_state.modules = None
-
-    if "selected_module" not in st.session_state:
-        st.session_state.selected_module = None
-
-    if "selected_phase" not in st.session_state:
-        st.session_state.selected_phase = None
-
-    if "segment_content" not in st.session_state:
-        st.session_state.segment_content = None
-
-    if "submitted" not in st.session_state:
-        st.session_state.submitted = False
-
-    if "student_answer" not in st.session_state:
-        st.session_state.student_answer = ""
-
-    if "score" not in st.session_state:
-        st.session_state.score = ""
-
-    if "feedback" not in st.session_state:
-        st.session_state.feedback = ""
-
-    if "shuffled_answers" not in st.session_state:
-        st.session_state.shuffled_answers = None
-
-    if "questions_only" not in st.session_state:
-        st.session_state.questions_only = False
-
-    if "username" not in st.session_state:
-        st.session_state.username = None
-
-    if "deployment_type" not in st.session_state:
-        st.session_state.deployment_type = None
-
-    if "wrong_credentials" not in st.session_state:
-        st.session_state.wrong_credentials = False
-
-    if "logged_in" not in st.session_state:
-        st.session_state.logged_in = False
-
-    if "streamlit_username" not in st.session_state:
-        st.session_state.streamlit_username = None
-
-    if "streamlit_password" not in st.session_state:
-        st.session_state.streamlit_username = None
 
 
 def fetch_nonce_from_query():
@@ -2163,6 +2014,171 @@ def set_correct_settings_for_deployment_type():
     return args, base_path
 
 
+def initialise_variables():
+    if "db_switched" not in st.session_state:
+        st.session_state.db_switched = False
+
+    if "base_path" not in st.session_state:
+        st.session_state.base_path = None
+
+    if "use_LL_openai_deployment" not in st.session_state:
+        st.session_state.use_LL_openai_deployment = None
+
+    if "use_LL_cosmosdb" not in st.session_state:
+        st.session_state.use_LL_cosmosdb = None
+
+    if "use_keyvault" not in st.session_state:
+        st.session_state.use_keyvault = False
+
+    if "use_LL_blob_storage" not in st.session_state:
+        st.session_state.use_LL_blob_storage = False
+
+    if "db_name" not in st.session_state:
+        st.session_state.db_name = None
+
+    if "selected_course" not in st.session_state:
+        st.session_state.selected_course = None
+
+    if "openai_model" not in st.session_state:
+        st.session_state.openai_model = None
+
+    if "practice_exam_name" not in st.session_state:
+        st.session_state.practice_exam_name = "Samenvattende vragen"
+
+    if "info_page" not in st.session_state:
+        st.session_state.info_page = False
+
+    if "nonce" not in st.session_state:
+        st.session_state.nonce = None
+
+    if "username" not in st.session_state:
+        st.session_state.username = None
+
+    if "warned" not in st.session_state:
+        st.session_state.warned = None
+
+    if "feedback_submitted" not in st.session_state:
+        st.session_state.feedback_submitted = False
+
+    if "old_page" not in st.session_state:
+        st.session_state.old_page = None
+
+    if "current_page" not in st.session_state:
+        st.session_state.current_page = None
+
+    if "ordered_segment_sequence" not in st.session_state:
+        st.session_state.ordered_segment_sequence = []
+
+    if "page_content" not in st.session_state:
+        st.session_state.page_content = None
+
+    if "segment_index" not in st.session_state:
+        st.session_state.segment_index = 0
+
+    if "modules" not in st.session_state:
+        st.session_state.modules = None
+
+    if "selected_module" not in st.session_state:
+        st.session_state.selected_module = None
+
+    if "selected_phase" not in st.session_state:
+        st.session_state.selected_phase = "courses"
+
+    if "segment_content" not in st.session_state:
+        st.session_state.segment_content = None
+
+    if "submitted" not in st.session_state:
+        st.session_state.submitted = False
+
+    if "student_answer" not in st.session_state:
+        st.session_state.student_answer = ""
+
+    if "score" not in st.session_state:
+        st.session_state.score = ""
+
+    if "feedback" not in st.session_state:
+        st.session_state.feedback = ""
+
+    if "shuffled_answers" not in st.session_state:
+        st.session_state.shuffled_answers = None
+
+    if "questions_only" not in st.session_state:
+        st.session_state.questions_only = False
+
+    if "deployment_type" not in st.session_state:
+        st.session_state.deployment_type = None
+
+    if "wrong_credentials" not in st.session_state:
+        st.session_state.wrong_credentials = False
+
+    if "logged_in" not in st.session_state:
+        st.session_state.logged_in = False
+
+    if "streamlit_username" not in st.session_state:
+        st.session_state.streamlit_username = None
+
+    if "streamlit_password" not in st.session_state:
+        st.session_state.streamlit_password = None
+
+    if "segments_in_qualitycheck" not in st.session_state:
+        st.session_state.segments_in_qualitycheck = None
+
+    if "previous_module" not in st.session_state:
+        st.session_state.previous_module = None
+
+    if "use_mongodb" not in st.session_state:
+        st.session_state.use_mongodb = None
+
+    if "generated" not in st.session_state:
+        st.session_state.generated = False
+
+
+def initialise_tools():
+    if "db" not in st.session_state:
+        st.session_state.db = db_config.connect_db(database_name="UvA_KNP")
+
+    if "db_dal" not in st.session_state:
+        st.session_state.db_dal = DatabaseAccess()
+
+    if "image_handler" not in st.session_state:
+        st.session_state.image_handler = ImageHandler()
+
+    if "utils" not in st.session_state:
+        st.session_state.utils = Utils()
+
+    if "openai_client" not in st.session_state:
+        st.session_state.openai_client = connect_to_openai()
+
+    if "azure_utils" not in st.session_state:
+        st.session_state.azure_utils = AzureUtils()
+
+
+def initialise_pages():
+    if "courses_page" not in st.session_state:
+        st.session_state.courses_page = CoursesOverview()
+
+    if "lectures_page" not in st.session_state:
+        st.session_state.lectures_page = LectureOverview()
+
+    if "topics_page" not in st.session_state:
+        st.session_state.topics_page = TopicOverview()
+
+    if "theory_overview_page" not in st.session_state:
+        st.session_state.theory_overview_page = TheoryOverview()
+
+    if "socratic_dialogue_page" not in st.session_state:
+        st.session_state.socratic_dialogue_page = SocraticDialogue()
+
+    if "insights_page" not in st.session_state:
+        st.session_state.insights_page = LectureInsights()
+
+    if "quality_check_page" not in st.session_state:
+        st.session_state.quality_check_page = QualityCheck()
+
+    if "record_page" not in st.session_state:
+        st.session_state.record_page = Recorder()
+
+
 if __name__ == "__main__":
     args = get_commandline_arguments()
     # set_global_exception_handler(
@@ -2194,54 +2210,12 @@ if __name__ == "__main__":
     no_login_page = args.no_login_page
     # ---------------------------------------------------------
     initialise_variables()
-
-    # Give the name of the test user when giving one. !! If not using a test username, set to None
-    if st.session_state.username is None and args.test_username is not None:
-        st.session_state.username = args.test_username
-
-    def initialise_tools():
-        if "db_dal" not in st.session_state:
-            st.session_state.db_dal = DatabaseAccess()
-
-        if "image_handler" not in st.session_state:
-            st.session_state.image_handler = ImageHandler()
-
-        if "utils" not in st.session_state:
-            st.session_state.utils = Utils()
-
-        if "openai" not in st.session_state:
-            st.session_state.openai_client = connect_to_openai()
-
-        if "azure_utils" not in st.session_state:
-            st.session_state.azure_utils = AzureUtils()
-
-        if "db" not in st.session_state:
-            st.session_state.db = db_config.connect_db(database_name="UvA_KNP")
-
-    def initialise_pages():
-        if "courses_page" not in st.session_state:
-            st.session_state.courses_page = CoursesOverview()
-
-        if "lectures_page" not in st.session_state:
-            st.session_state.lectures_page = LectureOverview()
-
-        if "topics_page" not in st.session_state:
-            st.session_state.topics_page = TopicOverview()
-
-        if "theory_overview_page" not in st.session_state:
-            st.session_state.theory_overview_page = TheoryOverview()
-
-        if "socratic_dialogue_page" not in st.session_state:
-            st.session_state.socratic_dialogue_page = SocraticDialogue()
-
     initialise_tools()
     initialise_pages()
 
-    # Reconnect to the correct database when the user is logged in
-    print("Logged in: ", st.session_state.logged_in)
-    print("Username: ", st.session_state.username)
-    print("DB switched: ", st.session_state.db_switched)
-    print("DB name: ", st.session_state.db_name)
+    # Give the name of the test user when giving one. !! If not using a test username, set to None
+    if st.session_state.username is None and args.test_username is not None:
+        st.session_state.username["name"] = args.test_username
 
     # Connect with the correct database after logging in. When rerouted to student app after SURF login, the session state is resetted
     if st.session_state.logged_in is True and st.session_state.db_switched is False:
@@ -2253,13 +2227,9 @@ if __name__ == "__main__":
         )
         st.session_state.db_switched = True
 
-    print("Selected course in main: ", st.session_state.selected_course)
-
     # Create a mid column with margins in which everything one a
     # page is displayed (referenced to mid_col in functions)
     left_col, mid_col, right_col = st.columns([1, 3, 1])
-
-    print("Username: ", st.session_state.username)
 
     if fetch_nonce_from_query() is not None:
         st.session_state.logged_in = True
@@ -2279,9 +2249,8 @@ if __name__ == "__main__":
             st.session_state.modules = (
                 st.session_state.db_dal.initialise_course_and_modules()
             )
-        # The username is fetched from the database with this nonce
+
         determine_username_from_nonce()
-        # The nonce is removed from the query params, the session state and the database
         remove_nonce_from_memories()
 
         check_user_doc_and_add_missing_fields()

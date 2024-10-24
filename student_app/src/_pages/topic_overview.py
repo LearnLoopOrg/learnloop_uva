@@ -189,7 +189,7 @@ class TopicOverview:
                     use_container_width=True,
                 )
 
-    def render_page(self):
+    def run(self):
         """
         Renders the overview page with the lecture title and the topics from the
         lecture in seperate containers that allow the user to look at the contents

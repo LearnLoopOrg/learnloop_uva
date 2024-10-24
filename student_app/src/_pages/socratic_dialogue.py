@@ -1,6 +1,7 @@
 import streamlit as st
 import json
 import base64
+import concurrent.futures
 
 
 class SocraticDialogue:
@@ -93,7 +94,7 @@ class SocraticDialogue:
         if message_id not in st.session_state.message_ids:
             st.session_state.message_ids.append(message_id)
 
-            if image_path:
+            if image_path is not None:
                 image_id = hash(image_path)
                 if image_id not in st.session_state.message_ids:
                     st.session_state.messages.append(
@@ -122,7 +123,7 @@ class SocraticDialogue:
 
         return None
 
-    def generate_assistant_response(self, topic):
+    def generate_text_response(self, topic, messages, openai_client, openai_model):
         example_output_diagnosed = {
             "student_knowledge": "De student weet dat insuline de bloedsuikerspiegel verlaagt door de opname van glucose in cellen te stimuleren.",
             "response": "Wat weet je al over insuline en de bloedsuikerspiegel?",
@@ -186,198 +187,269 @@ class SocraticDialogue:
             "status": "diagnosed",
         }
 
+        # Prompts
         undiagnosed_prompt = f"""
-You are part of a conversational system that aims to guide students through topics and questions. Your goal is to assess the student's knowledge on a given topic. The content is organized into topics, each containing multiple questions with corresponding answer models. Your role is to guide the student through each topic by evaluating their understanding of the entire subject. Your response must be in valid JSON format.
+    You are part of a conversational system that aims to guide students through topics and questions. Your goal is to assess the student's knowledge on a given topic. The content is organized into topics, each containing multiple questions with corresponding answer models. Your role is to guide the student through each topic by evaluating their understanding of the entire subject.
 
-At the start of a new topic: **{st.session_state.current_topic}**, ask the student what they already know about this specific topic, explicitly mentioning its name.
+    At the start of a new topic: **{topic}**, ask the student what they already know about this specific topic, explicitly mentioning its name.
 
-### Instructions:
+    ### Instructions:
 
-1. **Initial Question**: Begin by asking the student what they know about the current topic.
-2. **Evaluate Knowledge**: Based on the student's response, compare their knowledge to the answer models provided for each question in the topic. Identify which questions the student implicitly answered by determining how many points (marked as '(1 punt)' in the answer models) were addressed.
-3. **Update Scores**:
-    - Adjust the score for each question based on how many points the student earned, e.g., '2/3' or '0/X' (where X is the total available points for the question).
-    - If the student earns all points for a question, mark that question as 'done' and move on to the next unanswered question.
-4. **Diagnose Completion**:
-    - If you received the students answer (on your question on what they know about the topic), change the general **status** field to 'diagnosed'.
-    - Then, proceed to asking the first question in the questions list that the student didn't answer fully yet with it's answer. Prioritizing questions in order from lowest to highest difficulty.
+    1. **Initial Question**: Begin by asking the student what they know about the current topic.
+    2. **Evaluate Knowledge**: Based on the student's response, compare their knowledge to the answer models provided for each question in the topic. Identify which questions the student implicitly answered by determining how many points (marked as '(1 punt)' in the answer models) were addressed.
+    3. **Update Scores**:
+        - Adjust the score for each question based on how many points the student earned, e.g., '2/3' or '0/X' (where X is the total available points for the question).
+        - If the student earns all points for a question, mark that question as 'done' and move on to the next unanswered question.
+    4. **Diagnose Completion**:
+        - If you received the students answer (on your question on what they know about the topic), change the general **status** field to 'diagnosed'.
+        - Then, proceed to asking the first question in the questions list that the student didn't answer fully yet with it's answer. Prioritizing questions in order from lowest to highest difficulty.
 
-### The JSON response must include the following fields:
+    ### The response must be in clear, conversational text, guiding the student through the topic.
 
-- **response**: Provide feedback to the student, explaining what they got right or wrong. Offer a follow-up question or comment to further guide their learning.
-- **student_knowledge**: Give a brief summary of what the student understood based on their answer.
-- **questions**: This contains the original question data but updated to reflect the student's progress. For each question, update the following fields:
-    - **score**: Reflect how many points the student earned for each question they addressed, showing the result as a fraction (e.g., '2/3'). If no points were earned, display '0/X' (with X being the total points available for the question).
-    - **status**: Mark questions as 'done' if fully answered, or leave them as 'not asked' or 'asked' as applicable.
-    - **student_answer**: Add each answer of the student to this list for each question.
-- **status:** Update the status of the topic from 'undiagnosed' to 'diagnosed' once you've recieved the student's response.
+    **Example Output**:
+    Wat weet je al over insuline en de bloedsuikerspiegel?
 
-Response format is partly normal text and partly JSON:
-[Your response text]
-```json
-[Your JSON response]
-```
-
-**Example Output**:
-Wat weet je al over insuline en de bloedsuikerspiegel?
-```json
-{example_output_undiagnosed}
-```
-
-### Current Topic Questions and Answer Models:
-{self.get_questions()[topic]}
-
-### Conversation History:
-"""
+    **Example JSON response**:
+    {example_output_undiagnosed}
+    """
 
         diagnosed_prompt = f"""
-Your role in this system is to guide the student through each topic by asking questions, providing feedback, and assessing their progress based on unresolved questions. The content is organized into topics, each containing multiple questions and corresponding answer models. You are given the question data of only one topic.
+    Your role in this system is to guide the student through each topic by asking questions, providing feedback, and assessing their progress based on unresolved questions. The content is organized into topics, each containing multiple questions and corresponding answer models. You are given the question data of only one topic.
 
-Your task is either to:
+    Your task is either to:
 
-1. Ask the student a new question.
-2. Provide feedback on the student's answer to a previously asked question and update their score for that question accordingly.
+    1. Ask the student a new question.
+    2. Provide feedback on the student's answer to a previously asked question and update their score for that question accordingly.
 
-You should proceed by focusing on specific unanswered questions, starting with the easiest and increasing in difficulty. Continue asking a question until the student provides a satisfactory response that earns full points (e.g., 2/2 points).
+    You should proceed by focusing on specific unanswered questions, starting with the easiest and increasing in difficulty. Continue asking a question until the student provides a satisfactory response that earns full points (e.g., 2/2 points).
 
-Take the following steps step-by-step, take your time and don't skip any steps:
-After each student response:
+    Take the following steps step-by-step, take your time and don't skip any steps:
+    After each student response:
 
-- **Evaluate the answer** by comparing it to the answer model.
-- **Determine how many points the student earned** based on how many of the points, given as '(1 punt)' in the answer model, were addressed in the student's answer.
-- **Update the score** for the question accordingly by adjusting the score field to reflect the student's progress (e.g., '2/3' or '0/X' where X is the total points available).
-- If the student has earned all points for a question, **mark it as 'done'** by setting the status to 'done' and moving on to the next unanswered question. The next question should be the one with the lowest difficulty that the student has not yet fully answered, which is indicated by the status 'not asked' or 'asked' or the score 'Y/X' where Y < X. Explicitly ask the student this question in your response to their previous answer.
+    - **Evaluate the answer** by comparing it to the answer model.
+    - **Determine how many points the student earned** based on how many of the points, given as '(1 punt)' in the answer model, were addressed in the student's answer.
+    - **Update the score** for the question accordingly by adjusting the score field to reflect the student's progress (e.g., '2/3' or '0/X' where X is the total points available).
+    - If the student has earned all points for a question, **mark it as 'done'** by setting the status to 'done' and moving on to the next unanswered question. The next question should be the one with the lowest difficulty that the student has not yet fully answered, which is indicated by the status 'not asked' or 'asked' or the score 'Y/X' where Y < X. Explicitly ask the student this question in your response to their previous answer.
 
-The JSON response must include the following fields:
+    Always respond in clear, conversational text, providing feedback and guiding the student.
 
-- **response**: This is your feedback to the student. It should include an explanation of their answer, mentioning what was correct or incorrect, and a follow-up question or comment to guide their learning.
-- **student_knowledge**: Provide a concise summary of what the student correctly understood, based on their answer.
-- **questions**: This is the question data provided in the input, but with updates to reflect the student's current progress. For each question, update the following fields:
-    - **status**: Update to 'not asked', 'asked', or 'done', depending on the progress of each question. Only modify the status of the current question.
-    - **score**: Update the score for the current question, indicating the points earned as a fraction (e.g., '2/3'). If no points were earned for the current question, display '0/X', where X is the total possible points for the question. Leave the scores for the other questions unchanged.
+    Example response:
+    Hoe beïnvloedt insuline de bloedsuikerspiegel tijdens maaltijden of fysieke inspanning?
 
-Always react with a new question or feedback based on the student's response. Continue until all questions are answered correctly. If the student has answered a question correctly, move on to the next unanswered question and directly ask it after soliciting the student's response to the previous question.
+    Example JSON response:
+    {example_output_diagnosed}
+    """
 
-Never return your old response, always provide a new one based on the student's answer.
-
-Response format is partly normal text and partly JSON:
-[Your response text]
-```json
-[Your JSON response]
-```
-
-Example JSON response:
-Hoe beïnvloedt insuline de bloedsuikerspiegel tijdens maaltijden of fysieke inspanning?
-```json
-{example_output_diagnosed}
-```
-
-Question data:
-{self.get_questions()[topic]}
-
-Conversation history:
-"""
-
-        # Determine which prompt to use based on the topic status
+        # Determine which prompt to use
         questions = self.get_questions()
         status = questions[topic].get("status", "undiagnosed")
         if status == "diagnosed":
             instructions = diagnosed_prompt
-        elif status == "undiagnosed":
+        else:
             instructions = undiagnosed_prompt
 
-        stream = st.session_state.openai_client.chat.completions.create(
-            model=st.session_state.openai_model,
-            messages=[
-                {"role": "system", "content": instructions},
-                *[
-                    {
-                        "role": m["role"],
-                        "content": m["content"],
-                    }
-                    for m in st.session_state.messages
-                ],
-                *[
-                    {
-                        "role": "user",
-                        "content": f'<img src="data:image/png;base64,{self.encode_image_to_base64(m["image"])}">',
-                    }
-                    for m in st.session_state.messages
-                    if m.get("image")
-                ],
+        # Prepare messages
+        messages = [
+            {"role": "system", "content": instructions},
+            *[{"role": m["role"], "content": m["content"]} for m in messages],
+            *[
+                {
+                    "role": "user",
+                    "content": f'<img src="data:image/png;base64,{self.encode_image_to_base64(m["image"])}">',
+                }
+                for m in messages
+                if m.get("image")
             ],
+        ]
+
+        stream = openai_client.chat.completions.create(
+            model=openai_model,
+            messages=messages,
             stream=True,
-            response_format={"type": "text"},
         )
 
-        text_placeholder = st.empty()  # Placeholder for text output to user
-        text_buffer = ""
-        json_buffer = ""
-        json_response = {}
-        is_collecting_json = False
-        json_marker_buffer = ""  # Buffer to handle incomplete JSON markers
+        return stream
 
-        for chunk in stream:
-            if chunk.choices and (chunk_content := chunk.choices[0].delta.content):
-                # Handle incomplete JSON markers like "```j" or "`"
-                json_marker_buffer += chunk_content.strip()
+    def generate_json_response(self, topic, messages, openai_client, openai_model):
+        example_output_diagnosed = {
+            "student_knowledge": "De student weet dat insuline de bloedsuikerspiegel verlaagt door de opname van glucose in cellen te stimuleren.",
+            "response": "Wat weet je al over insuline en de bloedsuikerspiegel?",
+            "questions": [
+                {
+                    "question": "Welk effect heeft insuline op de bloedsuikerspiegel?",
+                    "status": "not asked",
+                    "level": 1,
+                    "score": "2/3",
+                    "answer": "Insuline verlaagt de bloedsuikerspiegel door de opname van glucose in cellen te stimuleren (2 punten).",
+                    "student_answer": ["Insuline verlaagt de bloedsuikerspiegel."],
+                },
+                {
+                    "question": "Wat is de rol van insuline in het lichaam?",
+                    "status": "not asked",
+                    "level": 2,
+                    "score": "1/2",
+                    "answer": "Insuline reguleert de bloedsuikerspiegel (1 punt) en zorgt voor de opslag van glucose in de lever (1 punt).",
+                    "student_answer": [],
+                },
+                {
+                    "question": "Hoe wordt insuline geproduceerd in het lichaam?",
+                    "status": "done",
+                    "level": 3,
+                    "score": "1/1",
+                    "answer": "Insuline wordt geproduceerd door de bètacellen in de alvleesklier (1 punt).",
+                    "student_answer": [],
+                },
+            ],
+            "status": "diagnosed",
+        }
 
-                print(f"CHUNK CONTENT: {chunk_content}")
-                print(f"JSON MARKER BUFFER: {json_marker_buffer}")
+        example_output_undiagnosed = {
+            "student_knowledge": "De student weet dat insuline de bloedsuikerspiegel verlaagt door de opname van glucose in cellen te stimuleren.",
+            "questions": [
+                {
+                    "question": "Welk effect heeft insuline op de bloedsuikerspiegel?",
+                    "status": "not asked",
+                    "level": 1,
+                    "score": "2/3",
+                    "answer": "Insuline verlaagt de bloedsuikerspiegel door de opname van glucose in cellen te stimuleren (2 punten).",
+                    "student_answer": [],
+                },
+                {
+                    "question": "Wat is de rol van insuline in het lichaam?",
+                    "status": "not asked",
+                    "level": 2,
+                    "score": "1/2",
+                    "answer": "Insuline reguleert de bloedsuikerspiegel (1 punt) en zorgt voor de opslag van glucose in de lever (1 punt).",
+                    "student_answer": [],
+                },
+                {
+                    "question": "Hoe wordt insuline geproduceerd in het lichaam?",
+                    "status": "done",
+                    "level": 3,
+                    "score": "1/1",
+                    "answer": "Insuline wordt geproduceerd door de bètacellen in de alvleesklier (1 punt).",
+                    "student_answer": [],
+                },
+            ],
+            "status": "diagnosed",
+        }
 
-                # Check if the collected buffer indicates the start of JSON block
-                if "```json" in json_marker_buffer or json_marker_buffer.startswith(
-                    "```"
-                ):
-                    is_collecting_json = True
-                    json_marker_buffer = ""  # Reset buffer
-                    # Split any text before the JSON block starts
-                    parts = chunk_content.split("```json")
-                    text_before_json = parts[0]
-                    text_buffer += text_before_json
-                    text_placeholder.markdown(text_buffer)  # Show the text so far
-                    if len(parts) > 1:
-                        json_buffer += parts[1]
-                    continue
+        # Prompts
+        undiagnosed_prompt = f"""
+    You are part of a conversational system that aims to guide students through topics and questions. Your goal is to assess the student's knowledge on a given topic. The content is organized into topics, each containing multiple questions with corresponding answer models. Your role is to guide the student through each topic by evaluating their understanding of the entire subject. Your response must be in valid JSON format.
 
-                # If already collecting JSON
-                if is_collecting_json:
-                    if "```" in chunk_content:
-                        # End of JSON block
-                        parts = chunk_content.split("```")
-                        json_buffer += parts[0]
-                        try:
-                            # Parse the collected JSON data
-                            json_data = json.loads(json_buffer)
-                            json_response.update(json_data)  # Store in the backend
-                        except json.JSONDecodeError:
-                            st.write("Ongeldige JSON-structuur")
-                        is_collecting_json = False
-                        json_buffer = ""  # Reset JSON buffer for future JSON blocks
-                        if len(parts) > 1:
-                            text_after_json = parts[1]
-                            text_buffer += text_after_json
-                            text_placeholder.markdown(
-                                text_buffer
-                            )  # Show text after JSON
-                        continue
-                    else:
-                        json_buffer += chunk_content  # Continue collecting JSON data
-                else:
-                    # Normal text output, no JSON involved
-                    text_buffer += chunk_content
-                    text_placeholder.markdown(text_buffer)
+    At the start of a new topic: **{topic}**, ask the student what they already know about this specific topic, explicitly mentioning its name.
 
-        print(f"JSON response: {json_response}")
+    ### Instructions:
 
-        # Process the response stored in JSON without showing it
-        if "response" in json_response:
-            # Add response to assistant messages
-            m = st.session_state.messages[-1]
-            image_path = m["image"] if m.get("image") else None
-            self.add_to_assistant_responses(json_response["response"], image_path)
+    1. **Initial Question**: Begin by asking the student what they know about the current topic.
+    2. **Evaluate Knowledge**: Based on the student's response, compare their knowledge to the answer models provided for each question in the topic. Identify which questions the student implicitly answered by determining how many points (marked as '(1 punt)' in the answer models) were addressed.
+    3. **Update Scores**:
+        - Adjust the score for each question based on how many points the student earned, e.g., '2/3' or '0/X' (where X is the total available points for the question).
+        - If the student earns all points for a question, mark that question as 'done' and move on to the next unanswered question.
+    4. **Diagnose Completion**:
+        - If you received the students answer (on your question on what they know about the topic), change the general **status** field to 'diagnosed'.
+        - Then, proceed to asking the first question in the questions list that the student didn't answer fully yet with it's answer. Prioritizing questions in order from lowest to highest difficulty.
 
-        return json_response
+    ### The JSON response must include the following fields:
+
+    - **response**: Provide feedback to the student, explaining what they got right or wrong. Offer a follow-up question or comment to further guide their learning.
+    - **student_knowledge**: Give a brief summary of what the student understood based on their answer.
+    - **questions**: This contains the original question data but updated to reflect the student's progress. For each question, update the following fields:
+        - **score**: Reflect how many points the student earned for each question they addressed, showing the result as a fraction (e.g., '2/3'). If no points were earned, display '0/X' (with X being the total points available for the question).
+        - **status**: Mark questions as 'done' if fully answered, or leave them as 'not asked' or 'asked' as applicable.
+        - **student_answer**: Add each answer of the student to this list for each question.
+    - **status:** Update the status of the topic from 'undiagnosed' to 'diagnosed' once you've received the student's response.
+
+    Response format is only JSON:
+    ```json
+    [Your JSON response]
+    ```
+    **Example Output:**
+    ```json
+    {example_output_undiagnosed}
+    ```
+
+    ### Current Topic Questions and Answer Models:
+
+    {self.get_questions()[topic]}
+    """
+
+        diagnosed_prompt = f"""
+        Your role in this system is to guide the student through each topic by asking questions, providing feedback, and assessing their progress based on unresolved questions. The content is organized into topics, each containing multiple questions and corresponding answer models. You are given the question data of only one topic.
+
+        Your task is either to:
+
+        1. Ask the student a new question.
+        2. Provide feedback on the student's answer to a previously asked question and update their score for that question accordingly.
+
+        You should proceed by focusing on specific unanswered questions, starting with the easiest and increasing in difficulty. Continue asking a question until the student provides a satisfactory response that earns full points (e.g., 2/2 points).
+
+        Take the following steps step-by-step, take your time and don't skip any steps: After each student response:
+
+        - **Evaluate the answer** by comparing it to the answer model.
+        - **Determine how many points the student earned** based on how many of the points, given as '(1 punt)' in the answer model, were addressed in the student's answer.
+        - **Update the score** for the question accordingly by adjusting the score field to reflect the student's progress (e.g., '2/3' or '0/X' where X is the total points available).
+        - If the student has earned all points for a question, **mark it as 'done'** by setting the status to 'done' and moving on to the next unanswered question. The next question should be the one with the lowest difficulty that the student has not yet fully answered, which is indicated by the status 'not asked' or 'asked' or the score 'Y/X' where Y < X. Explicitly ask the student this question in your response to their previous answer.
+
+        The JSON response must include the following fields:
+
+        - **response**: This is your feedback to the student. It should include an explanation of their answer, mentioning what was correct or incorrect, and a follow-up question or comment to guide their learning.
+        - **student_knowledge**: Provide a concise summary of what the student correctly understood, based on their answer.
+        - **questions**: This is the question data provided in the input, but with updates to reflect the student's current progress. For each question, update the following fields:
+            - **status**: Update to 'not asked', 'asked', or 'done', depending on the progress of each question. Only modify the status of the current question.
+            - **score**: Update the score for the current question, indicating the points earned as a fraction (e.g., '2/3'). If no points were earned for the current question, display '0/X', where X is the total possible points for the question. Leave the scores for the other questions unchanged.
+
+        Always provide your response in valid JSON format:
+
+        ```json
+        [Your JSON response]
+        ```
+
+        **Example JSON response:**
+
+        ```json
+        {example_output_diagnosed}
+        ```
+
+        **Question data:**
+
+        {self.get_questions()[topic]}
+        """
+
+        # Determine which prompt to use
+        questions = self.get_questions()
+        status = questions[topic].get("status", "undiagnosed")
+        if status == "diagnosed":
+            instructions = diagnosed_prompt
+        else:
+            instructions = undiagnosed_prompt
+
+        # Prepare messages
+        messages = [
+            {"role": "system", "content": instructions},
+            *[{"role": m["role"], "content": m["content"]} for m in messages],
+            *[
+                {
+                    "role": "user",
+                    "content": f'<img src="data:image/png;base64,{self.encode_image_to_base64(m["image"])}">',
+                }
+                for m in messages
+                if m.get("image")
+            ],
+        ]
+
+        # OpenAI API call for JSON response
+        response = openai_client.chat.completions.create(
+            model=openai_model,
+            messages=messages,
+            response_format={"type": "json_object"},
+        )
+
+        json_response = json.loads(response.choices[0].message.content)
+
+        if json_response:
+            return json_response
 
     def get_next_incomplete_topic(self):
         for topic, questions in self.get_questions().items():
@@ -387,7 +459,8 @@ Conversation history:
             if any(q["status"] != "done" for q in questions["questions"]):
                 return topic
 
-    def update_current_topic(self, question_data):
+    def update_current_topic(self):
+        print(f"Updating current topic: {st.session_state.current_topic}")
         question_data = self.get_questions()[st.session_state.current_topic][
             "questions"
         ]
@@ -432,28 +505,21 @@ Conversation history:
 
             # Generate assistant response based on current topic
             with st.chat_message("assistant", avatar="🔵"):
-                # response = st.write_stream(
-                #     self.generate_assistant_response(st.session_state.current_topic)
-                # )
                 # Render image if available
                 if image_path := self.get_next_question_with_image():
                     st.image(image_path)
 
-                json_response = self.generate_assistant_response(
-                    st.session_state.current_topic
-                )
+                json_response, text_response = self.generate_responses()
+                print(f"JSON response: {json_response}")
+                print(f"Text response: {text_response}")
 
-                # json_response = json.loads(response.choices[0].message.content)
-                # response = st.write(json_response["response"])
-
-            question_data = self.get_questions()[st.session_state.current_topic]
-            question_data["questions"] = json_response
-
-            self.update_question_data(json_response)
-
-            self.add_to_assistant_responses(json_response["response"], image_path)
-
-            self.update_current_topic(question_data)
+                if json_response:
+                    image_path = None
+                    self.update_question_data(json_response)
+                    self.add_to_assistant_responses(text_response, image_path)
+                    self.update_current_topic()
+                else:
+                    st.write("Geen JSON-reactie ontvangen van OpenAI.")
 
     def update_question_data(self, json_response):
         question_data = self.get_questions()
@@ -469,6 +535,7 @@ Conversation history:
         """
         Calculate the completion percentage of a topic based on the number of 'done' questions.
         """
+        print(f"Calculating completion for topic: {topic}")
         questions = self.get_questions()[topic]["questions"]
         total_questions = len(questions)
         done_questions = sum(1 for q in questions if q["status"] == "done")
@@ -478,6 +545,43 @@ Conversation history:
 
         completion_percentage = (done_questions / total_questions) * 100
         return int(completion_percentage)
+
+    def generate_responses(self):
+        topic = st.session_state.current_topic
+        messages = st.session_state.messages
+        openai_client = st.session_state.openai_client
+        openai_model = st.session_state.openai_model
+        # with concurrent.futures.ThreadPoolExecutor() as executor:
+        # Schedule both tasks to run concurrently
+        # future_text = st.write_stream(
+        #     executor.submit(
+        #         self.generate_text_response,
+        #         topic,
+        #         messages,
+        #         openai_client,
+        #         openai_model,
+        #     )
+        # )  # Pass arguments if required
+        # future_json = executor.submit(
+        #     self.generate_json_response,
+        #     topic,
+        #     messages,
+        #     openai_client,
+        #     openai_model,
+        # )  # Pass arguments if required
+
+        # # Now wait for both to complete and get results
+        # text_response, image_path = future_text.result()
+        # json_response = future_json.result()
+
+        text_response = st.write_stream(
+            self.generate_text_response(topic, messages, openai_client, openai_model)
+        )
+        json_response = self.generate_json_response(
+            topic, messages, openai_client, openai_model
+        )
+
+        return json_response, text_response
 
     def render_sidebar(self):
         with st.sidebar:
@@ -552,7 +656,7 @@ Conversation history:
 
         self.initialize_session_states()
 
-        self.create_questions_json_from_content_and_topic_json()
+        # self.create_questions_json_from_content_and_topic_json()
 
         st.title("Samenvatten in dialoog")
 

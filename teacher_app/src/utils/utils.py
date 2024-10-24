@@ -46,17 +46,25 @@ class Utils:
         Determines which lecture page to display based on the selected lecture status,
         which indicates if a lecture is recorded, generated or corrected.
         """
-        if st.session_state.db.content.find_one(
-            {"lecture_name": st.session_state.selected_module}
-        ):
-            status = self.db_dal.fetch_module_status()
+        module_status = self.db_dal.fetch_module_status()
 
-            if status == "generated":
+        if st.session_state.username["role"] == "teacher":
+            if module_status == "corrected":
+                st.session_state.selected_phase = "insights"
+            elif module_status == "generated":
+                st.session_state.selected_phase = "quality_check"
+            elif module_status == "not_recorded":
+                st.session_state.selected_phase = "record"
+
+        elif st.session_state.username["role"] == "student":
+            if module_status == "generated":
                 st.session_state.selected_phase = "generated"
-            elif status == "corrected":
+            elif module_status == "corrected":
                 st.session_state.selected_phase = phase
-        else:
-            st.session_state.selected_phase = "not_recorded"
+            else:
+                st.session_state.selected_phase = "not_recorded"
+
+        self.set_student_phase_to_match_lecture_status(phase, module_status)
 
     def add_spacing(self, count):
         for _ in range(count):
