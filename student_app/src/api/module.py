@@ -1,16 +1,16 @@
 from datetime import datetime
 from typing import Any
-from pymongo.database import Database
 from slack_sdk import WebClient
+import streamlit as st
 
 
 class ModuleRepository:
-    def __init__(self, db: Database[dict[str, Any]]):
-        self.db = db
+    def __init__(self):
+        pass
 
     def save_draft_correction(self, module, updated_segments):
         self._save_topics_json(module, updated_segments)
-        self.db.get_collection("content").find_one_and_update(
+        st.session_state.db.get_collection("content").find_one_and_update(
             {"lecture_name": module},
             {
                 "$set": {
@@ -25,7 +25,7 @@ class ModuleRepository:
     def save_final_correction(self, module, updated_segments):
         self._save_topics_json(module, updated_segments)
         updated_segments = self.remove_topics_from_updated_segments(updated_segments)
-        self.db.get_collection("content").find_one_and_update(
+        st.session_state.db.get_collection("content").find_one_and_update(
             {"lecture_name": module},
             {
                 "$set": {
@@ -60,7 +60,7 @@ class ModuleRepository:
         self._save_topics_json_to_db(module, topics_json)
 
     def _save_topics_json_to_db(self, module, topics_json):
-        self.db.get_collection("content").find_one_and_update(
+        st.session_state.db.get_collection("content").find_one_and_update(
             {"lecture_name": module},
             {
                 "$set": {
@@ -83,7 +83,7 @@ class ModuleRepository:
 
         print("Updating segments list with length ", len(modules_segments_list))
 
-        self.db.get_collection("content").find_one_and_update(
+        st.session_state.db.get_collection("content").find_one_and_update(
             {"lecture_name": module},
             {
                 "$set": {
@@ -96,7 +96,9 @@ class ModuleRepository:
         )
 
     def get_content_from_db(self, module: str):
-        doc = self.db.get_collection("content").find_one({"lecture_name": module})
+        doc = st.session_state.db.get_collection("content").find_one(
+            {"lecture_name": module}
+        )
         if doc is None:
             raise ValueError(f"Module {module} not found in database")
         return doc
@@ -157,7 +159,7 @@ class ModuleRepository:
             else:
                 topic_segment_id += 1
 
-        self.db.get_collection("content").find_one_and_update(
+        st.session_state.db.get_collection("content").find_one_and_update(
             {"lecture_name": module},
             {
                 "$set": {

@@ -37,9 +37,9 @@ class Utils:
         self.blob_service_client = BlobServiceClient.from_connection_string(
             self.connection_string
         )
-        self.module_repository = ModuleRepository(st.session_state.db)
+        self.module_repository = ModuleRepository()
         self.db_client = st.session_state.db
-        self.db_dal = DatabaseAccess()
+        self.db_dal = st.session_state.db_dal
 
     def set_phase_to_match_lecture_status(self, phase):
         """
@@ -56,7 +56,7 @@ class Utils:
             elif status == "corrected":
                 st.session_state.selected_phase = phase
         else:
-            st.session_state.selected_phase = "not-recorded"
+            st.session_state.selected_phase = "not_recorded"
 
     def add_spacing(self, count):
         for _ in range(count):
@@ -278,7 +278,7 @@ class ImageHandler:
 
     def render_image(self, segment, max_height=None):
         try:
-            # self.get_image_url(segment)
+            self.get_image_url(segment)
             image = self.download_image_from_blob_storage()
             if max_height:
                 image = self.resize_image_to_max_height(image, max_height)

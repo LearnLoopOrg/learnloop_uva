@@ -26,7 +26,26 @@ from utils.utils import AzureUtils
 from slack_sdk import WebClient
 
 # Must be called first
-st.set_page_config(page_title="LearnLoop", layout="wide")
+try:
+    st.set_page_config(
+        page_title="LearnLoop",
+        layout="wide",
+        page_icon="src/data/content/images/ll_logo_icon.png",
+    )
+except FileNotFoundError:
+    try:
+        st.set_page_config(
+            page_title="LearnLoop",
+            layout="wide",
+            page_icon="student_app/src/data/content/images/ll_logo_icon.png",
+        )
+    except FileNotFoundError:
+        st.set_page_config(
+            page_title="LearnLoop",
+            layout="wide",
+            page_icon=None,  # Of een ander pad voor een standaard favicon
+        )
+
 
 load_dotenv()
 
@@ -257,7 +276,6 @@ def evaluate_answer(max_retries=3):
         except (json.JSONDecodeError, KeyError, ValueError, TypeError) as e:
             # Fout bij het parsen van JSON of bij validatie van de velden
             attempt += 1
-            print(f"Feedback: {feedback}")
             print(
                 f"Attempt {attempt}: Fout bij verwerken van feedback: {e}. Proberen opnieuw..."
             )
@@ -349,8 +367,10 @@ def render_feedback():
         html_content += f"""<span style="background-color: {kleur}; border-radius: 3px; padding: 2px 5px 2px 5px; font-size: 18px;">{tekst.strip()}</span> """
     st.markdown(html_content, unsafe_allow_html=True)
 
-    feedback_header = """<hr style="margin: 3px 0px 3px 0px; border-top: 1px solid #ccc;" />
-    <h5 style="margin-top: 3px;">Feedback: </h5>"""
+    feedback_header = (
+        """<hr style="margin: 3px 0px 5px 0px; border-top: 0.5px solid #ccc;" />"""
+    )
+    # """<h5 style="margin-top: 3px;">Feedback: </h5>"""
     st.markdown(feedback_header, unsafe_allow_html=True)
 
     # Toon de gecombineerde HTML-content
@@ -403,9 +423,20 @@ def render_feedback():
         behaalde_punten, max_punten = "0", "0"
 
     punten_html = f"""
-        <div style="background-color: #f0f0f0; border-radius: 5px; padding: 10px; margin-bottom: 10px">
-            <strong>Punten:</strong> {behaalde_punten} / {max_punten}
+        <div style="
+            background-color: #F0F2F6; 
+            border-radius: 6px; 
+            padding: 13px; 
+            margin-bottom: 10px;
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 16px;
+            color: #31333F;
+        ">
+            <strong>Punten: {behaalde_punten} / {max_punten}</strong>
         </div>
+        <p style="font-size: 14px; color: #B3B3B3; margin-top: 2px; margin-bottom: 6px">
+            LearnLoop kan fouten maken. Check het antwoordmodel als je twijfelt.
+        </p>
     """
     st.markdown(punten_html, unsafe_allow_html=True)
 
@@ -944,7 +975,8 @@ def render_warning():
 
     st.button(
         "Leer meer over mogelijkheden & limitaties van LLM's",
-        on_click=set_info_page_true,
+        on_click=set_selected_phase,
+        args=("LLM-info",),
         use_container_width=True,
     )
 
@@ -1446,11 +1478,11 @@ def render_selected_page():
         case "topics":
             st.session_state.topics_page.run()
         case "learning":
-            st.session_state.learning_page.run()
+            render_learning_page()
         case "practice":
-            st.session_state.practice_page.run()
+            render_practice_page()
         case "theory-overview":
-            st.session_state.theory_overview_page()
+            st.session_state.theory_overview_page.run()
         case "socratic-dialogue":
             st.session_state.socratic_dialogue.run()
         case "record":
@@ -1568,7 +1600,8 @@ def render_sidebar():
             "theory-overview",
         }:
             st.button(
-                f"📖 Modules | {st.session_state.selected_course}",
+                # f"📖 Modules | {st.session_state.selected_course}",
+                "📖 Terug naar modules",
                 on_click=set_selected_phase,
                 args=("lectures",),
                 use_container_width=True,
@@ -1579,9 +1612,10 @@ def render_sidebar():
             "socratic-dialogue",
         }:
             st.button(
-                f"🗂 Topics | {st.session_state.selected_module}",
+                # f"🗂 Topics | {st.session_state.selected_module}",
+                "🗂 Terug naar onderwerpen",
                 on_click=set_selected_phase,
-                args=("topics"),
+                args=("topics",),
                 use_container_width=True,
             )
 
@@ -2156,7 +2190,7 @@ def initialise_variables():
         st.session_state.nonce = None
 
     if "username" not in st.session_state:
-        st.session_state.username = None
+        st.session_state.username = {"name": None, "role": None}
 
     if "warned" not in st.session_state:
         st.session_state.warned = None
@@ -2236,6 +2270,9 @@ def initialise_variables():
     if "generated" not in st.session_state:
         st.session_state.generated = False
 
+    if "topic_index" not in st.session_state:
+        st.session_state.topic_index = 0
+
 
 def initialise_tools():
     if "db" not in st.session_state:
@@ -2247,11 +2284,11 @@ def initialise_tools():
     if "image_handler" not in st.session_state:
         st.session_state.image_handler = ImageHandler()
 
-    if "utils" not in st.session_state:
-        st.session_state.utils = Utils()
-
     if "openai_client" not in st.session_state:
         st.session_state.openai_client = connect_to_openai()
+
+    if "utils" not in st.session_state:
+        st.session_state.utils = Utils()
 
     if "azure_utils" not in st.session_state:
         st.session_state.azure_utils = AzureUtils()
@@ -2318,7 +2355,7 @@ if __name__ == "__main__":
     initialise_pages()
 
     # Give the name of the test user when giving one. !! If not using a test username, set to None
-    if st.session_state.username is None and args.test_username is not None:
+    if st.session_state.username == {} and args.test_username is not None:
         st.session_state.username = {"role": "teacher"}
         st.session_state.username["name"] = args.test_username
 
@@ -2350,6 +2387,8 @@ if __name__ == "__main__":
     else:
         print("Rendering the app")
 
+        if st.session_state.username["role"] is None:
+            st.session_state.username["role"] = "student"
         if st.session_state.modules is None or st.session_state.selected_course is None:
             st.session_state.modules = (
                 st.session_state.db_dal.initialise_course_and_modules()

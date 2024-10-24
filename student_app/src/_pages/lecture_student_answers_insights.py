@@ -41,11 +41,19 @@ class LectureInsights:
             unsafe_allow_html=True,
         )
 
-    def render_title(self, module):
-        st.title(f"Inzichten: College {module}")
-        st.write(
-            "Bekijk de onderstaande analyses van de gemaakte vragen om inzicht te krijgen in de prestaties van je studenten. Je kunt hier per vraag zien: hoevaak deze is beantwoord; wat de gemiddelde score is; wat studenten snapten en waar mogelijke verwarringen liggen. Deze inzichten kun je gebruiken om je lesaanpak te verfijnen."
-        )
+    def display_header(self):
+        cols = st.columns([10, 7, 5])
+        with cols[0]:
+            st.title(st.session_state.selected_module)
+
+        with cols[1]:
+            st.write("\n\n")
+            st.subheader("Inzichten")
+            st.write(
+                "Bekijk de knelpunten van je studenten en focus hierop tijdens je volgende contactmoment."
+            )
+
+        st.write("---")
 
     def start_learning_page(self, topic_index):
         """
@@ -449,7 +457,7 @@ class LectureInsights:
 
             col1 = st.columns(1)
             with col1[0]:
-                st.markdown("<h2>Index</h2>", unsafe_allow_html=True)
+                st.subheader("Navigatie")
                 for i, topic in enumerate(topics):
                     questions_content = self.db_dal.get_topic_questions(
                         module, topic["segment_indexes"]
@@ -527,7 +535,7 @@ class LectureInsights:
                 total_achieved_score / total_score if total_score > 0 else -1
             )
             icon = self._get_icon_based_on_percentage(percentage_correct_topic)
-            st.header(
+            st.subheader(
                 f"{icon} {topic['topic_title']}",
                 anchor=topic["topic_title"],
             )
@@ -629,7 +637,7 @@ class LectureInsights:
         )
 
         self.set_styling()
-        self.render_title(self.module)
+        self.display_header()
 
         st.write("\n")
         topics = self.db_dal.get_topics_list_from_db(self.module)

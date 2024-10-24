@@ -307,15 +307,32 @@ class DatabaseAccess:
             return None
 
     def fetch_info(self):
+        # Zorg ervoor dat nonce bestaat voordat je iets anders doet
+        if st.session_state.nonce is None:
+            print("Nonce is None, cannot fetch user info.")
+            return
+
+        # Zoek de gebruiker op met de nonce
         user_doc = st.session_state.db.users.find_one({"nonce": st.session_state.nonce})
-        if user_doc is not None and st.session_state.nonce is not None:
+
+        # Als de gebruiker is gevonden
+        if user_doc is not None:
             st.session_state.username["name"] = user_doc["username"]
-            print("User found with the nonce:", st.session_state.nonce)
+            st.session_state.username["role"] = (
+                "student"  # TODO: HARDCODED, maar moet dynamisch worden bepaald met de SURF-token
+            )
+            print("User found with username:", st.session_state.username["name"])
+
+        # Als geen gebruiker is gevonden en de username nog niet is ingesteld
         elif st.session_state.username["name"] is None:
-            st.session_state.username["name"] = None
             print("No user found with the nonce.")
-        elif user_doc is None and st.session_state.username["name"] is not None:
-            print("User doc exists with username", st.session_state.username["name"])
+
+        # Als geen `user_doc` is gevonden, maar de username al wel is ingesteld
+        else:
+            print(
+                "No user doc found, but username exists:",
+                st.session_state.username["name"],
+            )
 
     def invalidate_nonce(self):
         st.session_state.db.users.update_one(
