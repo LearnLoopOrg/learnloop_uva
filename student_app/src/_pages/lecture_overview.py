@@ -18,14 +18,15 @@ class LectureOverview:
         )  # TODO: Replace with actual username
         st.button("Uitloggen", use_container_width=True)
 
-    def go_to_lecture(self, lecture_title, new_phase):
+    def update_module_and_phase(self, lecture_title, new_phase):
         """
         Sets the selected page and lecture to the one that the student clicked on.
         """
         st.session_state.selected_module = lecture_title
-        self.utils.set_phase_to_match_lecture_status(new_phase)
+        st.session_state.selected_phase = new_phase
 
         self.db_dal.update_last_module()
+        self.db_dal.update_last_phase(new_phase)
 
     def render_lecture(self, lecture_title, lecture_description, lecture_record):
         """
@@ -38,7 +39,7 @@ class LectureOverview:
         with container:
             role = st.session_state.username["role"]
             lecture_status = (
-                lecture_record["status"] if lecture_record else "not_recorded"
+                lecture_record["status"] if lecture_record else "not-recorded"
             )
 
             with cols[1]:
@@ -48,50 +49,64 @@ class LectureOverview:
                 print("lecture_status: ", lecture_status)
 
                 match role, lecture_status:
-                    case "teacher", "not_recorded":
-                        self.render_page_button(
+                    case "teacher", "not-recorded":
+                        st.button(
                             "⏳ Nog niet beschikbaar",
-                            lecture_title,
-                            phase="not_recorded",
+                            on_click=self.update_module_and_phase,
+                            args=(lecture_title, "not-recorded"),
+                            use_container_width=True,
+                            key=lecture_title + "_not-recorded",
                         )
 
                     case "teacher", "corrected":
-                        self.render_page_button(
+                        st.button(
                             "📊 Inzichten bekijken",
-                            lecture_title,
-                            phase="insights",
+                            on_click=self.update_module_and_phase,
+                            args=(lecture_title, "insights"),
+                            use_container_width=True,
+                            key=lecture_title + "_insights",
                         )
 
                     case "teacher", "generated":
-                        self.render_page_button(
+                        st.button(
                             "✔️ Kwaliteitscheck",
-                            lecture_title,
-                            phase="quality-check",
+                            on_click=self.update_module_and_phase,
+                            args=(lecture_title, "quality-check"),
+                            use_container_width=True,
+                            key=lecture_title + "_quality-check",
                         )
 
-                    case "student", "not_recorded" | "generated":
-                        self.render_page_button(
+                    case "student", "not-recorded" | "generated":
+                        st.button(
                             "⏳ Nog niet beschikbaar",
-                            lecture_title,
-                            phase="not_recorded",
+                            on_click=self.update_module_and_phase,
+                            args=(lecture_title, "not-recorded"),
+                            use_container_width=True,
+                            key=lecture_title + "_not-recorded",
                         )
 
                     case "student", "corrected":
-                        self.render_page_button(
+                        st.button(
                             "📝 Leerstof oefenen",
-                            f"{lecture_title}",
-                            phase="learning",
+                            on_click=self.update_module_and_phase,
+                            args=(lecture_title, "learning"),
+                            use_container_width=True,
+                            key=lecture_title + "_learning",
                         )
-                        self.render_page_button(
+                        st.button(
                             "📚 Overzicht theorie",
-                            f"{lecture_title}",
-                            phase="theory-overview",
+                            on_click=self.update_module_and_phase,
+                            args=(lecture_title, "theory-overview"),
+                            use_container_width=True,
+                            key=lecture_title + "_theory-overview",
                         )
                         if st.session_state.username["name"] == "supergeheimecode":
-                            self.render_page_button(
+                            st.button(
                                 "📝 Socratisch dialoog",
-                                f"{lecture_title}",
-                                phase="socratic-dialogue",
+                                on_click=self.update_module_and_phase,
+                                args=(lecture_title, "socratic-dialogue"),
+                                use_container_width=True,
+                                key=lecture_title + "_socratic-dialogue",
                             )
 
             with cols[0]:
@@ -102,17 +117,14 @@ class LectureOverview:
         """
         Renders the buttons that the users clicks to go to a certain lecture learning experience.
         """
-
         if st.button(
             page_title,
-            key=f"{module} {phase} theory-overview button",
+            key=f"module_{module}_phase_{phase}",
             use_container_width=True,
         ):
             st.session_state.selected_module = module
+            st.session_state.selected_phase = phase
 
-            self.utils.set_phase_to_match_lecture_status(phase)
-
-            st.session_state.info_page = False
             self.track_visits()
             st.rerun()
 
@@ -127,41 +139,37 @@ class LectureOverview:
             },
         )
 
-    def render_page(self):
-        """
-        Render the page that shows all the lectures that are available for the student for this course.
-        """
-        for lecture in st.session_state.lectures:
-            # find the lecture that is currently being rendered in the database
-            lecture_record = self.db_dal.get_lecture(lecture.title)
-            self.render_lecture(lecture.title, lecture.description, lecture_record)
-
-    def load_lectures(self):
+    def load_lectures_in_session_state(self):
         """
         Loads lectures from the database into the session state.
         """
         course_catalog = self.db_dal.get_course_catalog()
-        print("course_catalog: ", course_catalog)
         if st.session_state.selected_course is None:
-            print("selected_course is None")
             st.session_state.selected_course = course_catalog.courses[0].title
 
         st.session_state.lectures = self.db_dal.get_lectures_for_course(
             st.session_state.selected_course, course_catalog
         )
-        print("lectures: ", st.session_state.lectures)
+
+    def render_lectures(self):
+        """
+        Renders the lectures in the session state.
+        """
+        for lecture in st.session_state.lectures:
+            lecture_record = self.db_dal.get_lecture(lecture.title)
+            self.render_lecture(lecture.title, lecture.description, lecture_record)
 
     def run(self):
         self.db_dal = st.session_state.db_dal
         self.utils = st.session_state.utils
         self.db = st.session_state.db
-
         self.db_dal.update_last_phase("lectures")
 
-        self.load_lectures()
         st.title("Moduleoverzicht")
-        self.utils.add_spacing(1)
-        self.render_page()
+        st.write("\n\n")
+
+        self.load_lectures_in_session_state()
+        self.render_lectures()
 
 
 if __name__ == "__main__":

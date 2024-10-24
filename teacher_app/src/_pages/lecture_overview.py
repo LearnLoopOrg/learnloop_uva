@@ -24,8 +24,8 @@ class LectureOverview:
         if module_status == "corrected":
             st.session_state.selected_phase = "insights"
         elif module_status == "generated":
-            st.session_state.selected_phase = "quality_check"
-        elif module_status == "not_recorded":
+            st.session_state.selected_phase = "quality-check"
+        elif module_status == "not-recorded":
             st.session_state.selected_phase = "record"
 
         self.db_dal.update_last_module()
@@ -49,7 +49,7 @@ class LectureOverview:
                 module_status = self.db_dal.fetch_module_status()
 
                 if module_status is None:
-                    module_status = "not_recorded"
+                    module_status = "not-recorded"
 
                 match module_status:
                     case "corrected":
@@ -68,7 +68,7 @@ class LectureOverview:
                             args=(lecture.title,),
                             use_container_width=True,
                         )
-                    case "not_recorded":
+                    case "not-recorded":
                         st.button(
                             # "Genereren leermateriaal",
                             "⏳ Nog niet beschikbaar",

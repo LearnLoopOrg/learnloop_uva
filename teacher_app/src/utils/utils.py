@@ -52,8 +52,8 @@ class Utils:
             if module_status == "corrected":
                 st.session_state.selected_phase = "insights"
             elif module_status == "generated":
-                st.session_state.selected_phase = "quality_check"
-            elif module_status == "not_recorded":
+                st.session_state.selected_phase = "quality-check"
+            elif module_status == "not-recorded":
                 st.session_state.selected_phase = "record"
 
         elif st.session_state.username["role"] == "student":
@@ -62,7 +62,7 @@ class Utils:
             elif module_status == "corrected":
                 st.session_state.selected_phase = phase
             else:
-                st.session_state.selected_phase = "not_recorded"
+                st.session_state.selected_phase = "not-recorded"
 
         self.set_student_phase_to_match_lecture_status(phase, module_status)
 

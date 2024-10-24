@@ -30,6 +30,39 @@ st.set_page_config(page_title="LearnLoop", layout="wide")
 
 load_dotenv()
 
+hide_streamlit_style = """
+                <style>
+                div[data-testid="stToolbar"] {
+                visibility: hidden;
+                height: 0%;
+                position: fixed;
+                }
+                div[data-testid="stDecoration"] {
+                visibility: hidden;
+                height: 0%;
+                position: fixed;
+                }
+                div[data-testid="stStatusWidget"] {
+                visibility: hidden;
+                height: 0%;
+                position: fixed;
+                }
+                #MainMenu {
+                visibility: hidden;
+                height: 0%;
+                }
+                header {
+                visibility: hidden;
+                height: 0%;
+                }
+                footer {
+                visibility: hidden;
+                height: 0%;
+                }
+                </style>
+                """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
 
 def set_global_exception_handler(custom_handler: Callable, debug: bool = False):
     import sys
@@ -1426,11 +1459,11 @@ def render_selected_page():
             st.session_state.quality_check_page.run()
         case "insights":
             st.session_state.insights_page.run()
-        case "not_recorded":
+        case "not-recorded":
             render_not_recorded_page()
         case "generated":
             render_generated_page()
-        case "LLM_info":
+        case "LLM-info":
             render_LLM_info_page()
         case _:  # Render this page by default
             st.session_state.lectures_page.run()
@@ -1471,11 +1504,6 @@ def render_info_page():
     return
 
 
-def set_info_page_true():
-    """Sets the info page to true."""
-    st.session_state.info_page = True
-
-
 def track_visits():
     """Tracks the visits to the modules."""
     st.session_state.db.users.update_one(
@@ -1486,23 +1514,6 @@ def track_visits():
             }
         },
     )
-
-
-def render_page_button(page_title, module, phase):
-    """
-    Renders the buttons that the users clicks to go to a certain lecture learning experience.
-    """
-
-    if st.button(page_title, key=f"{module} {phase}", use_container_width=True):
-        # If the page is changed, then the feedback will be reset
-        if st.session_state.selected_phase != phase and phase == "practice":
-            reset_feedback()
-
-        st.session_state.selected_module = module
-        st.session_state.utils.set_phase_to_match_lecture_status(phase)
-
-        st.session_state.info_page = False
-        track_visits()
 
 
 def set_selected_phase(phase):
@@ -1565,16 +1576,12 @@ def render_sidebar():
         if st.session_state.selected_phase in {
             "learning",
             "practice",
-            "theory-overview",
-            "insights",
             "socratic-dialogue",
-            "record",
-            "quality-check",
         }:
             st.button(
                 f"🗂 Topics | {st.session_state.selected_module}",
                 on_click=set_selected_phase,
-                args=("topics",),
+                args=("topics"),
                 use_container_width=True,
             )
 
@@ -1588,7 +1595,8 @@ def render_sidebar():
 
         st.button(
             "Uitleg LLM's",
-            on_click=set_info_page_true,
+            on_click=set_selected_phase,
+            args=("LLM-info",),
             use_container_width=True,
             key="info_button_sidebar",
         )
@@ -1724,13 +1732,64 @@ def convert_image_base64(image_path):
         return base64.b64encode(image_file.read()).decode()
 
 
+# def try_login(input_username):
+#     st.session_state.wrong_credentials = False
+#     # Checks if the user is in the list below
+#     uva_users = {
+#         "Luc Mahieu": {"role": "student"},
+#         "Milan van Roessel": {"role": "student"},
+#         "eensupergeheimecode": {"role", "student"},
+#         "supergeheimecode": {"role": "student"},
+#         "famkesgeheimecode": {"role": "student"},
+#         "Erwin van Vliet": {"role": "teacher"},
+#     }
+
+#     vu_users = {}
+
+#     with open(f"{st.session_state.base_path}data/uu_users.json", "r") as f:
+#         uu_users = json.load(f)
+
+#     if input_username in uva_users:
+#         st.session_state.username = {
+#             "name": input_username,
+#             "role": uva_users[input_username]["role"],
+#         }
+#         st.session_state.logged_in = True
+#         if input_username == "supergeheimecode":
+#             st.session_state.db_name = "LearnLoop"
+#         else:
+#             st.session_state.db_name = "UvA_KNP"
+
+#     elif input_username in vu_users:
+#         st.session_state.username = {
+#             "name": input_username,
+#             "role": vu_users[input_username]["role"],
+#         }
+#         st.session_state.logged_in = True
+#         st.session_state.db_name = "test_users_1"
+
+#     elif input_username in uu_users:
+#         st.session_state.username = {
+#             "name": input_username,
+#             "role": uu_users[input_username]["role"],
+#         }
+#         st.session_state.logged_in = True
+#         st.session_state.db_name = "test_users_2"
+
+#     else:
+#         st.session_state.wrong_credentials = True
+#         return
+
+
 def try_login(input_username):
+    # Reset verkeerde inlogstatus
     st.session_state.wrong_credentials = False
-    # Checks if the user is in the list below
+
+    # Gebruikerslijst voor validatie
     uva_users = {
         "Luc Mahieu": {"role": "student"},
         "Milan van Roessel": {"role": "student"},
-        "eensupergeheimecode": {"role", "student"},
+        "eensupergeheimecode": {"role": "student"},
         "supergeheimecode": {"role": "student"},
         "famkesgeheimecode": {"role": "student"},
         "Erwin van Vliet": {"role": "teacher"},
@@ -1738,19 +1797,20 @@ def try_login(input_username):
 
     vu_users = {}
 
+    # Laad UU gebruikers
     with open(f"{st.session_state.base_path}data/uu_users.json", "r") as f:
         uu_users = json.load(f)
 
+    # Controleer of de gebruikersnaam in de lijst staat
     if input_username in uva_users:
         st.session_state.username = {
             "name": input_username,
             "role": uva_users[input_username]["role"],
         }
         st.session_state.logged_in = True
-        if input_username == "supergeheimecode":
-            st.session_state.db_name = "LearnLoop"
-        else:
-            st.session_state.db_name = "UvA_KNP"
+        st.session_state.db_name = (
+            "LearnLoop" if input_username == "supergeheimecode" else "UvA_KNP"
+        )
 
     elif input_username in vu_users:
         st.session_state.username = {
@@ -1769,26 +1829,73 @@ def try_login(input_username):
         st.session_state.db_name = "test_users_2"
 
     else:
+        # Onjuiste inloggegevens
         st.session_state.wrong_credentials = True
-        return
+        st.session_state.logged_in = False
+
+
+# def inlog_terminal(uni):
+#     # Begin een formulier voor de login
+#     with st.form(key=f"login_form_{uni}"):
+#         # Vraag de gebruikersnaam
+#         username = st.text_input(
+#             "Log in",
+#             label_visibility="collapsed",
+#             placeholder="Jouw gebruikersnaam",
+#             key=f"streamlit_username_{uni}",
+#         )
+
+#         # Voeg een formulierknop toe voor login
+#         submit_button = st.form_submit_button(
+#             label="Log in",
+#             use_container_width=True,
+#         )
+
+#         # Controleer of de knop is ingedrukt
+#         if submit_button:
+#             # Roep de inlogfunctie aan met de ingevoerde gebruikersnaam
+#             try_login(username)
+
+#     # Als de inloggegevens fout zijn, toon een waarschuwing
+#     if st.session_state.get("wrong_credentials", False):
+#         st.warning("Onjuiste inloggegevens.")
 
 
 def inlog_terminal(uni):
-    st.text_input(
-        "Log in",
-        label_visibility="collapsed",
-        placeholder="Jouw unieke gebruikersnaam",
-        key=f"streamlit_username_{uni}",
-    )
-    if st.session_state.wrong_credentials:
+    # Initialiseer session state variabelen
+    if "logged_in" not in st.session_state:
+        st.session_state.logged_in = False
+
+    if "wrong_credentials" not in st.session_state:
+        st.session_state.wrong_credentials = False
+
+    # Begin een formulier voor de login
+    with st.form(key=f"login_form_{uni}"):
+        # Vraag de gebruikersnaam
+        username = st.text_input(
+            "Log in",
+            label_visibility="collapsed",
+            placeholder="Jouw gebruikersnaam",
+            key=f"streamlit_username_{uni}",
+        )
+
+        # Voeg een formulierknop toe voor login
+        submit_button = st.form_submit_button(
+            label="Log in",
+            use_container_width=True,
+        )
+
+        # Controleer of de knop is ingedrukt
+        if submit_button:
+            # Roep de inlogfunctie aan met de ingevoerde gebruikersnaam
+            try_login(username)
+
+    # Controleer de status van het inloggen
+    if st.session_state.get("logged_in", False):
+        st.rerun()
+    elif st.session_state.get("wrong_credentials", False):
         st.warning("Onjuiste inloggegevens.")
-    st.button(
-        "Log in",
-        on_click=try_login,
-        args=(st.session_state.get(f"streamlit_username_{uni}", ""),),
-        use_container_width=True,
-        key=f"login_button_{uni}",
-    )
+        st.rerun()
 
 
 def render_login_page():
@@ -2045,9 +2152,6 @@ def initialise_variables():
     if "practice_exam_name" not in st.session_state:
         st.session_state.practice_exam_name = "Samenvattende vragen"
 
-    if "info_page" not in st.session_state:
-        st.session_state.info_page = False
-
     if "nonce" not in st.session_state:
         st.session_state.nonce = None
 
@@ -2215,6 +2319,7 @@ if __name__ == "__main__":
 
     # Give the name of the test user when giving one. !! If not using a test username, set to None
     if st.session_state.username is None and args.test_username is not None:
+        st.session_state.username = {"role": "teacher"}
         st.session_state.username["name"] = args.test_username
 
     # Connect with the correct database after logging in. When rerouted to student app after SURF login, the session state is resetted

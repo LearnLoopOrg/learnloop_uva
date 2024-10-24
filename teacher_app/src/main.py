@@ -104,7 +104,7 @@ class Controller:
                 self.lectures_page.run()
             case "record":
                 self.record_page.run()
-            case "quality_check":
+            case "quality-check":
                 self.quality_check_page.run()
             case "insights":
                 self.insights_page.run()

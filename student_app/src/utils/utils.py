@@ -56,7 +56,7 @@ class Utils:
             elif status == "corrected":
                 st.session_state.selected_phase = phase
         else:
-            st.session_state.selected_phase = "not_recorded"
+            st.session_state.selected_phase = "not-recorded"
 
     def add_spacing(self, count):
         for _ in range(count):

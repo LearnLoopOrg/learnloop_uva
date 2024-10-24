@@ -1,6 +1,4 @@
 from api.module import ModuleRepository
-from data.data_access_layer import DatabaseAccess
-from utils.utils import ImageHandler, Utils
 import streamlit as st
 from dotenv import load_dotenv
 
@@ -9,10 +7,7 @@ load_dotenv()
 
 class QualityCheck:
     def __init__(self):
-        self.utils = Utils()
         self.module_repository = ModuleRepository(st.session_state.db)
-        self.db_dal = DatabaseAccess()
-        self.image_handler = ImageHandler()
 
     def _initialise_segments_in_qualitycheck(self):
         module_name = st.session_state.selected_module
@@ -37,29 +32,17 @@ class QualityCheck:
         st.session_state.segments_in_qualitycheck = self.segments
         st.session_state.topics_in_qualitycheck = self.topics
 
-    def run(self):
-        self.init_segments_on_module_switch()
-        # Set previous module so on the next run the init_segments function can check if user opened new module
-        st.session_state.previous_module = st.session_state.selected_module
-        self.db_dal.update_last_phase("quality_check")
-        self.display_header()
-        self.display_segments()
-        self.display_sidebar()
-        self.display_save_buttons()
-        self.scroll_to_segment()
-
     def display_sidebar(self):
         with st.sidebar:
-            st.html("""
-                <div style="border-top: 2px solid grey; padding: 10px 10px 0px 10px; margin-bottom: -25px">
-                    <p><i>🔗 Klik op een onderwerp om direct er naartoe te navigeren.</i></p>
-                </div>
-                    """)
-            for i, topic in enumerate(st.session_state.topics_in_qualitycheck):
+            st.divider()
+            st.subheader("Navigatie")
+            for i, topic in enumerate(
+                st.session_state.topics_in_qualitycheck, 1
+            ):  # Start bij 1
                 topic_title = topic["topic_title"]
                 st.html(f"""
                     <a href="#{topic_title}" style="color: black; text-decoration: none;">
-                        →  {topic_title}
+                        {i}. {topic_title}
                     </a>
                 """)
 
@@ -87,12 +70,16 @@ class QualityCheck:
     def display_segments(self):
         segments = st.session_state.segments_in_qualitycheck
         previous_topic_title = None
+        topic_counter = 0  # Teller voor topic nummers
 
         for segment_id, segment in enumerate(segments):
             current_topic_title = segment.get("topic_title", "")
             if current_topic_title != previous_topic_title:
-                st.header(
-                    f"{current_topic_title}",
+                topic_counter += (
+                    1  # Verhoog de teller elke keer als er een nieuw topic is
+                )
+                st.subheader(
+                    f"{topic_counter}. {current_topic_title}",  # Voeg het nummer toe aan de titel
                     anchor=current_topic_title,
                 )
                 previous_topic_title = current_topic_title
@@ -175,7 +162,6 @@ class QualityCheck:
 
     def display_theory_segment(self, segment_id, segment):
         st.markdown("##### 📖 Theorie")
-        # st.subheader("Theorie")
         title_key = f"segment_{segment_id}_title"
         text_key = f"segment_{segment_id}_text"
         st.text_area(
@@ -192,7 +178,7 @@ class QualityCheck:
         )
 
     def display_question_segment(self, segment_id, segment):
-        st.markdown("##### ❓ Open vraag")
+        st.markdown("##### ❔ Open vraag")
         question_key = f"segment_{segment_id}_question"
         answer_key = f"segment_{segment_id}_answer"
         st.text_area(
@@ -209,7 +195,7 @@ class QualityCheck:
         )
 
     def display_MC_question(self, segment_id, segment):
-        st.markdown("##### ❓ Meerkeuzevraag")
+        st.markdown("##### ❔ Meerkeuzevraag")
         question_key = f"segment_{segment_id}_question"
         correct_answer_key = f"segment_{segment_id}_correct_answer"
         wrong_answers_key = f"segment_{segment_id}_wrong_answers"
@@ -292,10 +278,8 @@ class QualityCheck:
                     "wrong_answers": updated_wrong_answers,
                 }
             updated_segments.append(segment)
-        # Update the session state with the modified segments
         st.session_state.segments_in_qualitycheck = updated_segments
 
-        # Save the draft correction to the database
         if save_to_db:
             if draft_correction:
                 self.module_repository.save_draft_correction(
@@ -376,12 +360,18 @@ class QualityCheck:
         st.success("Voortgang opgeslagen.")
 
     def display_header(self):
-        st.title(f"Kwaliteitscheck: {st.session_state.selected_module}")
-        st.write(
-            "Controleer de onderstaande gegenereerde oefenmaterialen om er zeker van te zijn dat studenten het juiste leren. "
-            "Pas de afbeelding, theorie, vraag of het antwoord aan, of verwijder deze indien nodig. "
-            "Als je klaar bent, kun je de oefenmaterialen direct delen met studenten door op de button onderaan te drukken."
-        )
+        cols = st.columns([10, 6, 6])
+        with cols[0]:
+            st.title(st.session_state.selected_module)
+
+        with cols[1]:
+            st.write("\n\n")
+            st.subheader("Kwaliteitscheck")
+            st.write(
+                "Check of alles klopt, pas aan waar nodig en deel het met je studenten."
+            )
+
+        st.write("---")
 
     def scroll_to_segment(self):
         if "last_deleted_segment_id" in st.session_state:
@@ -395,6 +385,22 @@ class QualityCheck:
             """
             st.components.v1.html(js, height=0)
             del st.session_state.last_deleted_segment_id
+
+    def run(self):
+        self.db_dal = st.session_state.db_dal
+        self.utils = st.session_state.utils
+        self.db = st.session_state.db
+        self.image_handler = st.session_state.image_handler
+
+        self.init_segments_on_module_switch()
+        # Set previous module so on the next run the init_segments function can check if user opened new module
+        st.session_state.previous_module = st.session_state.selected_module
+        self.db_dal.update_last_phase("quality-check")
+        self.display_header()
+        self.display_segments()
+        self.display_sidebar()
+        self.display_save_buttons()
+        self.scroll_to_segment()
 
 
 if __name__ == "__main__":

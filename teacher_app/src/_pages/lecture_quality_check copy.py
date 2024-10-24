@@ -16,7 +16,7 @@ class QualityCheck1:
         self.image_handler = ImageHandler()
 
     def run(self):
-        self.db_dal.update_last_phase("quality_check")
+        self.db_dal.update_last_phase("quality-check")
         self.display_header()
         module_name = st.session_state.selected_module
         data_module = self.db_dal.fetch_original_module_content(module_name)
@@ -235,7 +235,7 @@ class QualityCheck1:
 
     def display_save_button(self):
         # TODO: navigeer een pagina terug
-        st.session_state.selected_phase = "quality_check"
+        st.session_state.selected_phase = "quality-check"
 
         st.button(
             "Opslaan",

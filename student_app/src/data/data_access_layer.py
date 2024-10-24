@@ -299,6 +299,13 @@ class DatabaseAccess:
             {"$set": {"last_module": st.session_state.selected_module}},
         )
 
+    def fetch_corrected_module_topics(self, module):
+        page_content = st.session_state.db.content.find_one({"lecture_name": module})
+        if page_content and "corrected_lecturepath_topics" in page_content:
+            return page_content["corrected_lecturepath_topics"]
+        else:
+            return None
+
     def fetch_info(self):
         user_doc = st.session_state.db.users.find_one({"nonce": st.session_state.nonce})
         if user_doc is not None and st.session_state.nonce is not None:

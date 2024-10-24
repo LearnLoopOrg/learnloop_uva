@@ -243,7 +243,7 @@ class Recorder:
         # Rerun necessary to render the correct page, namely quality check
         if st.session_state.generated:
             st.session_state.generated = False
-            st.session_state.selected_phase = "quality_check"
+            st.session_state.selected_phase = "quality-check"
             st.rerun()
 
 
