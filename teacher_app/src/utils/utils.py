@@ -252,7 +252,7 @@ class ImageHandler:
             self.connection_string
         )
         self.container_name = "uva-knp"
-        self.blob_name = "Dementie/images/uva_knp_Dementie_slide_00014_1.jpg"
+        self.blob_name = None
 
     def download_image_from_blob_storage(_self) -> Image.Image:
         blob_client = _self.blob_service_client.get_blob_client(
@@ -277,6 +277,7 @@ class ImageHandler:
         return resized_img
 
     def render_image(self, segment, max_height=None):
+        self.get_image_url(segment)
         try:
             # self.get_image_url(segment)
             image = self.download_image_from_blob_storage()
@@ -288,7 +289,7 @@ class ImageHandler:
             # st.error("No image found for this segment.")
             if "container" in str(e):
                 print(f"Container '{self.container_name}' not found.")
-            # print(f"No image found; error message: {e}")
+            print(f"No image found; error message: {e}")
             pass
 
 
