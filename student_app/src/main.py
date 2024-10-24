@@ -2379,7 +2379,7 @@ if __name__ == "__main__":
     if (
         no_login_page is False
         and st.session_state.logged_in is False
-        and st.session_state.username is None
+        and (not st.session_state.username or not st.session_state.username.get("name"))
     ):
         print("Rendering login page")
         render_login_page()

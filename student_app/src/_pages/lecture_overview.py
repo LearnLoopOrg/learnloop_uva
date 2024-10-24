@@ -144,17 +144,25 @@ class LectureOverview:
         Loads lectures from the database into the session state.
         """
         course_catalog = self.db_dal.get_course_catalog()
+        print("course_catalog: ", course_catalog)
         if st.session_state.selected_course is None:
+            print("selected_course from catalog ", course_catalog.courses[0].title)
             st.session_state.selected_course = course_catalog.courses[0].title
 
-        st.session_state.lectures = self.db_dal.get_lectures_for_course(
-            st.session_state.selected_course, course_catalog
-        )
+        print("selected_course: ", st.session_state.selected_course)
+
+        lectures = course_catalog.courses[0].lectures
+
+        st.session_state.lectures = [
+            lecture.title for lecture in lectures if lecture.title is not None
+        ]
+        print("lectures zelf uit de catalog gehaald: ", st.session_state.lectures)
 
     def render_lectures(self):
         """
         Renders the lectures in the session state.
         """
+        print("st.session_state.lectures: ", st.session_state.lectures)
         for lecture in st.session_state.lectures:
             lecture_record = self.db_dal.get_lecture(lecture.title)
             self.render_lecture(lecture.title, lecture.description, lecture_record)
