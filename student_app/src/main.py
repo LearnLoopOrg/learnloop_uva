@@ -2320,6 +2320,63 @@ def initialise_pages():
         st.session_state.record_page = Recorder()
 
 
+def qr_code_in_query_param():
+    query_params = st.query_params  # Gebruik van st.query_params
+    return "QR_code" in query_params
+
+
+# Functie om de volgende beschikbare gebruikersnaam op te halen uit één document
+def get_available_username():
+    usernames_collection = st.session_state.db.usernames
+    # Haal het document op met alle gebruikersnamen
+    user_doc = usernames_collection.find_one({})
+
+    if user_doc and "usernames" in user_doc:  # Check voor het 'usernames' veld
+        for username, status in user_doc["usernames"].items():
+            if status == "available":
+                # Zet de status van deze gebruikersnaam op 'taken' zonder gebruik te maken van _id
+                usernames_collection.update_one(
+                    {
+                        f"usernames.{username}": "available"
+                    },  # Zoek naar de beschikbare gebruikersnaam
+                    {"$set": {f"usernames.{username}": "taken"}},  # Werk de status bij
+                )
+                return username  # Retourneer de beschikbare gebruikersnaam
+    st.error("Geen beschikbare gebruikersnamen.")
+    return None
+
+
+# Functie om de gebruikersnaam te tonen en de login te voltooien
+def show_username_page(username):
+    st.write(f"Je gebruikersnaam is: {username}")
+    st.write("Maak een screenshot van deze pagina zodat je het niet vergeet.")
+
+    # Button om aan te geven dat de gebruikersnaam is opgeslagen
+    if st.button("Ik heb de gebruikersnaam opgeslagen"):
+        st.session_state["logged_in"] = True
+        st.session_state["username"] = username
+        st.success(f"Je bent ingelogd als {username}!")
+        # Eventueel verder redirecten of andere actie ondernemen.
+
+
+def register_qr_code():
+    # Controleer of de queryparameter 'QR_code' aanwezig is
+    if qr_code_in_query_param():
+        st.query_params.clear()  # Reset query parameters na uitlezen
+
+        if not st.session_state.logged_in:
+            username = get_available_username()
+            if username:
+                # Sla de username op in het gewenste format {"name": username, "role": None}
+                st.session_state.username = {"name": username, "role": None}
+                st.session_state.logged_in = True
+                st.session_state.db_name = "test_users_2"
+
+                show_username_page(username)
+        else:
+            st.write(f"Je bent al ingelogd als {st.session_state['username']['name']}.")
+
+
 if __name__ == "__main__":
     args = get_commandline_arguments()
     # set_global_exception_handler(
@@ -2359,11 +2416,13 @@ if __name__ == "__main__":
         st.session_state.username = {"role": "teacher"}
         st.session_state.username["name"] = args.test_username
 
+    register_qr_code()
+
     # Connect with the correct database after logging in. When rerouted to student app after SURF login, the session state is resetted
     if st.session_state.logged_in is True and st.session_state.db_switched is False:
         if st.session_state.db_name is None:
             st.session_state.db_name = "UvA_KNP"
-        print("Switching database to ", st.session_state.db_name)
+
         st.session_state.db = db_config.connect_db(
             database_name=st.session_state.db_name
         )
