@@ -80,7 +80,7 @@ hide_streamlit_style = """
                 }
                 </style>
                 """
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+# st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 
 def set_global_exception_handler(custom_handler: Callable, debug: bool = False):
@@ -2156,6 +2156,12 @@ def set_correct_settings_for_deployment_type():
 
 
 def initialise_variables():
+    if "via_qr_code" not in st.session_state:
+        st.session_state.via_qr_code = False
+
+    if "turned_qr_code_into_username" not in st.session_state:
+        st.session_state.turned_qr_code_into_username = False
+
     if "db_switched" not in st.session_state:
         st.session_state.db_switched = False
 
@@ -2346,35 +2352,60 @@ def get_available_username():
     return None
 
 
+def turn_qr_code_into_username(username):
+    # Sla de username op in het gewenste format {"name": username, "role": None}
+    st.session_state.username = {"name": username, "role": None}
+    st.session_state.logged_in = True
+    st.session_state.db_name = "test_users_2"
+    st.success(f"Je bent ingelogd als {username}!")
+    # Eventueel verder redirecten of andere actie ondernemen.
+    st.session_state.turned_qr_code_into_username = True
+    print("QR code omgezet in gebruikersnaam.")
+
+
 # Functie om de gebruikersnaam te tonen en de login te voltooien
 def show_username_page(username):
-    st.write(f"Je gebruikersnaam is: {username}")
-    st.write("Maak een screenshot van deze pagina zodat je het niet vergeet.")
+    # Maak gebruik van kolommen om de inhoud te centreren
+    cols = st.columns([1, 1, 1])
 
-    # Button om aan te geven dat de gebruikersnaam is opgeslagen
-    if st.button("Ik heb de gebruikersnaam opgeslagen"):
-        st.session_state["logged_in"] = True
-        st.session_state["username"] = username
-        st.success(f"Je bent ingelogd als {username}!")
-        # Eventueel verder redirecten of andere actie ondernemen.
+    with cols[1]:
+        st.markdown(
+            "<h5 style='text-align: center; color: #00000;'>Jouw gebruikersnaam:</h5>",
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            f"<h1 style='text-align: center; color: #2196F3;'>{username}</h1>",
+            unsafe_allow_html=True,
+        )
+        # st.markdown(
+        #     "<p style='text-align: center;'>Sla de gebruikersnaam ergens op of maak een screenshot van deze pagina zodat je het niet vergeet en later daar weer mee kunt inloggen :).</p>",
+        #     unsafe_allow_html=True,
+        # )
+        st.write("\n\n")
+        st.write("\n\n")
+        # Centraal geplaatste button
+        st.button(
+            "Ik heb de gebruikersnaam opgeslagen",
+            on_click=turn_qr_code_into_username,
+            args=(username,),
+            use_container_width=True,  # Zorgt ervoor dat de knop de volledige breedte van de kolom inneemt
+        )
 
 
 def register_qr_code():
     # Controleer of de queryparameter 'QR_code' aanwezig is
     if qr_code_in_query_param():
+        st.session_state.via_qr_code = True
         st.query_params.clear()  # Reset query parameters na uitlezen
 
         if not st.session_state.logged_in:
             username = get_available_username()
             if username:
-                # Sla de username op in het gewenste format {"name": username, "role": None}
-                st.session_state.username = {"name": username, "role": None}
-                st.session_state.logged_in = True
-                st.session_state.db_name = "test_users_2"
-
                 show_username_page(username)
         else:
             st.write(f"Je bent al ingelogd als {st.session_state['username']['name']}.")
+    else:
+        return
 
 
 if __name__ == "__main__":
@@ -2417,6 +2448,21 @@ if __name__ == "__main__":
         st.session_state.username["name"] = args.test_username
 
     register_qr_code()
+
+    print("Logged in: ", st.session_state.logged_in)
+    print("Username: ", st.session_state.username)
+    print("Role: ", st.session_state.username["role"])
+    print("DB name: ", st.session_state.db_name)
+    print("Via QR code?: ", st.session_state.via_qr_code)
+    print(
+        "Turned QR code into username?: ", st.session_state.turned_qr_code_into_username
+    )
+
+    if (
+        st.session_state.turned_qr_code_into_username is False
+        and st.session_state.via_qr_code is True
+    ):
+        st.stop()
 
     # Connect with the correct database after logging in. When rerouted to student app after SURF login, the session state is resetted
     if st.session_state.logged_in is True and st.session_state.db_switched is False:
