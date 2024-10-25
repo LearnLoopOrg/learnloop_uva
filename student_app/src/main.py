@@ -80,7 +80,7 @@ hide_streamlit_style = """
                 }
                 </style>
                 """
-# st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 
 def set_global_exception_handler(custom_handler: Callable, debug: bool = False):
