@@ -1001,6 +1001,10 @@ def add_date_to_progress_counter():
     Counts how many times a person answered the current question and updates database.
     """
     module = st.session_state.selected_module
+
+    print(
+        "--------> username in add_date_to_progress_counter", st.session_state.username
+    )
     user_doc = st.session_state.db_dal.find_user_doc()
 
     progress_counter = st.session_state.db_dal.get_progress_counter(module, user_doc)
@@ -1678,7 +1682,7 @@ def fetch_module_status(module_name):
 
 
 # Cache for 10 minutes only, so it checks every 10 minutes if there is a new lecture available
-@st.cache_data(show_spinner=False, ttl=600)
+# @st.cache_data(show_spinner=False, ttl=600)
 def check_user_doc_and_add_missing_fields():
     """
     Initializes the user database with missing fields and modules.
@@ -1978,18 +1982,18 @@ def render_login_page():
 
             inlog_terminal("UvA")
 
-            st.divider()
+            # st.divider()
 
-            uu_logo_base64 = convert_image_base64(
-                f"{st.session_state.base_path}data/content/images/uu-logo-nl.png"
-            )
+            # uu_logo_base64 = convert_image_base64(
+            #     f"{st.session_state.base_path}data/content/images/uu-logo-nl.png"
+            # )
 
-            html_uu_logo = f"""
-                <div style="text-align: center;">
-                    <img src="data:image/png;base64,{uu_logo_base64}" alt="Logo" style="max-width: 48%; height: auto; margin-bottom: 30px; margin-top:0px">
-                </div>
-            """
-            st.markdown(html_uu_logo, unsafe_allow_html=True)
+            # html_uu_logo = f"""
+            #     <div style="text-align: center;">
+            #         <img src="data:image/png;base64,{uu_logo_base64}" alt="Logo" style="max-width: 48%; height: auto; margin-bottom: 30px; margin-top:0px">
+            #     </div>
+            # """
+            # st.markdown(html_uu_logo, unsafe_allow_html=True)
 
             # st.info(
             #     "Log je voor het eerst in? Check dan eerst of je de uitnodiging van SURF hebt geaccepteerd (e-mail: *'Uitnodiging voor uva_fnwi_learnloop'*) om in te loggen. Niet gevonden? Check je spam. \n\nNog geen mail? Stuur een berichtje naar **+31 6 2019 2794**, dan zorgt Milan ervoor dat je toegang krijgt. 😊"
@@ -1999,8 +2003,6 @@ def render_login_page():
             #     if st.session_state.wrong_credentials:
             #         st.warning("Onjuiste credentials.")
             #     st.button("Log in", on_click=try_login, use_container_width=True)
-
-            inlog_terminal("UU")
 
     elif st.session_state.deployment_type == "streamlit_or_local":
         print("Rendering login page: streamlit_or_local")
@@ -2363,9 +2365,7 @@ def turn_qr_code_into_username(username):
     print("QR code omgezet in gebruikersnaam.")
 
 
-# Functie om de gebruikersnaam te tonen en de login te voltooien
 def show_username_page(username):
-    # Maak gebruik van kolommen om de inhoud te centreren
     cols = st.columns([1, 1, 1])
 
     with cols[1]:
@@ -2377,18 +2377,14 @@ def show_username_page(username):
             f"<h1 style='text-align: center; color: #2196F3;'>{username}</h1>",
             unsafe_allow_html=True,
         )
-        # st.markdown(
-        #     "<p style='text-align: center;'>Sla de gebruikersnaam ergens op of maak een screenshot van deze pagina zodat je het niet vergeet en later daar weer mee kunt inloggen :).</p>",
-        #     unsafe_allow_html=True,
-        # )
         st.write("\n\n")
         st.write("\n\n")
-        # Centraal geplaatste button
+
         st.button(
             "Ik heb de gebruikersnaam opgeslagen",
             on_click=turn_qr_code_into_username,
             args=(username,),
-            use_container_width=True,  # Zorgt ervoor dat de knop de volledige breedte van de kolom inneemt
+            use_container_width=True,
         )
 
 
@@ -2448,15 +2444,6 @@ if __name__ == "__main__":
         st.session_state.username["name"] = args.test_username
 
     register_qr_code()
-
-    print("Logged in: ", st.session_state.logged_in)
-    print("Username: ", st.session_state.username)
-    print("Role: ", st.session_state.username["role"])
-    print("DB name: ", st.session_state.db_name)
-    print("Via QR code?: ", st.session_state.via_qr_code)
-    print(
-        "Turned QR code into username?: ", st.session_state.turned_qr_code_into_username
-    )
 
     if (
         st.session_state.turned_qr_code_into_username is False
