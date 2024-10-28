@@ -16,7 +16,7 @@ class CoursesOverview:
         """
         Renders the course title and description as a button.
         """
-        with st.container(border=True, height=230):
+        with st.container(border=True, height=200):
             st.subheader(course_name)
             st.write(course_description)
             st.button(

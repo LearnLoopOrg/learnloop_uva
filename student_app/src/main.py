@@ -1488,7 +1488,7 @@ def render_selected_page():
         case "theory-overview":
             st.session_state.theory_overview_page.run()
         case "socratic-dialogue":
-            st.session_state.socratic_dialogue.run()
+            st.session_state.socratic_dialogue_page.run()
         case "record":
             st.session_state.record_page.run()
         case "quality-check":
@@ -1616,8 +1616,7 @@ def render_sidebar():
             "socratic-dialogue",
         }:
             st.button(
-                # f"🗂 Topics | {st.session_state.selected_module}",
-                "🗂 Terug naar onderwerpen",
+                "🔍 Terug naar onderwerpen",
                 on_click=set_selected_phase,
                 args=("topics",),
                 use_container_width=True,
@@ -1819,7 +1818,7 @@ def convert_image_base64(image_path):
 #         return
 
 
-def try_login(input_username):
+def try_login(input_username, uni):
     # Reset verkeerde inlogstatus
     st.session_state.wrong_credentials = False
 
@@ -1868,35 +1867,9 @@ def try_login(input_username):
 
     else:
         # Onjuiste inloggegevens
+        # st.session_state[f"streamlit_username_{uni}"] = ""
         st.session_state.wrong_credentials = True
         st.session_state.logged_in = False
-
-
-# def inlog_terminal(uni):
-#     # Begin een formulier voor de login
-#     with st.form(key=f"login_form_{uni}"):
-#         # Vraag de gebruikersnaam
-#         username = st.text_input(
-#             "Log in",
-#             label_visibility="collapsed",
-#             placeholder="Jouw gebruikersnaam",
-#             key=f"streamlit_username_{uni}",
-#         )
-
-#         # Voeg een formulierknop toe voor login
-#         submit_button = st.form_submit_button(
-#             label="Log in",
-#             use_container_width=True,
-#         )
-
-#         # Controleer of de knop is ingedrukt
-#         if submit_button:
-#             # Roep de inlogfunctie aan met de ingevoerde gebruikersnaam
-#             try_login(username)
-
-#     # Als de inloggegevens fout zijn, toon een waarschuwing
-#     if st.session_state.get("wrong_credentials", False):
-#         st.warning("Onjuiste inloggegevens.")
 
 
 def inlog_terminal(uni):
@@ -1913,8 +1886,9 @@ def inlog_terminal(uni):
         username = st.text_input(
             "Log in",
             label_visibility="collapsed",
-            placeholder="Jouw gebruikersnaam",
+            placeholder="Jouw wachtwoord",
             key=f"streamlit_username_{uni}",
+            type="password",
         )
 
         # Voeg een formulierknop toe voor login
@@ -1926,7 +1900,7 @@ def inlog_terminal(uni):
         # Controleer of de knop is ingedrukt
         if submit_button:
             # Roep de inlogfunctie aan met de ingevoerde gebruikersnaam
-            try_login(username)
+            try_login(username, uni)
 
     # Controleer de status van het inloggen
     if st.session_state.get("logged_in", False):
@@ -1979,6 +1953,8 @@ def render_login_page():
             </div>"""
 
             st.markdown(html_content, unsafe_allow_html=True)
+
+            st.divider()
 
             inlog_terminal("UvA")
 

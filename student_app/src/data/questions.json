@@ -1,18 +1,23 @@
 {
     "Substantiedualisme": {
-        "response": "Goed gedaan! Je hebt correct aangegeven dat Descartes het meest bekend is met substantiedualisme. Descartes stelde dat mensen bestaan uit een immateri\u00eble geest en een materieel lichaam, die onafhankelijk van elkaar kunnen bestaan.",
-        "student_knowledge": "De student weet dat substantiedualisme inhoudt dat lichaam en geest twee verschillende substanties zijn en dat Descartes hiermee wordt geassocieerd.",
+        "response": "Dat is geen probleem, laten we dit stap voor stap aanpakken! Substantiedualisme is een belangrijke term in de filosofie van de geest.",
+        "student_knowledge": "Student is niet bekend met de basisconcepten van substantiedualisme.",
         "questions": [
             {
-                "question": "Wat houdt substance dualism precies in volgens Descartes?",
-                "status": "done",
+                "question": "Wat bedoelen filosofen met substantiedualisme?",
+                "status": "asked",
                 "level": 1,
-                "score": "2/3",
+                "score": "0/1",
+                "answer": "Substantiedualisme stelt dat er twee fundamenteel verschillende soorten substanties bestaan: de mentale en de fysieke (1 punt).",
+                "student_answer": []
+            },
+            {
+                "question": "Wat houdt substance dualism precies in volgens Descartes?",
+                "status": "not asked",
+                "level": 1,
+                "score": "0/3",
                 "answer": "Volgens Descartes bestaan mensen uit een immateri\u00eble geest (1 punt) en een materieel lichaam (1 punt), die onafhankelijk van elkaar kunnen bestaan (1 punt).",
-                "student_answer": [
-                    "Dat twee substanties er zijn dus lichaam is een en geest is een",
-                    "Descartes is het meest bekend ermee"
-                ]
+                "student_answer": []
             },
             {
                 "question": "Welke argumenten ondersteunen substance dualism, zoals Leibniz' Law (Identity of Indiscernibles)?",
@@ -44,14 +49,6 @@
                 "level": 1,
                 "score": "0/3",
                 "answer": "De geest kan twijfelen (1 punt) en rationeel denken (1 punt), eigenschappen die het lichaam niet bezit (1 punt).",
-                "student_answer": []
-            },
-            {
-                "question": "Wat zijn de centrale problemen van substance dualism?",
-                "status": "not asked",
-                "level": 1,
-                "score": "0/3",
-                "answer": "Hoe kunnen een immateri\u00eble geest en een materieel lichaam met elkaar interageren? (1 punt)\nVerwarring tussen kennis over iets en het daadwerkelijk bestaan van iets (1 punt).\nParadoxen die voortkomen uit de veronderstelling dat een entiteit in verschillende gedaanten kan bestaan (1 punt).",
                 "student_answer": []
             }
         ],
