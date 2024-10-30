@@ -1,0 +1,91 @@
+{
+  "onderwerp": "Neuropsychologie en hersenontwikkeling",
+  "question": "Wat is neuropsychologie?",
+  "answer": "Neuropsychologie bestudeert de relatie tussen gedrag (1 punt), cognitie (1 punt) en hersenfuncties (1 punt)."
+  "children": [
+    {
+      "relation_with_parent": "Hersenlaesies hebben effect op de neuropsychologie en de hersenontwikkeling.",
+      "onderwerp": "Hersenlaesies",
+      "question": "Wat is een hersenlaesie?",
+      "answer": "Een hersenlaesie is een beschadigd gebied in de hersenen (1 punt), veroorzaakt door bijvoorbeeld een beroerte, tumor of letsel (1 punt)."
+    },
+    {
+      "relation_with_parent": "De Hebbiaanse veronderstelling legt een verband tussen hersenontwikkeling en leren.",
+      "onderwerp": "Hebbiaanse veronderstelling van verandering",
+      "question": "Wat is de Hebbiaanse veronderstelling van verandering?",
+      "answer": "De Hebbiaanse veronderstelling stelt dat neurale netwerken zich aanpassen (1 punt) op basis van ervaring en leren (1 punt)."
+      "children": [
+        {
+          "relation_with_parent": "De Hebbiaanse veronderstelling is gebaseerd op specifieke voorbeelden.",
+          "onderwerp": "Voorbeelden van de Hebbiaanse veronderstelling",
+          "question": "Welke voorbeelden ondersteunen de Hebbiaanse veronderstelling?",
+          "answer": "Leren en vaardigheidsontwikkeling (1 punt), herstel na hersenletsel (1 punt) en epigenetische effecten (1 punt) zoals de impact van hongersnoden op volgende generaties."
+        },
+        {
+          "relation_with_parent": "De Hebbiaanse veronderstelling is van toepassing op verschillende gebieden van de neuropsychologie.",
+          "onderwerp": "Toepassing in de neuropsychologie",
+          "question": "Hoe wordt de Hebbiaanse veronderstelling toegepast in de neuropsychologie?",
+          "answer": "Gedrag en hersenfunctie worden beïnvloed door genetica, epigenetica en ervaring, zoals dieet en levensstijl."
+        }
+      ]
+    },
+    {
+      "relation_with_parent": "Hersenplasticiteit is een belangrijk concept binnen de neuropsychologie en menselijke ontwikkeling.",
+      "onderwerp": "Menselijke ontwikkeling en hersenplasticiteit",
+      "question": "Wat is hersenplasticiteit in de context van menselijke ontwikkeling?",
+      "answer": "Hersenplasticiteit verwijst naar het vermogen van de hersenen om te veranderen door ervaring, met verschillende niveaus van flexibiliteit in verschillende levensfasen.",
+      "children": [
+        {
+          "relation_with_parent": "Prenatale en vroege hersenontwikkeling is een vroege fase van hersenplasticiteit.",
+          "onderwerp": "Prenatale en vroege hersenontwikkeling",
+          "question": "Hoe ontwikkelen de hersenen zich in de prenatale en vroege fasen?",
+          "answer": "De ontwikkeling begint met de neurale buis, waarna cellen zich differentiëren, migreren, en synapsen vormen. Er vindt pruning plaats om neurale verbindingen te verfijnen."
+        },
+        {
+          "relation_with_parent": "Piaget's stadia beschrijven de cognitieve ontwikkeling in verband met hersenplasticiteit.",
+          "onderwerp": "Jean Piaget's stadia van cognitieve ontwikkeling",
+          "question": "Wat zijn Jean Piaget's stadia van cognitieve ontwikkeling?",
+          "answer": "Piaget's theorie omvat vier stadia: de sensomotorische fase, preoperationele fase, concreet-operationele fase, en formeel-operationele fase, waarin kinderen steeds complexer leren denken.",
+          "children": [
+            {
+              "relation_with_parent": "De sensomotorische fase is het eerste stadium in Piaget's theorie.",
+              "onderwerp": "Stadium 1: Sensomotorische fase",
+              "question": "Wat gebeurt er in de sensomotorische fase?",
+              "answer": "Kinderen leren over hun omgeving via sensorische ervaringen en motorische activiteiten."
+            },
+            {
+              "relation_with_parent": "De preoperationele fase is het tweede stadium in Piaget's theorie.",
+              "onderwerp": "Stadium 2: Preoperationele fase",
+              "question": "Wat gebeurt er in de preoperationele fase?",
+              "answer": "Kinderen ontwikkelen mentale representaties en symbolisch denken, met de eerste bewuste herinneringen."
+            },
+            {
+              "relation_with_parent": "De concreet-operationele fase is het derde stadium in Piaget's theorie.",
+              "onderwerp": "Stadium 3: Concreet-operationele fase",
+              "question": "Wat gebeurt er in de concreet-operationele fase?",
+              "answer": "Kinderen ontwikkelen logisch en systematisch denken, zoals het vermogen om te classificeren en te vergelijken."
+            },
+            {
+              "relation_with_parent": "De formeel-operationele fase is het vierde stadium in Piaget's theorie.",
+              "onderwerp": "Stadium 4: Formeel-operationele fase",
+              "question": "Wat gebeurt er in de formeel-operationele fase?",
+              "answer": "Kinderen ontwikkelen abstract denken, vormen theorieën en testen hypotheses."
+            }
+          ]
+        },
+        {
+          "relation_with_parent": "De adolescentie is een cruciale fase voor veranderingen in hersenplasticiteit.",
+          "onderwerp": "Hersenontwikkeling tijdens adolescentie",
+          "question": "Welke veranderingen vinden plaats in het brein tijdens de adolescentie?",
+          "answer": "Tijdens de adolescentie neemt de synaptische pruning toe, de prefrontale cortex ontwikkelt zich verder, en de neurale plasticiteit is verhoogd."
+        },
+        {
+          "relation_with_parent": "De hersenplasticiteit neemt af, maar blijft aanwezig in het verouderende brein.",
+          "onderwerp": "Het verouderende brein",
+          "question": "Welke veranderingen vinden plaats in het brein naarmate het veroudert?",
+          "answer": "Tussen 30 en 80 jaar krimpt de grijze en witte stof, nemen dendrieten af, en daalt het hersenvolume, hoewel een gezonde levensstijl deze veranderingen kan beïnvloeden."
+        }
+      ]
+    }
+  ]
+}

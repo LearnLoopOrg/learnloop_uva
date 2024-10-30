@@ -2093,6 +2093,13 @@ def get_commandline_arguments() -> argparse.Namespace:
         default=None,
     )
 
+    parser.add_argument(
+        "--run_page",
+        help="Page you want to run when testing",
+        action="store",
+        default=None,
+    )
+
     return parser.parse_args()
 
 
@@ -2386,6 +2393,13 @@ if __name__ == "__main__":
     #     exception_handler, debug=args.debug
     # )
 
+    no_login_page = args.no_login_page
+    if no_login_page:
+        st.session_state.logged_in = True
+        st.session_state.db_name = "LearnLoop"
+        st.session_state.username = {"name": args.test_username, "role": "student"}
+        st.session_state.selected_phase = args.run_page
+
     args, st.session_state.base_path = set_correct_settings_for_deployment_type()
 
     # Turn on 'testing' to use localhost instead of learnloop.datanose.nl for authentication
@@ -2408,7 +2422,7 @@ if __name__ == "__main__":
 
     # Bypass authentication when testing so flask app doesnt have to run
     # st.session_state.skip_authentication = True
-    no_login_page = args.no_login_page
+
     # ---------------------------------------------------------
     initialise_variables()
     initialise_tools()

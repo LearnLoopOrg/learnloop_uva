@@ -1,0 +1,55 @@
+{
+  "onderwerp": "Neuropsychologie en hersenontwikkeling",
+  "question": "Wat is neuropsychologie?",
+  "answer": "Neuropsychologie bestudeert de relatie tussen gedrag (1 punt), cognitie (1 punt) en hersenfuncties (1 punt).",
+  "status": "asked",
+  "score": "3/3",
+  "children": [
+    {
+      "onderwerp": "Omgeving en hersenontwikkeling",
+      "question": "Hoe beïnvloedt de omgeving een persoon?",
+      "answer": "Omgevingsfactoren zoals cultuur, familie, en levensstijl (1 punt) hebben invloed op de hersenontwikkeling (1 punt) en daarmee gedrag en gedachtes van een persoon (1 punt).",
+      "status": "not asked",
+      "score": "0/2",
+      "children": [
+        {
+          "onderwerp": "Epigenetica",
+          "question": "Wat is epigenetica?",
+          "answer": "Epigenetica is de studie van veranderingen in genexpressie (1 punt) die niet worden veroorzaakt door veranderingen in de DNA-sequentie (1 punt), vaak als gevolg van omgevingsfactoren (1 punt).",
+          "status": "not asked",
+          "score": "0/3"
+        },
+        {
+          "onderwerp": "Voorbeeld van fenotypische plasticiteit",
+          "question": "Wat is fenotypische plasticiteit?",
+          "answer": "Fenotypische plasticiteit verwijst naar de mogelijkheid dat genetisch identieke organismen (1 punt) verschillende fysieke kenmerken ontwikkelen (1 punt) door verschillende omgevingsfactoren zoals dieet (1 punt).",
+          "status": "not asked",
+          "score": "0/3"
+        }
+      ]
+    },
+    {
+      "onderwerp": "Hebbiaanse veronderstelling van verandering",
+      "question": "Wat is de Hebbiaanse veronderstelling van verandering?",
+      "answer": "De Hebbiaanse veronderstelling stelt dat neurale netwerken zich aanpassen (1 punt) op basis van ervaring en leren (1 punt).",
+      "status": "not asked",
+      "score": "0/2",
+      "children": [
+        {
+          "onderwerp": "Voorbeelden van de Hebbiaanse veronderstelling",
+          "question": "Welke voorbeelden ondersteunen de Hebbiaanse veronderstelling?",
+          "answer": "Leren en vaardigheidsontwikkeling (1 punt), herstel na hersenletsel (1 punt) en epigenetische effecten (1 punt), zoals de invloed van voeding op de hersenen.",
+          "status": "not asked",
+          "score": "0/3"
+        },
+        {
+          "onderwerp": "Toepassing in neuropsychologie",
+          "question": "Hoe wordt de Hebbiaanse veronderstelling toegepast in de neuropsychologie?",
+          "answer": "Therapieën en revalidatie zijn afhankelijk van het vermogen van de hersenen om te veranderen (1 punt), wat mogelijk is door plasticiteit en aanpassing (1 punt).",
+          "status": "not asked",
+          "score": "0/2"
+        }
+      ]
+    }
+  ]
+}

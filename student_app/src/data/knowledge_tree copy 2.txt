@@ -1,0 +1,237 @@
+{
+  "onderwerp": "Neuropsychologie en hersenontwikkeling",
+  "question": "Wat is neuropsychologie en hoe ontwikkelen de hersenen zich?",
+  "answer": "Neuropsychologie bestudeert de relatie tussen gedrag (1 punt), cognitie (1 punt) en hersenfuncties (1 punt), met aandacht voor hersenplasticiteit (1 punt) en ontwikkeling van de hersenen door verschillende levensfasen heen (1 punt).",
+  "children": [
+    {
+      "relation_with_parent": "Hersenleases hebben effect op de neuropsychologie en de hersenontwikkeling."
+      "onderwerpen": "Hersenlaesies",
+      "question": "Wat is een hersenlaesie?",
+      "answer": "Een hersenlaesie is een beschadigd gebied in de hersenen (1 punt), veroorzaakt door bijvoorbeeld een beroerte, tumor of letsel (1 punt).",
+    },
+    {
+      "onderwerp": "Hebbiaanse veronderstelling van verandering",
+      "question": "Wat is de Hebbiaanse veronderstelling van verandering?",
+      "answer": "De Hebbiaanse veronderstelling stelt dat neurale netwerken zich aanpassen op basis van ervaring en leren, wat cruciaal is voor revalidatie en psychologische verandering.",
+      "onderliggende_concepten": [
+        {
+          "title": "Voorbeelden van de Hebbiaanse veronderstelling",
+          "abstractie_niveau": 3,
+          "question": "Welke voorbeelden ondersteunen de Hebbiaanse veronderstelling?",
+          "answer": "Leren en vaardigheidsontwikkeling, herstel na hersenletsel en epigenetische effecten zoals de impact van hongersnoden op volgende generaties.",
+          "onderliggende_concepten": []
+        },
+        {
+          "title": "Toepassing in de neuropsychologie",
+          "abstractie_niveau": 3,
+          "question": "Hoe wordt de Hebbiaanse veronderstelling toegepast in de neuropsychologie?",
+          "answer": "Gedrag en hersenfunctie worden beïnvloed door genetica, epigenetica en ervaring, zoals dieet en levensstijl.",
+          "onderliggende_concepten": []
+        }
+      ]
+    },
+    {
+      "title": "Menselijke ontwikkeling en hersenplasticiteit",
+      "abstractie_niveau": 2,
+      "question": "Wat is hersenplasticiteit in de context van menselijke ontwikkeling?",
+      "answer": "Hersenplasticiteit verwijst naar het vermogen van de hersenen om te veranderen door ervaring, met verschillende niveaus van flexibiliteit in verschillende levensfasen.",
+      "onderliggende_concepten": [
+        {
+          "title": "Prenatale en vroege hersenontwikkeling",
+          "abstractie_niveau": 3,
+          "question": "Hoe ontwikkelen de hersenen zich in de prenatale en vroege fasen?",
+          "answer": "De ontwikkeling begint met de neurale buis, waarna cellen zich differentiëren, migreren, en synapsen vormen. Er vindt pruning plaats om neurale verbindingen te verfijnen.",
+          "onderliggende_concepten": []
+        },
+        {
+          "title": "Jean Piaget's stadia van cognitieve ontwikkeling",
+          "abstractie_niveau": 3,
+          "question": "Wat zijn Jean Piaget's stadia van cognitieve ontwikkeling?",
+          "answer": "Piaget's theorie omvat vier stadia: de sensomotorische fase, preoperationele fase, concreet-operationele fase, en formeel-operationele fase, waarin kinderen steeds complexer leren denken.",
+          "onderliggende_concepten": [
+            {
+              "title": "Stadium 1: Sensomotorische fase",
+              "abstractie_niveau": 4,
+              "question": "Wat gebeurt er in de sensomotorische fase?",
+              "answer": "Kinderen leren over hun omgeving via sensorische ervaringen en motorische activiteiten.",
+              "onderliggende_concepten": []
+            },
+            {
+              "title": "Stadium 2: Preoperationele fase",
+              "abstractie_niveau": 4,
+              "question": "Wat gebeurt er in de preoperationele fase?",
+              "answer": "Kinderen ontwikkelen mentale representaties en symbolisch denken, met de eerste bewuste herinneringen.",
+              "onderliggende_concepten": []
+            },
+            {
+              "title": "Stadium 3: Concreet-operationele fase",
+              "abstractie_niveau": 4,
+              "question": "Wat gebeurt er in de concreet-operationele fase?",
+              "answer": "Kinderen ontwikkelen logisch en systematisch denken, zoals het vermogen om te classificeren en te vergelijken.",
+              "onderliggende_concepten": []
+            },
+            {
+              "title": "Stadium 4: Formeel-operationele fase",
+              "abstractie_niveau": 4,
+              "question": "Wat gebeurt er in de formeel-operationele fase?",
+              "answer": "Kinderen ontwikkelen abstract denken, vormen theorieën en testen hypotheses.",
+              "onderliggende_concepten": []
+            }
+          ]
+        },
+        {
+          "title": "Hersenontwikkeling tijdens adolescentie",
+          "abstractie_niveau": 3,
+          "question": "Welke veranderingen vinden plaats in het brein tijdens de adolescentie?",
+          "answer": "Tijdens de adolescentie neemt de synaptische pruning toe, de prefrontale cortex ontwikkelt zich verder, en de neurale plasticiteit is verhoogd.",
+          "onderliggende_concepten": []
+        },
+        {
+          "title": "Het verouderende brein",
+          "abstractie_niveau": 3,
+          "question": "Welke veranderingen vinden plaats in het brein naarmate het veroudert?",
+          "answer": "Tussen 30 en 80 jaar krimpt de grijze en witte stof, nemen dendrieten af, en daalt het hersenvolume, hoewel een gezonde levensstijl deze veranderingen kan beïnvloeden.",
+          "onderliggende_concepten": []
+        }
+      ]
+    },
+    {
+      "title": "Hebbiaanse principes van ervaring-gedreven plasticiteit",
+      "abstractie_niveau": 2,
+      "question": "Wat zijn de Hebbiaanse principes van ervaring-gedreven plasticiteit?",
+      "answer": "Deze principes beschrijven hoe ervaringen neurale veranderingen veroorzaken, waarbij plasticiteit afhankelijk is van leeftijd, tijd, en relevantie van de ervaring.",
+      "onderliggende_concepten": [
+        {
+          "title": "Typen plasticiteit",
+          "abstractie_niveau": 3,
+          "question": "Wat zijn de typen plasticiteit?",
+          "answer": "Ervaring-expectante plasticiteit verwijst naar veranderingen door verwachte ervaringen, zoals taalverwerving, terwijl ervaring-afhankelijke plasticiteit door unieke ervaringen wordt veroorzaakt.",
+          "onderliggende_concepten": []
+        },
+        {
+          "title": "Maladaptieve plasticiteit",
+          "abstractie_niveau": 3,
+          "question": "Wat is maladaptieve plasticiteit?",
+          "answer": "Maladaptieve plasticiteit verwijst naar neurale veranderingen die negatieve effecten kunnen hebben, zoals slechte gewoontes of psychologische problemen.",
+          "onderliggende_concepten": []
+        }
+      ]
+    },
+    {
+      "title": "Omgevingsinvloeden op hersenontwikkeling",
+      "abstractie_niveau": 2,
+      "question": "Hoe beïnvloeden omgevingsfactoren de hersenontwikkeling?",
+      "answer": "Negatieve omgevingen zoals stress kunnen de hersenontwikkeling nadelig beïnvloeden, terwijl complexe omgevingen en goede voeding positieve effecten kunnen hebben.",
+      "onderliggende_concepten": [
+        {
+          "title": "Negatieve omgevingen",
+          "abstractie_niveau": 3,
+          "question": "Hoe beïnvloedt stress de hersenontwikkeling?",
+          "answer": "Chronische stress kan leiden tot structurele en functionele veranderingen in de hersenen, met gevolgen voor leren en gedrag.",
+          "onderliggende_concepten": []
+        },
+        {
+          "title": "Complexe omgevingen",
+          "abstractie_niveau": 3,
+          "question": "Hoe beïnvloeden complexe omgevingen de hersenontwikkeling?",
+          "answer": "Stimulatie en verrijkte omgevingen bevorderen neurale groei en synaptische verbindingen.",
+          "onderliggende_concepten": []
+        },
+        {
+          "title": "Dieet en voeding",
+          "abstractie_niveau": 3,
+          "question": "Hoe beïnvloedt voeding de hersenontwikkeling?",
+          "answer": "Goede voeding is cruciaal voor optimale hersenontwikkeling, terwijl tekorten aan voedingsstoffen kunnen leiden tot ontwikkelingsachterstanden.",
+          "onderliggende_concepten": []
+        },
+        {
+          "title": "Sociaal-economische status (SES)",
+          "abstractie_niveau": 3,
+          "question": "Hoe beïnvloedt sociaal-economische status de hersenontwikkeling?",
+          "answer": "Lagere SES is geassocieerd met verhoogde stress en minder stimulerende omgevingen, wat de hersenontwikkeling negatief kan beïnvloeden.",
+          "onderliggende_concepten": []
+        }
+      ]
+    },
+    {
+      "title": "Individuele verschillen in cerebrale organisatie",
+      "abstractie_niveau": 2,
+      "question": "Welke factoren leiden tot individuele verschillen in hersenorganisatie?",
+      "answer": "Factoren zoals ervaring, handvoorkeur, geslacht, en cultuur beïnvloeden de structuur en functie van de hersenen, met voorbeelden zoals Londense taxichauffeurs die een grotere hippocampus ontwikkelen.",
+      "onderliggende_concepten": [
+        {
+          "title": "Voorbeelden van ervaringsinvloeden",
+          "abstractie_niveau": 3,
+          "question": "Welke voorbeelden illustreren het effect van ervaring op hersenontwikkeling?",
+          "answer": "Kittens blootgesteld aan enkel verticale lijnen en Londense taxichauffeurs zonder GPS laten zien hoe ervaring specifieke hersengebieden kan veranderen.",
+          "onderliggende_concepten": []
+        },
+        {
+          "title": "Andere individuele verschillen",
+          "abstractie_niveau": 3,
+          "question": "Welke andere factoren beïnvloeden de hersenorganisatie?",
+          "answer": "Handvoorkeur, sekseverschillen, en culturele achtergrond kunnen leiden tot verschillen in hersenstructuur en verwerking.",
+          "onderliggende_concepten": []
+        }
+      ]
+    },
+    {
+      "title": "Plasticiteit en hersenletsel",
+      "abstractie_niveau": 2,
+      "question": "Hoe werkt plasticiteit in het geval van hersenletsel?",
+      "answer": "Na hersenletsel kan plasticiteit helpen bij het herstel, afhankelijk van factoren zoals leeftijd en eerdere ervaringen, waarbij kinderen vaak betere herstelresultaten laten zien dan volwassenen.",
+      "onderliggende_concepten": [
+        {
+          "title": "Plasticiteit bij kinderen en volwassenen",
+          "abstractie_niveau": 3,
+          "question": "Hoe verschilt hersenplasticiteit bij kinderen en volwassenen na een hersenletsel?",
+          "answer": "Bij kinderen onder 5 jaar is de hersenplasticiteit hoog, wat herstel bevordert, terwijl plasticiteit bij volwassenen beperkter is.",
+          "onderliggende_concepten": []
+        },
+        {
+          "title": "Voorbeelden van aandoeningen",
+          "abstractie_niveau": 3,
+          "question": "Welke aandoeningen kunnen optreden na hersenletsel?",
+          "answer": "Voorbeelden zijn agnosie, het onvermogen om objecten te herkennen, en afasie, een taalstoornis die herstelbaar is met logopedie.",
+          "onderliggende_concepten": []
+        },
+        {
+          "title": "Beeldvorming en diagnose",
+          "abstractie_niveau": 3,
+          "question": "Hoe wordt hersenletsel gediagnosticeerd met beeldvormingstechnieken?",
+          "answer": "Structurele beeldvorming zoals CT-scans en functionele beeldvorming zoals fMRI worden gebruikt om hersenafwijkingen en activatie te detecteren.",
+          "onderliggende_concepten": []
+        }
+      ]
+    },
+    {
+      "title": "Beeldvorming en diagnose van hersenletsel",
+      "abstractie_niveau": 2,
+      "question": "Welke beeldvormingstechnieken worden gebruikt voor de diagnose van hersenletsel?",
+      "answer": "CT-scans en MRI's worden gebruikt om structurele afwijkingen te identificeren, terwijl fMRI en NIRS hersenactiviteit kunnen meten.",
+      "onderliggende_concepten": [
+        {
+          "title": "Structurele beeldvorming",
+          "abstractie_niveau": 3,
+          "question": "Wat is structurele beeldvorming?",
+          "answer": "Structurele beeldvorming toont de anatomie van de hersenen en wordt gebruikt voor het detecteren van fysieke afwijkingen zoals tumoren.",
+          "onderliggende_concepten": []
+        },
+        {
+          "title": "Functionele beeldvorming",
+          "abstractie_niveau": 3,
+          "question": "Wat is functionele beeldvorming?",
+          "answer": "Functionele beeldvorming zoals fMRI en NIRS toont hersenactiviteit door veranderingen in bloedstroom en oxygenatie te meten.",
+          "onderliggende_concepten": []
+        },
+        {
+          "title": "De hemodynamische respons",
+          "abstractie_niveau": 3,
+          "question": "Wat is de hemodynamische respons?",
+          "answer": "De hemodynamische respons verwijst naar veranderingen in bloedstroom naar actieve hersengebieden en is de basis voor technieken zoals fMRI.",
+          "onderliggende_concepten": []
+        }
+      ]
+    }
+  ]
+}
