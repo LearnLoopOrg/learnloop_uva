@@ -89,9 +89,9 @@ class LectureOverview:
                         st.button(
                             "📝 Leerstof oefenen",
                             on_click=self.update_module_and_phase,
-                            args=(lecture_title, "learning"),
+                            args=(lecture_title, "topics"),
                             use_container_width=True,
-                            key=lecture_title + "_learning",
+                            key=lecture_title + "_topics",
                         )
                         st.button(
                             "📚 Overzicht theorie",
