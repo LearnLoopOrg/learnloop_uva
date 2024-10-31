@@ -2140,6 +2140,9 @@ def set_correct_settings_for_deployment_type():
 
 
 def initialise_variables():
+    if "generated_username" not in st.session_state:
+        st.session_state.generated_username = None
+
     if "via_qr_code" not in st.session_state:
         st.session_state.via_qr_code = False
 
@@ -2398,9 +2401,9 @@ def register_qr_code():
         st.session_state.via_qr_code = True
 
         if not st.session_state.logged_in:
-            username = get_available_username()
-            if username:
-                show_username_page(username)
+            if st.session_state.generated_username is None:
+                st.session_state.generated_username = get_available_username()
+            show_username_page(st.session_state.generated_username)
         else:
             st.write(f"Je bent al ingelogd als {st.session_state['username']['name']}.")
     else:
