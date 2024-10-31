@@ -2345,6 +2345,7 @@ def turn_qr_code_into_username(username):
     st.success(f"Je bent ingelogd als {username}!")
     # Eventueel verder redirecten of andere actie ondernemen.
     st.session_state.turned_qr_code_into_username = True
+    st.query_params.clear()  # Reset query parameters na uitlezen
     print("QR code omgezet in gebruikersnaam.")
 
 
@@ -2396,7 +2397,6 @@ def register_qr_code():
     # Controleer of de queryparameter 'QR_code' aanwezig is
     if qr_code_in_query_param():
         st.session_state.via_qr_code = True
-        st.query_params.clear()  # Reset query parameters na uitlezen
 
         if not st.session_state.logged_in:
             username = get_available_username()
