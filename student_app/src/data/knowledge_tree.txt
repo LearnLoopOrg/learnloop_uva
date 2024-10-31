@@ -1,12 +1,9 @@
-Het lijkt erop dat er geen inhoudelijke antwoorden van de student zijn ontvangen in de gespreksgeschiedenis. Er is alleen een informeel bericht van de student ('Chill') dat geen relevantie heeft voor de evaluatie van de kennisboomvragen. Daarom kunnen er geen updates of scores worden toegekend. Hier is de ongewijzigde kennisboom:
-
-```json
 {
   "onderwerp": "Neuropsychologie en hersenontwikkeling",
-  "question": "Wat is neuropsychologie?",
+  "question": "Wat houdt neuropsychologie?",
   "answer": "Neuropsychologie bestudeert de relatie tussen gedrag (1 punt), cognitie (1 punt) en hersenfuncties (1 punt).",
   "status": "asked",
-  "score": "0/3",
+  "score": "3/3",
   "children": [
     {
       "onderwerp": "Omgeving en hersenontwikkeling",
@@ -33,15 +30,15 @@ Het lijkt erop dat er geen inhoudelijke antwoorden van de student zijn ontvangen
     },
     {
       "onderwerp": "Hebbiaanse veronderstelling van verandering",
-      "question": "Wat is de Hebbiaanse veronderstelling van verandering?",
-      "answer": "De Hebbiaanse veronderstelling stelt dat neurale netwerken zich aanpassen (1 punt) op basis van ervaring en leren (1 punt).",
+      "question": "Hoe beschrijft de Hebbiaanse theorie het leren?",
+      "answer": "De Hebbiaanse theorie beschrijft leren als het proces waarbij synaptische verbindingen versterkt worden (1 punt) wanneer neuronen herhaaldelijk tegelijkertijd worden geactiveerd (1 punt).",
       "status": "asked",
       "score": "0/2",
       "children": [
         {
-          "onderwerp": "Voorbeelden van de Hebbiaanse veronderstelling",
-          "question": "Welke voorbeelden ondersteunen de Hebbiaanse veronderstelling?",
-          "answer": "Leren en vaardigheidsontwikkeling (1 punt), herstel na hersenletsel (1 punt) en epigenetische effecten (1 punt), zoals de invloed van voeding op de hersenen.",
+          "onderwerp": "Praktische toepassingen van de Hebbiaanse veronderstelling",
+          "question": "Wat toont de praktische toepassing van de Hebbiaanse veronderstelling?",
+          "answer": "De praktische toepassing van de Hebbiaanse veronderstelling wordt geïllustreerd in neuroplasticiteit (1 punt) zoals motorisch leren (1 punt) en herstel na een beroerte (1 punt).",
           "status": "not asked",
           "score": "0/3"
         },
@@ -56,4 +53,3 @@ Het lijkt erop dat er geen inhoudelijke antwoorden van de student zijn ontvangen
     }
   ]
 }
-```
