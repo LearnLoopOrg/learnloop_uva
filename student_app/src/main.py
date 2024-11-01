@@ -1913,7 +1913,7 @@ def render_login_page():
     """This is the first page the user sees when visiting the website and
     prompts the user to login via SURFconext."""
     if st.session_state.deployment_type == "uva_servers":
-        columns = st.columns([1, 0.9, 1])
+        columns = st.columns([0.5, 1.5, 0.5])
         with columns[1]:
             ll_logo_base64 = convert_image_base64(
                 f"{st.session_state.base_path}data/content/images/logo.png"
