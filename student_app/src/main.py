@@ -1907,7 +1907,6 @@ def inlog_terminal(uni):
         st.rerun()
     elif st.session_state.get("wrong_credentials", False):
         st.warning("Onjuiste inloggegevens.")
-        st.rerun()
 
 
 def render_login_page():
@@ -2141,6 +2140,9 @@ def set_correct_settings_for_deployment_type():
 
 
 def initialise_variables():
+    if "generated_username" not in st.session_state:
+        st.session_state.generated_username = None
+
     if "via_qr_code" not in st.session_state:
         st.session_state.via_qr_code = False
 
@@ -2345,63 +2347,63 @@ def turn_qr_code_into_username(username):
     st.success(f"Je bent ingelogd als {username}!")
     # Eventueel verder redirecten of andere actie ondernemen.
     st.session_state.turned_qr_code_into_username = True
+    st.query_params.clear()  # Reset query parameters na uitlezen
     print("QR code omgezet in gebruikersnaam.")
 
 
 def show_username_page(username):
-    # cols = st.columns([1, 3, 1])
+    cols = st.columns([1, 7, 1])
 
-    # with cols[1]:
-    st.markdown(
-        "<h5 style='text-align: center; color: #00000;'>Jouw gebruikersnaam:</h5>",
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        "<p style='color: #00000; text-align: center'>⚠️ Sla deze goed op, je hebt hem later nodig om weer in te kunnen loggen. ⚠️</p>",
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        f"<h1 style='text-align: center; color: #2196F3;'>{username}</h1>",
-        unsafe_allow_html=True,
-    )
-    st.write("\n\n")
-    st.write("\n\n")
+    with cols[1]:
+        st.markdown(
+            "<h5 style='text-align: center; color: #00000;'>Jouw gebruikersnaam:</h5>",
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            "<p style='color: #00000; text-align: center'>⚠️ Sla deze goed op, je hebt hem later nodig om weer in te kunnen loggen. ⚠️</p>",
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            f"<h1 style='text-align: center; color: #2196F3;'>{username}</h1>",
+            unsafe_allow_html=True,
+        )
+        st.write("\n\n")
+        st.write("\n\n")
 
-    checkbox = st.checkbox(
-        "_Ik bevestig dat ik de gebruikersvoorwaarden heb gelezen en dat ik me ervan bewust ben dat LearnLoop **onafhankelijk** opereert van de universiteit, die daarom **niet** verantwoordelijk is voor mogelijke gevolgen van het gebruik van deze tool._"
-    )
-
-    # Button verschijnt alleen als checkbox is aangevinkt
-    if checkbox:
-        st.button(
-            "**Ik ga akkoord en wil doorgaan**",
-            on_click=turn_qr_code_into_username,
-            args=(username,),
-            use_container_width=True,
+        checkbox = st.checkbox(
+            "_Ik bevestig dat ik de gebruikersvoorwaarden heb gelezen en dat ik me ervan bewust ben dat LearnLoop **onafhankelijk** opereert van de universiteit, die daarom **niet** verantwoordelijk is voor mogelijke gevolgen van het gebruik van deze tool._"
         )
 
-    with st.expander("Gebruikersvoorwaarden", expanded=False):
-        st.write("""
-**Let op: Onafhankelijk platform buiten de Universiteit**
+        # Button verschijnt alleen als checkbox is aangevinkt
+        if checkbox:
+            st.button(
+                "**Ik ga akkoord en wil doorgaan**",
+                on_click=turn_qr_code_into_username,
+                args=(username,),
+                use_container_width=True,
+            )
 
-Welkom bij LearnLoop! Voor je verdergaat, is het belangrijk om te weten dat deze versie van LearnLoop, de *Easy-use versie*, losstaat van de universiteit. Dit platform is bedoeld voor gebruiksvriendelijke testpilots en opereert onafhankelijk van de onderwijsinstelling.
+        with st.expander("Gebruikersvoorwaarden", expanded=False):
+            st.write("""
+    **Let op: Onafhankelijk platform buiten de Universiteit**
 
-Deze versie van LearnLoop verzamelt uitsluitend anonieme gegevens voor testdoeleinden, zoals willekeurig gegenereerde gebruikersnamen (bijv. "blueberry21"), inlogfrequenties, voortgangsdata en antwoorden van gebruikers. Alle gegevens zijn volledig geanonimiseerd en niet te herleiden naar specifieke individuen. Na afloop van de testperiode worden alle gegevens verwijderd.
+    Welkom bij LearnLoop! Voor je verdergaat, is het belangrijk om te weten dat deze versie van LearnLoop, de *Easy-use versie*, losstaat van de universiteit. Dit platform is bedoeld voor gebruiksvriendelijke testpilots en opereert onafhankelijk van de onderwijsinstelling.
 
-**Door een account aan te maken, bevestig je dat je begrijpt en akkoord gaat dat LearnLoop in deze versie geen officiële samenwerking met de universiteit heeft. De universiteit is daarom niet verantwoordelijk of aansprakelijk voor het gebruik van deze versie.**
-""")
+    Deze versie van LearnLoop verzamelt uitsluitend anonieme gegevens voor testdoeleinden, zoals willekeurig gegenereerde gebruikersnamen (bijv. "blueberry21"), inlogfrequenties, voortgangsdata en antwoorden van gebruikers. Alle gegevens zijn volledig geanonimiseerd en niet te herleiden naar specifieke individuen. Na afloop van de testperiode worden alle gegevens verwijderd.
+
+    **Door een account aan te maken, bevestig je dat je begrijpt en akkoord gaat dat LearnLoop in deze versie geen officiële samenwerking met de universiteit heeft. De universiteit is daarom niet verantwoordelijk of aansprakelijk voor het gebruik van deze versie.**
+    """)
 
 
 def register_qr_code():
     # Controleer of de queryparameter 'QR_code' aanwezig is
     if qr_code_in_query_param():
         st.session_state.via_qr_code = True
-        st.query_params.clear()  # Reset query parameters na uitlezen
 
         if not st.session_state.logged_in:
-            username = get_available_username()
-            if username:
-                show_username_page(username)
+            if st.session_state.generated_username is None:
+                st.session_state.generated_username = get_available_username()
+            show_username_page(st.session_state.generated_username)
         else:
             st.write(f"Je bent al ingelogd als {st.session_state['username']['name']}.")
     else:
