@@ -117,7 +117,7 @@ class SocraticDialogue:
 
         if "messages" not in st.session_state:
             st.session_state.messages = []
-            content = "Zullen we beginnen?"
+            content = "Hee Mare! Zullen we beginnen?"
             self.add_to_assistant_responses(
                 content,
             )
@@ -592,6 +592,27 @@ class SocraticDialogue:
 
         return json_response, text_response
 
+    def reset_knowledge_tree_scores_and_status(self):
+        data = json.loads(self.read_data_file("knowledge_tree.json"))
+        for item in data:
+            for subtopic in item.get("subtopics", []):
+                # Zet de status naar 'not asked'
+                subtopic["status"] = "not asked"
+                # Pas de score aan zodat het eerste cijfer '0' is
+                score = subtopic.get("score", "0/0")
+                if "/" in score:
+                    numerator, denominator = score.split("/")
+                    subtopic["score"] = f"0/{denominator}"
+                else:
+                    # Als de score geen '/' bevat, zet deze op '0/1'
+                    subtopic["score"] = "0/1"
+
+        self.write_data_file(
+            "knowledge_tree.json", json.dumps(data, indent=4, ensure_ascii=False)
+        )
+
+        return data
+
     def render_sidebar(self):
         with st.sidebar:
             # st.subheader("Settings")
@@ -646,11 +667,17 @@ class SocraticDialogue:
                         question_color = "black"
 
                     # Pas de vraagopmaak aan met een kleinere tekstgrootte en grijze kleur bij None
-                    question = subtopic["question"]
+                    question = subtopic["topic"]
                     st.markdown(
                         f'<p style="font-size:14px; color:{question_color}; margin-left: 0.2em;">{status_icon} {question}</p>',
                         unsafe_allow_html=True,
                     )
+
+            st.button(
+                "Reset progress",
+                on_click=self.reset_knowledge_tree_scores_and_status,
+                use_container_width=True,
+            )
 
     def read_data_file(self, file_name):
         with open(f"{self.base_path}data/{file_name}", "r", encoding="utf-8") as file:
@@ -702,96 +729,124 @@ class SocraticDialogue:
         knowledge_tree = self.read_data_file("knowledge_tree.json")
 
         prompt = f"""
-Gegeven is een socratische dialoog met een student waarin de student antwoord geeft op vragen van de docent. Jouw doel is om de antwoorden van de student te evalueren aan de hand van het antwoordmodel in de gegeven JSON-structuur.
+Gegeven is een socratische dialoog met een student waarin de student antwoord geeft op vragen van de docent. Jouw doel is om elk antwoord van de student uit de volledige conversatie afzonderlijk te evalueren en te vergelijken met de nog openstaande vragen in de gegeven `knowledge_tree`-JSON-structuur, zodat de student zoveel mogelijk terecht verdiende punten krijgt voor inhoudelijke antwoorden.
 
-Volg de onderstaande stappen zorgvuldig:
+Volg deze stappen zorgvuldig:
 
-1. **Filter informele of irrelevante conversatieregels** die geen directe betrekking hebben op inhoudelijke vragen en antwoorden. Voorbeelden van dergelijke regels zijn introducties of reacties zoals "Zullen we beginnen?", "ja", "oké", en soortgelijke korte reacties zonder inhoudelijke waarde. Alleen inhoudelijke vragen en antwoorden moeten worden geëvalueerd.
-   
-2. **Evalueer alleen antwoorden die duidelijk overeenkomen** met vragen uit de `knowledge_tree`. Gebruik semantische vergelijkingen om vast te stellen of een vraag in de conversatie voldoende overeenkomt met een vraag in de `knowledge_tree`. Bijvoorbeeld, als de vraag in het `knowledge_tree` luidt "Waar houdt neuropsychologisch onderzoek zich mee bezig?", dan moet een vraag zoals "Kun je uitleggen waar neuropsychologisch onderzoek zich mee bezighoudt?" als overeenkomend worden beschouwd.
+1. **Vorm een verzameling van alle inhoudelijke antwoorden van de student** en filter conversatieregels die geen directe inhoudelijke waarde hebben. Voorbeelden van irrelevante regels zijn korte reacties zoals "ja", "oké", of introducties zoals "Zullen we beginnen?". Enkel inhoudelijke antwoorden worden geëvalueerd.
 
-3. **Evalueer de antwoorden van de student** door ze te vergelijken met het antwoordmodel in de JSON, alleen voor vragen die een duidelijke match hebben met de `knowledge_tree`.
+2. **Vergelijk elk afzonderlijk antwoord met alle nog niet beantwoorde vragen in de `knowledge_tree`** om zoveel mogelijk verdiende punten toe te kennen. Maak gebruik van semantische vergelijkingen om te bepalen of een vraag in de conversatie voldoende overeenkomt met een vraag in de `knowledge_tree`. Bijvoorbeeld, als een vraag in de `knowledge_tree` luidt "Waar houdt neuropsychologisch onderzoek zich mee bezig?", dan moet een vraag zoals "Kun je uitleggen waar neuropsychologisch onderzoek zich mee bezighoudt?" worden beschouwd als overeenkomend.
 
-4. **Bepaal per relevante subtopic** hoeveel punten de student heeft verdiend. De punten zijn aangegeven als "(1 punt)" in het antwoordmodel. De student hoeft geen exacte bewoording te gebruiken; interpreteer de intentie en beoordeel of de verwoording vergelijkbaar genoeg is om punten toe te kennen.
+3. **Bepaal per matchend antwoord het aantal punten** dat de student heeft verdiend. De student hoeft geen exacte bewoording te gebruiken; beoordeel of de intentie en het taalgebruik vergelijkbaar genoeg zijn om punten toe te kennen. Vergelijk elk antwoord met het bijbehorende antwoordmodel en tel de verdiende punten voor dat specifieke subtopic.
 
-5. **Bereken de nieuwe score** voor elk subtopic door het aantal behaalde punten te noteren, bijvoorbeeld "2/3".
+4. **Verwerk de nieuwe score en status voor elk subtopic** op basis van het totaal aantal verdiende punten:
+   - **Score**: Noteer de behaalde punten zoals aangegeven in het antwoordmodel, bijvoorbeeld "2/3".
+   - **Status**: 
+     - Indien alle punten zijn behaald voor een subtopic, markeer de status als `"done"`.
+     - Indien niet alle punten zijn behaald maar de vraag wel is behandeld, markeer de status als `"asked"`.
+     - Vragen die niet zijn behandeld of waarvoor geen relevante punten zijn behaald, hoeven niet te worden vermeld.
 
-6. **Bepaal de nieuwe status** voor elk subtopic:
-   - Als de student alle punten heeft behaald, is de status "done".
-   - Als de vraag is gesteld maar nog niet alle punten zijn behaald, is de status "asked".
-   - Vragen die niet zijn gesteld of niet relevant zijn voor de gegeven antwoorden hoef je niet te vermelden.
-
-7. Als de student geen nieuwe kennis heeft toegevoegd of de antwoorden niet relevant zijn voor de gegeven vragen, laat de scores en statussen dan ongewijzigd en reageer met lege curly brackets '{{}}'.
+5. **Geef alleen geüpdatete subtopics weer** in de output. Als de student geen nieuwe kennis heeft toegevoegd of geen relevante punten heeft verdiend, retourneer een lege JSON-string '{{}}'.
 
 ### Input
-- **JSON-structuur**: {knowledge_tree}
-- **Gesprekgeschiedenis met student**: {conversation}
+- **JSON-structuur**: `{knowledge_tree}`
+- **Gesprekgeschiedenis met student**: `{conversation}`
 
 ### Output
-Geef een JSON-array terug met objecten die de volgende velden bevatten:
+Retourneer een JSON-array met objecten die de volgende velden bevatten:
 - `"topic"`: de hoofdcategorie.
 - `"subtopic"`: de subcategorie.
-- `"score"`: de nieuwe score, bijvoorbeeld "2/3".
-- `"status"`: de nieuwe status, "asked" of "done".
+- `"score"`: de nieuwe score, bijvoorbeeld `"2/3"`.
+- `"status"`: de nieuwe status, `"asked"` of `"done"`.
 
-**Let op:** Geef alleen de geüpdatete subtopics terug in de array, zonder de hoofdtopics.
+**Let op:** Zorg ervoor dat de output een geldige JSON is, of retourneer `{{}}` als er geen relevante updates zijn.
 
 Voorbeeldoutput 1:
-{{
-"topic": "Neuropsychologie",
-"subtopic": "Omgeving en hersenontwikkeling",
-"score": "2/3",
-"status": "asked"
-}},
-{{
-"topic": "Hebbiaanse veronderstelling van verandering",
-"subtopic": "Toepassing in neuropsychologie",
-"score": "2/2",
-"status": "done"
-}}
+```json
+[
+    {{
+        "topic": "Neuropsychologie",
+        "subtopic": "Omgeving en hersenontwikkeling",
+        "score": "2/3",
+        "status": "asked"
+    }},
+    {{
+        "topic": "Hebbiaanse veronderstelling van verandering",
+        "subtopic": "Toepassing in neuropsychologie",
+        "score": "2/2",
+        "status": "done"
+    }}
+]
+```
 
-Voorbeeldoutput 2: De student heeft geen extra punten verdient.
+Voorbeeldoutput 2: De student heeft geen extra punten verdiend.
+```json
 {{}}
+```
 
-Zorg ervoor dat de output een geldige JSON is of reageer met {{}} als er geen relevante updates zijn.
+Voorbeelden voor hoe het NIET, ik herhaal, niet moet!
+Voorbeeld verkeerde output 1:
+Geeft nooit, maar dan ook nooit de hoofdcategorie boven de subcategorie terug in de output. Dus bijvoorbeeld nooit deze JSON-structuur, want die kan ik niet parsen:
+{{'The Hebbian Assumption of Change': [{{'subtopic': 'Kennis identificeren', 'score': '1/1', 'status': 'done'}}]}}
+Voorbeeld verkeerde output 2:
+Geef nooit, maar dan ook nooit de topic boven de subtopic terug in de output. Dus bijvoorbeeld nooit deze JSON-structuur, want die kan ik niet parsen:
+{{'topic': 'Brain Lesions', 'subtopics': [{{'topic': 'Definition and Causes', 'score': '3/4', 'status': 'asked'}}]}}
+
+Geef altijd de subtopic terug, zoals in de voorbeelden hierboven.
+
+## Jouw antwoord wat ofwel een JSON-object met de nieuwe scores en statussen, ofwel een lege JSON-string moet zijn. Geef nooit de conversatie zelf terug.
 """
-        response = self.openai_client.chat.completions.create(
-            model=self.openai_model,
-            messages=[
-                {"role": "system", "content": prompt},
-            ],
-            response_format={"type": "json_object"},
-        )
-        updates = json.loads(response.choices[0].message.content)
-        print(f"Evaluation output: {updates}")
+        max_retries = 3
+        retry_count = 0
+        while retry_count < max_retries:
+            try:
+                response = self.openai_client.chat.completions.create(
+                    model=self.openai_model,
+                    messages=[
+                        {"role": "system", "content": prompt},
+                    ],
+                    response_format={"type": "json_object"},
+                )
+                updates = json.loads(response.choices[0].message.content)
+                print(f"Evaluation output: {updates}")
 
-        if updates != {}:
-            print("Updating knowledge tree...")
-            # Parse the original knowledge tree and the LLM output
-            knowledge_tree_data = json.loads(knowledge_tree)
-            if isinstance(updates, dict):
-                updates = [updates]
+                if updates != {}:
+                    print("Updating knowledge tree...")
+                    # Parse the original knowledge tree and the LLM output
+                    knowledge_tree_data = json.loads(knowledge_tree)
+                    if isinstance(updates, dict):
+                        updates = [updates]
 
-            # Update the knowledge_tree_data with the new scores and statuses
-            for update in updates:
-                topic = update["topic"]
-                subtopic = update["subtopic"]
-                new_score = update["score"]
-                new_status = update["status"]
-                # Find the topic and subtopic in the knowledge_tree_data
-                for topic_data in knowledge_tree_data:
-                    if topic_data["topic"] == topic:
-                        for subtopic_data in topic_data["subtopics"]:
-                            if subtopic_data["topic"] == subtopic:
-                                subtopic_data["score"] = new_score
-                                subtopic_data["status"] = new_status
-                                break
+                    # Update the knowledge_tree_data with the new scores and statuses
+                    for update in updates:
+                        topic = update["topic"]
+                        subtopic = update["subtopic"]
+                        new_score = update["score"]
+                        new_status = update["status"]
+                        # Find the topic and subtopic in the knowledge_tree_data
+                        for topic_data in knowledge_tree_data:
+                            if topic_data["topic"] == topic:
+                                for subtopic_data in topic_data["subtopics"]:
+                                    if subtopic_data["topic"] == subtopic:
+                                        subtopic_data["score"] = new_score
+                                        subtopic_data["status"] = new_status
+                                        break
 
-            # Save the updated knowledge_tree_data
-            with open(
-                f"{self.base_path}data/knowledge_tree.json", "w", encoding="utf-8"
-            ) as f:
-                json.dump(knowledge_tree_data, f, ensure_ascii=False, indent=2)
+                    # Save the updated knowledge_tree_data
+                    with open(
+                        f"{self.base_path}data/knowledge_tree.json",
+                        "w",
+                        encoding="utf-8",
+                    ) as f:
+                        json.dump(knowledge_tree_data, f, ensure_ascii=False, indent=2)
+                break  # If everything went well, exit the loop
+            except (json.JSONDecodeError, KeyError, IndexError) as e:
+                print(f"Error occurred: {e}")
+                print("Retrying LLM call...")
+                retry_count += 1
+                if retry_count == max_retries:
+                    print("Max retries reached. Exiting.")
+                    raise  # Optionally, handle the exception as needed
 
     def generate_teacher_response(self):
         conversation = st.session_state.messages
@@ -809,8 +864,9 @@ Je bent een docent die de kennis van een student socratisch identificeert en doo
 ## Richtlijnen:
 - Begin altijd bij de hoogste abstractieniveau dat nog niet de status 'done' heeft en werk langzaam naar beneden.
 - Als de student een antwoord volledig goed beantwoord heeft, dan moet je naast je normale reactie met een groen vinkje (✅) aangeven dat het antwoord goed is.
+- Als de student een antwoord niet volledig goed beantwoord heeft, dan moet je de student stimuleren via een slimme socratische vraag de student aan het denken zetten en de student helpen om het antwoord te vinden. Als de student het antwoord dan niet weet, dan moet je uitleg geven over het antwoord en de student vragen om het nogmaals in eigen woorden uit te leggen.
 - Als de student 1/2, 2/3, 3/4 of 3/5 van de punten verdiend heeft, dan moet je de student aanvullen met wat er mist en door gaan naar de volgende vraag.
-- Als een student meermaals onvolledig antwoord heeft gegeven, moet je als alle relevante informatie gegeven is, de student vragen om het nogmaals in eigen woorden uit te leggen.
+- Als een student twee keer onvolledig antwoord heeft gegeven, moet je als alle relevante informatie gegeven is, de student vragen om het nogmaals in eigen woorden uit te leggen.
 - Geef nooit het antwoord dat staat in 'answer' field van de kennisboom. Dit is het antwoordmodel en de student moet zelf tot dit antwoord komen. Alleen als de student aangeeft het niet te weten, kun je dit antwoord geven.
 - Vraag de student om een vraag te beantwoorden, geef feedback door te zeggen dat het goed is of wat er nog mist en stel een nieuwe vraag.
 
@@ -926,14 +982,17 @@ Geef enkel de volledige aangepaste JSON-structuur terug in hetzelfde formaat met
         input = self.read_data_file("knowledge_tree.json")
 
         prompt = f"""
-Je krijgt een JSON waarin elke topic onder andere een vraag, antwoord, status en score bevat. Dit JSON-bestand wordt gebruikt voor een leertraject waarbij de student stap voor stap vragen beantwoordt en daarbij tussentijdse scores ontvangt. 
+Je krijgt een JSON-structuur waarin elke topic een vraag, antwoord, status en score bevat. Dit JSON-bestand wordt gebruikt voor een leertraject waarbij de student stap voor stap vragen beantwoordt en daarbij tussentijdse scores ontvangt.
 
-Jouw doel is om de eerstvolgende vraag met bijbehorend antwoord te selecteren die aan beide van de volgende voorwaarden voldoet:
+Jouw doel is om **de eerstvolgende vraag** met bijbehorend antwoord te selecteren die aan de onderstaande twee voorwaarden voldoet. **Lees de JSON-structuur van boven naar beneden en stop zodra je de eerste vraag vindt die aan beide voorwaarden voldoet.**
 
-1. De **status** van het onderwerp mag niet "done" zijn; de vraag is dus nog niet volledig afgehandeld.
-2. De **score** moet een breuk zijn die kleiner is dan 1 (bijvoorbeeld 2/3, 1/4, 2/5 of 0/2), wat betekent dat de student nog niet de volledige score voor dat onderwerp heeft behaald.
+1. De **status** van de vraag mag niet "done" zijn. De vraag is dus nog niet volledig afgehandeld.
+2. De **score** moet een breuk zijn die kleiner is dan 1 (bijvoorbeeld 0/1, 1/3, 2/3, 1/4, 2/5 of 0/2 etc.). Dit betekent dat de student nog niet de volledige score voor dat onderwerp heeft behaald. Een score is kleiner dan 1 als het getal vóór de slash kleiner is dan het getal erna.
 
-Selecteer en geef vervolgens **alleen de tekst van de vraag en daaronder de tekst van het antwoord** terug, zonder verdere informatie.
+### Belangrijke instructie:
+- **Selecteer alleen de eerstvolgende vraag die aan deze voorwaarden voldoet in de JSON-structuur** en stop met zoeken zodra je deze vraag hebt gevonden. Negeer alle andere vragen, zelfs als ze aan de voorwaarden voldoen.
+  
+**Geef alleen de tekst van de vraag en daaronder de tekst van het antwoord terug, zonder verdere informatie.**
 
 ## Kennisboom:
 {input}
@@ -991,7 +1050,7 @@ Antwoord: Insuline reguleert de bloedsuikerspiegel (1 punt) en zorgt voor de ops
 
         # self.create_questions_json_from_content_and_topic_json()
         st.title("Socratisch dialoog")
-        st.subheader("Neuropsychologie en Hersenontwikkeling")
+        st.subheader("Hersenontwikkeling en plasticiteit")
 
         self.display_chat_messages()
 

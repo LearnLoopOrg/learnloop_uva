@@ -1,0 +1,68 @@
+[
+  {
+    "topic": "Neuropsychologie",
+    "subtopics": [
+      {
+        "topic": "Kennis van student identificeren over neuropsychologie",
+        "question": "Wat weet je over neuropsychologie?",
+        "answer": "De student moet alleen noemen wat hij of zij weet om dit te beantwoorden. Er is geen goed of fout antwoord. Dus na het vragen mag deze vraag als 'done' worden gemarkeerd.",
+        "status": "done",
+        "score": "1/1"
+      },
+      {
+        "topic": "Neuropsychologie",
+        "question": "Waar houdt neuropsychologisch onderzoek zich mee bezig?",
+        "answer": "Neuropsychologie bestudeert de relatie tussen gedrag (1 punt), cognitie (1 punt) en hersenfuncties (1 punt).",
+        "status": "done",
+        "score": "3/3"
+      },
+      {
+        "topic": "Omgeving en hersenontwikkeling",
+        "question": "Hoe beïnvloedt de omgeving een persoon?",
+        "answer": "Omgevingsfactoren zoals cultuur, familie en levensstijl (1 punt) hebben invloed op de hersenontwikkeling (1 punt) en daarmee gedrag en gedachten van een persoon (1 punt).",
+        "status": "done",
+        "score": "3/3"
+      },
+      {
+        "topic": "Epigenetica",
+        "question": "Wat is epigenetica?",
+        "answer": "Epigenetica is de studie van veranderingen in genexpressie (1 punt) die niet worden veroorzaakt door veranderingen in de DNA-sequentie (1 punt), vaak als gevolg van omgevingsfactoren (1 punt).",
+        "status": "not asked",
+        "score": "3/3"
+      },
+      {
+        "topic": "Fenotypische plasticiteit",
+        "question": "Wat is fenotypische plasticiteit?",
+        "answer": "Fenotypische plasticiteit verwijst naar de mogelijkheid dat genetisch identieke organismen (1 punt) verschillende fysieke kenmerken ontwikkelen (1 punt) door verschillende omgevingsfactoren zoals dieet (1 punt).",
+        "status": "done",
+        "score": "3/3"
+      }
+    ]
+  },
+  {
+    "topic": "Hebbiaanse veronderstelling van verandering",
+    "subtopics": [
+      {
+        "topic": "Hebbiaanse veronderstelling van verandering",
+        "question": "Hoe beschrijft de Hebbiaanse theorie het leren?",
+        "answer": "De Hebbiaanse theorie beschrijft leren als het proces waarbij synaptische verbindingen versterkt worden (1 punt) wanneer neuronen herhaaldelijk tegelijkertijd worden geactiveerd (1 punt).",
+        "status": "done",
+        "score": "2/2"
+      },
+      {
+        "topic": "Praktische toepassingen van de Hebbiaanse veronderstelling",
+        "question": "Wat toont de praktische toepassing van de Hebbiaanse veronderstelling?",
+        "answer": "De praktische toepassing van de Hebbiaanse veronderstelling wordt geïllustreerd in neuroplasticiteit (1 punt) zoals motorisch leren (1 punt) en herstel na een beroerte (1 punt).",
+        "status": "not asked",
+        "score": "0/3"
+      },
+      {
+        "topic": "Toepassing in neuropsychologie",
+        "question": "Hoe wordt de Hebbiaanse veronderstelling toegepast in de neuropsychologie?",
+        "answer": "Therapieën en revalidatie zijn afhankelijk van het vermogen van de hersenen om te veranderen (1 punt), wat mogelijk is door plasticiteit en aanpassing (1 punt).",
+        "status": "not asked",
+        "score": "0/2"
+      }
+    ]
+  }
+]
