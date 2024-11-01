@@ -29,7 +29,7 @@ from slack_sdk import WebClient
 try:
     st.set_page_config(
         page_title="LearnLoop",
-        layout="wide",
+        layout="centered",
         page_icon="src/data/content/images/ll_logo_icon.png",
     )
 except FileNotFoundError:
