@@ -105,6 +105,9 @@ class SocraticDialogue:
         Initialize session variables if they don't exist.
         """
         print("Initializing session states...")
+        print(
+            f"Socratic menu placeholder in SD file: {st.session_state.socratic_menu_placeholder}"
+        )
 
         if "save_question" not in st.session_state:
             st.session_state.save_question = False
@@ -131,28 +134,32 @@ class SocraticDialogue:
                 message["role"],
                 avatar="🔵" if message["role"] == "teacher" else "🔘",
             ):
-                st.markdown(message["content"])
-                # if "image" in message:
-                #     st.image(open(message["image"], "rb").read())
+                cols = st.columns([4, 0.6])
+                with cols[0]:
+                    st.markdown(message["content"])
+                    # if "image" in message:
+                    #     st.image(open(message["image"], "rb").read())
 
-                # # Inside the display_chat_messages method
-                # if "answer_options" in message:
-                #     correct_answers = message["answer_options"]["correct"]
-                #     options = [
-                #         correct_answers[0],
-                #         correct_answers[1],
-                #         correct_answers[2],
-                #         message["answer_options"]["incorrect"],
-                #     ]
-                #     random.shuffle(options)
-                #     for option in options:
-                #         st.button(option)
+                    # # Inside the display_chat_messages method
+                    # if "answer_options" in message:
+                    #     correct_answers = message["answer_options"]["correct"]
+                    #     options = [
+                    #         correct_answers[0],
+                    #         correct_answers[1],
+                    #         correct_answers[2],
+                    #         message["answer_options"]["incorrect"],
+                    #     ]
+                    #     random.shuffle(options)
+                    #     for option in options:
+                    #         st.button(option)
 
-                # if answer_model := message.get("answer_model"):
-                #     with st.expander("Antwoordmodel", expanded=False):
-                #         st.write(answer_model)
-                if message["role"] == "teacher":
-                    self.edit_question(i)
+                    # if answer_model := message.get("answer_model"):
+                    #     with st.expander("Antwoordmodel", expanded=False):
+                    #         st.write(answer_model)
+                with cols[1]:
+                    if message["role"] == "teacher":
+                        self.edit_question(i)
+                        st.button("⭐", key=f"save_{i}")
 
     def add_to_assistant_responses(
         self,
@@ -614,7 +621,8 @@ class SocraticDialogue:
         return data
 
     def render_sidebar(self):
-        with st.sidebar:
+        print("Rendering sidebar...")
+        with st.session_state.socratic_menu_placeholder.container():
             # st.subheader("Settings")
             # st.button("Reset chat", on_click=self.reset_session_states)
             st.divider()
@@ -673,11 +681,15 @@ class SocraticDialogue:
                         unsafe_allow_html=True,
                     )
 
+            st.write("\n\n")
+            st.write("\n\n")
             st.button(
                 "Reset progress",
                 on_click=self.reset_knowledge_tree_scores_and_status,
                 use_container_width=True,
             )
+
+            st.divider()
 
     def read_data_file(self, file_name):
         with open(f"{self.base_path}data/{file_name}", "r", encoding="utf-8") as file:
@@ -729,13 +741,13 @@ class SocraticDialogue:
         knowledge_tree = self.read_data_file("knowledge_tree.json")
 
         prompt = f"""
-Gegeven is een socratische dialoog met een student waarin de student antwoord geeft op vragen van de docent. Jouw doel is om elk antwoord van de student uit de volledige conversatie afzonderlijk te evalueren en te vergelijken met de nog openstaande vragen in de gegeven `knowledge_tree`-JSON-structuur, zodat de student zoveel mogelijk terecht verdiende punten krijgt voor inhoudelijke antwoorden.
+Gegeven is een socratische dialoog met een student waarin de student antwoord geeft op vragen van de docent. Jouw doel is om elk antwoord van de student uit de volledige conversatie afzonderlijk te evalueren en te vergelijken met de nog openstaande vragen in de gegeven `knowledge_tree`-JSON-structuur, zodat de student zoveel mogelijk terecht verdiende punten krijgt voor inhoudelijke antwoorden, inclusief relevante informatie uit de huidige of eerdere antwoorden die relevant zijn voor toekomstige antwoorden van subtopics, ook als deze nog niet specifiek gevraagd is/zijn.
 
 Volg deze stappen zorgvuldig:
 
 1. **Vorm een verzameling van alle inhoudelijke antwoorden van de student** en filter conversatieregels die geen directe inhoudelijke waarde hebben. Voorbeelden van irrelevante regels zijn korte reacties zoals "ja", "oké", of introducties zoals "Zullen we beginnen?". Enkel inhoudelijke antwoorden worden geëvalueerd.
 
-2. **Vergelijk elk afzonderlijk antwoord met alle nog niet beantwoorde vragen in de `knowledge_tree`** om zoveel mogelijk verdiende punten toe te kennen. Maak gebruik van semantische vergelijkingen om te bepalen of een vraag in de conversatie voldoende overeenkomt met een vraag in de `knowledge_tree`. Bijvoorbeeld, als een vraag in de `knowledge_tree` luidt "Waar houdt neuropsychologisch onderzoek zich mee bezig?", dan moet een vraag zoals "Kun je uitleggen waar neuropsychologisch onderzoek zich mee bezighoudt?" worden beschouwd als overeenkomend.
+2. **Vergelijk elk afzonderlijk antwoord met alle nog niet beantwoorde vragen en antwoordmodellen in de `knowledge_tree`** om zoveel mogelijk verdiende punten toe te kennen voor elke subtopic. Maak gebruik van semantische vergelijkingen om te bepalen of een antwoord in de conversatie voldoende overeenkomt met een antwoord in de `knowledge_tree`. Bijvoorbeeld, als een antwoord in de `knowledge_tree` luidt "Insuline verlaagt de bloedsuikerspiegel (1 punt) door de opname van glucose in cellen te stimuleren (1 punt)" en de student zegt "Door insuline nemen cellen meer glucose op, waardoor het suiker in het bloed door afneemt.", dan verdient de student 2 punt voor dit antwoord. Als een student punten verdient door relevante informatie te geven voor een subtopic dat nog niet specifiek gevraagd is, ken dan ook deze punten toe en pas die subtopics aan.
 
 3. **Bepaal per matchend antwoord het aantal punten** dat de student heeft verdiend. De student hoeft geen exacte bewoording te gebruiken; beoordeel of de intentie en het taalgebruik vergelijkbaar genoeg zijn om punten toe te kennen. Vergelijk elk antwoord met het bijbehorende antwoordmodel en tel de verdiende punten voor dat specifieke subtopic.
 
@@ -963,7 +975,7 @@ Geef enkel de volledige aangepaste JSON-structuur terug in hetzelfde formaat met
     def edit_question(self, message_index):
         if not st.session_state.editing_mode:
             st.button(
-                "Edit question",
+                "✏️",
                 on_click=self.set_editing_mode_true,
                 key=f"edit_question_{message_index}",
             )
@@ -1021,18 +1033,23 @@ Antwoord: Insuline reguleert de bloedsuikerspiegel (1 punt) en zorgt voor de ops
                 st.markdown(f"{user_input}")
 
             with st.chat_message("teacher", avatar="🔵"):
-                self.evaluate_student_response()
-                self.next_question_and_answer = self.pick_next_question_and_answer()
-                print("Picked next question: " + self.next_question_and_answer)
-                response = st.write_stream(self.generate_teacher_response())
-                try:
-                    self.add_to_assistant_responses(
-                        response, question=self.next_question_and_answer
-                    )
-                except:
-                    pass
+                cols = st.columns([4, 0.6])
 
-                self.edit_question(message_index=len(st.session_state.messages))
+                with cols[0]:
+                    self.evaluate_student_response()
+                    self.next_question_and_answer = self.pick_next_question_and_answer()
+                    print("Picked next question: " + self.next_question_and_answer)
+                    response = st.write_stream(self.generate_teacher_response())
+                    try:
+                        self.add_to_assistant_responses(
+                            response, question=self.next_question_and_answer
+                        )
+                    except:
+                        pass
+
+                with cols[1]:
+                    self.edit_question(message_index=len(st.session_state.messages))
+                    st.button("⭐", key="save")
 
     def update_attributes(self):
         self.db_dal = st.session_state.db_dal

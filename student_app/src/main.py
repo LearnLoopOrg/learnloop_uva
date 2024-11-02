@@ -1628,8 +1628,29 @@ def render_sidebar():
         ):
             render_feedback_form()
 
-        st.divider()
+    print("RE-INITIALIZE SOCRATIC MENU PLACEHOLDER")
 
+    if "socratic_menu_placeholder" in st.session_state:
+        print(
+            f"Socratic menu placeholder VOOR RE-INIT: {st.session_state.socratic_menu_placeholder}"
+        )
+
+    # Space for the menu rendered in Socratic Dialogue
+    if (
+        "socratic_menu_placeholder" not in st.session_state
+        or st.session_state.socratic_menu_placeholder is None
+    ):
+        st.session_state.socratic_menu_placeholder = st.sidebar.empty()
+
+    print(
+        f"Socratic menu placeholder NA RE-INITIALIZATION: {st.session_state.socratic_menu_placeholder}"
+    )
+
+    if "bottom_buttons_placeholder" not in st.session_state:
+        st.session_state["bottom_buttons_placeholder"] = st.sidebar.empty()
+
+    # Render the static bottom buttons in the dedicated placeholder
+    with st.session_state["bottom_buttons_placeholder"].container():
         st.button(
             "Uitleg LLM's",
             on_click=set_selected_phase,
@@ -1637,7 +1658,6 @@ def render_sidebar():
             use_container_width=True,
             key="info_button_sidebar",
         )
-
         st.button("Log uit", on_click=logout, use_container_width=True)
 
 
@@ -2140,6 +2160,9 @@ def set_correct_settings_for_deployment_type():
 
 
 def initialise_variables():
+    if "socratic_menu_placeholder" in st.session_state:
+        st.session_state.socratic_menu_placeholder = None
+
     if "generated_username" not in st.session_state:
         st.session_state.generated_username = None
 
