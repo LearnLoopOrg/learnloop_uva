@@ -71,6 +71,7 @@
   max-width: 700px;
   /* Optional: Set a max width for large screens */
   margin-bottom: 20px;
+  margin-left: 160px;
 }
 
 /* Reset default margins and paddings */
@@ -518,4 +519,79 @@ a {
   margin-right: 5px;
   /* Voeg ruimte toe indien nodig */
   /* Verwijder de dubbele punt door ':' te verwijderen uit de content in JSX */
+}
+
+/* Floating Menu Styles */
+.floating-menu {
+  list-style: none;
+  position: fixed;
+  left: 20px;
+  top: 100px;
+  width: 250px;
+  /* Adjust width as needed */
+  /* Adjust as needed */
+}
+
+.floating-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  position: relative;
+}
+
+.floating-menu li {
+  position: relative;
+  margin-bottom: 20px;
+  padding-left: 20px;
+}
+
+/* Remove styles for main topic dots if necessary */
+.floating-menu .dot {
+  /* width: 12px;
+  height: 12px; */
+  border-radius: 50%;
+  background-color: gray;
+  position: absolute;
+  left: 0;
+  top: 5px;
+}
+
+.floating-menu .dot.completed {
+  background-color: green;
+}
+
+.floating-menu .topic-name {
+  display: block;
+  margin-left: 15px;
+  font-weight: bold;
+}
+
+.floating-menu .subtopics {
+  list-style: none;
+  padding-left: 20px;
+  margin-top: 10px;
+}
+
+/* .floating-menu .subtopics li {
+  font-size: 0.9em;
+  margin-bottom: 10px;
+} */
+
+.floating-menu .subtopics .dot {
+  width: 12px;
+  height: 12px;
+  background-color: gray;
+}
+
+.floating-menu .subtopics .dot.completed {
+  background-color: green;
+}
+
+.floating-menu .subtopic-name {
+  margin-left: 15px;
+  font-size: 0.9em;
+}
+
+.floating-menu li:last-child::before {
+  height: 10px;
 }

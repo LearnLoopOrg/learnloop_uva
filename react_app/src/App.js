@@ -146,6 +146,23 @@ const App = () => {
       <Header />
       <div className="app-container">
         <h1>Neuroplasticiteit</h1>
+        <div className="floating-menu">
+          <ul>
+            {expanders.map((expander, index) => (
+              <li key={index}>
+                <span className="topic-name">{expander.title}</span>
+                <ul className="subtopics">
+                  {expander.segments.map((segment, subIndex) => (
+                    <li key={subIndex}>
+                      <div className={`dot ${segment.isAnswered ? 'completed' : 'incomplete'}`}></div>
+                      <span className="subtopic-name">{segment.title}</span>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ul>
+        </div>
         <div className="main-content">
           {expanders.map((expander, expanderIndex) => (
             <Expander

@@ -1,98 +1,76 @@
 [
   {
-    "topic": "Hersenlaesies",
+    "topic": "Cognitieve ontwikkeling volgens Jean Piaget",
     "subtopics": [
       {
-        "topic": "Kennis identificeren",
-        "question": "Wat weet je over hersenlaesies? Benoem alles wat je daarover weet.",
-        "answer": "De student moet ofwel vertellen wat hij of zij weet over hersenlaesies of aangeven dat hij of zij er niets over weet. Er is geen goed of fout antwoord. Als de student een antwoord geeft, moet de score 1/1 zijn en de status 'done'.",
+        "topic": "Pre-operationele fase",
+        "question": "Beschrijf de belangrijkste kenmerken van de pre-operationele fase volgens Piaget. Noem ten minste drie cognitieve vaardigheden of beperkingen die typerend zijn voor deze fase.",
+        "answer": "De pre-operationele fase vindt plaats tussen de leeftijden van ongeveer 2 en 7 jaar en wordt gekenmerkt door de volgende cognitieve kenmerken:\n- Egocentrisme: Kinderen hebben moeite om situaties vanuit andermans perspectief te zien.\n- Centratie: Ze richten zich op één aspect van een situatie of object en negeren andere relevante aspecten.\n- Lack of Conservation: Kinderen begrijpen nog niet dat bepaalde eigenschappen van objecten hetzelfde blijven, zelfs als de vorm of het uiterlijk verandert.",
         "status": "done",
-        "score": "1/1"
+        "score": "6/6"
       },
       {
-        "topic": "Definitie",
-        "theorie": "Een hersenlaesie is een gebied van beschadigd hersenweefsel. Deze schade kan ontstaan door verschillende oorzaken, zoals een beroerte, verlies van bloedtoevoer, tumoren of verwondingen. Op MRI-scans worden deze laesies weergegeven als felwitte gebieden waar de bloedtoevoer is verstoord, wat wijst op weefselschade. Het herkennen van hersenlaesies en het begrijpen van hun effecten is cruciaal voor het bestuderen van neurologische schade en de impact ervan op cognitieve functies.",
-        "question": "Wat is een hersenlaesie?",
-        "answer": "Een hersenlaesie is een gebied van schade in de hersenen (1 punt).",
-        "status": "done",
-        "score": "1/1"
+        "topic": "Symbolisch denken",
+        "question": "Leg uit hoe symbolisch denken ontstaat tijdens de pre-operationele fase en geef een voorbeeld van hoe een kind deze vaardigheid kan demonstreren.",
+        "answer": "Symbolisch denken ontstaat wanneer kinderen beginnen symbolen of woorden te gebruiken om objecten en gebeurtenissen te vertegenwoordigen. Een voorbeeld hiervan is deelnemen aan fantasierijk spel, zoals doen alsof een bezem een paard is of een blok gebruiken als telefoon.",
+        "status": "not asked",
+        "score": "0/4"
       },
       {
-        "topic": "Oorzaken",
-        "theorie": "Hersenlaesies kunnen worden veroorzaakt door verschillende factoren, zoals beroertes die de bloedtoevoer verstoren, tumoren die op hersenweefsel drukken, en verwondingen die hersencellen fysiek beschadigen. Het begrijpen van deze oorzaken helpt bij het identificeren van de mogelijke gevolgen voor de hersenfunctie.",
-        "question": "Noem enkele mogelijke oorzaken van een hersenlaesie.",
-        "answer": "Mogelijke oorzaken zijn een beroerte (1 punt), verlies van bloedtoevoer (1 punt), tumoren (1 punt), of een verwonding (1 punt).",
+        "topic": "Vroege hersenontwikkeling",
+        "question": "Beschrijf twee belangrijke biologische veranderingen in het brein die optreden tussen de leeftijden van 2 en 4 jaar.",
+        "answer": "Twee belangrijke biologische veranderingen zijn:\n- Synaptogenese: Tegen de leeftijd van 2-3 jaar heeft elke neuron gemiddeld 15.000 synapsen gevormd, wat resulteert in ongeveer 1 quadriljoen synapsen in het brein van een peuter.\n- Hersengroei: Het brein groeit aanzienlijk en bereikt tegen de leeftijd van 4 jaar ongeveer 80% van de volwassen grootte.",
         "status": "done",
         "score": "4/4"
-      }
-    ]
-  },
-  {
-    "topic": "De Hebbiaanse veronderstelling",
-    "subtopics": [
-      {
-        "topic": "Kennis identificeren",
-        "question": "Vertel me alles wat je weet over de Hebbiaanse veronderstelling.",
-        "answer": "De student moet ofwel vertellen wat hij of zij weet over de Hebbiaanse veronderstelling of aangeven dat hij of zij er niets over weet. Er is geen goed of fout antwoord. Als de student een antwoord geeft, moet de score 1/1 zijn en de status 'done'.",
-        "status": "done",
-        "score": "1/1"
       },
       {
-        "topic": "Kernconcept",
-        "theorie": "De Hebbiaanse veronderstelling, gebaseerd op de theorie van Donald Hebb, stelt dat neuronen die samen actief zijn sterkere verbindingen vormen, wat impliceert dat leren en aanpassing in de hersenen worden gestuurd door ervaringen. Dit concept is fundamenteel in de neuropsychologie om te begrijpen hoe hersenstructuur en -functie evolueren met leren en gedrag.",
-        "question": "Wat houdt de Hebbiaanse veronderstelling in?",
-        "answer": "De Hebbiaanse veronderstelling stelt dat neuronen die samen actief zijn sterkere verbindingen vormen (1 punt), wat betekent dat leren en aanpassing in het brein worden aangestuurd door ervaringen (1 punt).",
-        "status": "done",
-        "score": "2/2"
-      },
-      {
-        "topic": "Omgevingsinvloed op genexpressie",
-        "theorie": "Omgevingsfactoren, zoals dieet of stress, kunnen invloed hebben op genexpressie, zelfs bij genetisch identieke individuen. Dit fenomeen toont aan dat omgevingsinvloeden een cruciale rol spelen bij het vormgeven van fysieke en gedragskenmerken, zoals aangetoond door voorbeelden van genetisch identieke dieren met verschillende kenmerken door omgevingsfactoren.",
-        "question": "In de presentatie wordt een voorbeeld gegeven van twee genetisch identieke muizen die verschillen in uiterlijk en gedrag door verschillende voeding van hun moeder. Wat zegt dit voorbeeld over de invloed van omgevingsfactoren, zelfs bij genetisch identieke individuen?",
-        "answer": "Dit voorbeeld suggereert dat omgevingsfactoren (zoals voeding tijdens de zwangerschap) fysieke en gedragsverschillen kunnen veroorzaken (1 punt), zelfs bij genetisch identieke individuen (1 punt).",
-        "status": "done",
-        "score": "3/3"
-      }
-    ]
-  },
-  {
-    "topic": "Neuroplasticiteit in therapie en revalidatie",
-    "subtopics": [
-      {
-        "topic": "Belang van neuroplasticiteit",
-        "theorie": "Neuroplasticiteit verwijst naar het vermogen van de hersenen om zichzelf te reorganiseren door nieuwe neurale verbindingen te vormen, wat essentieel is voor herstel na verwondingen, het leren van nieuwe vaardigheden en aanpassing aan veranderingen in de omgeving. In therapie en revalidatie is het benutten van dit aanpassingsvermogen cruciaal voor de behandeling van zowel fysieke als psychologische stoornissen.",
-        "question": "Waarom is neuroplasticiteit essentieel voor therapie en revalidatie in neuropsychologie?",
-        "answer": "Neuroplasticiteit is essentieel omdat het de hersenen in staat stelt zich aan te passen en te herstellen (1 punt), waardoor revalidatie mogelijk wordt door het herstructureren van neurale verbindingen (1 punt), en therapieën effectief kunnen zijn bij zowel fysieke als psychologische problemen (1 punt).",
-        "status": "asked",
-        "score": "0/3"
-      }
-    ]
-  },
-  {
-    "topic": "Overerving van omgevingsinvloeden",
-    "subtopics": [
-      {
-        "topic": "Kennis identificeren",
-        "question": "Wat weet je over epigenetische overerving?",
-        "answer": "De student moet ofwel vertellen wat hij of zij weet over epigenetische overerving of aangeven dat hij of zij er niets over weet. Er is geen goed of fout antwoord. Als de student een antwoord geeft, moet de score 1/1 zijn en de status 'done'.",
-        "status": "done",
-        "score": "0/1"
-      },
-      {
-        "topic": "Epigenetica",
-        "theorie": "Epigenetica is de studie van veranderingen in genexpressie die niet worden veroorzaakt door veranderingen in de DNA-sequentie, maar door externe of omgevingsfactoren. Deze veranderingen kunnen de eigenschappen van een individu beïnvloeden en zelfs worden doorgegeven aan volgende generaties, met invloed op hun gezondheid en gedrag.",
-        "question": "Wat is epigenetica?",
-        "answer": "Epigenetica is de studie van veranderingen in genexpressie (1 punt) die niet worden veroorzaakt door veranderingen in de DNA-sequentie (1 punt), vaak als gevolg van omgevingsfactoren (1 punt).",
+        "topic": "Ondersteuning van cognitieve vaardigheden",
+        "question": "Leg uit hoe deze biologische veranderingen de ontwikkeling van nieuwe cognitieve vaardigheden tijdens de pre-operationele fase ondersteunen. Geef specifieke voorbeelden.",
+        "answer": "Deze biologische veranderingen ondersteunen de cognitieve ontwikkeling door de neurale connectiviteit en efficiëntie te vergroten. De toename van synapsen maakt complexere neurale netwerken mogelijk, wat geavanceerde cognitieve functies zoals taalontwikkeling en symbolisch denken bevordert. Bijvoorbeeld, de groei in taalgebieden ondersteunt het vermogen om in korte zinnen te spreken.",
         "status": "not asked",
-        "score": "0/3"
+        "score": "0/6"
       },
       {
-        "topic": "Overerving van gezondheidseffecten",
-        "theorie": "Omgevingservaringen, zoals blootstelling aan hongersnood, kunnen leiden tot epigenetische veranderingen die de gezondheid beïnvloeden en worden doorgegeven aan toekomstige generaties. Studies tonen aan dat dergelijke ervaringen genexpressie kunnen beïnvloeden en de gevoeligheid voor ziekten bij nakomelingen kunnen vergroten.",
-        "question": "Onderzoekers vonden dat mensen die vóór de puberteit werden blootgesteld aan hongersnood gezondheidseffecten doorgaven aan hun kinderen en kleinkinderen. Waardoor is deze overerving van gezondheidseffecten mogelijk?",
-        "answer": "Deze overerving is mogelijk door epigenetische veranderingen (1 punt) die optreden als reactie op omgevingsfactoren zoals hongersnood (1 punt), die genexpressie kunnen beïnvloeden en gezondheidseffecten kunnen doorgeven aan toekomstige generaties (1 punt).",
+        "topic": "Cognitieve en sociale ontwikkeling",
+        "question": "Analyseer hoe deelname aan rollenspellen en het hebben van denkbeeldige vrienden bijdragen aan de cognitieve en sociale ontwikkeling bij kinderen van 2-4 jaar.",
+        "answer": "Rollenspellen en denkbeeldige vrienden dragen bij aan de cognitieve ontwikkeling door het bevorderen van symbolisch denken; kinderen gebruiken symbolen om echte levenssituaties te representeren. Dit oefent hun vermogen om symbolen te begrijpen en te manipuleren, wat een basis is voor latere complexe denkvormen. Sociaal gezien stelt rollenspel kinderen in staat om verschillende rollen en perspectieven te verkennen, wat empathie en sociaal begrip ontwikkelt. Denkbeeldige vrienden kunnen kinderen helpen bij het oefenen van sociale interacties en het omgaan met emoties.",
         "status": "not asked",
-        "score": "0/3"
+        "score": "0/8"
+      },
+      {
+        "topic": "Vroege bewuste herinneringen",
+        "question": "Leg uit hoe de biologische veranderingen tijdens de pre-operationele fase de ontwikkeling van vroege bewuste herinneringen ondersteunen. Bespreek de rol van hersengroei en synapsvorming in dit proces.",
+        "answer": "De snelle synaptogenese en hersengroei tijdens de pre-operationele fase verbeteren de neurale connectiviteit en opslagcapaciteit. Deze groei ondersteunt de vorming en consolidatie van herinneringen. Naarmate neurale netwerken complexer worden, kan het brein informatie effectiever coderen, opslaan en ophalen. De vorming van vroege bewuste herinneringen wordt mogelijk naarmate de hippocampus en gerelateerde structuren rijpen.",
+        "status": "not asked",
+        "score": "0/8"
+      },
+      {
+        "topic": "Egocentrisch denken",
+        "question": "Leg uit wat egocentrisch denken inhoudt en hoe dit zich manifesteert bij kinderen van 2-4 jaar.",
+        "answer": "Egocentrisch denken verwijst naar het onvermogen van kinderen om de wereld vanuit het perspectief van anderen te zien. Bij kinderen van 2-4 jaar manifesteert dit zich doordat ze ervan uitgaan dat anderen dezelfde gedachten en gevoelens hebben als zijzelf; ze kunnen zich moeilijk verplaatsen in iemand anders' positie.",
+        "status": "done",
+        "score": "4/4"
+      },
+      {
+        "topic": "Piaget's experiment",
+        "question": "Beschrijf een klassiek experiment van Piaget dat egocentrisme bij kinderen aantoont en bespreek de resultaten.",
+        "answer": "Een klassiek experiment is de Drie Bergen Taak van Piaget. In dit experiment wordt een kind gevraagd een model van drie bergen vanuit verschillende perspectieven te beschrijven of te selecteren hoe de bergen eruitzien vanuit het standpunt van een pop aan de andere kant van het model. Kinderen in de pre-operationele fase kiezen vaak hun eigen perspectief in plaats van dat van de pop, wat hun egocentrisme aantoont.",
+        "status": "not asked",
+        "score": "0/6"
+      },
+      {
+        "topic": "Objectpermanentie",
+        "question": "Definieer objectpermanentie en beschrijf hoe dit concept evolueert van de sensomotorische naar de pre-operationele fase.",
+        "answer": "Objectpermanentie is het besef dat objecten blijven bestaan, ook als ze niet direct zichtbaar zijn. In de sensomotorische fase beginnen kinderen dit concept te ontwikkelen, maar het wordt verder versterkt tijdens de pre-operationele fase, waar kinderen begrijpen dat verborgen of afwezige objecten nog steeds bestaan en daarnaar kunnen zoeken.",
+        "status": "not asked",
+        "score": "0/4"
+      },
+      {
+        "topic": "Taalontwikkeling",
+        "question": "Beschrijf hoe biologische veranderingen in het brein de taalontwikkeling bij peuters ondersteunen.",
+        "answer": "Biologische veranderingen zoals synaptogenese in taalgerelateerde gebieden (bijvoorbeeld Broca's en Wernicke's gebieden) verhogen de neurale capaciteit voor taalverwerking. De groei van myeline in betrokken circuits versnelt de transmissie van taalgerelateerde signalen, wat het leren van nieuwe woorden en zinsstructuren faciliteert.",
+        "status": "not asked",
+        "score": "0/4"
       }
     ]
   }
