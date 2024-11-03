@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: learnloop-react-frontend
+  namespace: "{{ .Release.Namespace }}"
+spec:
+  selector:
+    matchLabels:
+      app: learnloop-react-frontend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: learnloop-react-frontend
+    spec:
+      containers:
+        - name: learnloop-react-frontend
+          image: "{{ .Values.image }}/react_frontend:{{ .Values.tag }}"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          # ...additional configurations...

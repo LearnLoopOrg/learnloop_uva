@@ -27,11 +27,17 @@ spec:
                 name: learnloop-student
                 port:
                   number: 80
-
-          - path: /teacher
+          - path: /app
             pathType: Prefix
             backend:
               service:
-                name: learnloop-teacher
+                name: learnloop-react-frontend
+                port:
+                  number: 80
+          - path: /react-backend
+            pathType: Prefix
+            backend:
+              service:
+                name: learnloop-react-backend
                 port:
                   number: 80

@@ -57,11 +57,20 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.REPO_NAME_LOWER }}/student_app:main
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Build and push Teacher Docker image
+      - name: Build and push React Backend Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./teacher_app
-          file: ./teacher_app/Dockerfile
+          context: ./react_app/backend
+          file: ./react_app/backend/Dockerfile
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.REPO_NAME_LOWER }}/teacher_app:main
+          tags: ${{ env.REGISTRY }}/${{ env.REPO_NAME_LOWER }}/react_backend:main
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Build and push React Frontend Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./react_app/frontend
+          file: ./react_app/frontend/Dockerfile
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.REPO_NAME_LOWER }}/react_frontend:main
           labels: ${{ steps.meta.outputs.labels }}
