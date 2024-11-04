@@ -134,7 +134,7 @@ def save_user_info_to_db(user_id, user_info):
     return user_info
 
 
-@app.route("/auth")
+@app.route("/")
 def authorize():
     global surf_test_env
     token = auth.surfconext.authorize_access_token()
@@ -160,10 +160,8 @@ def authorize():
         url = "https://learnloop.datanose.nl/"
 
     # Redirect a user to the teacher or student page based on their affiliation
-    if "employee" in user_info["eduperson_affiliation"]:
-        redirect_url = f"{url}teacher?nonce={nonce}"
-    else:
-        redirect_url = f"{url}student?nonce={nonce}"
+
+    redirect_url = f"{url}?nonce={nonce}"
 
     print(f"\n\nRedirecting to {redirect_url}\n\n")
 

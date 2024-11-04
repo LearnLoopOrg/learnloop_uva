@@ -1952,7 +1952,7 @@ def render_login_page():
             if surf_test_env:
                 href = "http://localhost:3000/"
             else:
-                href = "https://learnloop.datanose.nl/"
+                href = "https://learnloop.datanose.nl/auth"
 
             uva_logo_base64 = convert_image_base64(
                 f"{st.session_state.base_path}data/content/images/uva-logo-eng.png"
