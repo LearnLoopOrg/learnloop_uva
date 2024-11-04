@@ -7,7 +7,7 @@ const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 
-require('dotenv').config({ path: '../.env' }); // Zorg ervoor dat dit bovenaan staat en het juiste pad naar je .env bestand specificeert
+require('dotenv').config({ path: '../.env', override: true }); // Zorg ervoor dat dit bovenaan staat en het juiste pad naar je .env bestand specificeert
 
 const endpoint = process.env.LL_OPENAI_API_ENDPOINT;
 const apiKey = process.env.LL_OPENAI_API_KEY;
@@ -70,7 +70,7 @@ app.post('/api/generateResponse', async (req, res) => {
     
     ## Your response in Dutch:
     `;
-
+    console.log('Endpoint:', `${endpoint}openai/deployments/${deployment}/chat/completions?api-version=${apiVersion}`)
     try {
         const response = await axios.post(
             `${endpoint}/openai/deployments/${deployment}/chat/completions?api-version=${apiVersion}`,
@@ -89,7 +89,7 @@ app.post('/api/generateResponse', async (req, res) => {
         res.json({ assistantResponse });
     } catch (error) {
         // Detailed error handling
-        console.error('Error in /generateResponse:', error.response ? error.response.data : error.message);
+        console.error('Error in /api/generateResponse:', error.response ? error.response.data : error.message);
         res.status(500).json({
             error: 'Error generating response',
             details: error.response ? error.response.data : error.message,
@@ -108,7 +108,9 @@ app.post('/api/evaluateStudentResponse', async (req, res) => {
     console.log('Evaluating student response...');
     console.log('Conversation:', conversation);
     console.log('Current question:', currentQuestion);
-
+    console.log('Endpoint:', endpoint);
+    console.log('Api Key:', apiKey);
+    console.log('Endpoint:', `${endpoint}/openai/deployments/${deployment}/chat/completions?api-version=${apiVersion}`)
     // Construct the prompt using the provided template
     const prompt = `
     Je bent een evaluator die de antwoorden van een student beoordeelt op basis van een kennisboom. Jouw doel is om elk antwoord van de student te evalueren en te vergelijken met de nog openstaande vragen in de kennisboom, zodat de student zoveel mogelijk verdiende punten krijgt voor inhoudelijke antwoorden.
@@ -218,7 +220,7 @@ app.post('/api/evaluateStudentResponse', async (req, res) => {
         }
 
         // Update the knowledge tree
-        const knowledgeTreeData = knowledgeTree; // Assuming knowledgeTree is already parsed JSON
+        const knowledgeTreeData = knowledgeTree.data; // Assuming knowledgeTree is already parsed JSON
         if (typeof updates === 'object' && !Array.isArray(updates)) {
             updates = [updates];
         }
@@ -239,7 +241,7 @@ app.post('/api/evaluateStudentResponse', async (req, res) => {
         });
 
         // Optioneel, sla de bijgewerkte kennisboom op in een bestand
-        const knowledgeTreePath = path.join(__dirname, '../src/data/knowledgeTree.json');
+        const knowledgeTreePath = path.join(__dirname, 'data/knowledgeTree.json');
         console.log('Saving updated knowledgeTree to:', knowledgeTreePath);
         fs.writeFileSync(knowledgeTreePath, JSON.stringify(knowledgeTreeData, null, 2), 'utf-8');
         console.log('Updated knowledgeTree saved successfully.');
@@ -249,7 +251,7 @@ app.post('/api/evaluateStudentResponse', async (req, res) => {
 
     } catch (error) {
         // Detailed error handling
-        console.error('Error in /evaluateStudentResponse:', error.response ? error.response.data : error.message);
+        console.error('Error in /api/evaluateStudentResponse:', error.response ? error.response.data : error.message);
         res.status(500).json({
             error: 'Error evaluating student response',
             details: error.response ? error.response.data : error.message,
@@ -259,7 +261,7 @@ app.post('/api/evaluateStudentResponse', async (req, res) => {
 
 // Voeg deze endpoint toe om knowledgeTree.json op te halen
 app.get('/api/getKnowledgeTree', (req, res) => {
-    const knowledgeTreePath = path.join(__dirname, '../src/data/knowledgeTree.json');
+    const knowledgeTreePath = path.join(__dirname, 'data/knowledgeTree.json');
     fs.readFile(knowledgeTreePath, 'utf-8', (err, data) => {
         if (err) {
             console.error('Error reading knowledgeTree.json:', err);
@@ -275,6 +277,23 @@ app.get('/api/getKnowledgeTree', (req, res) => {
     });
 });
 
-app.listen(port, () => {
+app.get('/api/getExampleConversation', (req, res) => {
+    const knowledgeTreePath = path.join(__dirname, 'data/exampleConversation.json');
+    fs.readFile(knowledgeTreePath, 'utf-8', (err, data) => {
+        if (err) {
+            console.error('Error reading exampleConversation.json:', err);
+            return res.status(500).json({ error: 'Failed to read exampleConversation.json' });
+        }
+        try {
+            const knowledgeTree = JSON.parse(data);
+            res.json(knowledgeTree);
+        } catch (parseError) {
+            console.error('Error parsing exampleConversation.json:', parseError);
+            res.status(500).json({ error: 'Invalid JSON format in exampleConversation.json' });
+        }
+    });
+});
+
+app.listen(port, '0.0.0.0', () => {
     console.log(`Server running on port ${port}`);
 });

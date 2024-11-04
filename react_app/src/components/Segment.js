@@ -1,11 +1,11 @@
 // src/components/Segment.js
 import React, { useState, useRef, forwardRef, useImperativeHandle } from 'react';
 import axios from 'axios';
-import knowledgeTree from '../data/knowledgeTree.json';
 import { FaArrowCircleUp } from 'react-icons/fa'; // Import the icon
 import '../App.css';
 
 const backendBaseUrl = process.env.REACT_APP_BACKEND_BASE_URL
+const knowledgeTree = await axios.get(`${backendBaseUrl}/api/getKnowledgeTree`);
 
 const Segment = forwardRef(({ data, onComplete, index, updateSegmentData, exampleConversation, topicTitle }, ref) => {
     const [answer, setAnswer] = useState('');

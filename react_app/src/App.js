@@ -3,11 +3,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Expander from './components/Expander';
 import './App.css';
-import knowledgeTreeData from './data/knowledgeTree.json';
-import exampleConversationData from './data/exampleConversation.json';
 import Header from './components/Header';
 
 const backendBaseUrl = process.env.REACT_APP_BACKEND_BASE_URL
+const knowledgeTree = await axios.get(`${backendBaseUrl}/api/getKnowledgeTree`);
+const knowledgeTreeData = knowledgeTree.data;
+const exampleConversationData = await axios.get(`${backendBaseUrl}/api/getExampleConversation`);
 
 const App = () => {
   const [expanders, setExpanders] = useState(() =>
