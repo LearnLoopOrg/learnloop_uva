@@ -76,7 +76,7 @@ auth.register(
 )
 
 
-@app.route("/")
+@app.route("/auth")
 def login():
     global surf_test_env
     if surf_test_env:
