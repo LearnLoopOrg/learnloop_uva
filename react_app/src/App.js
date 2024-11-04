@@ -7,6 +7,8 @@ import knowledgeTreeData from './data/knowledgeTree.json';
 import exampleConversationData from './data/exampleConversation.json';
 import Header from './components/Header';
 
+const backendBaseUrl = process.env.REACT_APP_BACKEND_BASE_URL || 'http://localhost:5001';
+
 const App = () => {
   const [expanders, setExpanders] = useState(() =>
     knowledgeTreeData.map((topicItem) => ({
@@ -61,7 +63,7 @@ const App = () => {
     console.log('Current segment:', currentSegment);
 
     try {
-      const response = await axios.post('http://localhost:5001/api/evaluateStudentResponse', {
+      const response = await axios.post(`${backendBaseUrl}/evaluateStudentResponse`, {
         conversation,
         knowledgeTree,
         currentQuestion
@@ -126,7 +128,7 @@ const App = () => {
 
   const generateResponse = async (updatedKnowledgeTree, isQuestionFullyAnswered, currentQuestion) => {
     try {
-      const response = await axios.post('http://localhost:5001/api/generateResponse', {
+      const response = await axios.post(`${backendBaseUrl}/generateResponse`, {
         conversation,
         knowledgeTree: updatedKnowledgeTree,
         isQuestionCompleted: isQuestionFullyAnswered,
