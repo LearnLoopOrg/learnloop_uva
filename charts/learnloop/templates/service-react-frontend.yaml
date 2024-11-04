@@ -6,6 +6,6 @@ metadata:
 spec:
   ports:
     - port: 80
-      targetPort: 3001
+      targetPort: 3000
   selector:
     app: learnloop-react-frontend

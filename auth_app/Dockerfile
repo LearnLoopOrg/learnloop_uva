@@ -18,4 +18,7 @@ COPY ./server.conf /etc/nginx/conf.d/server.conf
 CMD ["gunicorn", "-w 4", "-b 0.0.0.0:3000", "main:app"]
 
 # Set port used by container
-EXPOSE 3000
+# AANZETTEN VOOR DE ECHTE DEPLOYMENT:
+# EXPOSE 3000
+# VERWIJDEREN:
+EXPOSE 3001
