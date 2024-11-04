@@ -18,7 +18,7 @@ spec:
           image: "{{ .Values.image }}/react_backend:{{ .Values.tag }}"
           imagePullPolicy: Always
           ports:
-            - containerPort: 5000
+            - containerPort: 5001
           envFrom:
             - secretRef:
                 name: learnloop-secret

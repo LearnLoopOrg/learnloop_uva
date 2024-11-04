@@ -134,7 +134,7 @@ def save_user_info_to_db(user_id, user_info):
     return user_info
 
 
-@app.route("/auth")
+@app.route("/")
 def authorize():
     global surf_test_env
     try:
