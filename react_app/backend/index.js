@@ -6,7 +6,13 @@ const port = 5001;
 const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
+
 require('dotenv').config({ path: '../.env' }); // Zorg ervoor dat dit bovenaan staat en het juiste pad naar je .env bestand specificeert
+
+const endpoint = process.env.LL_OPENAI_API_ENDPOINT;
+const apiKey = process.env.LL_OPENAI_API_KEY;
+const deployment = "LLgpt-4o"
+const apiVersion = '2024-08-01-preview'; // Specify the API version
 
 app.use(cors());
 app.use(express.json());
@@ -67,17 +73,16 @@ app.post('/generateResponse', async (req, res) => {
 
     try {
         const response = await axios.post(
-            'https://api.openai.com/v1/chat/completions',
+            `${endpoint}/openai/deployments/${deployment}/chat/completions?api-version=${apiVersion}`,
             {
-                model: 'gpt-4o',
-                messages: [{ role: 'system', content: prompt }],
+                messages: [{ role: 'user', content: prompt }],
                 temperature: 0.7,
             },
             {
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${process.env.OPENAI_API_KEY} `,
-                }
+                    'api-key': apiKey,
+                },
             }
         );
         const assistantResponse = response.data.choices[0].message.content;
@@ -177,20 +182,24 @@ app.post('/evaluateStudentResponse', async (req, res) => {
 
     try {
         // Call OpenAI API
-        const response = await axios.post('https://api.openai.com/v1/chat/completions', {
-            model: 'gpt-4o',
-            messages: [{ role: 'user', content: prompt }],
-            temperature: 0.7,
-        }, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+        const response = await axios.post(
+            `${endpoint}/openai/deployments/${deployment}/chat/completions?api-version=${apiVersion}`,
+            {
+                messages: [{ role: 'user', content: prompt }],
+                temperature: 0.7,
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'api-key': apiKey,
+                },
             }
-        });
+        );
 
         let updates;
         try {
             const cleanedResponse = cleanResponse(response.data.choices[0].message.content);
+            console.log(cleanedResponse);
             updates = JSON.parse(cleanedResponse);
             console.log('Parsed updates:', updates);
         } catch (parseError) {
