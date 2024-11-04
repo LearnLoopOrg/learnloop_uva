@@ -76,7 +76,7 @@ auth.register(
 )
 
 
-@app.route("/auth")
+@app.route("/surf")
 def login():
     global surf_test_env
     if surf_test_env:
@@ -134,7 +134,7 @@ def save_user_info_to_db(user_id, user_info):
     return user_info
 
 
-@app.route("/")
+@app.route("/auth")
 def authorize():
     global surf_test_env
     token = auth.surfconext.authorize_access_token()
