@@ -97,12 +97,14 @@ class PlotUsage:
         all_progress_data_per_user = {}
         documents = self.db_dal.fetch_all_documents()
         for user_doc in documents:
+            if isinstance(user_doc["username"], dict):
+                continue
             progress_data = []
             for module in st.session_state.modules:
                 progress_counter = self.db_dal.fetch_progress_counter(module, user_doc)
                 if progress_counter is not None:
                     progress_data.append(progress_counter)
-
+            # print(user_doc["username"])
             all_progress_data_per_user[user_doc["username"]] = progress_data
         return all_progress_data_per_user
 
@@ -132,6 +134,7 @@ class PlotUsage:
         ]
         numb_of_questions = self.count_all_questions()
         all_progress_data_per_user = self.collect_all_progress_data()
+        total_questions_made = 0
         print("all_progress_data_per_user ", all_progress_data_per_user)
         all_percentages = []
         for user_data_pcs_list in all_progress_data_per_user.values():
@@ -145,16 +148,24 @@ class PlotUsage:
             individual_percentage = self.calculate_percentage(
                 question_dates, numb_of_questions
             )
+            print(question_dates)
+            total_questions_made += len(question_dates)
             all_percentages.append(individual_percentage)
 
         clusters = self.cluster_percentages(all_percentages)
-        print("all_percentages: ", all_percentages)
+        # print("all_percentages: ", all_percentages)
         st.write("Aantal studenten ingelogd: ", str(len(all_percentages)))
         count_above_zero = sum(1 for value in all_percentages if value > 0)
 
         st.write(
             f"Aantal studenten die een vraag hebben gemaakt: {count_above_zero}",
         )
+        st.write(f"Totaal aantal vragen gemaakt: {total_questions_made}")
+        st.write(
+            "Gemiddeld aantal vragen per actieve student: ",
+            str(total_questions_made / count_above_zero),
+        )
+        # st.write("Totaal aantal vragen in de hele cursus: ", str(numb_of_questions))
         self.plot_clusters(clusters)
 
     def render_date_input(self):
