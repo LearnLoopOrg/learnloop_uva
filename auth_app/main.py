@@ -137,12 +137,20 @@ def save_user_info_to_db(user_id, user_info):
 @app.route("/auth")
 def authorize():
     global surf_test_env
-    token = auth.surfconext.authorize_access_token()
+    try:
+        token = auth.surfconext.authorize_access_token()
+    except Exception as e:
+        print(f"Error during token authorization: {e}")
+        return "Bad Request: Token authorization failed", 400
 
     userinfo_endpoint = auth.surfconext.server_metadata.get("userinfo_endpoint")
 
     headers = {"Authorization": f'Bearer {token["access_token"]}'}
     userinfo = requests.get(userinfo_endpoint, headers=headers)
+
+    if userinfo.status_code != 200:
+        print(f"Error fetching userinfo: {userinfo.text}")
+        return "Bad Request: Failed to fetch userinfo", 400
 
     print(f"Userinfo Response: {userinfo.json()}")
 

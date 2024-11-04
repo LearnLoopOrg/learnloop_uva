@@ -7,7 +7,7 @@ metadata:
 spec:
   ports:
     - port: 80
-      targetPort: 5000  # Changed from 3001 to 5000
+      targetPort: 5000
   selector:
     app: learnloop-react-backend
 ---
@@ -19,6 +19,6 @@ metadata:
 spec:
   ports:
     - port: 80
-      targetPort: 3000  # Assuming frontend runs on port 3000
+      targetPort: 3001
   selector:
     app: learnloop-react-frontend
