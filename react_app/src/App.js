@@ -61,7 +61,7 @@ const App = () => {
     console.log('Current segment:', currentSegment);
 
     try {
-      const response = await axios.post('http://localhost:5001/evaluateStudentResponse', {
+      const response = await axios.post('http://localhost:5001/api/evaluateStudentResponse', {
         conversation,
         knowledgeTree,
         currentQuestion
@@ -126,7 +126,7 @@ const App = () => {
 
   const generateResponse = async (updatedKnowledgeTree, isQuestionFullyAnswered, currentQuestion) => {
     try {
-      const response = await axios.post('http://localhost:5001/generateResponse', {
+      const response = await axios.post('http://localhost:5001/api/generateResponse', {
         conversation,
         knowledgeTree: updatedKnowledgeTree,
         isQuestionCompleted: isQuestionFullyAnswered,
