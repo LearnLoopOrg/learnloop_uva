@@ -34,13 +34,13 @@ const Segment = forwardRef(({ data, onComplete, index, updateSegmentData, exampl
         let currentQuestion = data.question;
 
         try {
-            await axios.post('http://localhost:5001/evaluateStudentResponse', {
+            await axios.post('http://localhost:5001/api/evaluateStudentResponse', {
                 conversation,
                 knowledgeTree,
                 currentQuestion
             });
 
-            const knowledgeTreeResponse = await axios.get('http://localhost:5001/getKnowledgeTree');
+            const knowledgeTreeResponse = await axios.get('http://localhost:5001/api/getKnowledgeTree');
             const updatedKnowledgeTree = knowledgeTreeResponse.data;
             console.log('Updated knowledge tree:', updatedKnowledgeTree);
 
@@ -64,7 +64,7 @@ const Segment = forwardRef(({ data, onComplete, index, updateSegmentData, exampl
             }
 
             console.log('Generating teacher response');
-            const generateResponse = await axios.post('http://localhost:5001/generateResponse', {
+            const generateResponse = await axios.post('http://localhost:5001/api/generateResponse', {
                 conversation,
                 knowledgeTree: updatedKnowledgeTree,
                 exampleConversation,

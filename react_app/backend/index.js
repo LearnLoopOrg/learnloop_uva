@@ -18,7 +18,7 @@ app.use(cors());
 app.use(express.json());
 
 // Endpoint om de reactie van de docent te genereren
-app.post('/generateResponse', async (req, res) => {
+app.post('/api/generateResponse', async (req, res) => {
     const { conversation, knowledgeTree, exampleConversation, currentQuestion, isQuestionCompleted } = req.body;
 
     console.log('Generating front-end response...');
@@ -102,7 +102,7 @@ const cleanResponse = (response) => {
     return response.replace(/```json/g, '').replace(/```/g, '').trim();
 };
 
-app.post('/evaluateStudentResponse', async (req, res) => {
+app.post('/api/evaluateStudentResponse', async (req, res) => {
     const { conversation, knowledgeTree, currentQuestion } = req.body;
 
     console.log('Evaluating student response...');
@@ -257,7 +257,7 @@ app.post('/evaluateStudentResponse', async (req, res) => {
 });
 
 // Voeg deze endpoint toe om knowledgeTree.json op te halen
-app.get('/getKnowledgeTree', (req, res) => {
+app.get('/api/getKnowledgeTree', (req, res) => {
     const knowledgeTreePath = path.join(__dirname, '../src/data/knowledgeTree.json');
     fs.readFile(knowledgeTreePath, 'utf-8', (err, data) => {
         if (err) {
