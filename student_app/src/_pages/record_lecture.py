@@ -209,7 +209,7 @@ class Recorder:
 
     # def show_spinner_till_generated(self):
     #     with st.spinner("Oefenmaterialen worden gegenereerd..."):
-    #         url = "https://contentpipeline.azurewebsites.net/api/contentpipeline?code=YxHEt2ZBmN6YX912nsC_i9KVpof7RVlr3k1yMSmZXlajAzFu_xvH1w=="
+    #         url = "https://contentpipeline.azurewebsites.net/contentpipeline?code=YxHEt2ZBmN6YX912nsC_i9KVpof7RVlr3k1yMSmZXlajAzFu_xvH1w=="
     #         params = {
     #             "lecture": "celbio_3",
     #             "run_full_pipeline": "true",

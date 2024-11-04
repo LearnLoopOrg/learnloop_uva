@@ -8,7 +8,7 @@ surfconextMetadataUrl: https://connect.test.surfconext.nl/.well-known/openid-con
 azureOpenaiEndpoint: https://uva-test-learnloop-turbo.openai.azure.com/
 
 env:
-  backendBaseUrl: "https://learnloop.datanose.nl/api"
+  backendBaseUrl: "https://learnloop.datanose.nl"
 
 azure:
   keyvaultName: keyvaultName

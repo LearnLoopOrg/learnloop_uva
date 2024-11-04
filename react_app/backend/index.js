@@ -6,8 +6,6 @@ const port = 5001;
 const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
-const backendBaseUrl = process.env.REACT_APP_BACKEND_BASE_URL;
-
 
 require('dotenv').config({ path: '../.env' }); // Zorg ervoor dat dit bovenaan staat en het juiste pad naar je .env bestand specificeert
 

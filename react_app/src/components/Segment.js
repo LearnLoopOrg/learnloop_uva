@@ -5,7 +5,7 @@ import knowledgeTree from '../data/knowledgeTree.json';
 import { FaArrowCircleUp } from 'react-icons/fa'; // Import the icon
 import '../App.css';
 
-const backendBaseUrl = process.env.REACT_APP_BACKEND_BASE_URL || 'http://localhost:5001';
+const backendBaseUrl = process.env.REACT_APP_BACKEND_BASE_URL
 
 const Segment = forwardRef(({ data, onComplete, index, updateSegmentData, exampleConversation, topicTitle }, ref) => {
     const [answer, setAnswer] = useState('');
