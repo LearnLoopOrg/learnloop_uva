@@ -43,7 +43,7 @@ except FileNotFoundError:
         st.set_page_config(
             page_title="LearnLoop",
             layout="wide",
-            page_icon=None,  # Of een ander pad voor een standaard favicon
+            page_icon=None,
         )
 
 

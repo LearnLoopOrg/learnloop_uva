@@ -20,6 +20,8 @@ body {
   color: #000;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  padding-left: 240px;
+  /* Width of floating menu + some spacing */
 }
 
 code {
