@@ -7,11 +7,13 @@ const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 
-require('dotenv').config({ path: '../.env', override: true }); // Zorg ervoor dat dit bovenaan staat en het juiste pad naar je .env bestand specificeert
+require('dotenv').config({ path: '../.env', override: true });
 
-const endpoint = process.env.LL_OPENAI_API_ENDPOINT;
-const apiKey = process.env.LL_OPENAI_API_KEY;
-const deployment = "LLgpt-4o"
+// Use Kubernetes environment variables if they exist, otherwise fall back to local .env variables
+const endpoint = process.env.AZURE_OPENAI_ENDPOINT || process.env.LL_OPENAI_API_ENDPOINT;
+const apiKey = process.env.OPENAI_API_KEY || process.env.LL_OPENAI_API_KEY;
+// Set the deployment name based on the endpoint used
+const deployment = process.env.AZURE_OPENAI_ENDPOINT ? "learnloop-4o" : "LLgpt-4o";
 const apiVersion = '2024-08-01-preview'; // Specify the API version
 
 app.use(cors());

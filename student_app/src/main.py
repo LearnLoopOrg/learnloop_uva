@@ -29,7 +29,7 @@ from slack_sdk import WebClient
 try:
     st.set_page_config(
         page_title="LearnLoop",
-        layout="centered",
+        layout="wide",
         page_icon="src/data/content/images/ll_logo_icon.png",
     )
 except FileNotFoundError:
@@ -1514,7 +1514,6 @@ def upload_feedback():
 def render_feedback_form():
     """Feedback form in the sidebar."""
     with st.sidebar:
-        st.subheader("Denk je mee?")
         st.text_area(
             label="Wat vind je handig? Wat kan beter? Voer geen persoonlijke of herkenbare gegevens in.",
             key="feedback_box",

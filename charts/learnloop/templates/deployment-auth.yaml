@@ -19,8 +19,7 @@ spec:
           image: "{{ .Values.image }}/auth_app:{{ .Values.tag }}"
           imagePullPolicy: Always
           ports:
-            # - containerPort: 3000 # WEER AANZETTEN
-            - containerPort: 3001 # VERWIJDEREN
+            - containerPort: 3000
           env:
           - name: SURFCONEXT_CLIENT_ID
             value: "{{ .Values.surfconextClientId }}"

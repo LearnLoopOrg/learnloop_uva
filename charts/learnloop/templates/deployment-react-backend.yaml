@@ -25,6 +25,8 @@ spec:
           env:
             - name: REACT_APP_BACKEND_BASE_URL
               value: "{{ .Values.env.backendBaseUrl }}"
+            - name: AZURE_OPENAI_ENDPOINT
+              value: "{{ .Values.azureOpenaiEndpoint }}"
             - name: OPENAI_API_KEY
               valueFrom:
                 secretKeyRef:
