@@ -45,7 +45,7 @@ jobs:
           context: ./auth_app
           file: ./auth_app/Dockerfile
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.REPO_NAME_LOWER }}/auth_app:latest
+          tags: ${{ env.REGISTRY }}/${{ env.REPO_NAME_LOWER }}/auth_app:main
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Build and push Student Docker image
@@ -54,7 +54,7 @@ jobs:
           context: ./student_app
           file: ./student_app/Dockerfile
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.REPO_NAME_LOWER }}/student_app:latest
+          tags: ${{ env.REGISTRY }}/${{ env.REPO_NAME_LOWER }}/student_app:main
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Build and push React Backend Docker image
@@ -63,7 +63,7 @@ jobs:
           context: ./react_app/backend
           file: ./react_app/backend/Dockerfile
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.REPO_NAME_LOWER }}/react_backend:latest
+          tags: ${{ env.REGISTRY }}/${{ env.REPO_NAME_LOWER }}/react_backend:main
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Build and push React Frontend Docker image
@@ -72,5 +72,5 @@ jobs:
           context: ./react_app
           file: ./react_app/Dockerfile
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.REPO_NAME_LOWER }}/react_frontend:latest
+          tags: ${{ env.REGISTRY }}/${{ env.REPO_NAME_LOWER }}/react_frontend:main
           labels: ${{ steps.meta.outputs.labels }}

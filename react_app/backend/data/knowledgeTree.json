@@ -317,7 +317,9 @@
         "topic": "Reden voor uitsluiting in meta-analyse",
         "question": "Waarom zijn SJT's niet opgenomen in de meta-analyse van Schmidt & Hunter?",
         "answer": "Omdat situational judgment tests een opkomend veld zijn en mogelijk nog niet voldoende empirische studies beschikbaar waren om ze op te nemen in de meta-analyse van Schmidt & Hunter. Daarnaast kunnen er methodologische verschillen zijn die opname bemoeilijken.",
-        "points": 2
+        "points": 2,
+        "score": "1/2",
+        "status": "asked"
       }
     ]
   }
