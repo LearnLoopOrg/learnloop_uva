@@ -14,8 +14,8 @@ const App = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const knowledgeTreeResponse = await axios.get('/api/getKnowledgeTree');
-        const exampleConversationResponse = await axios.get('/api/getExampleConversation');
+        const knowledgeTreeResponse = await axios.get('/api/server/getKnowledgeTree');
+        const exampleConversationResponse = await axios.get('/api/server/getExampleConversation');
 
         const knowledgeTreeData = knowledgeTreeResponse.data;
         const exampleConversationData = exampleConversationResponse.data;
@@ -77,7 +77,7 @@ const App = () => {
     console.log('Current segment:', currentSegment);
 
     try {
-      const response = await axios.post('/api/evaluateStudentResponse', {
+      const response = await axios.post('/api/server/evaluateStudentResponse', {
         conversation,
         knowledgeTree,
         currentQuestion
@@ -142,7 +142,7 @@ const App = () => {
 
   const generateResponse = async (updatedKnowledgeTree, isQuestionFullyAnswered, currentQuestion) => {
     try {
-      const response = await axios.post('/api/generateResponse', {
+      const response = await axios.post('/api/server/generateResponse', {
         conversation,
         knowledgeTree: updatedKnowledgeTree,
         isQuestionCompleted: isQuestionFullyAnswered,
@@ -159,7 +159,7 @@ const App = () => {
 
   const handleResetProgress = async () => {
     try {
-      await axios.post('/api/resetKnowledgeTree');
+      await axios.post('/api/server/resetKnowledgeTree');
       // Optionally reload the page or update state
       window.location.reload();
     } catch (error) {
