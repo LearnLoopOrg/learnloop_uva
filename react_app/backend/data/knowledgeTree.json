@@ -1,76 +1,323 @@
 [
   {
-    "topic": "Cognitieve ontwikkeling volgens Jean Piaget",
+    "topic": "Vaardigheden versus kennis in individuele verschillen",
     "subtopics": [
       {
-        "topic": "Pre-operationele fase",
-        "question": "Beschrijf de belangrijkste kenmerken van de pre-operationele fase volgens Piaget. Noem ten minste drie cognitieve vaardigheden of beperkingen die typerend zijn voor deze fase.",
-        "answer": "De pre-operationele fase vindt plaats tussen de leeftijden van ongeveer 2 en 7 jaar en wordt gekenmerkt door de volgende cognitieve kenmerken:\n- Egocentrisme: Kinderen hebben moeite om situaties vanuit andermans perspectief te zien.\n- Centratie: Ze richten zich op één aspect van een situatie of object en negeren andere relevante aspecten.\n- Lack of Conservation: Kinderen begrijpen nog niet dat bepaalde eigenschappen van objecten hetzelfde blijven, zelfs als de vorm of het uiterlijk verandert.",
-        "status": "not asked",
-        "score": "0/6"
+        "topic": "Verschil tussen vaardigheden en kennis",
+        "question": "Wat is het verschil tussen vaardigheden (skills) en kennis volgens de docent?",
+        "answer": "Het verschil tussen vaardigheden en kennis is dat vaardigheden betrekking hebben op praktische acties en technische of niet-technische handelingen die iemand kan uitvoeren, terwijl kennis gaat over wat iemand weet en kan uitleggen.",
+        "status": "asked",
+        "score": "2/3"
       },
       {
-        "topic": "Symbolisch denken",
-        "question": "Leg uit hoe symbolisch denken ontstaat tijdens de pre-operationele fase en geef een voorbeeld van hoe een kind deze vaardigheid kan demonstreren.",
-        "answer": "Symbolisch denken ontstaat wanneer kinderen beginnen symbolen of woorden te gebruiken om objecten en gebeurtenissen te vertegenwoordigen. Een voorbeeld hiervan is deelnemen aan fantasierijk spel, zoals doen alsof een bezem een paard is of een blok gebruiken als telefoon.",
-        "status": "not asked",
-        "score": "0/1"
+        "topic": "Voorbeeld van vaardigheid zonder kennis",
+        "question": "Geef een voorbeeld van een situatie waarin iemand een vaardigheid heeft zonder de bijbehorende kennis.",
+        "answer": "Een voorbeeld is iemand die kan fietsen (vaardigheid) maar niet in staat is uit te leggen hoe de mechanica van het fietsen werkt of de principes erachter (gebrek aan kennis).",
+        "status": "done",
+        "score": "2/2"
       },
       {
-        "topic": "Vroege hersenontwikkeling",
-        "question": "Beschrijf twee belangrijke biologische veranderingen in het brein die optreden tussen de leeftijden van 2 en 4 jaar.",
-        "answer": "Twee belangrijke biologische veranderingen zijn:\n- Synaptogenese: Tegen de leeftijd van 2-3 jaar heeft elke neuron gemiddeld 15.000 synapsen gevormd, wat resulteert in ongeveer 1 quadriljoen synapsen in het brein van een peuter.\n- Hersengroei: Het brein groeit aanzienlijk en bereikt tegen de leeftijd van 4 jaar ongeveer 80% van de volwassen grootte.",
-        "status": "not asked",
-        "score": "0/4"
+        "topic": "Voorbeeld van kennis zonder vaardigheid",
+        "question": "Geef een voorbeeld van een situatie waarin iemand kennis heeft zonder de bijbehorende vaardigheid.",
+        "answer": "Een voorbeeld is iemand die theoretisch weet hoe een muziekinstrument wordt bespeeld (kennis), maar niet in staat is het instrument daadwerkelijk te bespelen (gebrek aan vaardigheid).",
+        "status": "done",
+        "score": "2/2"
+      }
+    ]
+  },
+  {
+    "topic": "Procedurele en declaratieve kennis",
+    "subtopics": [
+      {
+        "topic": "Verschil tussen procedurele en declaratieve kennis",
+        "question": "Wat is het verschil tussen procedurele kennis en declaratieve kennis?",
+        "answer": "Procedurele kennis is weten hoe iets gedaan moet worden en het kunnen uitleggen van de stappen of procedures (het 'hoe'). Declaratieve kennis is het kunnen uitleggen van feiten en informatie over iets (het 'wat').",
+        "status": "done",
+        "score": "2/2"
       },
       {
-        "topic": "Ondersteuning van cognitieve vaardigheden",
-        "question": "Leg uit hoe deze biologische veranderingen de ontwikkeling van nieuwe cognitieve vaardigheden tijdens de pre-operationele fase ondersteunen. Geef specifieke voorbeelden.",
-        "answer": "Deze biologische veranderingen ondersteunen de cognitieve ontwikkeling door de neurale connectiviteit en efficiëntie te vergroten. De toename van synapsen maakt complexere neurale netwerken mogelijk, wat geavanceerde cognitieve functies zoals taalontwikkeling en symbolisch denken bevordert. Bijvoorbeeld, de groei in taalgebieden ondersteunt het vermogen om in korte zinnen te spreken.",
-        "status": "not asked",
-        "score": "0/1"
+        "topic": "Belang van onderscheid",
+        "question": "Leg uit waarom het belangrijk is om onderscheid te maken tussen deze vormen van kennis bij het beoordelen van iemands bekwaamheid.",
+        "answer": "Het is belangrijk om onderscheid te maken omdat iemand wellicht weet wat hij moet doen (declaratieve kennis), maar niet weet hoe het te doen (procedurele kennis), of omgekeerd. Dit heeft implicaties voor bijvoorbeeld training en ontwikkeling, omdat het aangeeft op welke gebieden iemand ondersteuning nodig heeft.",
+        "status": "done",
+        "score": "2/2"
+      }
+    ]
+  },
+  {
+    "topic": "Competenties en hun rol in psychologie",
+    "subtopics": [
+      {
+        "topic": "Definitie van competenties",
+        "question": "Wat zijn competenties volgens de docent, en waarvan zijn ze een combinatie?",
+        "answer": "Competenties zijn een set van vaardigheden, kennis en gevoelens die instrumenteel zijn voor prestatie. Ze zijn een combinatie van individuele verschillen.",
+        "status": "done",
+        "score": "2/2"
       },
       {
-        "topic": "Cognitieve en sociale ontwikkeling",
-        "question": "Analyseer hoe deelname aan rollenspellen en het hebben van denkbeeldige vrienden bijdragen aan de cognitieve en sociale ontwikkeling bij kinderen van 2-4 jaar.",
-        "answer": "Rollenspellen en denkbeeldige vrienden dragen bij aan de cognitieve ontwikkeling door het bevorderen van symbolisch denken; kinderen gebruiken symbolen om echte levenssituaties te representeren. Dit oefent hun vermogen om symbolen te begrijpen en te manipuleren, wat een basis is voor latere complexe denkvormen. Sociaal gezien stelt rollenspel kinderen in staat om verschillende rollen en perspectieven te verkennen, wat empathie en sociaal begrip ontwikkelt. Denkbeeldige vrienden kunnen kinderen helpen bij het oefenen van sociale interacties en het omgaan met emoties.",
-        "status": "not asked",
-        "score": "0/8"
+        "topic": "Populariteit van competenties",
+        "question": "Waarom zijn competenties populair buiten de psychologie, maar niet binnen de psychologie?",
+        "answer": "Competenties zijn populair buiten de psychologie omdat ze een breed en toepasbaar concept zijn voor het beschrijven van gewenste gedragspatronen in organisaties. Binnen de psychologie zijn ze minder populair vanwege problemen met hun definitie en meetbaarheid.",
+        "status": "done",
+        "score": "2/2"
       },
       {
-        "topic": "Vroege bewuste herinneringen",
-        "question": "Leg uit hoe de biologische veranderingen tijdens de pre-operationele fase de ontwikkeling van vroege bewuste herinneringen ondersteunen. Bespreek de rol van hersengroei en synapsvorming in dit proces.",
-        "answer": "De snelle synaptogenese en hersengroei tijdens de pre-operationele fase verbeteren de neurale connectiviteit en opslagcapaciteit. Deze groei ondersteunt de vorming en consolidatie van herinneringen. Naarmate neurale netwerken complexer worden, kan het brein informatie effectiever coderen, opslaan en ophalen. De vorming van vroege bewuste herinneringen wordt mogelijk naarmate de hippocampus en gerelateerde structuren rijpen.",
-        "status": "not asked",
-        "score": "0/8"
+        "topic": "Kritiek op competenties",
+        "question": "Geef twee redenen waarom psychologen kritisch zijn over het gebruik van competenties.",
+        "answer": "Twee redenen: \n- Er zijn definitieproblemen; competenties zijn vaak vaag gedefinieerd, waardoor het onduidelijk is wat precies wordt bedoeld. \n- Competenties zijn een samengestelde constructie van verschillende individuele verschillen, waardoor het moeilijk is om specifieke aspecten aan te pakken of te meten.",
+        "status": "done",
+        "score": "4/4"
+      }
+    ]
+  },
+  {
+    "topic": "Feedback geven op basis van competenties",
+    "subtopics": [
+      {
+        "topic": "Effectieve feedback",
+        "question": "Waarom is het volgens de docent lastig om effectieve feedback te geven op basis van competenties?",
+        "answer": "Omdat competenties vaak breed en vaag zijn, is het moeilijk om specifiek te zijn over wat er verbeterd moet worden. Zonder duidelijke specificatie wordt feedback minder effectief, omdat het niet duidelijk maakt welke kennis, vaardigheden of gedrag aangepast moeten worden.",
+        "status": "done",
+        "score": "2/2"
       },
       {
-        "topic": "Egocentrisch denken",
-        "question": "Leg uit wat egocentrisch denken inhoudt en hoe dit zich manifesteert bij kinderen van 2-4 jaar.",
-        "answer": "Egocentrisch denken verwijst naar het onvermogen van kinderen om de wereld vanuit het perspectief van anderen te zien. Bij kinderen van 2-4 jaar manifesteert dit zich doordat ze ervan uitgaan dat anderen dezelfde gedachten en gevoelens hebben als zijzelf; ze kunnen zich moeilijk verplaatsen in iemand anders' positie.",
-        "status": "not asked",
-        "score": "0/4"
+        "topic": "Specifieke feedback",
+        "question": "Hoe kan het geven van specifieke feedback bijdragen aan de ontwikkeling van een individu?",
+        "answer": "Specifieke feedback helpt individuen te begrijpen wat ze precies goed doen en wat ze kunnen verbeteren. Dit maakt de feedback actiever en gerichter, waardoor het leer- en ontwikkelingsproces wordt bevorderd.",
+        "status": "done",
+        "score": "2/2"
+      }
+    ]
+  },
+  {
+    "topic": "Kritiek op emotionele intelligentie als psychologisch construct",
+    "subtopics": [
+      {
+        "topic": "Definitie en populariteit",
+        "question": "Wat is emotionele intelligentie en waarom is het populair buiten de psychologie?",
+        "answer": "Emotionele intelligentie is het vermogen om emoties te herkennen, te begrijpen en te beheren bij zichzelf en anderen. Het is populair buiten de psychologie omdat het wordt gezien als een belangrijke factor in persoonlijk en professioneel succes, vooral in gebieden zoals management en leiderschap.",
+        "score": "2/2"
       },
       {
-        "topic": "Piaget's experiment",
-        "question": "Beschrijf een klassiek experiment van Piaget dat egocentrisme bij kinderen aantoont en bespreek de resultaten.",
-        "answer": "Een klassiek experiment is de Drie Bergen Taak van Piaget. In dit experiment wordt een kind gevraagd een model van drie bergen vanuit verschillende perspectieven te beschrijven of te selecteren hoe de bergen eruitzien vanuit het standpunt van een pop aan de andere kant van het model. Kinderen in de pre-operationele fase kiezen vaak hun eigen perspectief in plaats van dat van de pop, wat hun egocentrisme aantoont.",
-        "status": "not asked",
-        "score": "0/6"
+        "topic": "Controversie en betwisting",
+        "question": "Noem twee redenen waarom emotionele intelligentie een controversieel of betwist construct is binnen de psychologie.",
+        "answer": "Twee redenen zijn: (1) De definitie van emotionele intelligentie is onduidelijk en vaag. Er is geen consensus over wat het precies is of hoe het gemeten moet worden. (2) Onderzoek heeft aangetoond dat emotionele intelligentie sterk overlapt met bestaande persoonlijkheidsconstructen zoals de Big Five, waardoor het toegevoegde waarde beperkt is.",
+        "score": "4/4"
       },
       {
-        "topic": "Objectpermanentie",
-        "question": "Definieer objectpermanentie en beschrijf hoe dit concept evolueert van de sensomotorische naar de pre-operationele fase.",
-        "answer": "Objectpermanentie is het besef dat objecten blijven bestaan, ook als ze niet direct zichtbaar zijn. In de sensomotorische fase beginnen kinderen dit concept te ontwikkelen, maar het wordt verder versterkt tijdens de pre-operationele fase, waar kinderen begrijpen dat verborgen of afwezige objecten nog steeds bestaan en daarnaar kunnen zoeken.",
-        "status": "not asked",
-        "score": "0/4"
+        "topic": "Vergelijking met Big Five",
+        "question": "Leg uit wat bedoeld wordt met de opmerking dat het toevoegen van emotionele intelligentie bovenop de Big Five vraagbaar is.",
+        "answer": "Hiermee wordt bedoeld dat wanneer je emotionele intelligentie toevoegt aan een model of meting dat al de Big Five persoonlijkheidstrekken omvat, het weinig extra voorspellende kracht toevoegt. Dit roept vragen op over de noodzaak en relevantie van emotionele intelligentie als apart construct.",
+        "score": "2/2"
+      }
+    ]
+  },
+  {
+    "topic": "Verschil tussen IQ/GMA en emotionele intelligentie",
+    "subtopics": [
+      {
+        "topic": "Meetbaarheid en validiteit",
+        "question": "Hoe verschilt emotionele intelligentie van IQ of algemene mentale capaciteit (GMA) in termen van meetbaarheid en validiteit?",
+        "answer": "IQ of GMA is een goed gedefinieerd construct met duidelijke meetmethoden en hoge validiteit; het meet cognitieve capaciteiten zoals redeneervermogen en probleemoplossend vermogen. Emotionele intelligentie is moeilijker te meten door vage definities en inconsistente meetinstrumenten, en het vertoont minder consistente en lagere validiteit.",
+        "score": "2/2"
+      }
+    ]
+  },
+  {
+    "topic": "Biases en Eerlijkheid in Testen",
+    "subtopics": [
+      {
+        "topic": "Bias in Psychologische Testen",
+        "question": "Wat is een bias in de context van psychologische testen?",
+        "answer": "Een bias is een systematische fout in een test die ervoor zorgt dat de testresultaten ongelijk zijn voor bepaalde subgroepen, waardoor de test voor die groepen geen accurate of eerlijke meting is.",
+        "score": "2/2"
       },
       {
-        "topic": "Taalontwikkeling",
-        "question": "Beschrijf hoe biologische veranderingen in het brein de taalontwikkeling bij peuters ondersteunen.",
-        "answer": "Biologische veranderingen zoals synaptogenese in taalgerelateerde gebieden (bijvoorbeeld Broca's en Wernicke's gebieden) verhogen de neurale capaciteit voor taalverwerking. De groei van myeline in betrokken circuits versnelt de transmissie van taalgerelateerde signalen, wat het leren van nieuwe woorden en zinsstructuren faciliteert.",
-        "status": "not asked",
-        "score": "0/4"
+        "topic": "Voorbeelden van Bias",
+        "question": "Geef een voorbeeld van hoe een test gebiased kan zijn tegen een bepaalde culturele groep.",
+        "answer": "Een voorbeeld is een IQ-testvraag die culturele kennis vereist die niet alle testdeelnemers hebben, zoals een vraag over specifieke dieren die in sommige culturen als onrein worden beschouwd. Dit kan leiden tot lagere scores voor die culturele groep, niet door verschil in intelligentie, maar door culturele verschillen.",
+        "score": "2/2"
+      },
+      {
+        "topic": "Fairness in Testen",
+        "question": "Wat wordt bedoeld met fairness in testen, en waarom is dit belangrijk?",
+        "answer": "Fairness in testen betekent dat beslissingen op basis van testresultaten eerlijk en rechtvaardig zijn voor alle testdeelnemers, ongeacht hun achtergrond, en dat de test geen onnodige nadelen oplevert voor bepaalde groepen. Dit is belangrijk om discriminatie te voorkomen en om te zorgen dat de test echt meet wat hij beoogt te meten.",
+        "score": "2/2"
+      }
+    ]
+  },
+  {
+    "topic": "Cultuur en Testen",
+    "subtopics": [
+      {
+        "topic": "Invloed van Cultuur",
+        "question": "Leg uit waarom cultuur een belangrijke factor is om rekening mee te houden bij het ontwikkelen en afnemen van psychologische testen.",
+        "answer": "Omdat cultuur invloed heeft op hoe mensen denken, communiceren en reageren op testinhoud. Testen die geen rekening houden met culturele verschillen kunnen daardoor niet valide of betrouwbaar zijn voor alle culturele groepen.",
+        "score": "2/2"
+      },
+      {
+        "topic": "Gevolgen van Niet Rekening Houden met Cultuur",
+        "question": "Hoe kan het niet in acht nemen van culturele verschillen bij het testen leiden tot verkeerde interpretaties van testresultaten?",
+        "answer": "Het kan ertoe leiden dat verschillen in testresultaten worden toegeschreven aan eigenschappen van het individu (bijvoorbeeld lagere intelligentie), terwijl ze in feite voortkomen uit culturele misverstanden of onbekendheid met de testinhoud, wat leidt tot onjuiste conclusies.",
+        "score": "2/2"
+      }
+    ]
+  },
+  {
+    "topic": "Definitie van een test en constructen in psychologie",
+    "subtopics": [
+      {
+        "topic": "Definitie van een test",
+        "questions": [
+          {
+            "question": "Wat is volgens de docent de definitie van een test?",
+            "answer": "Een test is een objectieve en gestandaardiseerde procedure voor het meten van een psychologisch construct aan de hand van een steekproef van gedrag. Dit betekent dat de test op een objectieve manier wordt afgenomen, met dezelfde procedures voor iedereen, om een niet-tastbaar psychologisch kenmerk te meten door middel van observeerbaar gedrag in een beperkte tijd.",
+            "points": 4
+          }
+        ]
+      },
+      {
+        "topic": "Psychologische constructen",
+        "subtopics": [
+          {
+            "topic": "Definitie en belang",
+            "questions": [
+              {
+                "question": "Wat wordt bedoeld met een psychologisch construct, en waarom zijn deze constructen belangrijk in de psychologie?",
+                "answer": "Een psychologisch construct is een abstract concept dat wordt gebruikt om bepaalde psychologische fenomenen te beschrijven of te verklaren, zoals intelligentie, persoonlijkheidstrekken of emoties. Ze zijn belangrijk omdat ze psychologen helpen om menselijk gedrag te begrijpen, te onderzoeken en te meten.",
+                "points": 2
+              }
+            ]
+          },
+          {
+            "topic": "Niet-tastbaarheid van constructen",
+            "questions": [
+              {
+                "question": "Leg uit waarom psychologische constructen als 'niet-tastbaar' worden beschouwd.",
+                "answer": "Psychologische constructen zijn niet-tastbaar omdat ze niet direct waarneembaar of meetbaar zijn; ze bestaan in de gedeelde ideeën en afspraken binnen de psychologie over bepaalde kenmerken of concepten. Ze kunnen alleen indirect worden gemeten via observeerbaar gedrag of antwoorden op tests.",
+                "points": 2
+              }
+            ]
+          },
+          {
+            "topic": "Voorbeeld van een psychologisch construct",
+            "questions": [
+              {
+                "question": "Geef een voorbeeld van een psychologisch construct en beschrijf hoe het in de psychologie wordt gebruikt.",
+                "answer": "Een voorbeeld is 'intelligentie'. In de psychologie wordt het gebruikt om individuele verschillen in cognitieve capaciteiten te beschrijven en te meten, vaak via IQ-tests. Hoewel we intelligentie niet direct kunnen zien, kunnen we het afleiden uit prestaties op specifieke taken die ontworpen zijn om aspecten van intelligentie te meten.",
+                "points": 2
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "topic": "Multitrait-multimethod testtechniek",
+    "subtopics": [
+      {
+        "topic": "Definitie van de techniek",
+        "question": "Wat houdt de multitrait-multimethod testtechniek in?",
+        "answer": "De multitrait-multimethod testtechniek houdt in dat meerdere eigenschappen (traits) worden gemeten met verschillende methoden, zodat de resultaten uit verschillende bronnen kunnen worden vergeleken om de validiteit en betrouwbaarheid van de metingen te verhogen. (2 punten)",
+        "status": "done",
+        "score": "2/2"
+      },
+      {
+        "topic": "Praktijkvoorbeeld",
+        "question": "Geef een voorbeeld van hoe deze techniek in de praktijk kan worden toegepast bij het meten van één kwaliteit.",
+        "answer": "Een voorbeeld is het meten van sociale vaardigheden door zowel een zelfrapportagevragenlijst als een observatie tijdens een rollenspel en feedback uit een interview te gebruiken. Door deze verschillende methoden te combineren, krijg je een completer beeld van de sociale vaardigheden van een persoon. (4 punten)",
+        "status": "done",
+        "score": "4/4"
+      },
+      {
+        "topic": "Voordelen en nadelen",
+        "question": "Noem één voordeel en één nadeel van het combineren van verschillende methoden bij het meten van dezelfde eigenschap.",
+        "answers": [
+          {
+            "type": "voordeel",
+            "answer": "Het verhoogt de validiteit van de meting omdat het dezelfde eigenschap op verschillende manieren meet, wat zorgt voor een meer betrouwbaar en robuust beeld. (2 punten)"
+          },
+          {
+            "type": "nadeel",
+            "answer": "Het kan complex en tijdrovend zijn, en er is voorzichtigheid nodig bij het combineren van resultaten, omdat verschillende methoden niet altijd direct vergelijkbaar zijn en verschillende biases kunnen introduceren. (2 punten)"
+          }
+        ],
+        "status": "done",
+        "score": "4/4"
+      }
+    ]
+  },
+  {
+    "topic": "Speedtests versus powertests",
+    "subtopics": [
+      {
+        "topic": "Verschil tussen speedtests en powertests",
+        "theory": "Speedtests meten hoe snel iemand een taak kan voltooien binnen een vaste, beperkte tijd, met doorgaans eenvoudige items. Powertests meten de moeilijkheidsgraad die iemand aankan, zonder strikte tijdslimiet, en bevatten vaak moeilijkere items.",
+        "question": "Wat is het verschil tussen een speedtest en een powertest?",
+        "answer": "Een speedtest meet hoe snel iemand een taak kan voltooien binnen een vaste, beperkte tijd, met doorgaans eenvoudige items. Een powertest meet de moeilijkheidsgraad die iemand aankan, zonder strikte tijdslimiet, en bevat vaak moeilijkere items.",
+        "score": "2/2"
+      },
+      {
+        "topic": "Gebruik van speedtests",
+        "theory": "Speedtests zijn geschikt voor situaties waarin de snelheid van taakuitvoering belangrijk is, zoals bij het meten van typevaardigheid.",
+        "question": "Geef een voorbeeld van een situatie waarin het gebruik van een speedtest gepast is.",
+        "answer": "Een speedtest is gepast bij het meten van typevaardigheid, waar de snelheid waarmee iemand kan typen binnen een bepaalde tijd belangrijk is.",
+        "score": "2/2"
+      },
+      {
+        "topic": "Gebruik van powertests",
+        "theory": "Powertests zijn geschikt voor situaties waarin de moeilijkheidsgraad en kwaliteit van probleemoplossing belangrijk zijn, zoals bij het meten van wiskundig inzicht op hoog niveau.",
+        "question": "Geef een voorbeeld van een situatie waarin een powertest meer geschikt is dan een speedtest.",
+        "answer": "Een powertest is geschikt voor het meten van wiskundig inzicht op hoog niveau, waarbij het belangrijk is om te zien hoe complexe problemen worden aangepakt, ongeacht hoelang het duurt om deze op te lossen binnen redelijke grenzen.",
+        "score": "2/2"
+      },
+      {
+        "topic": "Belang van juiste testcategorie",
+        "theory": "Het kiezen van de juiste testcategorie is cruciaal omdat het type test moet aansluiten bij de aard van de vaardigheid of eigenschap die gemeten wordt. Een verkeerde keuze kan leiden tot onjuiste of misleidende resultaten over iemands capaciteiten.",
+        "question": "Leg uit waarom het belangrijk is om de juiste testcategorie te kiezen voor het meten van een bepaalde eigenschap of vaardigheid.",
+        "answer": "Het is belangrijk om de juiste testcategorie te kiezen omdat het type test moet aansluiten bij de aard van de vaardigheid of eigenschap die gemeten wordt. Een verkeerde keuze kan leiden tot onjuiste of misleidende resultaten over iemands capaciteiten.",
+        "score": "2/2"
+      }
+    ]
+  },
+  {
+    "topic": "Situational Judgment Tests (SJT)",
+    "subtopics": [
+      {
+        "topic": "Definitie en concept",
+        "question": "Wat is een situational judgment test (SJT)?",
+        "answer": "Een situational judgment test is een test waarbij kandidaten worden geconfronteerd met hypothetische werkgerelateerde situaties en hen wordt gevraagd te beoordelen wat de meest effectieve of geschikte actie is in die situatie. Het meet hun oordeelsvermogen en beslissingsvaardigheden.",
+        "points": 2
+      },
+      {
+        "topic": "Verschil met andere tests",
+        "question": "Leg uit hoe een SJT verschilt van andere soorten tests, zoals persoonlijkheidstests of capaciteitentests.",
+        "answer": "Een SJT verschilt van persoonlijkheidstests omdat het niet vraagt naar persoonlijke eigenschappen, maar naar het oordeel in specifieke situaties. Het verschilt van capaciteitentests omdat het niet puur cognitieve vaardigheden meet, maar praktische oordeelsvaardigheden in contextuele situaties.",
+        "points": 2
+      },
+      {
+        "topic": "Voordelen van SJT",
+        "question": "Noem twee voordelen van het gebruik van SJT's in selectieprocedures.",
+        "answer": "Twee voordelen:\n- SJT's zijn werkgerelateerd en contextspecifiek, waardoor ze relevant zijn voor de functie en een goede indicatie kunnen geven van toekomstige werkprestaties.\n- Ze kunnen helpen bij het verminderen van biases en adverse impact in vergelijking met andere selectie-instrumenten, omdat ze zich richten op situationeel gedrag in plaats van op achtergrondkenmerken.",
+        "points": 4
+      },
+      {
+        "topic": "Nadeel van SJT",
+        "question": "Wat is een nadeel of uitdaging bij het gebruiken van SJT's?",
+        "answer": "Een nadeel is dat het ontwikkelen van goede SJT's tijdrovend en complex is, omdat situaties realistisch en representatief moeten zijn en de 'juiste' antwoorden goed moeten worden geijkt.",
+        "points": 2
+      }
+    ]
+  },
+  {
+    "topic": "Validiteit van SJT's",
+    "subtopics": [
+      {
+        "topic": "Reden voor uitsluiting in meta-analyse",
+        "question": "Waarom zijn SJT's niet opgenomen in de meta-analyse van Schmidt & Hunter?",
+        "answer": "Omdat situational judgment tests een opkomend veld zijn en mogelijk nog niet voldoende empirische studies beschikbaar waren om ze op te nemen in de meta-analyse van Schmidt & Hunter. Daarnaast kunnen er methodologische verschillen zijn die opname bemoeilijken.",
+        "points": 2
       }
     ]
   }

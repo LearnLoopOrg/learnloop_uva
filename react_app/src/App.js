@@ -173,7 +173,7 @@ const App = () => {
     <>
       <Header />
       <div className="app-container">
-        <h1>Neuroplasticiteit</h1>
+        <h1>Individuele verschillen</h1>
         {/* <div className="floating-menu">
           <ul>
             {expanders.map((expander, index) => (

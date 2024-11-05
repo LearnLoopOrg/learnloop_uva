@@ -114,7 +114,10 @@ const Segment = forwardRef(({ data, onComplete, index, updateSegmentData, exampl
             <h3>{data.title}</h3>
             <p className={isBlurry ? 'blurry' : ''} dangerouslySetInnerHTML={{ __html: data.text }}></p>
             {data.question && (
-                <p className="question">⚫ {data.question}</p>
+                <p className="question">
+                    <span className="circle">⚫</span>
+                    {data.question}
+                </p>
             )}
             {chatHistory.map((chat, idx) => (
                 <div key={idx} className={`chat-message ${chat.role}`}>
