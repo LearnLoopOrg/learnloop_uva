@@ -70,8 +70,8 @@
   /* Adjust this percentage to control the width of your expanders */
   max-width: 700px;
   /* Optional: Set a max width for large screens */
-  margin-bottom: 20px;
-  margin-left: 160px;
+  margin-bottom: auto;
+  margin-left: auto;
 }
 
 /* Reset default margins and paddings */
@@ -140,22 +140,23 @@ h1 {
   font-size: 60px;
   color: #000;
   /* Black text */
-  margin-bottom: 60px;
+  margin-bottom: 80px;
   text-align: center;
 }
 
 .expander h2 {
-  background-color: #f5f5f5;
-  padding: 15px 20px;
-  border-radius: 10px;
+  background-color: #f4f4f4;
+  padding: 20px 30px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.5s, border-radius 0.5s;
   font-weight: 500;
-  /* Pas de font-weight aan naar wens, bijvoorbeeld 400 voor een dunnere tekst */
+  font-size: larger;
+  color: #454545;
 }
 
 .expander h2:hover {
-  background-color: #f0f0f0;
+  background-color: #e2e2e2;
+  color: #454545;
 }
 
 .expander h2 span {
@@ -165,9 +166,20 @@ h1 {
 .expander>div {
   background-color: #ffffff;
   padding: 50px;
-  border: 1px solid #ecf0f1;
+  border: 1px solid #dfe2e3;
   border-top: none;
   margin-bottom: 20px;
+  margin-top: 0px;
+  border-radius: 0 0 12px 12px;
+  transition: border-radius 0.5s;
+}
+
+.expander.open h2 {
+  border-radius: 12px 12px 0px 0px;
+}
+
+.expander:not(.open)>h2 {
+  border-radius: 12px;
 }
 
 /* Segment styles */
@@ -250,6 +262,7 @@ h1 {
 .segment p.question {
   margin-top: 30px;
   margin-bottom: 20px;
+  color: #484848;
   /* Pas deze waarde aan naar wens */
 }
 
@@ -334,7 +347,7 @@ svg defs {
   align-items: center;
   padding: 10px 0;
   /* Remove horizontal padding */
-  background: #ffffff;
+  background: #f5f5f5;
   border-bottom: 1px solid #e0e0e0;
   width: 100vw;
   /* Make header full viewport width */
@@ -348,13 +361,18 @@ svg defs {
   /* Ensure header stays on top */
 }
 
+.app-container {
+  padding-top: 100px;
+  /* Adjust this value to match the height of the header */
+}
+
 .logo {
   font-size: 24px;
   font-weight: bold;
 }
 
 .nav-links a {
-  color: #000;
+  color: #565656;
   margin: 0 10px;
   text-decoration: none;
 }
@@ -595,3 +613,29 @@ a {
 .floating-menu li:last-child::before {
   height: 10px;
 }
+
+.reset-button {
+  background-color: white;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  border: 1px solid #3f3f3f;
+  border-radius: 20px;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-top: 80px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 150px;
+}
+
+/* .expander-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 1s ease;
+}
+
+.expander-content.open {
+  max-height: 4000px;
+  /* Set this to a value that fits your content */
+/* } */

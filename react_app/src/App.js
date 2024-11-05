@@ -144,12 +144,22 @@ const App = () => {
     }
   };
 
+  const handleResetProgress = async () => {
+    try {
+      await axios.post(`${backendBaseUrl}/api/resetKnowledgeTree`);
+      // Optionally reload the page or update state
+      window.location.reload();
+    } catch (error) {
+      console.error('Error resetting progress:', error);
+    }
+  };
+
   return (
     <>
       <Header />
       <div className="app-container">
         <h1>Neuroplasticiteit</h1>
-        <div className="floating-menu">
+        {/* <div className="floating-menu">
           <ul>
             {expanders.map((expander, index) => (
               <li key={index}>
@@ -165,7 +175,7 @@ const App = () => {
               </li>
             ))}
           </ul>
-        </div>
+        </div> */}
         <div className="main-content">
           {expanders.map((expander, expanderIndex) => (
             <Expander
@@ -183,10 +193,17 @@ const App = () => {
               exampleConversation={exampleConversation}
             />
           ))}
+          {/* Add the Reset Progress button */}
+          <button
+            onClick={handleResetProgress}
+            className="reset-button"
+          >
+            Reset Progress
+          </button>
         </div>
-        <aside className="sidebar">
-          {/* Additional actions or information */}
-        </aside>
+        {/* <aside className="sidebar"> */}
+        {/* Additional actions or information */}
+        {/* </aside> */}
       </div>
     </>
   );

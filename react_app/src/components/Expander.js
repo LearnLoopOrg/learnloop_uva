@@ -1,4 +1,3 @@
-// src/components/Expander.js
 import React, { useRef, useEffect } from 'react';
 import Segment from './Segment';
 
@@ -25,7 +24,6 @@ const Expander = ({
     const handleSegmentComplete = (segmentIndex) => {
         console.log('Segment complete at index:', segmentIndex);
 
-        // Als er meer segments zijn, ga naar de volgende
         if (segmentIndex + 1 < segments.length) {
             const nextIndex = segmentIndex + 1;
             console.log('Setting focus to next segment at index:', nextIndex);
@@ -36,7 +34,6 @@ const Expander = ({
                 console.warn(`Segment referentie voor index ${nextIndex} niet gevonden.`);
             }
         } else {
-            // Alle segments in deze expander zijn voltooid
             console.log('All segments answered. Closing expander.');
             handleComplete();
         }
@@ -47,7 +44,7 @@ const Expander = ({
     };
 
     return (
-        <div className="expander">
+        <div className={`expander ${isOpen ? 'open' : ''}`}>
             <h2 onClick={onToggle}>
                 {title} {isCompleted && <span>✅</span>}
             </h2>
@@ -63,9 +60,9 @@ const Expander = ({
                             index={segmentIndex}
                             onComplete={handleSegmentComplete}
                             updateSegmentData={updateSegmentData}
-                            knowledgeTree={knowledgeTree} // Pass knowledgeTree as prop
-                            exampleConversation={exampleConversation} // Pass exampleConversation as prop
-                            topicTitle={title} // Pass title as topicTitle prop
+                            knowledgeTree={knowledgeTree}
+                            exampleConversation={exampleConversation}
+                            topicTitle={title}
                         />
                     ))}
                 </div>

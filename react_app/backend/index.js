@@ -17,6 +17,40 @@ const apiVersion = '2024-08-01-preview'; // Specify the API version
 app.use(cors());
 app.use(express.json());
 
+// Reset function to reset the knowledge tree
+const resetKnowledgeTree = () => {
+    const knowledgeTreePath = path.join(__dirname, 'data', 'knowledgeTree.json');
+
+    // Read the current knowledge tree
+    const data = fs.readFileSync(knowledgeTreePath, 'utf-8');
+    const knowledgeTree = JSON.parse(data);
+
+    // Iterate over all topics and subtopics
+    knowledgeTree.forEach(topic => {
+        topic.subtopics.forEach(subtopic => {
+            // Set status to "not asked"
+            subtopic.status = "not asked";
+
+            // Reset the score to "0/total"
+            const scoreParts = subtopic.score.split('/');
+            if (scoreParts.length === 2) {
+                subtopic.score = `0/${scoreParts[1]}`;
+            }
+        });
+    });
+
+    // Write the updated knowledge tree back to the file
+    fs.writeFileSync(knowledgeTreePath, JSON.stringify(knowledgeTree, null, 2), 'utf-8');
+
+    console.log('Kennisboom succesvol gereset.');
+};
+
+// Add endpoint to handle the reset request
+app.post('/api/resetKnowledgeTree', (req, res) => {
+    resetKnowledgeTree();
+    res.json({ message: 'Knowledge tree reset successfully.' });
+});
+
 // Endpoint om de reactie van de docent te genereren
 app.post('/api/generateResponse', async (req, res) => {
     const { conversation, knowledgeTree, exampleConversation, currentQuestion, isQuestionCompleted } = req.body;
