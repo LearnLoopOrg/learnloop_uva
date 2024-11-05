@@ -5,8 +5,6 @@ import Expander from './components/Expander';
 import './App.css';
 import Header from './components/Header';
 
-const backendBaseUrl = process.env.REACT_APP_BACKEND_BASE_URL;
-
 const App = () => {
   const [expanders, setExpanders] = useState([]);
   const [knowledgeTree, setKnowledgeTree] = useState([]);
@@ -16,8 +14,8 @@ const App = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const knowledgeTreeResponse = await axios.get(`${backendBaseUrl}/api/getKnowledgeTree`);
-        const exampleConversationResponse = await axios.get(`${backendBaseUrl}/api/getExampleConversation`);
+        const knowledgeTreeResponse = await axios.get('/api/getKnowledgeTree');
+        const exampleConversationResponse = await axios.get('/api/getExampleConversation');
 
         const knowledgeTreeData = knowledgeTreeResponse.data;
         const exampleConversationData = exampleConversationResponse.data;
@@ -79,7 +77,7 @@ const App = () => {
     console.log('Current segment:', currentSegment);
 
     try {
-      const response = await axios.post(`${backendBaseUrl}/api/evaluateStudentResponse`, {
+      const response = await axios.post('/api/evaluateStudentResponse', {
         conversation,
         knowledgeTree,
         currentQuestion
@@ -144,7 +142,7 @@ const App = () => {
 
   const generateResponse = async (updatedKnowledgeTree, isQuestionFullyAnswered, currentQuestion) => {
     try {
-      const response = await axios.post(`${backendBaseUrl}/api/generateResponse`, {
+      const response = await axios.post('/api/generateResponse', {
         conversation,
         knowledgeTree: updatedKnowledgeTree,
         isQuestionCompleted: isQuestionFullyAnswered,
@@ -161,7 +159,7 @@ const App = () => {
 
   const handleResetProgress = async () => {
     try {
-      await axios.post(`${backendBaseUrl}/api/resetKnowledgeTree`);
+      await axios.post('/api/resetKnowledgeTree');
       // Optionally reload the page or update state
       window.location.reload();
     } catch (error) {

@@ -301,7 +301,10 @@ app.post('/api/evaluateStudentResponse', async (req, res) => {
 
 // Voeg deze endpoint toe om knowledgeTree.json op te halen
 app.get('/api/getKnowledgeTree', (req, res) => {
-    const knowledgeTreePath = path.join(__dirname, 'data/knowledgeTree.json');
+    console.log("Accessing /api/getKnowledgeTree endpoint"); // Logging toevoegen
+    const knowledgeTreePath = path.join(process.cwd(), 'data', 'knowledgeTree.json');
+    console.log("Knowledge tree path:", knowledgeTreePath); // Pad naar bestand loggen
+
     fs.readFile(knowledgeTreePath, 'utf-8', (err, data) => {
         if (err) {
             console.error('Error reading knowledgeTree.json:', err);
