@@ -145,7 +145,7 @@ h1 {
 }
 
 .expander h2 {
-  background-color: #f4f4f4;
+  background-color: #e1e3e4;
   padding: 20px 30px;
   cursor: pointer;
   transition: background-color 0.5s, border-radius 0.5s;
@@ -164,14 +164,14 @@ h1 {
 }
 
 .expander>div {
-  background-color: #ffffff;
+  background-color: #fafafa;
   padding: 50px;
-  border: 1px solid #dfe2e3;
+  border: 1px solid #e1e3e4;
   border-top: none;
   margin-bottom: 20px;
   margin-top: 0px;
   border-radius: 0 0 12px 12px;
-  transition: border-radius 0.5s;
+  transition: border-radius 0.3s;
 }
 
 .expander.open h2 {
@@ -185,6 +185,11 @@ h1 {
 /* Segment styles */
 .segment {
   margin-bottom: 50px;
+  padding: 30px;
+  /* background-color: #f8f8f8; */
+  border: 1px solid #e5e5e5;
+  background-color: #fff;
+  border-radius: 12px;
 }
 
 .segment h3 {
