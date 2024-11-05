@@ -4,8 +4,7 @@ import axios from 'axios';
 import { FaArrowCircleUp } from 'react-icons/fa'; // Import the icon
 import '../App.css';
 
-const backendBaseUrl = process.env.REACT_APP_BACKEND_BASE_URL
-const knowledgeTree = await axios.get(`${backendBaseUrl}/api/getKnowledgeTree`);
+const knowledgeTree = await axios.get('/api/getKnowledgeTree');
 
 const Segment = forwardRef(({ data, onComplete, index, updateSegmentData, exampleConversation, topicTitle }, ref) => {
     const [answer, setAnswer] = useState('');
@@ -36,13 +35,13 @@ const Segment = forwardRef(({ data, onComplete, index, updateSegmentData, exampl
         let currentQuestion = data.question;
 
         try {
-            await axios.post(`${backendBaseUrl}/api/evaluateStudentResponse`, {
+            await axios.post('/api/evaluateStudentResponse', {
                 conversation,
                 knowledgeTree,
                 currentQuestion
             });
 
-            const knowledgeTreeResponse = await axios.get(`${backendBaseUrl}/api/getKnowledgeTree`);
+            const knowledgeTreeResponse = await axios.get('/api/getKnowledgeTree');
             const updatedKnowledgeTree = knowledgeTreeResponse.data;
             console.log('Updated knowledge tree:', updatedKnowledgeTree);
 
@@ -66,7 +65,7 @@ const Segment = forwardRef(({ data, onComplete, index, updateSegmentData, exampl
             }
 
             console.log('Generating teacher response');
-            const generateResponse = await axios.post(`${backendBaseUrl}/api/generateResponse`, {
+            const generateResponse = await axios.post('/api/generateResponse', {
                 conversation,
                 knowledgeTree: updatedKnowledgeTree,
                 exampleConversation,

@@ -16,7 +16,11 @@ const apiKey = process.env.OPENAI_API_KEY || process.env.LL_OPENAI_API_KEY;
 const deployment = process.env.AZURE_OPENAI_ENDPOINT ? "learnloop-4o" : "LLgpt-4o";
 const apiVersion = '2024-08-01-preview'; // Specify the API version
 
-app.use(cors());
+app.use(cors({
+    origin: 'https://learnloop-uva.vercel.app',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true
+}));
 app.use(express.json());
 
 // Reset function to reset the knowledge tree
