@@ -27,6 +27,11 @@ spec:
             value: "{{ .Values.surfconextClientId }}"
           - name: LEARNLOOP_VERSION
             value: "{{ .Chart.AppVersion }}"
+          - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: learnloop-openai-api-key
+              key: OPENAI_API_KEY
           envFrom:
             - secretRef:
                 name: learnloop-secret

@@ -5,29 +5,44 @@ import Expander from './components/Expander';
 import './App.css';
 import Header from './components/Header';
 
-const backendBaseUrl = process.env.REACT_APP_BACKEND_BASE_URL
-const knowledgeTree = await axios.get(`${backendBaseUrl}/api/getKnowledgeTree`);
-const knowledgeTreeData = knowledgeTree.data;
-const exampleConversationData = await axios.get(`${backendBaseUrl}/api/getExampleConversation`);
+const backendBaseUrl = process.env.REACT_APP_BACKEND_BASE_URL;
 
 const App = () => {
-  const [expanders, setExpanders] = useState(() =>
-    knowledgeTreeData.map((topicItem) => ({
-      title: topicItem.topic,
-      segments: topicItem.subtopics.map((subtopicItem) => ({
-        title: subtopicItem.topic,
-        text: subtopicItem.theorie || '',
-        question: subtopicItem.question || '',
-        chatHistory: [],
-      })),
-      isCompleted: false,
-      isOpen: false,
-    }))
-  );
-
-  const [knowledgeTree, setKnowledgeTree] = useState(knowledgeTreeData);
-  const [exampleConversation, setExampleConversation] = useState(exampleConversationData);
+  const [expanders, setExpanders] = useState([]);
+  const [knowledgeTree, setKnowledgeTree] = useState([]);
+  const [exampleConversation, setExampleConversation] = useState([]);
   const [conversation, setConversation] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const knowledgeTreeResponse = await axios.get(`${backendBaseUrl}/api/getKnowledgeTree`);
+        const exampleConversationResponse = await axios.get(`${backendBaseUrl}/api/getExampleConversation`);
+
+        const knowledgeTreeData = knowledgeTreeResponse.data;
+        const exampleConversationData = exampleConversationResponse.data;
+
+        setKnowledgeTree(knowledgeTreeData);
+        setExampleConversation(exampleConversationData);
+
+        setExpanders(knowledgeTreeData.map((topicItem) => ({
+          title: topicItem.topic,
+          segments: topicItem.subtopics.map((subtopicItem) => ({
+            title: subtopicItem.topic,
+            text: subtopicItem.theorie || '',
+            question: subtopicItem.question || '',
+            chatHistory: [],
+          })),
+          isCompleted: false,
+          isOpen: false,
+        })));
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     setExpanders((prev) =>
@@ -35,7 +50,7 @@ const App = () => {
         index === 0 ? { ...expander, isOpen: true } : expander
       )
     );
-  }, []);
+  }, [knowledgeTree]);
 
   const handleExpanderComplete = async (index) => {
     setExpanders((prev) =>
