@@ -4,17 +4,19 @@
     "subtopics": [
       {
         "topic": "Definitie en verschil",
+        "theorie": "",
         "question": "Wat is het verschil tussen procedurele kennis en declaratieve kennis?",
         "answer": "Procedurele kennis is weten hoe iets gedaan moet worden en het kunnen uitleggen van de stappen of procedures (het 'hoe') (1 punt). Declaratieve kennis is het kunnen uitleggen van feiten en informatie over iets (het 'wat') (1 punt).",
-        "status": "asked",
-        "score": "1/2"
+        "status": "not asked",
+        "score": "0/2"
       },
       {
         "topic": "Belang van onderscheid",
+        "theorie": "",
         "question": "Leg uit waarom het belangrijk is om onderscheid te maken tussen deze vormen van kennis bij het beoordelen van iemands bekwaamheid.",
         "answer": "Het is belangrijk om onderscheid te maken omdat iemand wellicht weet wat hij moet doen (declaratieve kennis) (1 punt), maar niet weet hoe het te doen (procedurele kennis) (1 punt), of omgekeerd. Dit heeft implicaties voor bijvoorbeeld training en ontwikkeling, omdat het aangeeft op welke gebieden iemand ondersteuning nodig heeft.",
-        "status": "asked",
-        "score": "1/2"
+        "status": "not asked",
+        "score": "0/2"
       }
     ]
   },

@@ -170,8 +170,11 @@ app.post('/api/evaluateStudentResponse', async (req, res) => {
        - Noteer de behaalde punten zoals aangegeven in het antwoordmodel, bijvoorbeeld "2/3".
        - Indien alle punten zijn behaald voor een subtopic, markeer de status als "done".
        - Indien niet alle punten zijn behaald maar de vraag wel is behandeld, markeer de status als "asked".
-       - Je mag nooit het aantal behaalde punten in de kennisboom verminderen, want dat zou oneerlijk zijn voor de student. De student mag nooit minder punten krijgen dan eerder behaald.    
-       
+       - Je mag nooit het aantal behaalde punten van de student verminderen, want die punten heeft de student al verdiend.
+       - Je mag ook nooit de status van een subtopic veranderen van "done" naar "asked".
+       - Je mag ook nooit het aantal te behalen punten van een subtopic veranderen.    
+       - Je mag alleen de score en status van het subtopic van de huidige vraag bijwerken. Pas nooit de scores aan van andere subtopics dan die van de huidige vraag.
+
     5. **Geef alleen geüpdatete subtopics weer in de output**:
        - Als de student geen nieuwe kennis heeft toegevoegd of geen relevante punten heeft verdiend, retourneer een lege JSON-string '{}'.
     
@@ -207,7 +210,7 @@ app.post('/api/evaluateStudentResponse', async (req, res) => {
     Voorbeeldoutput 2: De student heeft geen extra punten verdiend en de vraag was niet verkennend bedoeld om kennis te identificeren.
     {}
     
-    Voorbeeldoutput 3: De student heeft inhoudelijk antwoord gegeven op de vraag wat hij van een antwoord weet, ondanks dat er weinig tot geen relevante informatie is toegevoegd.
+    Voorbeeldoutput 3:
     [
         {
             "topic": "Neuropsychologie",
