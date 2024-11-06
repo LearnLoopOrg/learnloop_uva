@@ -213,7 +213,7 @@ const App = () => {
             onClick={handleResetProgress}
             className="reset-button"
           >
-            Reset Progress
+            Reset progress
           </button>
         </div>
         {/* <aside className="sidebar"> */}

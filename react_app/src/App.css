@@ -43,35 +43,28 @@
   filter: blur(1px);
 }
 
-
-/* src/App.css */
+/* Consolidated .app-container styles */
 .app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  /* Center the container horizontally */
+  padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: left;
-  margin: 0 auto;
-  max-width: 800px;
-  /* Pas de breedte aan naar wens */
-  padding: 20px;
 }
 
 .content-column {
   width: 60%;
-  /* Adjust to control the width of the centered column */
   max-width: 800px;
-  /* Set a max width for larger screens */
   text-align: left;
-  /* Align text to the left inside this column */
 }
 
+/* Center the expander */
 .expander {
   width: 100%;
-  /* Adjust this percentage to control the width of your expanders */
   max-width: 700px;
-  /* Optional: Set a max width for large screens */
-  margin-bottom: 20px;
-  margin-left: auto;
+  margin: 0 auto 20px;
 }
 
 /* Reset default margins and paddings */
@@ -89,50 +82,14 @@ button {
   padding: 0;
 }
 
-/* Set a modern font and background */
-body {
-  font-family: 'Inter', sans-serif;
-  background-color: #fff;
-  /* White background */
-  color: #000;
-  /* Black text */
-}
-
-/* Monochrome color scheme and font */
-body {
-  background-color: #ffffff;
-  color: #000000;
-  font-family: 'Inter', sans-serif;
-}
-
 /* Ensure the body takes full width and centers content */
 body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  margin: 0;
   font-family: 'Inter', sans-serif;
   background-color: #fff;
   color: #000;
-}
-
-/* Container styles */
-.app-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: left;
-  margin: 0 auto;
-  max-width: 1200px;
-  padding: 40px 20px;
-}
-
-/* Two-column layout */
-.app-container {
-  display: flex;
-  justify-content: center;
-  margin: 20px;
+  margin: 0;
+  /* Reset default margin */
+  /* Remove flex styles to prevent interference */
 }
 
 /* Heading styles */
@@ -140,6 +97,7 @@ h1 {
   font-size: 60px;
   color: #000;
   /* Black text */
+  margin-top: 80px;
   margin-bottom: 80px;
   text-align: center;
 }
@@ -159,16 +117,12 @@ h1 {
   color: #454545;
 }
 
-.expander h2 span {
-  margin-left: 10px;
-}
-
 .expander>div {
   background-color: #fafafa;
-  padding: 50px;
+  padding: 50px 50px 10px 50px;
   border: 1px solid #e1e3e4;
   border-top: none;
-  margin-bottom: 20px;
+  margin-bottom: 0px;
   margin-top: 0px;
   border-radius: 0 0 12px 12px;
   transition: border-radius 0.3s;
@@ -361,41 +315,37 @@ svg defs {
   margin-left: -35px;
 }
 
-/* Header styles */
 .app-header {
   display: flex;
   justify-content: center;
+  /* Center the content horizontally */
   align-items: center;
   padding: 10px 0;
-  /* Remove horizontal padding */
   background: #f5f5f5;
   border-bottom: 1px solid #e0e0e0;
   width: 100vw;
-  /* Make header full viewport width */
   position: fixed;
-  /* Fix header at top */
   top: 0;
-  /* Align to top */
   left: 0;
-  /* Align to left */
   z-index: 1000;
-  /* Ensure header stays on top */
 }
 
-.app-container {
-  padding-top: 100px;
-  /* Adjust this value to match the height of the header */
-}
-
-.logo {
-  font-size: 24px;
-  font-weight: bold;
+.nav-links {
+  display: flex;
+  justify-content: center;
+  /* Center the links within the nav */
+  align-items: center;
 }
 
 .nav-links a {
   color: #565656;
   margin: 0 10px;
   text-decoration: none;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
 }
 
 .profile {
@@ -446,14 +396,10 @@ svg defs {
 }
 
 .main-content {
-  flex: 3;
+  width: 100%;
   max-width: 800px;
-}
-
-.sidebar {
-  flex: 1;
-  margin-left: 20px;
-  max-width: 300px;
+  margin: 0 auto;
+  /* Center the main content */
 }
 
 /* Ensure high contrast for all elements */
@@ -469,7 +415,7 @@ a {
 @media (max-width: 768px) {
   .app-container {
     flex-direction: column;
-    padding: 20px 15px;
+    padding: 10px 15px;
   }
 
   .main-content,
