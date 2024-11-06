@@ -300,6 +300,51 @@ h1 {
   height: 20px;
 }
 
+.next-segment-button {
+  background-color: #4caf50;
+  /* Green background */
+  color: white;
+  /* White text */
+  font-size: 16px;
+  font-weight: 500;
+  padding: 12px 20px;
+  border: 1px solid #4caf50;
+  /* Green border to match background */
+  border-radius: 12px;
+  /* Matches the border-radius of the segment */
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.3s ease, transform 0.1s ease, box-shadow 0.3s ease;
+  text-align: center;
+  display: block;
+  /* Ensures full-width alignment with the rest of the segment */
+  width: 100%;
+  /* Ensures the button stretches to match the segment width */
+  box-sizing: border-box;
+  box-shadow: 0 0 2px rgba(108, 108, 108, 0.5);
+  /* Adds a green glow */
+}
+
+.next-segment-button:hover {
+  background-color: #45a049;
+  /* Slightly darker green for hover */
+  color: white;
+  /* Maintain white text color */
+}
+
+.next-segment-button:focus {
+  outline: none;
+  box-shadow: 0 0 4px #66bb6a;
+  /* Light green shadow for focus */
+}
+
+.next-segment-button:active {
+  background-color: #388e3c;
+  /* Darker green on click */
+  transform: scale(0.98);
+  /* Slightly shrink on click */
+}
+
 /* SVG filter for rounded corners */
 svg {
   width: 0;

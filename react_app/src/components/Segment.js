@@ -11,6 +11,7 @@ const Segment = forwardRef(({ data, onComplete, index, updateSegmentData, exampl
     const [answer, setAnswer] = useState('');
     const [isBlurry, setIsBlurry] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isFullyAnswered, setIsFullyAnswered] = useState(false);
     const inputRef = useRef(null);
 
     const chatHistory = data.chatHistory || [];
@@ -79,8 +80,9 @@ const Segment = forwardRef(({ data, onComplete, index, updateSegmentData, exampl
             updateSegmentData(index, { chatHistory: updatedChatHistory });
 
             if (isCurrentQuestionFullyAnswered) {
+                setIsFullyAnswered(true);
                 console.log(`Vraag "${currentQuestion}" volledig beantwoord. Overgaan naar het volgende segment.`);
-                onComplete(index);
+                // onComplete(index);
             } else {
                 console.log(`Vraag "${currentQuestion}" niet volledig beantwoord. Blijven op het huidige segment.`);
             }
@@ -134,7 +136,11 @@ const Segment = forwardRef(({ data, onComplete, index, updateSegmentData, exampl
                     <span>●</span>
                 </div>
             )}
-
+            {isFullyAnswered && (
+                <div className="next-segment-button" onClick={() => onComplete(index)}>
+                    Ga naar de volgende vraag
+                </div>
+            )}
             <form onSubmit={handleSubmit}>
                 <input
                     type="text"
