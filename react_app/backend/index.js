@@ -11,7 +11,7 @@ require('dotenv').config({ path: '../.env', override: true });
 
 // Use Kubernetes environment variables if they exist, otherwise fall back to local .env variables
 const endpoint = process.env.AZURE_OPENAI_ENDPOINT || process.env.LL_OPENAI_API_ENDPOINT;
-const apiKey = process.env.OPENAI_API_KEY || process.env.LL_OPENAI_API_KEY;
+const apiKey = process.env.AZURE_OPENAI_API_KEY || process.env.LL_OPENAI_API_KEY;
 // Set the deployment name based on the endpoint used
 const deployment = process.env.AZURE_OPENAI_ENDPOINT ? "learnloop-4o" : "LLgpt-4o";
 const apiVersion = '2024-08-01-preview'; // Specify the API version
@@ -66,10 +66,10 @@ app.post('/api/generateResponse', async (req, res) => {
     
     ## Guidelines:
     - Always be concise, short, and friendly.
-    - If the student answers correctly, indicate with a green checkmark (✅) and provide a brief positive response.
+    - If the student answers correctly, indicate with a green checkmark (✅) and provide a brief positive response. Don't ask follow-up questions.
     - If the answer is incomplete, ask a Socratic question to prompt further thinking. If the student still struggles, provide an explanation and ask them to rephrase in their own words.
-    - If the student answers with two incomplete answers consecutively, provide all relevant information to answer the question and ask the student to rephrase in their own words.
-    - Never directly give the exact answer from the 'answer' field unless the student explicitly states they don't know.
+    - Never directly give the exact answer from the 'answer' field unless the student explicitly states they don't know. Never give away part of the answer or give big hints.
+    - Never use asterisks (*) for emphasis or markdown formatting.
     
     ## Important Rule:
     ${isQuestionCompleted ?

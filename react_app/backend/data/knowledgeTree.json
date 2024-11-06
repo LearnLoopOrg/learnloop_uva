@@ -1,114 +1,99 @@
 [
   {
-    "topic": "Vaardigheden versus kennis in individuele verschillen",
+    "topic": "Procedurele vs. declaratieve kennis",
     "subtopics": [
       {
-        "topic": "Verschil tussen vaardigheden en kennis",
-        "question": "Wat is het verschil tussen vaardigheden (skills) en kennis volgens de docent?",
-        "answer": "Het verschil tussen vaardigheden en kennis is dat vaardigheden betrekking hebben op praktische acties en technische of niet-technische handelingen die iemand kan uitvoeren, terwijl kennis gaat over wat iemand weet en kan uitleggen.",
-        "status": "done",
-        "score": "3/3"
-      },
-      {
-        "topic": "Voorbeeld van vaardigheid zonder kennis",
-        "question": "Geef een voorbeeld van een situatie waarin iemand een vaardigheid heeft zonder de bijbehorende kennis.",
-        "answer": "Een voorbeeld is iemand die kan fietsen (vaardigheid) maar niet in staat is uit te leggen hoe de mechanica van het fietsen werkt of de principes erachter (gebrek aan kennis).",
-        "status": "done",
-        "score": "2/2"
-      },
-      {
-        "topic": "Voorbeeld van kennis zonder vaardigheid",
-        "question": "Geef een voorbeeld van een situatie waarin iemand kennis heeft zonder de bijbehorende vaardigheid.",
-        "answer": "Een voorbeeld is iemand die theoretisch weet hoe een muziekinstrument wordt bespeeld (kennis), maar niet in staat is het instrument daadwerkelijk te bespelen (gebrek aan vaardigheid).",
-        "status": "done",
-        "score": "2/2"
-      }
-    ]
-  },
-  {
-    "topic": "Procedurele en declaratieve kennis",
-    "subtopics": [
-      {
-        "topic": "Verschil tussen procedurele en declaratieve kennis",
+        "topic": "Definitie en verschil",
         "question": "Wat is het verschil tussen procedurele kennis en declaratieve kennis?",
-        "answer": "Procedurele kennis is weten hoe iets gedaan moet worden en het kunnen uitleggen van de stappen of procedures (het 'hoe'). Declaratieve kennis is het kunnen uitleggen van feiten en informatie over iets (het 'wat').",
-        "status": "done",
-        "score": "2/2"
+        "answer": "Procedurele kennis is weten hoe iets gedaan moet worden en het kunnen uitleggen van de stappen of procedures (het 'hoe') (1 punt). Declaratieve kennis is het kunnen uitleggen van feiten en informatie over iets (het 'wat') (1 punt).",
+        "status": "asked",
+        "score": "1/2"
       },
       {
         "topic": "Belang van onderscheid",
         "question": "Leg uit waarom het belangrijk is om onderscheid te maken tussen deze vormen van kennis bij het beoordelen van iemands bekwaamheid.",
-        "answer": "Het is belangrijk om onderscheid te maken omdat iemand wellicht weet wat hij moet doen (declaratieve kennis), maar niet weet hoe het te doen (procedurele kennis), of omgekeerd. Dit heeft implicaties voor bijvoorbeeld training en ontwikkeling, omdat het aangeeft op welke gebieden iemand ondersteuning nodig heeft.",
-        "status": "done",
-        "score": "2/2"
+        "answer": "Het is belangrijk om onderscheid te maken omdat iemand wellicht weet wat hij moet doen (declaratieve kennis) (1 punt), maar niet weet hoe het te doen (procedurele kennis) (1 punt), of omgekeerd. Dit heeft implicaties voor bijvoorbeeld training en ontwikkeling, omdat het aangeeft op welke gebieden iemand ondersteuning nodig heeft.",
+        "status": "not asked",
+        "score": "0/2"
       }
     ]
   },
   {
-    "topic": "Competenties en hun rol in psychologie",
+    "topic": "Competenties in psychologie",
     "subtopics": [
       {
         "topic": "Definitie van competenties",
-        "question": "Wat zijn competenties volgens de docent, en waarvan zijn ze een combinatie?",
-        "answer": "Competenties zijn een set van vaardigheden, kennis en gevoelens die instrumenteel zijn voor prestatie. Ze zijn een combinatie van individuele verschillen.",
-        "status": "done",
-        "score": "2/2"
+        "theorie": "In de lezing beschrijft de docent competenties als een set van vaardigheden, kennis en gevoelens die instrumenteel zijn voor prestatie. Competenties zijn een combinatie van individuele verschillen.",
+        "question": "Hoe definieert de docent competenties, en welke elementen vormen samen competenties?",
+        "answer": "Competenties zijn een set van vaardigheden, kennis en gevoelens die instrumenteel zijn voor prestatie (1 punt). Ze zijn een combinatie van individuele verschillen (1 punt).",
+        "status": "not asked",
+        "score": "0/2"
       },
       {
         "topic": "Populariteit van competenties",
+        "theorie": "Competenties zijn populair buiten de psychologie omdat ze een breed en toepasbaar concept zijn voor het beschrijven van gewenste gedragspatronen in organisaties. Binnen de psychologie zijn ze minder populair vanwege problemen met hun definitie en meetbaarheid.",
         "question": "Waarom zijn competenties populair buiten de psychologie, maar niet binnen de psychologie?",
-        "answer": "Competenties zijn populair buiten de psychologie omdat ze een breed en toepasbaar concept zijn voor het beschrijven van gewenste gedragspatronen in organisaties. Binnen de psychologie zijn ze minder populair vanwege problemen met hun definitie en meetbaarheid.",
-        "status": "done",
-        "score": "1/1"
+        "answer": "Competenties zijn populair buiten de psychologie omdat ze een breed en toepasbaar concept zijn voor het beschrijven van gewenste gedragspatronen in organisaties (1 punt). Binnen de psychologie zijn ze minder populair vanwege problemen met hun definitie en meetbaarheid (1 punt).",
+        "status": "not asked",
+        "score": "0/2"
       },
       {
         "topic": "Kritiek op competenties",
+        "theorie": "Psychologen zijn kritisch over het gebruik van competenties vanwege problemen met de definitie en meetbaarheid ervan. Competenties zijn vaak vaag gedefinieerd, waardoor het onduidelijk is wat precies wordt bedoeld. Daarnaast zijn competenties een samengestelde constructie van verschillende individuele verschillen, wat het moeilijk maakt om specifieke aspecten aan te pakken of te meten.",
         "question": "Geef twee redenen waarom psychologen kritisch zijn over het gebruik van competenties.",
-        "answer": "Twee redenen: \n- Er zijn definitieproblemen; competenties zijn vaak vaag gedefinieerd, waardoor het onduidelijk is wat precies wordt bedoeld. \n- Competenties zijn een samengestelde constructie van verschillende individuele verschillen, waardoor het moeilijk is om specifieke aspecten aan te pakken of te meten.",
-        "status": "done",
-        "score": "4/4"
+        "answer": "Er zijn definitieproblemen; competenties zijn vaak vaag gedefinieerd, waardoor het onduidelijk is wat precies wordt bedoeld (2 punten). Competenties zijn een samengestelde constructie van verschillende individuele verschillen, waardoor het moeilijk is om specifieke aspecten aan te pakken of te meten (2 punten).",
+        "status": "not asked",
+        "score": "0/4"
       }
     ]
   },
   {
-    "topic": "Feedback geven op basis van competenties",
+    "topic": "Feedback op competenties",
     "subtopics": [
       {
-        "topic": "Effectieve feedback",
+        "topic": "Moeilijkheid van competentie-gebaseerde feedback",
+        "theorie": "Omdat competenties vaak breed en vaag zijn, is het moeilijk om specifiek te zijn over wat er verbeterd moet worden. Zonder duidelijke specificatie wordt feedback minder effectief, omdat het niet duidelijk maakt welke kennis, vaardigheden of gedrag aangepast moeten worden.",
         "question": "Waarom is het volgens de docent lastig om effectieve feedback te geven op basis van competenties?",
-        "answer": "Omdat competenties vaak breed en vaag zijn, is het moeilijk om specifiek te zijn over wat er verbeterd moet worden. Zonder duidelijke specificatie wordt feedback minder effectief, omdat het niet duidelijk maakt welke kennis, vaardigheden of gedrag aangepast moeten worden.",
-        "status": "done",
-        "score": "2/2"
+        "answer": "Omdat competenties vaak breed en vaag zijn, is het moeilijk om specifiek te zijn over wat er verbeterd moet worden (1 punt). Zonder duidelijke specificatie wordt feedback minder effectief, omdat het niet duidelijk maakt welke kennis, vaardigheden of gedrag aangepast moeten worden (1 punt).",
+        "status": "not asked",
+        "score": "0/2"
       },
       {
         "topic": "Specifieke feedback",
+        "theorie": "Specifieke feedback helpt individuen te begrijpen wat ze precies goed doen en wat ze kunnen verbeteren. Dit maakt de feedback actiever en gerichter, waardoor het leer- en ontwikkelingsproces wordt bevorderd.",
         "question": "Hoe kan het geven van specifieke feedback bijdragen aan de ontwikkeling van een individu?",
-        "answer": "Specifieke feedback helpt individuen te begrijpen wat ze precies goed doen en wat ze kunnen verbeteren. Dit maakt de feedback actiever en gerichter, waardoor het leer- en ontwikkelingsproces wordt bevorderd.",
-        "status": "done",
-        "score": "2/2"
+        "answer": "Specifieke feedback helpt individuen te begrijpen wat ze precies goed doen en wat ze kunnen verbeteren (1 punt). Dit maakt de feedback actiever en gerichter, waardoor het leer- en ontwikkelingsproces wordt bevorderd (1 punt).",
+        "status": "not asked",
+        "score": "0/2"
       }
     ]
   },
   {
-    "topic": "Kritiek op emotionele intelligentie als psychologisch construct",
+    "topic": "Kritiek op emotionele intelligentie",
     "subtopics": [
       {
         "topic": "Definitie en populariteit",
+        "theorie": "De docent bespreekt emotionele intelligentie en legt uit waarom het een controversieel concept is binnen de psychologie.",
         "question": "Wat is emotionele intelligentie en waarom is het populair buiten de psychologie?",
-        "answer": "Emotionele intelligentie is het vermogen om emoties te herkennen, te begrijpen en te beheren bij zichzelf en anderen. Het is populair buiten de psychologie omdat het wordt gezien als een belangrijke factor in persoonlijk en professioneel succes, vooral in gebieden zoals management en leiderschap.",
-        "score": "2/2"
+        "answer": "Emotionele intelligentie is het vermogen om emoties te herkennen, te begrijpen en te beheren bij zichzelf en anderen (1 punt). Het is populair buiten de psychologie omdat het wordt gezien als een belangrijke factor in persoonlijk en professioneel succes, vooral in gebieden zoals management en leiderschap (1 punt).",
+        "status": "not asked",
+        "score": "0/2"
       },
       {
-        "topic": "Controversie en betwisting",
+        "topic": "Controverses binnen psychologie",
+        "theorie": "De docent bespreekt emotionele intelligentie en legt uit waarom het een controversieel concept is binnen de psychologie.",
         "question": "Noem twee redenen waarom emotionele intelligentie een controversieel of betwist construct is binnen de psychologie.",
-        "answer": "Twee redenen zijn: (1) De definitie van emotionele intelligentie is onduidelijk en vaag. Er is geen consensus over wat het precies is of hoe het gemeten moet worden. (2) Onderzoek heeft aangetoond dat emotionele intelligentie sterk overlapt met bestaande persoonlijkheidsconstructen zoals de Big Five, waardoor het toegevoegde waarde beperkt is.",
-        "score": "4/4"
+        "answer": "Twee redenen: \n- De definitie van emotionele intelligentie is onduidelijk en vaag (2 punten). Er is geen consensus over wat het precies is of hoe het gemeten moet worden.\n- Onderzoek heeft aangetoond dat emotionele intelligentie sterk overlapt met bestaande persoonlijkheidsconstructen zoals de Big Five, waardoor het toegevoegde waarde beperkt is (2 punten).",
+        "status": "not asked",
+        "score": "0/4"
       },
       {
-        "topic": "Vergelijking met Big Five",
+        "topic": "Toevoeging aan de Big Five",
+        "theorie": "De docent bespreekt emotionele intelligentie en legt uit waarom het een controversieel concept is binnen de psychologie.",
         "question": "Leg uit wat bedoeld wordt met de opmerking dat het toevoegen van emotionele intelligentie bovenop de Big Five vraagbaar is.",
-        "answer": "Hiermee wordt bedoeld dat wanneer je emotionele intelligentie toevoegt aan een model of meting dat al de Big Five persoonlijkheidstrekken omvat, het weinig extra voorspellende kracht toevoegt. Dit roept vragen op over de noodzaak en relevantie van emotionele intelligentie als apart construct.",
-        "score": "2/2"
+        "answer": "Hiermee wordt bedoeld dat wanneer je emotionele intelligentie toevoegt aan een model of meting dat al de Big Five persoonlijkheidstrekken omvat, het weinig extra voorspellende kracht toevoegt (1 punt). Dit roept vragen op over de noodzaak en relevantie van emotionele intelligentie als apart construct (1 punt).",
+        "status": "not asked",
+        "score": "0/2"
       }
     ]
   },
@@ -117,99 +102,98 @@
     "subtopics": [
       {
         "topic": "Meetbaarheid en validiteit",
+        "theorie": "De docent bespreekt het verschil tussen IQ/GMA en emotionele intelligentie.",
         "question": "Hoe verschilt emotionele intelligentie van IQ of algemene mentale capaciteit (GMA) in termen van meetbaarheid en validiteit?",
-        "answer": "IQ of GMA is een goed gedefinieerd construct met duidelijke meetmethoden en hoge validiteit; het meet cognitieve capaciteiten zoals redeneervermogen en probleemoplossend vermogen. Emotionele intelligentie is moeilijker te meten door vage definities en inconsistente meetinstrumenten, en het vertoont minder consistente en lagere validiteit.",
-        "score": "2/2"
+        "answer": "IQ of GMA is een goed gedefinieerd construct met duidelijke meetmethoden en hoge validiteit (1 punt); het meet cognitieve capaciteiten zoals redeneervermogen en probleemoplossend vermogen. Emotionele intelligentie is moeilijker te meten door vage definities en inconsistente meetinstrumenten (1 punt), en het vertoont minder consistente en lagere validiteit.",
+        "status": "not asked",
+        "score": "0/2"
       }
     ]
   },
   {
-    "topic": "Biases en Eerlijkheid in Testen",
+    "topic": "Biases en eerlijkheid",
     "subtopics": [
       {
-        "topic": "Bias in Psychologische Testen",
+        "topic": "Bias in testen",
+        "theorie": "Bias in de context van psychologische testen verwijst naar een systematische fout die ervoor zorgt dat de testresultaten ongelijk zijn voor bepaalde subgroepen. Dit betekent dat de test voor deze groepen geen accurate of eerlijke meting is.",
         "question": "Wat is een bias in de context van psychologische testen?",
-        "answer": "Een bias is een systematische fout in een test die ervoor zorgt dat de testresultaten ongelijk zijn voor bepaalde subgroepen, waardoor de test voor die groepen geen accurate of eerlijke meting is.",
-        "score": "2/2"
+        "answer": "Een bias is een systematische fout in een test die ervoor zorgt dat de testresultaten ongelijk zijn voor bepaalde subgroepen, waardoor de test voor die groepen geen accurate of eerlijke meting is. (2 punten)",
+        "status": "not asked",
+        "score": "0/2"
       },
       {
-        "topic": "Voorbeelden van Bias",
+        "topic": "Voorbeeld van bias",
+        "theorie": "Vooroordelen in testen kunnen specifieke culturele groepen oneerlijk benadelen door vragen te stellen die niet alle deelnemers gelijk kunnen beantwoorden vanwege culturele verschillen.",
         "question": "Geef een voorbeeld van hoe een test gebiased kan zijn tegen een bepaalde culturele groep.",
-        "answer": "Een voorbeeld is een IQ-testvraag die culturele kennis vereist die niet alle testdeelnemers hebben, zoals een vraag over specifieke dieren die in sommige culturen als onrein worden beschouwd. Dit kan leiden tot lagere scores voor die culturele groep, niet door verschil in intelligentie, maar door culturele verschillen.",
-        "score": "2/2"
+        "answer": "Een voorbeeld is een IQ-testvraag die culturele kennis vereist die niet alle testdeelnemers hebben, zoals een vraag over specifieke dieren die in sommige culturen als onrein worden beschouwd. Dit kan leiden tot lagere scores voor die culturele groep, niet door verschil in intelligentie, maar door culturele verschillen. (2 punten)",
+        "status": "not asked",
+        "score": "0/2"
       },
       {
-        "topic": "Fairness in Testen",
+        "topic": "Fairness in testen",
+        "theorie": "Fairness in testen betekent dat beslissingen op basis van testresultaten eerlijk en rechtvaardig zijn voor alle testdeelnemers, ongeacht hun achtergrond, en dat de test geen onnodige nadelen oplevert voor bepaalde groepen. Dit is belangrijk om discriminatie te voorkomen en om te zorgen dat de test echt meet wat hij beoogt te meten.",
         "question": "Wat wordt bedoeld met fairness in testen, en waarom is dit belangrijk?",
-        "answer": "Fairness in testen betekent dat beslissingen op basis van testresultaten eerlijk en rechtvaardig zijn voor alle testdeelnemers, ongeacht hun achtergrond, en dat de test geen onnodige nadelen oplevert voor bepaalde groepen. Dit is belangrijk om discriminatie te voorkomen en om te zorgen dat de test echt meet wat hij beoogt te meten.",
-        "score": "2/2"
+        "answer": "Fairness in testen betekent dat beslissingen op basis van testresultaten eerlijk en rechtvaardig zijn voor alle testdeelnemers, ongeacht hun achtergrond, en dat de test geen onnodige nadelen oplevert voor bepaalde groepen. Dit is belangrijk om discriminatie te voorkomen en om te zorgen dat de test echt meet wat hij beoogt te meten. (2 punten)",
+        "status": "not asked",
+        "score": "0/2"
       }
     ]
   },
   {
-    "topic": "Cultuur en Testen",
+    "topic": "Cultuur en testen",
     "subtopics": [
       {
-        "topic": "Invloed van Cultuur",
+        "topic": "Cultuur bij testen",
+        "theorie": "Cultuur beïnvloedt hoe mensen denken, communiceren en reageren op testinhoud. Testen die geen rekening houden met culturele verschillen kunnen daardoor niet valide of betrouwbaar zijn voor alle culturele groepen.",
         "question": "Leg uit waarom cultuur een belangrijke factor is om rekening mee te houden bij het ontwikkelen en afnemen van psychologische testen.",
-        "answer": "Omdat cultuur invloed heeft op hoe mensen denken, communiceren en reageren op testinhoud. Testen die geen rekening houden met culturele verschillen kunnen daardoor niet valide of betrouwbaar zijn voor alle culturele groepen.",
-        "score": "2/2"
+        "answer": "Omdat cultuur invloed heeft op hoe mensen denken, communiceren en reageren op testinhoud. Testen die geen rekening houden met culturele verschillen kunnen daardoor niet valide of betrouwbaar zijn voor alle culturele groepen. (2 punten)",
+        "status": "not asked",
+        "score": "0/2"
       },
       {
-        "topic": "Gevolgen van Niet Rekening Houden met Cultuur",
+        "topic": "Culturele verschillen en testresultaten",
+        "theorie": "Het niet in acht nemen van culturele verschillen bij het testen kan leiden tot verkeerde interpretaties van testresultaten, waarbij verschillen ten onrechte kunnen worden toegeschreven aan eigenschappen van het individu in plaats van aan culturele misverstanden of onbekendheid met de testinhoud.",
         "question": "Hoe kan het niet in acht nemen van culturele verschillen bij het testen leiden tot verkeerde interpretaties van testresultaten?",
-        "answer": "Het kan ertoe leiden dat verschillen in testresultaten worden toegeschreven aan eigenschappen van het individu (bijvoorbeeld lagere intelligentie), terwijl ze in feite voortkomen uit culturele misverstanden of onbekendheid met de testinhoud, wat leidt tot onjuiste conclusies.",
-        "score": "2/2"
+        "answer": "Het kan ertoe leiden dat verschillen in testresultaten worden toegeschreven aan eigenschappen van het individu (bijvoorbeeld lagere intelligentie), terwijl ze in feite voortkomen uit culturele misverstanden of onbekendheid met de testinhoud, wat leidt tot onjuiste conclusies. (2 punten)",
+        "status": "not asked",
+        "score": "0/2"
       }
     ]
   },
   {
-    "topic": "Definitie van een test en constructen in psychologie",
+    "topic": "Testen en constructen",
     "subtopics": [
       {
         "topic": "Definitie van een test",
-        "questions": [
-          {
-            "question": "Wat is volgens de docent de definitie van een test?",
-            "answer": "Een test is een objectieve en gestandaardiseerde procedure voor het meten van een psychologisch construct aan de hand van een steekproef van gedrag. Dit betekent dat de test op een objectieve manier wordt afgenomen, met dezelfde procedures voor iedereen, om een niet-tastbaar psychologisch kenmerk te meten door middel van observeerbaar gedrag in een beperkte tijd.",
-            "points": 4
-          }
-        ]
+        "theorie": "In de lezing wordt een definitie gegeven van wat een test is en wordt het concept van psychologische constructen uitgelegd.",
+        "question": "Wat is volgens de docent de definitie van een test?",
+        "answer": "Een test is een objectieve en gestandaardiseerde procedure voor het meten van een psychologisch construct aan de hand van een steekproef van gedrag. Dit betekent dat de test op een objectieve manier wordt afgenomen, met dezelfde procedures voor iedereen, om een niet-tastbaar psychologisch kenmerk te meten door middel van observeerbaar gedrag in een beperkte tijd. (4 punten)",
+        "status": "not asked",
+        "score": "0/4"
       },
       {
         "topic": "Psychologische constructen",
-        "subtopics": [
-          {
-            "topic": "Definitie en belang",
-            "questions": [
-              {
-                "question": "Wat wordt bedoeld met een psychologisch construct, en waarom zijn deze constructen belangrijk in de psychologie?",
-                "answer": "Een psychologisch construct is een abstract concept dat wordt gebruikt om bepaalde psychologische fenomenen te beschrijven of te verklaren, zoals intelligentie, persoonlijkheidstrekken of emoties. Ze zijn belangrijk omdat ze psychologen helpen om menselijk gedrag te begrijpen, te onderzoeken en te meten.",
-                "points": 2
-              }
-            ]
-          },
-          {
-            "topic": "Niet-tastbaarheid van constructen",
-            "questions": [
-              {
-                "question": "Leg uit waarom psychologische constructen als 'niet-tastbaar' worden beschouwd.",
-                "answer": "Psychologische constructen zijn niet-tastbaar omdat ze niet direct waarneembaar of meetbaar zijn; ze bestaan in de gedeelde ideeën en afspraken binnen de psychologie over bepaalde kenmerken of concepten. Ze kunnen alleen indirect worden gemeten via observeerbaar gedrag of antwoorden op tests.",
-                "points": 2
-              }
-            ]
-          },
-          {
-            "topic": "Voorbeeld van een psychologisch construct",
-            "questions": [
-              {
-                "question": "Geef een voorbeeld van een psychologisch construct en beschrijf hoe het in de psychologie wordt gebruikt.",
-                "answer": "Een voorbeeld is 'intelligentie'. In de psychologie wordt het gebruikt om individuele verschillen in cognitieve capaciteiten te beschrijven en te meten, vaak via IQ-tests. Hoewel we intelligentie niet direct kunnen zien, kunnen we het afleiden uit prestaties op specifieke taken die ontworpen zijn om aspecten van intelligentie te meten.",
-                "points": 2
-              }
-            ]
-          }
-        ]
+        "theorie": "In de lezing wordt een definitie gegeven van wat een test is en wordt het concept van psychologische constructen uitgelegd.",
+        "question": "Wat wordt bedoeld met een psychologisch construct, en waarom zijn deze constructen belangrijk in de psychologie?",
+        "answer": "Een psychologisch construct is een abstract concept dat wordt gebruikt om bepaalde psychologische fenomenen te beschrijven of te verklaren, zoals intelligentie, persoonlijkheidstrekken of emoties. Ze zijn belangrijk omdat ze psychologen helpen om menselijk gedrag te begrijpen, te onderzoeken en te meten. (2 punten)",
+        "status": "not asked",
+        "score": "0/2"
+      },
+      {
+        "topic": "Niet-tastbare constructen",
+        "theorie": "In de lezing wordt een definitie gegeven van wat een test is en wordt het concept van psychologische constructen uitgelegd.",
+        "question": "Leg uit waarom psychologische constructen als 'niet-tastbaar' worden beschouwd.",
+        "answer": "Psychologische constructen zijn niet-tastbaar omdat ze niet direct waarneembaar of meetbaar zijn; ze bestaan in de gedeelde ideeën en afspraken binnen de psychologie over bepaalde kenmerken of concepten. Ze kunnen alleen indirect worden gemeten via observeerbaar gedrag of antwoorden op tests. (2 punten)",
+        "status": "not asked",
+        "score": "0/2"
+      },
+      {
+        "topic": "Voorbeeld van een construct",
+        "theorie": "In de lezing wordt een definitie gegeven van wat een test is en wordt het concept van psychologische constructen uitgelegd.",
+        "question": "Geef een voorbeeld van een psychologisch construct en beschrijf hoe het in de psychologie wordt gebruikt.",
+        "answer": "Een voorbeeld is 'intelligentie'. In de psychologie wordt het gebruikt om individuele verschillen in cognitieve capaciteiten te beschrijven en te meten, vaak via IQ-tests. Hoewel we intelligentie niet direct kunnen zien, kunnen we het afleiden uit prestaties op specifieke taken die ontworpen zijn om aspecten van intelligentie te meten. (2 punten)",
+        "status": "not asked",
+        "score": "0/2"
       }
     ]
   },
@@ -217,34 +201,28 @@
     "topic": "Multitrait-multimethod testtechniek",
     "subtopics": [
       {
-        "topic": "Definitie van de techniek",
+        "topic": "Definitie en doel",
+        "theorie": "De multitrait-multimethod testtechniek houdt in dat meerdere eigenschappen (traits) worden gemeten met verschillende methoden, zodat de resultaten uit verschillende bronnen kunnen worden vergeleken om de validiteit en betrouwbaarheid van de metingen te verhogen.",
         "question": "Wat houdt de multitrait-multimethod testtechniek in?",
         "answer": "De multitrait-multimethod testtechniek houdt in dat meerdere eigenschappen (traits) worden gemeten met verschillende methoden, zodat de resultaten uit verschillende bronnen kunnen worden vergeleken om de validiteit en betrouwbaarheid van de metingen te verhogen. (2 punten)",
-        "status": "done",
-        "score": "2/2"
+        "status": "not asked",
+        "score": "0/2"
       },
       {
         "topic": "Praktijkvoorbeeld",
+        "theorie": "Een voorbeeld is het meten van sociale vaardigheden door zowel een zelfrapportagevragenlijst als een observatie tijdens een rollenspel en feedback uit een interview te gebruiken. Door deze verschillende methoden te combineren, krijg je een completer beeld van de sociale vaardigheden van een persoon.",
         "question": "Geef een voorbeeld van hoe deze techniek in de praktijk kan worden toegepast bij het meten van één kwaliteit.",
         "answer": "Een voorbeeld is het meten van sociale vaardigheden door zowel een zelfrapportagevragenlijst als een observatie tijdens een rollenspel en feedback uit een interview te gebruiken. Door deze verschillende methoden te combineren, krijg je een completer beeld van de sociale vaardigheden van een persoon. (4 punten)",
-        "status": "done",
-        "score": "4/4"
+        "status": "not asked",
+        "score": "0/4"
       },
       {
         "topic": "Voordelen en nadelen",
+        "theorie": "Het combineren van verschillende methoden bij het meten van dezelfde eigenschap kan zowel voordelen als nadelen hebben. Het verhoogt de validiteit van de meting omdat het dezelfde eigenschap op verschillende manieren meet, wat zorgt voor een meer betrouwbaar en robuust beeld. Echter, het kan complex en tijdrovend zijn, en er is voorzichtigheid nodig bij het combineren van resultaten, omdat verschillende methoden niet altijd direct vergelijkbaar zijn en verschillende biases kunnen introduceren.",
         "question": "Noem één voordeel en één nadeel van het combineren van verschillende methoden bij het meten van dezelfde eigenschap.",
-        "answers": [
-          {
-            "type": "voordeel",
-            "answer": "Het verhoogt de validiteit van de meting omdat het dezelfde eigenschap op verschillende manieren meet, wat zorgt voor een meer betrouwbaar en robuust beeld. (2 punten)"
-          },
-          {
-            "type": "nadeel",
-            "answer": "Het kan complex en tijdrovend zijn, en er is voorzichtigheid nodig bij het combineren van resultaten, omdat verschillende methoden niet altijd direct vergelijkbaar zijn en verschillende biases kunnen introduceren. (2 punten)"
-          }
-        ],
-        "status": "done",
-        "score": "4/4"
+        "answer": "Voordeel: Het verhoogt de validiteit van de meting omdat het dezelfde eigenschap op verschillende manieren meet, wat zorgt voor een meer betrouwbaar en robuust beeld. (2 punten) Nadeel: Het kan complex en tijdrovend zijn, en er is voorzichtigheid nodig bij het combineren van resultaten, omdat verschillende methoden niet altijd direct vergelijkbaar zijn en verschillende biases kunnen introduceren. (2 punten)",
+        "status": "not asked",
+        "score": "0/4"
       }
     ]
   },
@@ -252,61 +230,73 @@
     "topic": "Speedtests versus powertests",
     "subtopics": [
       {
-        "topic": "Verschil tussen speedtests en powertests",
-        "theory": "Speedtests meten hoe snel iemand een taak kan voltooien binnen een vaste, beperkte tijd, met doorgaans eenvoudige items. Powertests meten de moeilijkheidsgraad die iemand aankan, zonder strikte tijdslimiet, en bevatten vaak moeilijkere items.",
+        "topic": "Verschil speed- en powertests",
+        "theorie": "In de lezing worden speedtests en powertests besproken als verschillende soorten tests. Een speedtest meet hoe snel iemand een taak kan voltooien binnen een vaste, beperkte tijd, met doorgaans eenvoudige items. Een powertest meet de moeilijkheidsgraad die iemand aankan, zonder strikte tijdslimiet, en bevat vaak moeilijkere items.",
         "question": "Wat is het verschil tussen een speedtest en een powertest?",
-        "answer": "Een speedtest meet hoe snel iemand een taak kan voltooien binnen een vaste, beperkte tijd, met doorgaans eenvoudige items. Een powertest meet de moeilijkheidsgraad die iemand aankan, zonder strikte tijdslimiet, en bevat vaak moeilijkere items.",
-        "score": "2/2"
+        "answer": "Een speedtest meet hoe snel iemand een taak kan voltooien binnen een vaste, beperkte tijd (1 punt), met doorgaans eenvoudige items (1 punt). Een powertest meet de moeilijkheidsgraad die iemand aankan, zonder strikte tijdslimiet (1 punt), en bevat vaak moeilijkere items (1 punt).",
+        "status": "not asked",
+        "score": "0/2"
       },
       {
         "topic": "Gebruik van speedtests",
-        "theory": "Speedtests zijn geschikt voor situaties waarin de snelheid van taakuitvoering belangrijk is, zoals bij het meten van typevaardigheid.",
+        "theorie": "Speedtests zijn geschikt voor situaties waarin het belangrijk is om te meten hoe snel iemand een specifieke taak kan voltooien binnen een beperkte tijd.",
         "question": "Geef een voorbeeld van een situatie waarin het gebruik van een speedtest gepast is.",
-        "answer": "Een speedtest is gepast bij het meten van typevaardigheid, waar de snelheid waarmee iemand kan typen binnen een bepaalde tijd belangrijk is.",
-        "score": "2/2"
+        "answer": "Een speedtest is gepast bij het meten van typevaardigheid (1 punt), waar de snelheid waarmee iemand kan typen binnen een bepaalde tijd belangrijk is (1 punt).",
+        "status": "not asked",
+        "score": "0/2"
       },
       {
         "topic": "Gebruik van powertests",
-        "theory": "Powertests zijn geschikt voor situaties waarin de moeilijkheidsgraad en kwaliteit van probleemoplossing belangrijk zijn, zoals bij het meten van wiskundig inzicht op hoog niveau.",
+        "theorie": "Powertests zijn geschikt voor situaties waarin de focus ligt op het meten van de moeilijkheidsgraad die iemand aankan, zonder strikte tijdslimiet.",
         "question": "Geef een voorbeeld van een situatie waarin een powertest meer geschikt is dan een speedtest.",
-        "answer": "Een powertest is geschikt voor het meten van wiskundig inzicht op hoog niveau, waarbij het belangrijk is om te zien hoe complexe problemen worden aangepakt, ongeacht hoelang het duurt om deze op te lossen binnen redelijke grenzen.",
-        "score": "2/2"
+        "answer": "Een powertest is geschikt voor het meten van wiskundig inzicht op hoog niveau (1 punt), waarbij het belangrijk is om te zien hoe complexe problemen worden aangepakt (1 punt), ongeacht hoelang het duurt om deze op te lossen binnen redelijke grenzen.",
+        "status": "not asked",
+        "score": "0/2"
       },
       {
-        "topic": "Belang van juiste testcategorie",
-        "theory": "Het kiezen van de juiste testcategorie is cruciaal omdat het type test moet aansluiten bij de aard van de vaardigheid of eigenschap die gemeten wordt. Een verkeerde keuze kan leiden tot onjuiste of misleidende resultaten over iemands capaciteiten.",
+        "topic": "Belang van testcategorie",
+        "theorie": "Het kiezen van de juiste testcategorie is cruciaal omdat de aard van de vaardigheid of eigenschap die gemeten wordt, moet aansluiten bij het type test.",
         "question": "Leg uit waarom het belangrijk is om de juiste testcategorie te kiezen voor het meten van een bepaalde eigenschap of vaardigheid.",
-        "answer": "Het is belangrijk om de juiste testcategorie te kiezen omdat het type test moet aansluiten bij de aard van de vaardigheid of eigenschap die gemeten wordt. Een verkeerde keuze kan leiden tot onjuiste of misleidende resultaten over iemands capaciteiten.",
-        "score": "2/2"
+        "answer": "Het is belangrijk om de juiste testcategorie te kiezen omdat het type test moet aansluiten bij de aard van de vaardigheid of eigenschap die gemeten wordt (1 punt). Een verkeerde keuze kan leiden tot onjuiste of misleidende resultaten over iemands capaciteiten (1 punt).",
+        "status": "not asked",
+        "score": "0/2"
       }
     ]
   },
   {
-    "topic": "Situational Judgment Tests (SJT)",
+    "topic": "Situational judgment tests (SJT)",
     "subtopics": [
       {
-        "topic": "Definitie en concept",
+        "topic": "Definitie van SJT",
+        "theorie": "Een situational judgment test is een test waarbij kandidaten worden geconfronteerd met hypothetische werkgerelateerde situaties en hen wordt gevraagd te beoordelen wat de meest effectieve of geschikte actie is in die situatie. Het meet hun oordeelsvermogen en beslissingsvaardigheden.",
         "question": "Wat is een situational judgment test (SJT)?",
-        "answer": "Een situational judgment test is een test waarbij kandidaten worden geconfronteerd met hypothetische werkgerelateerde situaties en hen wordt gevraagd te beoordelen wat de meest effectieve of geschikte actie is in die situatie. Het meet hun oordeelsvermogen en beslissingsvaardigheden.",
-        "points": 2
+        "answer": "Een situational judgment test is een test waarbij kandidaten worden geconfronteerd met hypothetische werkgerelateerde situaties en hen wordt gevraagd te beoordelen wat de meest effectieve of geschikte actie is in die situatie. Het meet hun oordeelsvermogen en beslissingsvaardigheden. (2 punten)",
+        "status": "not asked",
+        "score": "0/2"
       },
       {
-        "topic": "Verschil met andere tests",
+        "topic": "Vergelijking met andere tests",
+        "theorie": "Een SJT verschilt van persoonlijkheidstests omdat het niet vraagt naar persoonlijke eigenschappen, maar naar het oordeel in specifieke situaties. Het verschilt van capaciteitentests omdat het niet puur cognitieve vaardigheden meet, maar praktische oordeelsvaardigheden in contextuele situaties.",
         "question": "Leg uit hoe een SJT verschilt van andere soorten tests, zoals persoonlijkheidstests of capaciteitentests.",
-        "answer": "Een SJT verschilt van persoonlijkheidstests omdat het niet vraagt naar persoonlijke eigenschappen, maar naar het oordeel in specifieke situaties. Het verschilt van capaciteitentests omdat het niet puur cognitieve vaardigheden meet, maar praktische oordeelsvaardigheden in contextuele situaties.",
-        "points": 2
+        "answer": "Een SJT verschilt van persoonlijkheidstests omdat het niet vraagt naar persoonlijke eigenschappen, maar naar het oordeel in specifieke situaties. Het verschilt van capaciteitentests omdat het niet puur cognitieve vaardigheden meet, maar praktische oordeelsvaardigheden in contextuele situaties. (2 punten)",
+        "status": "not asked",
+        "score": "0/2"
       },
       {
-        "topic": "Voordelen van SJT",
+        "topic": "Voordelen van SJT's",
+        "theorie": "Twee voordelen van het gebruik van SJT's in selectieprocedures zijn dat SJT's werkgerelateerd en contextspecifiek zijn, waardoor ze relevant zijn voor de functie en een goede indicatie kunnen geven van toekomstige werkprestaties. Daarnaast kunnen ze helpen bij het verminderen van biases en adverse impact in vergelijking met andere selectie-instrumenten, omdat ze zich richten op situationeel gedrag in plaats van op achtergrondkenmerken.",
         "question": "Noem twee voordelen van het gebruik van SJT's in selectieprocedures.",
-        "answer": "Twee voordelen:\n- SJT's zijn werkgerelateerd en contextspecifiek, waardoor ze relevant zijn voor de functie en een goede indicatie kunnen geven van toekomstige werkprestaties.\n- Ze kunnen helpen bij het verminderen van biases en adverse impact in vergelijking met andere selectie-instrumenten, omdat ze zich richten op situationeel gedrag in plaats van op achtergrondkenmerken.",
-        "points": 4
+        "answer": "Twee voordelen:\n- SJT's zijn werkgerelateerd en contextspecifiek, waardoor ze relevant zijn voor de functie en een goede indicatie kunnen geven van toekomstige werkprestaties. (2 punten)\n- Ze kunnen helpen bij het verminderen van biases en adverse impact in vergelijking met andere selectie-instrumenten, omdat ze zich richten op situationeel gedrag in plaats van op achtergrondkenmerken. (2 punten)",
+        "status": "not asked",
+        "score": "0/4"
       },
       {
-        "topic": "Nadeel van SJT",
+        "topic": "Nadeel van SJT's",
+        "theorie": "Een nadeel is dat het ontwikkelen van goede SJT's tijdrovend en complex is, omdat situaties realistisch en representatief moeten zijn en de 'juiste' antwoorden goed moeten worden geijkt.",
         "question": "Wat is een nadeel of uitdaging bij het gebruiken van SJT's?",
-        "answer": "Een nadeel is dat het ontwikkelen van goede SJT's tijdrovend en complex is, omdat situaties realistisch en representatief moeten zijn en de 'juiste' antwoorden goed moeten worden geijkt.",
-        "points": 2
+        "answer": "Een nadeel is dat het ontwikkelen van goede SJT's tijdrovend en complex is, omdat situaties realistisch en representatief moeten zijn en de 'juiste' antwoorden goed moeten worden geijkt. (2 punten)",
+        "status": "not asked",
+        "score": "0/2"
       }
     ]
   },
@@ -314,10 +304,12 @@
     "topic": "Validiteit van SJT's",
     "subtopics": [
       {
-        "topic": "Reden voor uitsluiting in meta-analyse",
+        "topic": "Meta-analyse uitsluiting",
+        "theorie": "Omdat situational judgment tests een opkomend veld zijn en mogelijk nog niet voldoende empirische studies beschikbaar waren om ze op te nemen in de meta-analyse van Schmidt & Hunter. Daarnaast kunnen er methodologische verschillen zijn die opname bemoeilijken.",
         "question": "Waarom zijn SJT's niet opgenomen in de meta-analyse van Schmidt & Hunter?",
-        "answer": "Omdat situational judgment tests een opkomend veld zijn en mogelijk nog niet voldoende empirische studies beschikbaar waren om ze op te nemen in de meta-analyse van Schmidt & Hunter. Daarnaast kunnen er methodologische verschillen zijn die opname bemoeilijken.",
-        "points": 2
+        "answer": "Omdat situational judgment tests een opkomend veld zijn en mogelijk nog niet voldoende empirische studies beschikbaar waren om ze op te nemen in de meta-analyse van Schmidt & Hunter. Daarnaast kunnen er methodologische verschillen zijn die opname bemoeilijken. (2 punten)",
+        "status": "not asked",
+        "score": "0/2"
       }
     ]
   }
