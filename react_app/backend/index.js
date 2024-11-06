@@ -150,20 +150,18 @@ app.post('/api/evaluateStudentResponse', async (req, res) => {
     console.log('Endpoint:', endpoint);
     console.log('Api Key:', apiKey);
     console.log('Endpoint:', `${endpoint}/openai/deployments/${deployment}/chat/completions?api-version=${apiVersion}`)
+
     // Construct the prompt using the provided template
     const prompt = `
-    Je bent een evaluator die de antwoorden van een student beoordeelt op basis van een kennisboom. Jouw doel is om elk antwoord van de student te evalueren en te vergelijken met de nog openstaande vragen in de kennisboom, zodat de student zoveel mogelijk verdiende punten krijgt voor inhoudelijke antwoorden.
+    Je bent een evaluator die de antwoorden van een student beoordeelt op basis van een kennisboom. Jouw doel is om elk antwoord van de student te evalueren en te vergelijken met het antwoordmodel van de huidige vraag in de kennisboom om te bepalen of de student voldoende kennis heeft overgedragen om door te gaan naar de volgende vraag.
     
     Volg deze stappen zorgvuldig:
     
     1. **Verzamel alle inhoudelijke antwoorden van de student**:
        - Filter conversatieregels die geen directe inhoudelijke waarde hebben (bijv. "ja", "oké", "Zullen we beginnen?").
     
-    2. **Vergelijk elk antwoord met de nog niet beantwoorde vragen in de kennisboom**:
-       - Gebruik semantische vergelijkingen om te bepalen of een antwoord voldoende overeenkomt met een antwoord in de kennisboom.
-       - Voor subtopics met "Kennis identificeren":
-         - Als de student aangeeft geen kennis te hebben (bijv. "niks", "ik weet het niet", "geen idee" etc.), ken dan een score toe van "1/1" en markeer de status als "done".
-         - Als de student enige of veel kennis deelt, ken dan ook een score toe van "1/1" en markeer de status als "done".
+    2. **Vergelijk de antwoorden van de student met het antwoordmodel 'answer' van de huidige vraag in de kennisboom**:
+       - Gebruik semantische vergelijkingen om te bepalen of een antwoord voldoende overeenkomt met het antwoordmodel in de kennisboom.
     
     3. **Bepaal per matchend antwoord het aantal punten**:
        - De student hoeft geen exacte bewoording te gebruiken; beoordeel of de intentie en het taalgebruik vergelijkbaar genoeg zijn om punten toe te kennen.
@@ -172,12 +170,13 @@ app.post('/api/evaluateStudentResponse', async (req, res) => {
        - Noteer de behaalde punten zoals aangegeven in het antwoordmodel, bijvoorbeeld "2/3".
        - Indien alle punten zijn behaald voor een subtopic, markeer de status als "done".
        - Indien niet alle punten zijn behaald maar de vraag wel is behandeld, markeer de status als "asked".
-    
+       - Je mag nooit het aantal behaalde punten in de kennisboom verminderen, want dat zou oneerlijk zijn voor de student. De student mag nooit minder punten krijgen dan eerder behaald.    
+       
     5. **Geef alleen geüpdatete subtopics weer in de output**:
        - Als de student geen nieuwe kennis heeft toegevoegd of geen relevante punten heeft verdiend, retourneer een lege JSON-string '{}'.
     
     ### Input
-    - **JSON-structuur**: \`${JSON.stringify(knowledgeTree)}\`
+    - **JSON-structuur** met vragen ter context: \`${JSON.stringify(knowledgeTree)}\`
     - **Gesprekgeschiedenis met student**: \`${JSON.stringify(conversation)}\`
     - **Huidige vraag**: \`${currentQuestion}\`
     
