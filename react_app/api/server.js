@@ -1,4 +1,3 @@
-// backend/index.js
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
@@ -52,13 +51,13 @@ const resetKnowledgeTree = () => {
 };
 
 // Add endpoint to handle the reset request
-app.post('/api/resetKnowledgeTree', (req, res) => {
+app.post('resetKnowledgeTree', (req, res) => {
     resetKnowledgeTree();
     res.json({ message: 'Knowledge tree reset successfully.' });
 });
 
 // Endpoint om de reactie van de docent te genereren
-app.post('/api/generateResponse', async (req, res) => {
+app.post('generateResponse', async (req, res) => {
     const { conversation, knowledgeTree, exampleConversation, currentQuestion, isQuestionCompleted } = req.body;
 
     console.log('Generating front-end response...');
@@ -129,7 +128,7 @@ app.post('/api/generateResponse', async (req, res) => {
         res.json({ assistantResponse });
     } catch (error) {
         // Detailed error handling
-        console.error('Error in /api/generateResponse:', error.response ? error.response.data : error.message);
+        console.error('Error in generateResponse:', error.response ? error.response.data : error.message);
         res.status(500).json({
             error: 'Error generating response',
             details: error.response ? error.response.data : error.message,
@@ -142,7 +141,7 @@ const cleanResponse = (response) => {
     return response.replace(/```json/g, '').replace(/```/g, '').trim();
 };
 
-app.post('/api/evaluateStudentResponse', async (req, res) => {
+app.post('evaluateStudentResponse', async (req, res) => {
     const { conversation, knowledgeTree, currentQuestion } = req.body;
 
     console.log('Evaluating student response...');
@@ -291,7 +290,7 @@ app.post('/api/evaluateStudentResponse', async (req, res) => {
 
     } catch (error) {
         // Detailed error handling
-        console.error('Error in /api/evaluateStudentResponse:', error.response ? error.response.data : error.message);
+        console.error('Error in evaluateStudentResponse:', error.response ? error.response.data : error.message);
         res.status(500).json({
             error: 'Error evaluating student response',
             details: error.response ? error.response.data : error.message,
@@ -300,8 +299,8 @@ app.post('/api/evaluateStudentResponse', async (req, res) => {
 });
 
 // Voeg deze endpoint toe om knowledgeTree.json op te halen
-app.get('/api/getKnowledgeTree', (req, res) => {
-    console.log("Accessing /api/getKnowledgeTree endpoint"); // Logging toevoegen
+app.get('/getKnowledgeTree', (req, res) => {
+    console.log("Accessing getKnowledgeTree endpoint"); // Logging toevoegen
     const knowledgeTreePath = path.join(process.cwd(), 'data', 'knowledgeTree.json');
     console.log("Knowledge tree path:", knowledgeTreePath); // Pad naar bestand loggen
 
@@ -320,7 +319,7 @@ app.get('/api/getKnowledgeTree', (req, res) => {
     });
 });
 
-app.get('/api/getExampleConversation', (req, res) => {
+app.get('getExampleConversation', (req, res) => {
     const knowledgeTreePath = path.join(__dirname, 'data/exampleConversation.json');
     fs.readFile(knowledgeTreePath, 'utf-8', (err, data) => {
         if (err) {
