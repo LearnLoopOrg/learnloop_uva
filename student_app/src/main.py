@@ -1942,6 +1942,7 @@ def inlog_terminal(uni):
 def render_login_page():
     """This is the first page the user sees when visiting the website and
     prompts the user to login via SURFconext."""
+
     if st.session_state.deployment_type == "uva_servers":
         columns = st.columns([0.5, 1.5, 0.5])
         with columns[1]:
@@ -2008,6 +2009,7 @@ def render_login_page():
             #     if st.session_state.wrong_credentials:
             #         st.warning("Onjuiste credentials.")
             #     st.button("Log in", on_click=try_login, use_container_width=True)
+            st.write("Version: 0.4.83")
 
     elif st.session_state.deployment_type == "streamlit_or_local":
         print("Rendering login page: streamlit_or_local")
