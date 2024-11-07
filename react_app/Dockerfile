@@ -15,10 +15,13 @@ RUN npm run build
 
 FROM nginx:alpine
 
+# Copy the custom Nginx configuration to set port 3001
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 # Copy the built React app to Nginx's web server directory
 COPY --from=build /app/build /usr/share/nginx/html
 
-ENV PORT=3001
+# ENV PORT=3001
 
 EXPOSE 3001
 
