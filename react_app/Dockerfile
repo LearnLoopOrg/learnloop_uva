@@ -9,6 +9,7 @@ RUN npm install
 
 COPY . .
 
+ENV NODE_ENV=production
 # Run the build command to create the production build
 RUN npm run build
 
