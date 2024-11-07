@@ -21,6 +21,7 @@ from _pages.socratic_dialogue import SocraticDialogue
 from _pages.lecture_student_answers_insights import LectureInsights
 from _pages.lecture_quality_check import QualityCheck
 from _pages.record_lecture import Recorder
+from _pages.upload import UploadPage
 from utils.utils import Utils
 from utils.utils import AzureUtils
 from slack_sdk import WebClient
@@ -1491,6 +1492,8 @@ def render_selected_page():
             st.session_state.socratic_dialogue_page.run()
         case "record":
             st.session_state.record_page.run()
+        case "upload":
+            st.session_state.upload_page.run()
         case "quality-check":
             st.session_state.quality_check_page.run()
         case "insights":
@@ -1501,6 +1504,7 @@ def render_selected_page():
             render_generated_page()
         case "LLM-info":
             render_LLM_info_page()
+
         case _:  # Render this page by default
             st.session_state.lectures_page.run()
 
@@ -1592,6 +1596,13 @@ def render_sidebar():
             args=("courses",),
             use_container_width=True,
         )
+        if st.session_state.username["role"] == "teacher":
+            st.button(
+                "⬆️ Upload materiaal",
+                on_clic=set_selected_phase,
+                args=("upload",),
+                use_container_width=True,
+            )
         if st.session_state.selected_phase in {
             "topics",
             "learning",
@@ -2333,6 +2344,9 @@ def initialise_pages():
 
     if "record_page" not in st.session_state:
         st.session_state.record_page = Recorder()
+
+    if "upload_page" not in st.session_state:
+        st.session_state.upload_page = UploadPage()
 
 
 def qr_code_in_query_param():

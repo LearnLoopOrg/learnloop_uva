@@ -1,2 +1,3 @@
 [server]
 baseUrlPath = ""
+maxUploadSize = 1500
