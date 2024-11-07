@@ -9,8 +9,13 @@ RUN npm install
 
 COPY . .
 
+# Run the build command to create the production build
+RUN npm run build
+
 ENV PORT=3001
 
 EXPOSE 3001
 
-CMD ["npm", "start"]
+# Serve the build output with a static file server
+# CMD ["npx", "serve", "-s", "build", "-l", "3001"]
+CMD [ "npm", "run", "start" ]
