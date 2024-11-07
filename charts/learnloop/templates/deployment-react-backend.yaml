@@ -24,11 +24,6 @@ spec:
             value: "{{ .Values.env.backendBaseUrl }}"
           - name: AZURE_OPENAI_ENDPOINT
             value: "{{ .Values.azureOpenaiEndpoint }}"
-          - name: OPENAI_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: learnloop-openai-api-key
-              key: OPENAI_API_KEY
           envFrom:
             - secretRef:
                 name: learnloop-secret
