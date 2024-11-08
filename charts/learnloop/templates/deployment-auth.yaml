@@ -23,11 +23,6 @@ spec:
           env:
           - name: SURFCONEXT_CLIENT_ID
             value: "{{ .Values.surfconextClientId }}"
-          - name: SURFCONEXT_CLIENT_SECRET
-            valueFrom:
-              secretKeyRef:
-                name: learnloop-secret
-                key: surfconextClientSecret
           - name: SURFCONEXT_METADATA_URL
             value: "{{ .Values.surfconextMetadataUrl }}"
           - name: LEARNLOOP_VERSION
