@@ -1,65 +1,58 @@
 import os
 
-# Define the directory paths
-charts_directory_path = (
-    r"C:\Users\LucMa\OneDrive\Desktop\LearnLoop\repositories\learnloop_uva\charts"
-)
-react_app_directory_path = (
-    r"C:\Users\LucMa\OneDrive\Desktop\LearnLoop\repositories\learnloop_uva\react_app"
-)
-src_directory_path = r"C:\Users\LucMa\OneDrive\Desktop\LearnLoop\repositories\learnloop_uva\react_app\src"
-backend_directory_path = r"C:\Users\LucMa\OneDrive\Desktop\LearnLoop\repositories\learnloop_uva\react_app\backend"
-output_file_path = os.path.join(charts_directory_path, "file_list.txt")
+
+def export_directory_content(
+    dir_path, output_file="exported_codebase.txt", ignore_list=[]
+):
+    # Reset file-inhoud van exported_codebase.txt
+    open(output_file, "w").close()
+
+    # Schrijf de folderstructuur en file-inhoud naar exported_codebase.txt
+    with open(output_file, "w", encoding="utf-8") as out:
+        # Folderstructuur toevoegen
+        out.write("Folder Structure:\n")
+        for root, dirs, files in os.walk(dir_path):
+            # Filter directories die genegeerd moeten worden
+            dirs[:] = [d for d in dirs if d not in ignore_list]
+            level = root.replace(dir_path, "").count(os.sep)
+            indent = " " * 4 * level
+            if os.path.basename(root) not in ignore_list:
+                out.write(f"{indent}{os.path.basename(root)}/\n")
+            subindent = " " * 4 * (level + 1)
+            for file in files:
+                if file not in ignore_list:
+                    out.write(f"{subindent}{file}\n")
+        out.write("\n" + "=" * 50 + "\n\n")
+
+        # Bestanden en inhoud toevoegen
+        for root, dirs, files in os.walk(dir_path):
+            # Filter directories die genegeerd moeten worden
+            dirs[:] = [d for d in dirs if d not in ignore_list]
+            for file in files:
+                if file not in ignore_list:
+                    file_path = os.path.join(root, file)
+                    relative_path = os.path.relpath(file_path, dir_path)
+                    out.write(f"File: {relative_path}\n")
+                    out.write("-" * 50 + "\n")
+                    with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+                        out.write(f.read())
+                    out.write("\n" + "-" * 50 + "\n\n")
+
+    print(f"Directory content exported to {output_file}")
 
 
-# Function to write files to the output file
-def write_files_to_output(directory_path, output_file, specific_files=None):
-    for root, dirs, files in os.walk(directory_path):
-        for file in files:
-            file_path = os.path.join(root, file)
-            if (
-                specific_files is None
-                or file_path in specific_files
-                or any(
-                    file_path.startswith(os.path.join(directory_path, sf))
-                    for sf in specific_files
-                )
-            ):
-                # Write the file title
-                output_file.write(f"--- {file} ---\n")
-                # Write the file content
-                with open(file_path, "r", encoding="utf-8") as f:
-                    output_file.write(f.read())
-                # Write a separator line
-                output_file.write("\n" + "-" * 40 + "\n")
+if __name__ == "__main__":
+    # Stel het pad in naar de react_app directory relatief aan het huidige script
+    react_app_path = os.path.join(os.getcwd(), "react_app")
 
-
-# List of specific files to include
-specific_files = [
-    os.path.join(src_directory_path, "app.js"),
-    os.path.join(src_directory_path, "index.js"),
-    os.path.join(backend_directory_path, "index.js"),
-]
-
-# Open the output file in write mode
-with open(output_file_path, "w", encoding="utf-8") as output_file:
-    # Write files from the charts directory
-    write_files_to_output(charts_directory_path, output_file)
-    # Write Dockerfiles from the react_app directory
-    write_files_to_output(
-        react_app_directory_path,
-        output_file,
-        specific_files=[os.path.join(react_app_directory_path, "Dockerfile")],
-    )
-    # Write specific files from the src and backend directories
-    write_files_to_output(
-        src_directory_path,
-        output_file,
-        specific_files=specific_files
-        + [os.path.join(src_directory_path, "components")],
-    )
-    write_files_to_output(
-        backend_directory_path, output_file, specific_files=specific_files
-    )
-
-print(f"File list has been written to {output_file_path}")
+    # Stel dat je bestanden en mappen wilt negeren zoals '.git', 'node_modules', en '__pycache__'
+    ignore_list = [
+        ".git",
+        ".env",
+        "package-lock.json",
+        "node_modules",
+        "__pycache__",
+        "exported_codebase.txt",
+        "requirements.txt",
+    ]
+    export_directory_content(react_app_path, ignore_list=ignore_list)
