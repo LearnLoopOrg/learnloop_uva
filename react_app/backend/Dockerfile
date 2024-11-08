@@ -1,16 +1,24 @@
+# Gebruik een Node.js image
+FROM node:18-alpine
 
-FROM node:14-alpine
+# Maak app directory
+WORKDIR /app
 
-WORKDIR /backend
-
+# Kopieer package.json en package-lock.json
 COPY package*.json ./
 
+# Installeer dependencies
 RUN npm install
 
+# Kopieer de rest van de applicatie
 COPY . .
 
-ENV PORT=5001
+# Stel environment variables in
+ENV PORT=8080
+ENV NODE_ENV=production
 
-EXPOSE 5001
+# Expose de poort
+EXPOSE 8080
 
+# Start de applicatie
 CMD ["node", "index.js"]

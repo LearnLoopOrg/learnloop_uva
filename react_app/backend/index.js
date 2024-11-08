@@ -2,10 +2,11 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const port = 5001;
+const port = process.env.PORT || 5001;
 const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
+
 
 require('dotenv').config({ path: '../.env', override: true });
 
@@ -21,6 +22,14 @@ const apiVersion = '2024-08-01-preview'; // Specify the API version
 
 app.use(cors());
 app.use(express.json());
+
+// Serve statische bestanden uit de React-app
+app.use(express.static(path.join(__dirname, 'build')));
+
+// Voor alle GET-verzoeken, stuur index.html terug
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 
 // Reset function to reset the knowledge tree
 const resetKnowledgeTree = () => {
