@@ -24,6 +24,8 @@ spec:
             value: "{{ .Values.env.backendBaseUrl }}"
           - name: AZURE_OPENAI_ENDPOINT
             value: "{{ .Values.azureOpenaiEndpoint }}"
+          - name: LEARNLOOP_VERSION
+            value: "{{ .Chart.AppVersion }}"
           envFrom:
             - secretRef:
                 name: learnloop-secret
