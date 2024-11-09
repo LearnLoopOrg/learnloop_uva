@@ -40,7 +40,7 @@
     ]
   },
   "devDependencies": {
-    "html-webpack-plugin": "^5.6.3",
-    "@babel/plugin-transform-private-property-in-object": "^7.21.11"
+    "@babel/plugin-transform-private-property-in-object": "^7.25.9",
+    "html-webpack-plugin": "^5.6.3"
   }
 }
