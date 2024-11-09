@@ -24,7 +24,8 @@
   "eslintConfig": {
     "extends": [
       "react-app",
-      "react-app/jest"
+      "react-app/jest",
+      "@babel/plugin-transform-private-property-in-object"
     ]
   },
   "browserslist": {
@@ -40,7 +41,6 @@
     ]
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@babel/plugin-transform-private-property-in-object": "^7.25.9",
     "html-webpack-plugin": "^5.6.3"
   }
