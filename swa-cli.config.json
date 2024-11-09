@@ -1,0 +1,19 @@
+{
+  "$schema": "https://aka.ms/azure/static-web-apps-cli/schema",
+  "configurations": {
+    "learnloop-uva": {
+      "appLocation": "react_app",
+      "apiLocation": "react_app/backend",
+      "outputLocation": "build",
+      "dataApiLocation": "react_app/backend/data",
+      "apiLanguage": "node",
+      "apiVersion": "18",
+      "appBuildCommand": "npm run build",
+      "run": "npm start",
+      "appDevserverUrl": "http://localhost:3000",
+      "apiDevserverUrl": "http://localhost:5001",
+      "appName": "learnloop-uva",
+      "resourceGroup": "learnloop-uva-rg"
+    }
+  }
+}
