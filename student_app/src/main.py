@@ -25,6 +25,7 @@ from _pages.upload import UploadPage
 from utils.utils import Utils
 from utils.utils import AzureUtils
 from slack_sdk import WebClient
+from azure.storage.blob import BlobServiceClient
 
 # Must be called first
 try:
@@ -1598,8 +1599,8 @@ def render_sidebar():
         )
         if st.session_state.username["role"] == "teacher":
             st.button(
-                "⬆️ Upload materiaal",
-                on_clic=set_selected_phase,
+                "➕ Genereer leertraject",
+                on_click=set_selected_phase,
                 args=("upload",),
                 use_container_width=True,
             )
@@ -1944,7 +1945,8 @@ def render_login_page():
     prompts the user to login via SURFconext."""
 
     if st.session_state.deployment_type == "uva_servers":
-        columns = st.columns([0.5, 1.5, 0.5])
+        # columns = st.columns([0.5, 1.5, 0.5])
+        columns = st.columns([1, 0.8, 1])
         with columns[1]:
             ll_logo_base64 = convert_image_base64(
                 f"{st.session_state.base_path}data/content/images/logo.png"
@@ -2009,7 +2011,6 @@ def render_login_page():
             #     if st.session_state.wrong_credentials:
             #         st.warning("Onjuiste credentials.")
             #     st.button("Log in", on_click=try_login, use_container_width=True)
-            st.write("Version: 0.4.83")
 
     elif st.session_state.deployment_type == "streamlit_or_local":
         print("Rendering login page: streamlit_or_local")
@@ -2317,6 +2318,11 @@ def initialise_tools():
 
     if "utils" not in st.session_state:
         st.session_state.utils = Utils()
+
+    if "blob_service_client" not in st.session_state:
+        st.session_state.blob_service_client = (
+            st.session_state.utils.create_blob_service_client()
+        )
 
     if "azure_utils" not in st.session_state:
         st.session_state.azure_utils = AzureUtils()

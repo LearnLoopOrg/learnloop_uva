@@ -18,29 +18,37 @@ load_dotenv()
 
 class Utils:
     def __init__(self):
-        if st.session_state.use_keyvault:
-            AZURE_BLOB_STORAGE_CONNECTION_STRING = AzureUtils.get_secret(
-                "AZURE-BLOB-STORAGE-CONNECTION-STRING", "lluniappkv"
-            )
-        else:
-            # In development, use the LearnLoop Blob Storage connection string
-            if st.session_state.use_LL_blob_storage:
-                AZURE_BLOB_STORAGE_CONNECTION_STRING = os.getenv(
-                    "AZURE_BLOB_STORAGE_CONNECTION_STRING"
-                )
-            else:
-                # In production by default, use the UvA Blob Storage connection string
-                AZURE_BLOB_STORAGE_CONNECTION_STRING = os.getenv(
-                    "UVA_BLOB_CONNECTION_STRING"
-                )
-
-        self.connection_string = AZURE_BLOB_STORAGE_CONNECTION_STRING
-        self.blob_service_client = BlobServiceClient.from_connection_string(
-            self.connection_string
-        )
+        self.blob_service_client = self.create_blob_service_client()
         self.module_repository = ModuleRepository()
         self.db_client = st.session_state.db
         self.db_dal = st.session_state.db_dal
+
+    def get_blob_storage_connection_string(self):
+        """
+        Haal de Azure Blob Storage verbindingsstring op, afhankelijk van de configuratie.
+        """
+        if st.session_state.use_keyvault:
+            # Gebruik Azure Key Vault om de verbindingsstring op te halen
+            return AzureUtils.get_secret(
+                "AZURE-BLOB-STORAGE-CONNECTION-STRING", "lluniappkv"
+            )
+
+        if st.session_state.use_LL_blob_storage:
+            # Gebruik de LearnLoop Blob Storage verbindingsstring in ontwikkeling
+            return os.getenv("AZURE_BLOB_STORAGE_CONNECTION_STRING")
+
+        # Gebruik de UvA Blob Storage verbindingsstring in productie
+        return os.getenv("UVA_BLOB_CONNECTION_STRING")
+
+    def create_blob_service_client(self):
+        """
+        Maak een BlobServiceClient aan met de opgehaalde verbindingsstring.
+        """
+        connection_string = self.get_blob_storage_connection_string()
+        blob_service_client = BlobServiceClient.from_connection_string(
+            connection_string
+        )
+        return blob_service_client
 
     def set_phase_to_match_lecture_status(self, phase):
         """
@@ -83,13 +91,18 @@ class Utils:
             f"File '{source_path}' uploaded to '{blob_name}' in container '{container_name}'."
         )
 
-    def upload_content_to_blob_storage(self, container_name, blob_name, content):
+    def upload_content_to_blob_storage(
+        self, container_name, blob_name, content, progress_callback=None
+    ):
         """
         Upload content to a specific directory within a container in Azure Blob Storage.
-
         """
-
         try:
+            # Probeer de container te maken
+            container_client = self.blob_service_client.get_container_client(
+                container_name
+            )
+            container_client.create_container()
             print(f"Container '{container_name}' created successfully.")
         except Exception as e:
             print(f"Container might already exist: {e}")
@@ -98,7 +111,9 @@ class Utils:
             container=container_name, blob=blob_name
         )
 
-        blob_client.upload_blob(content, overwrite=True)
+        blob_client.upload_blob(
+            content, overwrite=True, progress_hook=progress_callback
+        )
         print(f"Content uploaded to '{blob_name}' in container '{container_name}'.")
 
     def download_content_from_blob_storage(_self, container_name, blob_name):
