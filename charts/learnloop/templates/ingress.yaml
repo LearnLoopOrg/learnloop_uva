@@ -5,6 +5,7 @@ metadata:
   namespace: "{{ .Release.Namespace }}"
   annotations:
     kubernetes.io/ingress.class: "{{ .Values.ingressClass }}"
+    nginx.ingress.kubernetes.io/proxy-body-size: "1500m" # 1.5GB max upload size
 spec:
   tls:
     - hosts:
