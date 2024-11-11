@@ -34,8 +34,39 @@ class UploadPage:
             )
 
             st.success(
-                "Upload geslaagd! Je bestand wordt verwerkt en je ontvangt een notificatie wanneer het module klaar is."
+                "Upload geslaagd! Geef een naam aan de module en klik op 'Genereer module' om de module te genereren."
             )
 
             with st.form(key="generate_learning_path"):
-                st.text_input("Naam van module", value=uploaded_file.name, key="name")
+                module_name = st.text_input(
+                    # "Naam van module", value=uploaded_file.name, key="name"
+                    "Naam van module",
+                    "...",
+                    key="name",
+                )
+                submit_button = st.form_submit_button("Genereer module")
+                # TODO: Implementeer de post request naar de backend om de module te genereren
+                if submit_button:
+                    print(f"""
+                            Uitvoeren van post request naar backend om module te genereren met blob name: uploaded_materials/{uploaded_file.name} en module name: {module_name}.
+                            """)
+                    st.success(
+                        f'Module \'{module_name}\' wordt gegenereerd; het leertraject zal binnen enkele minuten onder "Mijn vakken" > "Kies module"s verschijnen.'
+                    )
+
+    ## Gebruik deze code om de post request te sturen naar de backend om de module te genereren.
+    # def show_spinner_till_generated(self):
+    #     with st.spinner("Oefenmaterialen worden gegenereerd..."):
+    #         url = "https://contentpipeline.azurewebsites.net/contentpipeline?code=YxHEt2ZBmN6YX912nsC_i9KVpof7RVlr3k1yMSmZXlajAzFu_xvH1w=="
+    #         params = {
+    #             "lecture": "celbio_3",
+    #             "run_full_pipeline": "true",
+    #             "upload_to_demo_db": "true",
+    #         }
+    #         print(f"Sending http request to: {url} with params: {params}")
+    #         # requests.get(url, params=params)
+    #         while st.session_state.generated is False:
+    #             status = self.db_dal.fetch_module_status()
+    #             if status == "generated":
+    #                 st.session_state.generated = True
+    #             time.sleep(1)  # Sleep to avoid overwhelming the database with requests
