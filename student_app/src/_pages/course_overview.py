@@ -54,6 +54,9 @@ class CoursesOverview:
         st.title("Mijn vakken")
         self.utils.add_spacing(1)
 
-        st.session_state.courses = self.db_dal.get_course_catalog().courses
+        st.session_state.courses = self.db_dal.get_course_catalog(
+            st.session_state.user_doc["university"],
+            st.session_state.user_doc["courses"],
+        ).courses
 
         self.render_courses()

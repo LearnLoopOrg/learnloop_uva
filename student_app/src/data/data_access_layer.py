@@ -48,7 +48,10 @@ class DatabaseAccess:
         """
         Loads lectures from the database into the session state.
         """
-        course_catalog = self.get_course_catalog()
+        course_catalog = self.get_course_catalog(
+            st.session_state.user_doc["university"],
+            st.session_state.user_doc["courses"],
+        )
         if st.session_state.selected_course is None:
             st.session_state.selected_course = course_catalog.courses[0].title
 
@@ -60,14 +63,25 @@ class DatabaseAccess:
         ]
 
     def get_course_catalog(
-        self, university_name: str = "Universiteit van Amsterdam"
+        self,
+        university_name: str = "Universiteit van Amsterdam",
+        user_courses: List[str] = None,
     ) -> CourseCatalog:
         """
-        Load the course catalog from the (dummy) university database.
+        Load the course catalog from the university database,
+        filtered by university and user's selected courses.
         """
         data = st.session_state.db.courses.find_one(
             {"university_name": university_name}
         )
+
+        # Filter courses based on user_courses
+        if user_courses:
+            filtered_courses = [
+                course for course in data["courses"] if course["title"] in user_courses
+            ]
+        else:
+            filtered_courses = data["courses"]
 
         courses = [
             Course(
@@ -81,7 +95,7 @@ class DatabaseAccess:
                     for lecture in course["lectures"]
                 ],
             )
-            for course in data["courses"]
+            for course in filtered_courses
         ]
 
         return CourseCatalog(courses=courses)

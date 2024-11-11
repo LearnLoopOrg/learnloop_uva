@@ -143,7 +143,10 @@ class LectureOverview:
         """
         Loads lectures from the database into the session state.
         """
-        course_catalog = self.db_dal.get_course_catalog()
+        course_catalog = self.db_dal.get_course_catalog(
+            st.session_state.user_doc["university"],
+            st.session_state.user_doc["courses"],
+        )
         if st.session_state.selected_course is None:
             print("selected_course from catalog ", course_catalog.courses[0].title)
             st.session_state.selected_course = course_catalog.courses[0].title
