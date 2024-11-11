@@ -6,6 +6,10 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: "{{ .Values.ingressClass }}"
     nginx.ingress.kubernetes.io/proxy-body-size: "1500m" # 1.5GB max upload size
+    # Sticky session annotations
+    nginx.ingress.kubernetes.io/affinity: cookie
+    nginx.ingress.kubernetes.io/session-cookie-name: "learnloop-session"
+    nginx.ingress.kubernetes.io/session-cookie-max-age: "86400"  # 24 hours
 spec:
   tls:
     - hosts:
