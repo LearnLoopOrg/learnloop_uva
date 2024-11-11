@@ -7,7 +7,7 @@ class UploadPage:
     def __init__(self):
         self.utils = Utils()
         self.container_name = "uu-demo"
-        self.title = "Genereer module"
+        self.title = "Creëer module"
         self.progress_bar = None
         self.progress_text = None
 

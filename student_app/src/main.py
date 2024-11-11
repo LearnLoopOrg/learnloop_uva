@@ -1599,7 +1599,7 @@ def render_sidebar():
         )
         if st.session_state.username["role"] == "teacher":
             st.button(
-                "➕ Genereer leertraject",
+                "➕ Creëer module",
                 on_click=set_selected_phase,
                 args=("upload",),
                 use_container_width=True,
