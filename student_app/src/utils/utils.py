@@ -8,8 +8,6 @@ from azure.storage.blob import BlobServiceClient
 from io import BytesIO
 from PIL import Image
 from api.module import ModuleRepository
-from utils.db_config import connect_db
-from data.data_access_layer import DatabaseAccess
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
 

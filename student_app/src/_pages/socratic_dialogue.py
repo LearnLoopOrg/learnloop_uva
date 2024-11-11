@@ -4,9 +4,6 @@ import base64
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
-from pydub import AudioSegment
-from pydub.playback import play
-import random
 import time
 
 load_dotenv()
@@ -15,34 +12,6 @@ load_dotenv()
 class SocraticDialogue:
     def __init__(self):
         pass
-
-    def change_audio_speed(self, input_file, output_file, speed=1.5):
-        # Stap 1: Laad het mp3-bestand
-        sound = AudioSegment.from_mp3(input_file)
-
-        # Stap 2: Pas de snelheid aan (hier wordt het geluid 2x zo snel afgespeeld)
-        new_sound = sound.speedup(playback_speed=speed)
-
-        # Stap 3: Exporteer het nieuwe audiobestand
-        new_sound.export(output_file, format="mp3")
-
-    def generate_and_play_audio(self, text):
-        # Stap 1: Genereer het audiobestand met OpenAI TTS
-        response = self.openai_personal_client.audio.speech.create(
-            model="tts-1",
-            voice="alloy",
-            input=text,
-        )
-
-        # Sla het audiobestand op
-        audio_file = "output.mp3"
-        response.stream_to_file(audio_file)
-        fast_audio_file = "output_fast.mp3"
-        self.change_audio_speed(audio_file, fast_audio_file, speed=2.0)
-
-        # Stap 2: Speel het audiobestand af via de speakers met pydub
-        sound = AudioSegment.from_mp3(fast_audio_file)
-        play(sound)
 
     def create_questions_json_from_content_and_topic_json(self):
         print("Creating questions JSON from content and topic JSON...")

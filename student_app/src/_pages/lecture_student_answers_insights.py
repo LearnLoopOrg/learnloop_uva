@@ -4,7 +4,6 @@ import numpy as np
 import streamlit as st
 import base64
 import json
-import utils.db_config as db_config
 from data.data_access_layer import DatabaseAccess
 from utils.openai_client import openai_call, read_prompt
 from streamlit_extras.add_vertical_space import add_vertical_space

@@ -13,7 +13,7 @@ from _pages.topic_overview import TopicOverview
 from utils.utils import ImageHandler
 import utils.db_config as db_config
 from data.data_access_layer import DatabaseAccess
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from _pages.lecture_overview import LectureOverview
 from _pages.course_overview import CoursesOverview
 from _pages.theory_overview import TheoryOverview
@@ -25,7 +25,8 @@ from _pages.upload import UploadPage
 from utils.utils import Utils
 from utils.utils import AzureUtils
 from slack_sdk import WebClient
-from azure.storage.blob import BlobServiceClient
+import streamlit_authenticator as stauth
+from streamlit_authenticator import Hasher
 
 # Must be called first
 try:
@@ -1568,7 +1569,6 @@ def logout():
     st.session_state.selected_phase = None
     st.session_state.logged_in = False
     st.session_state.db_switched = False
-    st.session_state.db_name = "UvA_KNP"
     return
 
 
@@ -1639,23 +1639,12 @@ def render_sidebar():
         ):
             render_feedback_form()
 
-    print("RE-INITIALIZE SOCRATIC MENU PLACEHOLDER")
-
-    if "socratic_menu_placeholder" in st.session_state:
-        print(
-            f"Socratic menu placeholder VOOR RE-INIT: {st.session_state.socratic_menu_placeholder}"
-        )
-
     # Space for the menu rendered in Socratic Dialogue
     if (
         "socratic_menu_placeholder" not in st.session_state
         or st.session_state.socratic_menu_placeholder is None
     ):
         st.session_state.socratic_menu_placeholder = st.sidebar.empty()
-
-    print(
-        f"Socratic menu placeholder NA RE-INITIALIZATION: {st.session_state.socratic_menu_placeholder}"
-    )
 
     if "bottom_buttons_placeholder" not in st.session_state:
         st.session_state["bottom_buttons_placeholder"] = st.sidebar.empty()
@@ -1849,9 +1838,36 @@ def convert_image_base64(image_path):
 #         return
 
 
-def try_login(input_username, uni):
+def try_login(input_username, input_password, uni):
     # Reset verkeerde inlogstatus
     st.session_state.wrong_credentials = False
+
+    # Retrieve user from database
+    print(f"Database name: {st.session_state.db_name}")
+    user_doc = st.session_state.db.users.find_one({"username": input_username})
+    print("user_doc", user_doc)
+
+    # Check if input password is correct
+    if user_doc and "password" in user_doc:
+        hashed_password = user_doc.get("password", None)
+
+        if Hasher.check_pw(input_password, hashed_password):
+            st.session_state.username = {
+                "name": user_doc["username"],
+                "role": user_doc["role"],
+                "university": user_doc["university"],
+                "courses": user_doc["courses"],
+            }
+            st.session_state.logged_in = True
+
+            if user_doc["university"] == "UvA":
+                st.session_state.db_name = "UvA_KNP"
+            elif user_doc["university"] == "UU":
+                st.session_state.db_name = "test_users_2"
+
+            st.session_state.db = db_config.connect_db(st.session_state.db_name)
+
+            return
 
     # Gebruikerslijst voor validatie
     uva_users = {
@@ -1898,7 +1914,6 @@ def try_login(input_username, uni):
 
     else:
         # Onjuiste inloggegevens
-        # st.session_state[f"streamlit_username_{uni}"] = ""
         st.session_state.wrong_credentials = True
         st.session_state.logged_in = False
 
@@ -1917,21 +1932,21 @@ def inlog_terminal(uni):
         username = st.text_input(
             "Log in",
             label_visibility="collapsed",
-            placeholder="Jouw wachtwoord",
+            placeholder="Gebruikersnaam",
             key=f"streamlit_username_{uni}",
+        )
+
+        password = st.text_input(
+            "Password",
+            label_visibility="collapsed",
+            placeholder="Wachtwoord",
+            key=f"streamlit_password_{uni}",
             type="password",
         )
 
-        # Voeg een formulierknop toe voor login
-        submit_button = st.form_submit_button(
-            label="Log in",
-            use_container_width=True,
-        )
-
-        # Controleer of de knop is ingedrukt
-        if submit_button:
+        if st.form_submit_button("Inloggen", use_container_width=True):
             # Roep de inlogfunctie aan met de ingevoerde gebruikersnaam
-            try_login(username, uni)
+            try_login(username, password, uni)
 
     # Controleer de status van het inloggen
     if st.session_state.get("logged_in", False):
@@ -1940,9 +1955,140 @@ def inlog_terminal(uni):
         st.warning("Onjuiste inloggegevens.")
 
 
+def login_module():
+    # @st.cache_data(ttl=600)
+    def get_user_data():
+        """Caches the login data for all users for 10 minutes in a accessible format."""
+        # Connect to database
+        db = st.session_state.db
+
+        # List  all collections in db
+        collections = list(db.users.find())  # make hashable for st.cache_data
+
+        # Format collections into { key: { "username": username, "password": password } }
+        items = {"usernames": {item["username"]: item for item in collections}}
+
+        # Revert username field to name
+        for username, item in items["usernames"].items():
+            item["name"] = item.pop("username")
+            item["password"] = item.pop("password")
+
+        return items
+
+    login_user_data = get_user_data()
+
+    cookie_name = "LearnLoopLogin"
+    cookie_key = "LearnLoopKey"
+    cookie_expiry = 0
+    preauthorized_users = []
+
+    authenticator = stauth.Authenticate(
+        login_user_data,
+        cookie_name,
+        cookie_key,
+        cookie_expiry,
+        preauthorized_users,
+    )
+
+    authenticator.login("Login", "main")
+
+    if st.session_state["authentication_status"]:
+        st.header("Account")
+        st.write(f"{st.session_state.username}")
+        authenticator.logout("Log out", "main", key="unique_key")
+    elif st.session_state["authentication_status"] is False:
+        st.error("Username or password is incorrect")
+    elif st.session_state["authentication_status"] is None:
+        pass
+
+
+def save_hashed_password_account_to_database():
+    hashed_password = Hasher.hash(st.session_state.new_password)
+    st.session_state.db.users.insert_one(
+        {
+            "username": st.session_state.new_username,
+            "password": hashed_password,
+            "role": st.session_state.user_role,
+            "university": st.session_state.user_university,
+            "courses": st.session_state.user_courses,
+        }
+    )
+    st.success("Je account is aangemaakt! Je bent nu ingelogd.")
+
+    st.session_state.logged_in = True
+    st.session_state.username = {
+        "name": st.session_state.new_username,
+        "role": "student",
+    }
+
+    st.session_state.admin_logged_in = False
+
+
+def new_account_terminal():
+    # Plaats de universiteit selectbox buiten het formulier
+    university = st.selectbox(
+        "University",
+        [
+            "Selecteer een universiteit",
+            "Universiteit van Amsterdam",
+            "Vrije Universiteit",
+            "Universiteit Utrecht",
+        ],
+        index=0,
+        key="user_university",
+    )
+
+    with st.form(key="new_account_form"):
+        st.text_input("Username", key="new_username")
+        st.text_input("Password", type="password", key="new_password")
+
+        # Toon de vakken multiselect alleen als een universiteit is geselecteerd
+        university_courses = {
+            "Universiteit van Amsterdam": [
+                "Introductie Celbiologie",
+                "Genetica & Evolutie",
+                "Leren & Geheugen",
+                "Klinische Psychologie",
+            ],
+            "Vrije Universiteit": [
+                "Bedrijfsethiek",
+                "Marketingstrategieën",
+                "Financiële Analyse",
+                "Organisatiegedrag",
+            ],
+            "Universiteit Utrecht": [
+                "Medische Biologie",
+                "Farmacologie",
+                "Neuroanatomie",
+                "Immunologie",
+            ],
+        }
+
+        if university != "Selecteer een universiteit":
+            courses = university_courses.get(university, [])
+            st.multiselect("Vakken", courses, key="user_courses")
+
+        st.selectbox("Role", ["student", "teacher"], key="user_role")
+
+        st.form_submit_button(
+            "Create account",
+            on_click=save_hashed_password_account_to_database,
+            use_container_width=True,
+        )
+
+
+def set_admin_logged_in_true():
+    if "admin_logged_in" not in st.session_state:
+        st.session_state.admin_logged_in = True
+    else:
+        st.session_state.admin_logged_in = True
+
+
 def render_login_page():
     """This is the first page the user sees when visiting the website and
     prompts the user to login via SURFconext."""
+
+    # login_module()
 
     if st.session_state.deployment_type == "uva_servers":
         # columns = st.columns([0.5, 1.5, 0.5])
@@ -1989,6 +2135,30 @@ def render_login_page():
             st.divider()
 
             inlog_terminal("UvA")
+
+            st.divider()
+
+            with st.expander("Admin login", expanded=st.session_state.admin_logged_in):
+                st.text_input(
+                    "Admin login",
+                    label_visibility="collapsed",
+                    key="admin_key",
+                )
+
+                st.button(
+                    "Log in",
+                    on_click=set_admin_logged_in_true,
+                    use_container_width=True,
+                )
+
+                if st.session_state.admin_logged_in:
+                    if st.session_state.admin_key != "":
+                        if st.session_state.admin_key == "pooLnraeL":
+                            new_account_terminal()
+                        else:
+                            st.warning("Wrong credentials")
+                    else:
+                        st.warning("Enter admin key")
 
             # st.divider()
 
@@ -2173,6 +2343,9 @@ def set_correct_settings_for_deployment_type():
 
 
 def initialise_variables():
+    if "admin_logged_in" not in st.session_state:
+        st.session_state.admin_logged_in = False
+
     if "socratic_menu_placeholder" in st.session_state:
         st.session_state.socratic_menu_placeholder = None
 
@@ -2305,7 +2478,7 @@ def initialise_variables():
 
 def initialise_tools():
     if "db" not in st.session_state:
-        st.session_state.db = db_config.connect_db(database_name="UvA_KNP")
+        st.session_state.db = db_config.connect_db(database_name="LearnLoop")
 
     if "db_dal" not in st.session_state:
         st.session_state.db_dal = DatabaseAccess()
@@ -2511,7 +2684,7 @@ if __name__ == "__main__":
     # Connect with the correct database after logging in. When rerouted to student app after SURF login, the session state is resetted
     if st.session_state.logged_in is True and st.session_state.db_switched is False:
         if st.session_state.db_name is None:
-            st.session_state.db_name = "UvA_KNP"
+            st.session_state.db_name = "LearnLoop"
 
         st.session_state.db = db_config.connect_db(
             database_name=st.session_state.db_name
