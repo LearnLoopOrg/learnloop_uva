@@ -48,6 +48,7 @@ class DatabaseAccess:
         """
         Loads lectures from the database into the session state.
         """
+
         course_catalog = self.get_course_catalog(
             st.session_state.user_doc["university"],
             st.session_state.user_doc["courses"],
@@ -141,7 +142,7 @@ class DatabaseAccess:
 
         if not segment_indices:
             st.session_state.db.users.update_one(
-                {"username": st.session_state.username["name"]},
+                {"username": st.session_state.user_doc["name"]},
                 {
                     "$set": {
                         f"progress.{st.session_state.selected_module}.learning.last_visited_segment_index_per_topic_index": [
@@ -167,7 +168,7 @@ class DatabaseAccess:
             phase = "learning"
 
         user_doc = st.session_state.db.users.find_one(
-            {"username": st.session_state.username["name"]}
+            {"username": st.session_state.user_doc["name"]}
         )
         return user_doc["progress"][st.session_state.selected_module][phase][
             "segment_index"
@@ -285,14 +286,14 @@ class DatabaseAccess:
     def update_if_warned(self, boolean):
         """Callback function for a button that turns of the LLM warning message."""
         st.session_state.db.users.update_one(
-            {"username": st.session_state.username["name"]},
+            {"username": st.session_state.user_doc["name"]},
             {"$set": {"warned": boolean}},
         )
 
     def fetch_if_warned(self):
         """Fetches from database if the user has been warned about LLM."""
         user_doc = st.session_state.db.users.find_one(
-            {"username": st.session_state.username["name"]}
+            {"username": st.session_state.user_doc["name"]}
         )
         if user_doc is None:
             return None
@@ -306,7 +307,7 @@ class DatabaseAccess:
 
     def update_last_module(self):
         st.session_state.db.users.update_one(
-            {"username": st.session_state.username["name"]},
+            {"username": st.session_state.user_doc["name"]},
             {"$set": {"last_module": st.session_state.selected_module}},
         )
 
@@ -328,26 +329,26 @@ class DatabaseAccess:
 
         # Als de gebruiker is gevonden
         if user_doc is not None:
-            st.session_state.username["name"] = user_doc["username"]
-            st.session_state.username["role"] = (
+            st.session_state.user_doc["name"] = user_doc["username"]
+            st.session_state.user_doc["role"] = (
                 "student"  # TODO: HARDCODED, maar moet dynamisch worden bepaald met de SURF-token
             )
-            print("User found with username:", st.session_state.username["name"])
+            print("User found with username:", st.session_state.user_doc["name"])
 
         # Als geen gebruiker is gevonden en de username nog niet is ingesteld
-        elif st.session_state.username["name"] is None:
+        elif st.session_state.user_doc["name"] is None:
             print("No user found with the nonce.")
 
         # Als geen `user_doc` is gevonden, maar de username al wel is ingesteld
         else:
             print(
                 "No user doc found, but username exists:",
-                st.session_state.username["name"],
+                st.session_state.user_doc["name"],
             )
 
     def invalidate_nonce(self):
         st.session_state.db.users.update_one(
-            {"username": st.session_state.username["name"]}, {"$set": {"nonce": None}}
+            {"username": st.session_state.user_doc["name"]}, {"$set": {"nonce": None}}
         )
         st.session_state.nonce = None
 
@@ -357,7 +358,7 @@ class DatabaseAccess:
 
     def find_user_doc(self):
         return st.session_state.db.users.find_one(
-            {"username": st.session_state.username["name"]}
+            {"username": st.session_state.user_doc["name"]}
         )
 
     def get_progress_counter(self, module, user_doc) -> dict:
@@ -371,7 +372,7 @@ class DatabaseAccess:
 
     def update_progress_counter_for_segment(self, module, new_progress_count):
         st.session_state.db.users.update_one(
-            {"username": st.session_state.username["name"]},
+            {"username": st.session_state.user_doc["name"]},
             {
                 "$set": {
                     f"progress.{module}.learning.progress_counter.{str(st.session_state.segment_index)}": new_progress_count
@@ -385,7 +386,7 @@ class DatabaseAccess:
         many times the user answered a certain question.
         """
         st.session_state.db.users.update_one(
-            {"username": st.session_state.username["name"]},
+            {"username": st.session_state.user_doc["name"]},
             {"$set": {f"progress.{module}.learning.progress_counter": empty_dict}},
         )
 
@@ -401,7 +402,7 @@ class DatabaseAccess:
         Update the last phase the user visitied, such as 'courses', 'practice' etc.
         """
         st.session_state.db.users.update_one(
-            {"username": st.session_state.username["name"]},
+            {"username": st.session_state.user_doc["name"]},
             {"$set": {"last_phase": phase}},
         )
 

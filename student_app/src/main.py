@@ -1862,14 +1862,6 @@ def try_login(input_username, input_password, uni):
                 "courses": user_doc["courses"],
             }
             st.session_state.logged_in = True
-
-            # if user_doc["university"] == "UvA":
-            #     st.session_state.db_name = "UvA_KNP"
-            # elif user_doc["university"] == "UU":
-            #     st.session_state.db_name = "test_users_2"
-
-            # st.session_state.db = db_config.connect_db(st.session_state.db_name)
-
             return
 
     # Gebruikerslijst voor validatie
@@ -2047,24 +2039,11 @@ def new_account_terminal():
 
         # Toon de vakken multiselect alleen als een universiteit is geselecteerd
         university_courses = {
-            "Universiteit van Amsterdam": [
-                "Introductie Celbiologie",
-                "Genetica & Evolutie",
-                "Leren & Geheugen",
-                "Klinische Psychologie",
-            ],
+            "Universiteit van Amsterdam": "None",
             "Vrije Universiteit": [
-                "Bedrijfsethiek",
-                "Marketingstrategieën",
-                "Financiële Analyse",
-                "Organisatiegedrag",
+                "None",
             ],
-            "Universiteit Utrecht": [
-                "Medische Biologie",
-                "Farmacologie",
-                "Neuroanatomie",
-                "Immunologie",
-            ],
+            "Universiteit Utrecht": ["Plant biology", "Cell biology"],
         }
 
         if university != "Selecteer een universiteit":

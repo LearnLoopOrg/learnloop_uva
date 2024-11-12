@@ -37,7 +37,7 @@ class LectureOverview:
         st.session_state.selected_module = lecture_title
 
         with container:
-            role = st.session_state.username["role"]
+            role = st.session_state.user_doc["role"]
             lecture_status = (
                 lecture_record["status"] if lecture_record else "not-recorded"
             )
@@ -100,7 +100,7 @@ class LectureOverview:
                             use_container_width=True,
                             key=lecture_title + "_theory-overview",
                         )
-                        if st.session_state.username["name"] == "supergeheimecode":
+                        if st.session_state.user_doc["name"] == "supergeheimecode":
                             st.button(
                                 "📝 Socratisch dialoog",
                                 on_click=self.update_module_and_phase,
@@ -131,7 +131,7 @@ class LectureOverview:
     def track_visits(self):
         """Tracks the visits to the modules."""
         self.db.users.update_one(
-            {"username": st.session_state.username},
+            {"username": st.session_state.user_doc},
             {
                 "$inc": {
                     f"progress.{st.session_state.selected_module}.visits.{st.session_state.selected_phase}": 1
