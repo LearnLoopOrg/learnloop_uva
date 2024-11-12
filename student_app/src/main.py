@@ -1792,55 +1792,6 @@ def convert_image_base64(image_path):
         return base64.b64encode(image_file.read()).decode()
 
 
-# def try_login(input_username):
-#     st.session_state.wrong_credentials = False
-#     # Checks if the user is in the list below
-#     uva_users = {
-#         "Luc Mahieu": {"role": "student"},
-#         "Milan van Roessel": {"role": "student"},
-#         "eensupergeheimecode": {"role", "student"},
-#         "supergeheimecode": {"role": "student"},
-#         "famkesgeheimecode": {"role": "student"},
-#         "Erwin van Vliet": {"role": "teacher"},
-#     }
-
-#     vu_users = {}
-
-#     with open(f"{st.session_state.base_path}data/uu_users.json", "r") as f:
-#         uu_users = json.load(f)
-
-#     if input_username in uva_users:
-#         st.session_state.user_doc = {
-#             "name": input_username,
-#             "role": uva_users[input_username]["role"],
-#         }
-#         st.session_state.logged_in = True
-#         if input_username == "supergeheimecode":
-#             st.session_state.db_name = "LearnLoop"
-#         else:
-#             st.session_state.db_name = "UvA_KNP"
-
-#     elif input_username in vu_users:
-#         st.session_state.user_doc = {
-#             "name": input_username,
-#             "role": vu_users[input_username]["role"],
-#         }
-#         st.session_state.logged_in = True
-#         st.session_state.db_name = "test_users_1"
-
-#     elif input_username in uu_users:
-#         st.session_state.user_doc = {
-#             "name": input_username,
-#             "role": uu_users[input_username]["role"],
-#         }
-#         st.session_state.logged_in = True
-#         st.session_state.db_name = "test_users_2"
-
-#     else:
-#         st.session_state.wrong_credentials = True
-#         return
-
-
 def try_login(input_username, input_password, uni):
     # Reset verkeerde inlogstatus
     st.session_state.wrong_credentials = False
@@ -2002,7 +1953,8 @@ def login_module():
 
 
 def save_hashed_password_account_to_database():
-    hashed_password = Hasher.hash(st.session_state.new_password)
+    new_password = st.session_state.new_password
+    hashed_password = Hasher.hash(new_password)
     st.session_state.db.users.insert_one(
         {
             "username": st.session_state.new_username,
@@ -2018,6 +1970,7 @@ def save_hashed_password_account_to_database():
     st.session_state.user_doc = {
         "name": st.session_state.new_username,
         "role": "student",
+        "university": st.session_state.user_university,
     }
 
     st.session_state.admin_logged_in = False
@@ -2526,15 +2479,17 @@ def qr_code_in_query_param():
 
 # Functie om de volgende beschikbare gebruikersnaam op te halen uit één document
 def get_available_username():
-    usernames_collection = st.session_state.db.usernames
+    print("Getting available username for QR login...")
+    users_collection = st.session_state.db.users
     # Haal het document op met alle gebruikersnamen
-    user_doc = usernames_collection.find_one({})
+    user_doc = users_collection.find_one({"usernames": {"$exists": True}})
+    print("User doc:", user_doc)
 
     if user_doc and "usernames" in user_doc:  # Check voor het 'usernames' veld
         for username, status in user_doc["usernames"].items():
             if status == "available":
                 # Zet de status van deze gebruikersnaam op 'taken' zonder gebruik te maken van _id
-                usernames_collection.update_one(
+                users_collection.update_one(
                     {
                         f"usernames.{username}": "available"
                     },  # Zoek naar de beschikbare gebruikersnaam
@@ -2548,8 +2503,12 @@ def get_available_username():
 def turn_qr_code_into_username(username):
     # Sla de username op in het gewenste format {"name": username, "role": None}
     st.session_state.user_doc = {"name": username, "role": None}
+    st.session_state.user_role = "student"
+    st.session_state.new_username = username
+    st.session_state.user_university = "Universiteit Utrecht"
+    st.session_state.user_courses = ["Plant biology", "Cell biology"]
+    save_hashed_password_account_to_database()
     st.session_state.logged_in = True
-    st.session_state.db_name = "test_users_2"
     st.success(f"Je bent ingelogd als {username}!")
     # Eventueel verder redirecten of andere actie ondernemen.
     st.session_state.turned_qr_code_into_username = True
@@ -2558,7 +2517,7 @@ def turn_qr_code_into_username(username):
 
 
 def show_username_page(username):
-    cols = st.columns([1, 7, 1])
+    cols = st.columns([1, 1, 1])
 
     with cols[1]:
         st.markdown(
@@ -2566,13 +2525,15 @@ def show_username_page(username):
             unsafe_allow_html=True,
         )
         st.markdown(
-            "<p style='color: #00000; text-align: center'>⚠️ Sla deze goed op, je hebt hem later nodig om weer in te kunnen loggen. ⚠️</p>",
-            unsafe_allow_html=True,
-        )
-        st.markdown(
             f"<h1 style='text-align: center; color: #2196F3;'>{username}</h1>",
             unsafe_allow_html=True,
         )
+        st.markdown(
+            "<p style='color: #00000; text-align: center'>⚠️ Sla deze goed op, je hebt hem later nodig om weer in te kunnen loggen. ⚠️</p>",
+            unsafe_allow_html=True,
+        )
+
+        st.text_input("Nieuw wachtwoord", type="password", key="new_password")
         st.write("\n\n")
         st.write("\n\n")
 
