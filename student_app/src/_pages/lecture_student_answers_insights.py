@@ -64,7 +64,7 @@ class LectureInsights:
 
         # Change the segment index to the index corresponding to the selected topic
         self.db.users.update_one(
-            {"username": st.session_state.user_doc["name"]},
+            {"username": st.session_state.user_doc["username"]},
             {
                 "$set": {
                     f"progress.{st.session_state.selected_module}.learning.segment_index": segment_index

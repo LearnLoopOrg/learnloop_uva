@@ -100,7 +100,7 @@ class LectureOverview:
                             use_container_width=True,
                             key=lecture_title + "_theory-overview",
                         )
-                        if st.session_state.user_doc["name"] == "supergeheimecode":
+                        if st.session_state.user_doc["username"] == "supergeheimecode":
                             st.button(
                                 "📝 Socratisch dialoog",
                                 on_click=self.update_module_and_phase,

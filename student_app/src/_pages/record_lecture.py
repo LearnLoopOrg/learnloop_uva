@@ -141,7 +141,7 @@ class Recorder:
     #     st.session_state.selected_phase = phase
     #     self.db_dal.update_last_phase(phase)
 
-    # user = st.session_state.user_doc["name"]
+    # user = st.session_state.user_doc["username"]
 
     def go_to_course(self, course_name):
         """

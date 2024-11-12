@@ -39,10 +39,10 @@ class UploadPage:
 
             with st.form(key="generate_learning_path"):
                 module_name = st.text_input(
-                    # "Naam van module", value=uploaded_file.name, key="name"
+                    # "Naam van module", value=uploaded_file.name, key="username"
                     "Naam van module",
                     "...",
-                    key="name",
+                    key="username",
                 )
                 submit_button = st.form_submit_button("Genereer module")
                 # TODO: Implementeer de post request naar de backend om de module te genereren

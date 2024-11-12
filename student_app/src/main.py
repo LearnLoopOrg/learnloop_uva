@@ -173,10 +173,10 @@ def upload_progress():
 
     # The data dict contains the paths and data
     st.session_state.db.users.update_one(
-        {"username": st.session_state.user_doc["name"]}, {"$set": learning_path}
+        {"username": st.session_state.user_doc["username"]}, {"$set": learning_path}
     )
     st.session_state.db.users.update_one(
-        {"username": st.session_state.user_doc["name"]}, {"$set": practice_data}
+        {"username": st.session_state.user_doc["username"]}, {"$set": practice_data}
     )
 
 
@@ -709,7 +709,7 @@ def render_question():
 def fetch_ordered_segment_sequence():
     """Fetches the practice segments from the database."""
     user_doc = st.session_state.db.users.find_one(
-        {"username": st.session_state.user_doc["name"]}
+        {"username": st.session_state.user_doc["username"]}
     )
     st.session_state.ordered_segment_sequence = user_doc["progress"][
         st.session_state.selected_module
@@ -719,7 +719,7 @@ def fetch_ordered_segment_sequence():
 def update_ordered_segment_sequence(ordered_segment_sequence):
     """Updates the practice segments in the database."""
     st.session_state.db.users.update_one(
-        {"username": st.session_state.user_doc["name"]},
+        {"username": st.session_state.user_doc["username"]},
         {
             "$set": {
                 f"progress.{st.session_state.selected_module}.practice.ordered_segment_sequence": ordered_segment_sequence
@@ -817,7 +817,7 @@ def reset_segment_index_and_feedback():
 
 
 def reset_feedback():
-    user_query = {"username": st.session_state.user_doc["name"]}
+    user_query = {"username": st.session_state.user_doc["username"]}
     set_empty_array = {
         "$set": {f"progress.{st.session_state.selected_module}.feedback.questions": []}
     }
@@ -893,7 +893,7 @@ def calculate_score():
 
 # TODO move to db access class
 def get_feedback_questions_from_db():
-    query = {"username": st.session_state.user_doc["name"]}
+    query = {"username": st.session_state.user_doc["username"]}
 
     projection = {
         f"progress.{st.session_state.selected_module}.feedback.questions": 1,
@@ -949,7 +949,7 @@ def render_oefententamen_final_page():
 def reset_progress():
     """Resets the progress of the user in the current phase to the database."""
     st.session_state.db.users.update_one(
-        {"username": st.session_state.user_doc["name"]},
+        {"username": st.session_state.user_doc["username"]},
         {
             "$set": {
                 f"progress.{st.session_state.selected_module}.{st.session_state.selected_phase}.segment_index": -1
@@ -1167,7 +1167,7 @@ def save_feedback_on_open_question():
     there does not already exists a feedback entry in the database. If it does, it overwrites this one,
     if it doesn't it makes a new one.
     """
-    user_query = {"username": st.session_state.user_doc["name"]}
+    user_query = {"username": st.session_state.user_doc["username"]}
 
     # First, pull the existing question if it exists
     pull_query = {
@@ -1208,7 +1208,7 @@ def save_feedback_on_mc_question():
     there does not already exists a feedback entry in the database. If it does, it overwrites this one,
     if it doesn't it makes a new one.
     """
-    user_query = {"username": st.session_state.user_doc["name"]}
+    user_query = {"username": st.session_state.user_doc["username"]}
 
     # First, pull the existing question if it exists
     pull_query = {
@@ -1548,7 +1548,7 @@ def render_info_page():
 def track_visits():
     """Tracks the visits to the modules."""
     st.session_state.db.users.update_one(
-        {"username": st.session_state.user_doc["name"]},
+        {"username": st.session_state.user_doc["username"]},
         {
             "$inc": {
                 f"progress.{st.session_state.selected_module}.visits.{st.session_state.selected_phase}": 1
@@ -1710,7 +1710,7 @@ def check_user_doc_and_add_missing_fields():
 
     if not user_doc:
         st.session_state.db.users.insert_one(
-            {"username": st.session_state.user_doc["name"]}
+            {"username": st.session_state.user_doc["username"]}
         )
         user_doc = st.session_state.db_dal.find_user_doc()
         print("Inserted new user doc in db: ", user_doc)
@@ -1781,7 +1781,7 @@ def check_user_doc_and_add_missing_fields():
 
     # Update user_doc in db
     st.session_state.db.users.update_one(
-        {"username": st.session_state.user_doc["name"]}, {"$set": user_doc}
+        {"username": st.session_state.user_doc["username"]}, {"$set": user_doc}
     )
 
 
@@ -1811,7 +1811,7 @@ def try_login(input_username, input_password, uni):
 
         if Hasher.check_pw(input_password, hashed_password):
             st.session_state.user_doc = {
-                "name": user_doc["username"],
+                "username": user_doc["username"],
                 "role": user_doc["role"],
                 "university": user_doc["university"],
                 "courses": user_doc["courses"],
@@ -1838,7 +1838,7 @@ def try_login(input_username, input_password, uni):
     # Controleer of de gebruikersnaam in de lijst staat
     if input_username in uva_users:
         st.session_state.user_doc = {
-            "name": input_username,
+            "username": input_username,
             "role": uva_users[input_username]["role"],
         }
         st.session_state.logged_in = True
@@ -1848,7 +1848,7 @@ def try_login(input_username, input_password, uni):
 
     elif input_username in vu_users:
         st.session_state.user_doc = {
-            "name": input_username,
+            "username": input_username,
             "role": vu_users[input_username]["role"],
         }
         st.session_state.logged_in = True
@@ -1856,7 +1856,7 @@ def try_login(input_username, input_password, uni):
 
     elif input_username in uu_users:
         st.session_state.user_doc = {
-            "name": input_username,
+            "username": input_username,
             "role": uu_users[input_username]["role"],
         }
         st.session_state.logged_in = True
@@ -1920,7 +1920,7 @@ def login_module():
 
         # Revert username field to name
         for username, item in items["usernames"].items():
-            item["name"] = item.pop("username")
+            item["username"] = item.pop("username")
             item["password"] = item.pop("password")
 
         return items
@@ -1964,11 +1964,10 @@ def save_hashed_password_account_to_database():
             "courses": st.session_state.user_courses,
         }
     )
-    st.success("Je account is aangemaakt! Je bent nu ingelogd.")
 
     st.session_state.logged_in = True
     st.session_state.user_doc = {
-        "name": st.session_state.new_username,
+        "username": st.session_state.new_username,
         "role": "student",
         "university": st.session_state.user_university,
     }
@@ -2168,9 +2167,7 @@ def determine_username_from_nonce():
     """
     Fetches the username from the database using the nonce in the query parameters.
     """
-    st.session_state.nonce = (
-        fetch_nonce_from_query()
-    )  # ? Why save nonce in session state? Pass a param?
+    st.session_state.nonce = fetch_nonce_from_query()
     st.session_state.db_dal.fetch_info()
 
 
@@ -2334,7 +2331,7 @@ def initialise_variables():
         st.session_state.nonce = None
 
     if "user_doc" not in st.session_state:
-        st.session_state.user_doc = {"name": None, "role": None}
+        st.session_state.user_doc = {"username": None, "role": None}
 
     if "warned" not in st.session_state:
         st.session_state.warned = None
@@ -2501,18 +2498,19 @@ def get_available_username():
 
 
 def turn_qr_code_into_username(username):
-    # Sla de username op in het gewenste format {"name": username, "role": None}
-    st.session_state.user_doc = {"name": username, "role": None}
+    # Sla de username op in het gewenste format {"username": username, "role": None}
     st.session_state.user_role = "student"
     st.session_state.new_username = username
     st.session_state.user_university = "Universiteit Utrecht"
     st.session_state.user_courses = ["Plant biology", "Cell biology"]
+    st.session_state.user_doc = {"username": username, "role": "student"}
     save_hashed_password_account_to_database()
-    st.session_state.logged_in = True
+
     st.success(f"Je bent ingelogd als {username}!")
-    # Eventueel verder redirecten of andere actie ondernemen.
+    st.session_state.logged_in = True
     st.session_state.turned_qr_code_into_username = True
-    st.query_params.clear()  # Reset query parameters na uitlezen
+    st.query_params.clear()
+
     print("QR code omgezet in gebruikersnaam.")
 
 
@@ -2572,9 +2570,20 @@ def register_qr_code():
                 st.session_state.generated_username = get_available_username()
             show_username_page(st.session_state.generated_username)
         else:
-            st.write(f"Je bent al ingelogd als {st.session_state['username']['name']}.")
+            st.write(
+                f"Je bent al ingelogd als {st.session_state['username']['username']}."
+            )
     else:
         return
+
+
+def fetch_user_doc_from_db():
+    print("Fetching user doc from db...")
+    print(f"User name: {st.session_state.user_doc['username']}")
+    st.session_state.user_doc = st.session_state.db.users.find_one(
+        {"username": st.session_state.user_doc["username"]}
+    )
+    print(f"User doc: {st.session_state.user_doc}")
 
 
 if __name__ == "__main__":
@@ -2587,7 +2596,7 @@ if __name__ == "__main__":
     if no_login_page:
         st.session_state.logged_in = True
         st.session_state.db_name = "LearnLoop"
-        st.session_state.user_doc = {"name": args.test_username, "role": "student"}
+        st.session_state.user_doc = {"username": args.test_username, "role": "student"}
         st.session_state.selected_phase = args.run_page
 
     args, st.session_state.base_path = set_correct_settings_for_deployment_type()
@@ -2621,7 +2630,7 @@ if __name__ == "__main__":
     # Give the name of the test user when one is given. If not using a test username, set to None
     if st.session_state.user_doc == {} and args.test_username is not None:
         st.session_state.user_doc = {"role": "teacher"}
-        st.session_state.user_doc["name"] = args.test_username
+        st.session_state.user_doc["username"] = args.test_username
 
     register_qr_code()
 
@@ -2651,7 +2660,10 @@ if __name__ == "__main__":
     if (
         no_login_page is False
         and st.session_state.logged_in is False
-        and (not st.session_state.user_doc or not st.session_state.user_doc.get("name"))
+        and (
+            not st.session_state.user_doc
+            or not st.session_state.user_doc.get("username")
+        )
     ):
         print("Rendering login page")
         render_login_page()
@@ -2659,8 +2671,12 @@ if __name__ == "__main__":
     else:
         print("Rendering the app")
 
-        if st.session_state.user_doc["role"] is None:
-            st.session_state.user_doc["role"] = "student"
+        fetch_user_doc_from_db()
+
+        print(
+            f"Logged in as {st.session_state.user_doc['username']} with user the following user doc: {st.session_state.user_doc}"
+        )
+
         if st.session_state.modules is None or st.session_state.selected_course is None:
             st.session_state.modules = (
                 st.session_state.db_dal.initialise_course_and_modules()
