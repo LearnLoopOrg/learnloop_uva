@@ -1845,6 +1845,10 @@ def try_login(input_username, input_password, uni):
     # Reset verkeerde inlogstatus
     st.session_state.wrong_credentials = False
 
+    # Clean inputs by stripping whitespace
+    input_username = input_username.strip()
+    input_password = input_password.strip()
+
     # Retrieve user from database
     print(f"Database name: {st.session_state.db_name}")
     user_doc = st.session_state.db.users.find_one({"username": input_username})
