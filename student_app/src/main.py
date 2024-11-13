@@ -1071,11 +1071,14 @@ def render_learning_page():
                 render_question()
 
                 # Spinner that displays during evaluating answer
+                # with st.spinner(
+                #     "Een large language model (LLM) checkt je antwoord met het antwoordmodel. \
+                #                 Check zelf het antwoordmodel als je twijfelt. \n\n Leer meer over het gebruik \
+                #                 van LLM's op de pagina **'Uitleg mogelijkheden & limitaties LLM's'** onder \
+                #                 het kopje 'Extra info' in de sidebar."
+                # ):
                 with st.spinner(
-                    "Een large language model (LLM) checkt je antwoord met het antwoordmodel. \
-                                Check zelf het antwoordmodel als je twijfelt. \n\n Leer meer over het gebruik \
-                                van LLM's op de pagina **'Uitleg mogelijkheden & limitaties LLM's'** onder \
-                                het kopje 'Extra info' in de sidebar."
+                    "Een large language model (LLM) checkt je antwoord met het antwoordmodel."
                 ):
                     evaluate_answer()
                     add_date_to_progress_counter()
@@ -1651,14 +1654,19 @@ def render_sidebar():
 
     # Render the static bottom buttons in the dedicated placeholder
     with st.session_state["bottom_buttons_placeholder"].container():
-        st.button(
-            "Uitleg LLM's",
-            on_click=set_selected_phase,
-            args=("LLM-info",),
-            use_container_width=True,
-            key="info_button_sidebar",
-        )
+        st.divider()
+        if st.session_state.user_doc["role"] == "student":
+            st.button(
+                "Uitleg LLM's",
+                on_click=set_selected_phase,
+                args=("LLM-info",),
+                use_container_width=True,
+                key="info_button_sidebar",
+            )
+
         st.button("Log uit", on_click=logout, use_container_width=True)
+
+        st.toggle("Studentweergave", key="student_view")
 
 
 def create_default_progress_structure(module):
@@ -1995,7 +2003,7 @@ def new_account_terminal():
 
         # Toon de vakken multiselect alleen als een universiteit is geselecteerd
         university_courses = {
-            "Universiteit van Amsterdam": "None",
+            "Universiteit van Amsterdam": ["Celbiologie", "Klinische Neuropsychologie"],
             "Vrije Universiteit": [
                 "None",
             ],
@@ -2279,6 +2287,9 @@ def set_correct_settings_for_deployment_type():
 
 
 def initialise_variables():
+    if "student_view" not in st.session_state:
+        st.session_state.student_view = False
+
     if "user_doc" not in st.session_state:
         st.session_state.user_doc = None
 
@@ -2579,11 +2590,9 @@ def register_qr_code():
 
 def fetch_user_doc_from_db():
     print("Fetching user doc from db...")
-    print(f"User name: {st.session_state.user_doc['username']}")
     st.session_state.user_doc = st.session_state.db.users.find_one(
         {"username": st.session_state.user_doc["username"]}
     )
-    print(f"User doc: {st.session_state.user_doc}")
 
 
 if __name__ == "__main__":
@@ -2672,6 +2681,10 @@ if __name__ == "__main__":
         print("Rendering the app")
 
         fetch_user_doc_from_db()
+
+        # Toggle sets this to True when the teacher wants to see the student view
+        if st.session_state.student_view:
+            st.session_state.user_doc["role"] = "student"
 
         print(
             f"Logged in as {st.session_state.user_doc['username']} with user the following user doc: {st.session_state.user_doc}"
