@@ -2690,7 +2690,11 @@ if __name__ == "__main__":
             f"Logged in as {st.session_state.user_doc['username']} with user the following user doc: {st.session_state.user_doc}"
         )
 
-        if st.session_state.modules is None or st.session_state.selected_course is None:
+        if (
+            st.session_state.modules == []
+            or st.session_state.modules is None
+            or st.session_state.selected_course is None
+        ):
             st.session_state.modules = (
                 st.session_state.db_dal.initialise_course_and_modules()
             )
