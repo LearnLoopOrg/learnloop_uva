@@ -56,21 +56,3 @@ jobs:
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.REPO_NAME_LOWER }}/student_app:main
           labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Build and push React Backend Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./react_app/backend
-          file: ./react_app/backend/Dockerfile
-          push: true
-          tags: ${{ env.REGISTRY }}/${{ env.REPO_NAME_LOWER }}/react_backend:main
-          labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Build and push React Frontend Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./react_app
-          file: ./react_app/Dockerfile
-          push: true
-          tags: ${{ env.REGISTRY }}/${{ env.REPO_NAME_LOWER }}/react_frontend:main
-          labels: ${{ steps.meta.outputs.labels }}

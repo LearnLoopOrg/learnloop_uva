@@ -39,17 +39,3 @@ spec:
                 name: learnloop-auth
                 port:
                   number: 80
-          - path: /app
-            pathType: Prefix
-            backend:
-              service:
-                name: learnloop-react-frontend
-                port:
-                  number: 80
-          - path: /api
-            pathType: Prefix
-            backend:
-              service:
-                name: learnloop-react-backend
-                port:
-                  number: 80
