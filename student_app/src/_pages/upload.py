@@ -12,8 +12,8 @@ class UploadPage:
         self.title = "Creëer module"
         self.progress_bar = None
         self.progress_text = None
-        # self.api_url = "https://learnloopcontentpipeline.azurewebsites.net/api/contentpipelinehttp?code=8zG4ThuDDpzez8v46xyBvpR7iGWElTurc8Hzx4GgTKeyAzFumB3U7A=="
-        self.api_url = "http://localhost:7071/api/contentpipelinehttp"
+        self.api_url = "https://learnloopcontentpipeline.azurewebsites.net/api/contentpipelinehttp?code=8zG4ThuDDpzez8v46xyBvpR7iGWElTurc8Hzx4GgTKeyAzFumB3U7A=="
+        # self.api_url = "http://localhost:7071/api/contentpipelinehttp"
 
     def progress_callback(self, bytes_transferred, total_bytes):
         progress = int(bytes_transferred / total_bytes * 100)
@@ -72,10 +72,10 @@ class UploadPage:
                     "Naam van module",
                     key="module_name",
                 )
-                # Course name input
-                course_name = st.text_input(
-                    "Naam van cursus",
-                    "AI in Society",
+                # Get the courses that belong to this user
+                course_name = st.selectbox(
+                    "Cursus",
+                    options=st.session_state.user_doc["courses"],
                     key="course_name",
                 )
                 output_language = st.selectbox(
@@ -87,23 +87,30 @@ class UploadPage:
                     "dutch" if output_language == "Nederlands" else "english"
                 )
 
-                submit_button = st.form_submit_button("Genereer module")
+                submit_button = st.form_submit_button(
+                    "Creëer module", use_container_width=True
+                )
 
                 if submit_button:
-                    print(f"""
-                            Uitvoeren van post request naar backend om module te genereren met blob name uploaded_materials/{uploaded_file.name} en module {module_name} in course {course_name} met output_language {output_language}.
-                            """)
-                    # Wait for some time for upload to be set in blob storage
-                    # time.sleep(10)
-                    self.trigger_content_pipeline(
-                        input_file_name=uploaded_file.name,
-                        module_name=module_name,
-                        course_name=course_name,
-                        output_language=output_language,
-                    )
-                    st.success(
-                        f'Module \'{module_name}\' wordt gegenereerd; het leertraject zal binnen enkele minuten onder "Mijn vakken" > "Kies module"s verschijnen.'
-                    )
+                    if not module_name:
+                        st.error("Gelieve een modulenaam in te vullen.")
+                    elif not course_name:
+                        st.error("Gelieve een cursus te selecteren.")
+                    else:
+                        print(
+                            f"Uitvoeren van post request naar backend om module te genereren met blob name uploaded_materials/{uploaded_file.name} en module {module_name} in course {course_name} met output_language {output_language}."
+                        )
+                        # Wait for some time for upload to be set in blob storage
+                        # time.sleep(10)
+                        self.trigger_content_pipeline(
+                            input_file_name=uploaded_file.name,
+                            module_name=module_name,
+                            course_name=course_name,
+                            output_language=output_language,
+                        )
+                        st.success(
+                            f'Module \'{module_name}\' wordt gegenereerd; het leertraject zal binnen enkele minuten onder "Mijn vakken" > "Kies module"s verschijnen.'
+                        )
 
 
 if __name__ == "__main__":
