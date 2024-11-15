@@ -25,18 +25,9 @@ class Utils:
         """
         Haal de Azure Blob Storage verbindingsstring op, afhankelijk van de configuratie.
         """
-        if st.session_state.use_keyvault:
-            # Gebruik Azure Key Vault om de verbindingsstring op te halen
-            return AzureUtils.get_secret(
-                "AZURE-BLOB-STORAGE-CONNECTION-STRING", "lluniappkv"
-            )
 
-        if st.session_state.use_LL_blob_storage:
-            # Gebruik de LearnLoop Blob Storage verbindingsstring in ontwikkeling
-            return os.getenv("AZURE_BLOB_STORAGE_CONNECTION_STRING")
-
-        # Gebruik de UvA Blob Storage verbindingsstring in productie
-        return os.getenv("UVA_BLOB_CONNECTION_STRING")
+        # Gebruik de LearnLoop Blob Storage connectionstring in productie
+        return os.getenv("LL_BLOB_CONNECTION_STRING")
 
     def create_blob_service_client(self):
         """

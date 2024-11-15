@@ -6,6 +6,8 @@ tag: latest
 surfconextClientId: learnloop-test.datanose.nl
 surfconextMetadataUrl: https://connect.test.surfconext.nl/.well-known/openid-configuration
 azureOpenaiEndpoint: https://uva-test-learnloop-turbo.openai.azure.com/
+learnloopBlobStorage: DefaultEndpointsProtocol=https;AccountName=uniappblobstorage;AccountKey=T5SbavOVnKz+i34kzGxpflFZ4kjMAVyTqGrjH/30RXLJCyMc55Hwjm2VIUO31J/AxYs0rVvTqQl9+AStjl90sQ==;EndpointSuffix=core.windows.net
+learnloopCosmos: mongodb+srv://learnloopadmin:pooLnraeL%404070@learnloop-cosmosdb.mongocluster.cosmos.azure.com/?tls=true&authMechanism=SCRAM-SHA-256&retrywrites=false&maxIdleTimeMS=120000
 
 env:
   backendBaseUrl: https://learnloop.datanose.nl/api

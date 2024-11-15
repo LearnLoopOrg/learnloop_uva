@@ -27,6 +27,10 @@ spec:
             value: "{{ .Values.surfconextClientId }}"
           - name: LEARNLOOP_VERSION
             value: "{{ .Chart.AppVersion }}"
+          - name: LL_BLOB_CONNECTION_STRING
+            value: "{{ .Values.learnloopBlobStorage }}"
+          - name: LL_COSMOS_URI
+            value: "{{ .Values.learnloopCosmos }}"
           envFrom:
             - secretRef:
                 name: learnloop-secret
