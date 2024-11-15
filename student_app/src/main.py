@@ -2686,9 +2686,9 @@ if __name__ == "__main__":
         if st.session_state.student_view:
             st.session_state.user_doc["role"] = "student"
 
-        print(
-            f"Logged in as {st.session_state.user_doc['username']} with user the following user doc: {st.session_state.user_doc}"
-        )
+        # print(
+        #     f"Logged in as {st.session_state.user_doc['username']} with user the following user doc: {st.session_state.user_doc}"
+        # )
 
         if (
             st.session_state.modules == []

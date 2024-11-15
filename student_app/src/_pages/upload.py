@@ -13,7 +13,7 @@ class UploadPage:
         self.progress_bar = None
         self.progress_text = None
         self.api_url = "https://learnloopcontentpipeline.azurewebsites.net/api/contentpipelinehttp?code=8zG4ThuDDpzez8v46xyBvpR7iGWElTurc8Hzx4GgTKeyAzFumB3U7A=="
-        # self.api_url = "http://localhost:7071/api/contentpipelinehttp"
+        # self.api_url = "http://localhost:7071/api/contentpipelinehttp?code=8zG4ThuDDpzez8v46xyBvpR7iGWElTurc8Hzx4GgTKeyAzFumB3U7A=="
 
     def progress_callback(self, bytes_transferred, total_bytes):
         progress = int(bytes_transferred / total_bytes * 100)
@@ -25,6 +25,7 @@ class UploadPage:
         input_file_name: str,
         module_name: str,
         course_name: str,
+        description: str,
         output_language: str,
     ):
         try:
@@ -32,6 +33,7 @@ class UploadPage:
                 "input_file_name": input_file_name,
                 "module_name": module_name,
                 "course_name": course_name,
+                "description": description,
                 "output_language": output_language,
             }
 
@@ -48,7 +50,13 @@ class UploadPage:
 
     def run(self):
         st.title(self.title)
-
+        # if st.button("Trigger CP"):
+        #     self.trigger_content_pipeline(
+        #         input_file_name="state_of_ai_report.mp4",
+        #         module_name="test",
+        #         course_name="test",
+        #         output_language="dutch",
+        #     )
         uploaded_file = st.file_uploader("Kies een bestand", type=["mp4"])
         if uploaded_file is not None:
             # Initialiseer de voortgangsbalk en statusbericht
@@ -83,6 +91,7 @@ class UploadPage:
                     options=["Nederlands", "English"],
                     key="language",
                 )
+                description = st.text_area("Beschrijving", key="description")
                 output_language = (
                     "dutch" if output_language == "Nederlands" else "english"
                 )
@@ -98,14 +107,15 @@ class UploadPage:
                         st.error("Gelieve een cursus te selecteren.")
                     else:
                         print(
-                            f"Uitvoeren van post request naar backend om module te genereren met blob name uploaded_materials/{uploaded_file.name} en module {module_name} in course {course_name} met output_language {output_language}."
+                            f"Uitvoeren van post request naar backend om module te genereren met blob name uploaded_materials/{uploaded_file.name} en module {module_name} (beschrijving: {description} in course {course_name} met output_language {output_language}."
                         )
-                        # Wait for some time for upload to be set in blob storage
-                        # time.sleep(10)
+                        if description == "":
+                            description = ""
                         self.trigger_content_pipeline(
                             input_file_name=uploaded_file.name,
                             module_name=module_name,
                             course_name=course_name,
+                            description=description,
                             output_language=output_language,
                         )
                         st.success(
