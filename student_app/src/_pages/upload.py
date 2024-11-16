@@ -74,7 +74,7 @@ class UploadPage:
             )
 
             st.success(
-                f"Upload geslaagd van {uploaded_file.name}! Geef een naam aan de module en klik op 'Genereer module' om de module te genereren."
+                f"Upload geslaagd van {uploaded_file.name} ✅ Geef een naam aan de module en klik op 'Genereer module' om de module te genereren."
             )
 
             with st.form(key="generate_learning_path"):
@@ -109,11 +109,11 @@ class UploadPage:
                     elif not course_name:
                         st.error("Gelieve een cursus te selecteren.")
                     else:
-                        print(
-                            f"Uitvoeren van post request naar backend om module te genereren met blob name uploaded_materials/{uploaded_file.name} en module {module_name} (beschrijving: {description} in course {course_name} met output_language {output_language}."
-                        )
                         if description == "":
                             description = ""
+                        st.success(
+                            f"{module_name} wordt gegenereerd 🚀 het leertraject zal binnen enkele minuten onder Mijn vakken > {course_name} verschijnen. Je kan deze pagina sluiten."
+                        )
                         self.trigger_content_pipeline(
                             input_file_name=uploaded_file.name,
                             module_name=module_name,
@@ -121,7 +121,4 @@ class UploadPage:
                             description=description,
                             learning_objectives=learning_objectives,
                             output_language=output_language,
-                        )
-                        st.success(
-                            f"{module_name} wordt gegenereerd; het leertraject zal binnen enkele minuten onder Mijn vakken > {course_name} verschijnen."
                         )
