@@ -123,15 +123,5 @@ class UploadPage:
                             output_language=output_language,
                         )
                         st.success(
-                            f'Module \'{module_name}\' wordt gegenereerd; het leertraject zal binnen enkele minuten onder "Mijn vakken" > "Kies module"s verschijnen.'
+                            f"{module_name} wordt gegenereerd; het leertraject zal binnen enkele minuten onder Mijn vakken > {course_name} verschijnen."
                         )
-
-
-if __name__ == "__main__":
-    upload_page = UploadPage()
-    upload_page.trigger_content_pipeline(
-        input_file_name="state_of_ai_report.mp4",
-        module_name="test",
-        course_name="test",
-        output_language="dutch",
-    )
