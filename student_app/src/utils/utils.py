@@ -256,7 +256,7 @@ class ImageHandler:
         self.blob_service_client = BlobServiceClient.from_connection_string(
             self.connection_string
         )
-        self.container_name = "uva-knp"
+        self.container_name = "uu-demo"
         self.blob_name = "Dementie/images/uva_knp_Dementie_slide_00014_1.jpg"
 
     def download_image_from_blob_storage(_self) -> Image.Image:
@@ -267,7 +267,7 @@ class ImageHandler:
         return Image.open(BytesIO(blob_data))
 
     def get_image_url(self, segment):
-        self.container_name = "uva-knp"
+        self.container_name = "uu-demo"
         self.blob_name = segment.get("image", {}).get("url")
 
     def resize_image_to_max_height(self, image: Image.Image, max_height):
