@@ -1,0 +1,197 @@
+{
+    "percentage_per_topic": {
+        "GTP-eiwitten": 0.75,
+        "Fosfolipase C": 0.80,
+        "PLC-beta 1 en PLC-gamma 2": 0.92,
+        "Calcium als signaalmolecuul": 0.93,
+        "Convergente signalering": 0.81,
+        "Enzymgekoppelde receptoren": 0.92,
+        "Dimerisatie": 0.85,
+        "Kinases": 0.62,
+        "Scaffolding": 0.87,
+        "PI3-Kinase": 1,
+        "JAK-STAT route": 0.82
+    },
+    "feedback_per_question": {
+        "1": {
+            "percentage_score": 0.82,
+            "analysis": "De studenten snapten goed dat GTP-eiwitten zoals Rho, Rac en Cdc42 betrokken zijn bij de regulatie van het actine-cytoskelet. Wat ze minder goed verwoordden, is op welke manier deze eiwitten precies bijdragen aan de veranderingen in het cytoskelet. Ze hadden bijvoorbeeld concreter kunnen uitleggen welke specifieke veranderingen deze eiwitten veroorzaken in de structuur en dynamiek van het actine-cytoskelet.",
+            "number_of_students": 80
+        },
+        "4": {
+            "percentage_score": 0.85,
+            "analysis": "De studenten begrepen goed dat fosfolipase C in het plasmamembraan betrokken is bij de productie van twee second messengers. Wat ze minder goed begrepen, is welke specifieke second messengers door fosfolipase C worden gevormd en wat hun rol is in de signaaltransductie. Je zou verder kunnen toelichten welke second messengers ontstaan (zoals IP3 en DAG) en hoe deze bijdragen aan de celrespons.",
+            "number_of_students": 77
+        },
+        "6": {
+            "percentage_score": 0.88,
+            "analysis": "De studenten begrepen dat G-eiwitgekoppelde receptoren een rol spelen bij de activering van fosfolipase C. Wat ze minder goed wisten te beschrijven, is hoe deze activering precies plaatsvindt en welke subeenheid van het G-eiwit hierbij betrokken is. Een verdere toelichting op het proces waarbij de Gαq-subeenheid fosfolipase C activeert, zou hun begrip kunnen verdiepen.",
+            "number_of_students": 83
+        },
+        "8": {
+            "percentage_score": 0.91,
+            "analysis": "De studenten wisten correct te benoemen dat de omzetting van PIP2 door fosfolipase C leidt tot de vorming van IP3 en diacylglycerol (DAG). Wat ze minder goed begrepen, is de specifieke functie van deze producten in de cel. Het zou nuttig zijn om verder toe te lichten hoe IP3 calciumionen vrijmaakt uit het endoplasmatisch reticulum en hoe DAG proteïnekinase C activeert, zodat het belang van deze producten in de signaaltransductie duidelijker wordt.",
+            "number_of_students": 79
+        },
+        "10": {
+            "percentage_score": 0.80,
+            "analysis": "De studenten begrepen goed dat IP3 zich bindt aan calciumkanalen in het endoplasmatisch reticulum (ER).",
+            "number_of_students": 82
+        },
+        "12": {
+            "percentage_score": 0.87,
+            "analysis": "De studenten hadden over het algemeen een goed begrip van de verschillende stappen in de fosfolipase C-route. Wat ze echter minder goed verwoordden, was het belang van elk product, zoals hoe IP3 specifiek de calciumkanalen in het ER opent en hoe DAG leidt tot de activering van proteïnekinase C (PKC). Een iets uitgebreidere uitleg over de volgorde en samenhang van deze stappen zou helpen om het geheel beter te begrijpen.",
+            "number_of_students": 81
+        },
+        "14": {
+            "percentage_score": 0.84,
+            "analysis": "De studenten begrepen goed dat de fosfolipase C-route start met de activatie door G-proteïnegekoppelde receptoren en de daaropvolgende omzetting van PIP2 in IP3 en DAG. Wat ze minder goed benoemden, is hoe IP3 en DAG vervolgens leiden tot respectievelijk calciumvrijgave en PKC-activatie.",
+            "number_of_students": 78
+        },
+        "16": {
+            "percentage_score": 0.89,
+            "analysis": "De studenten begrepen over het algemeen correct dat PLC-beta 1 geactiveerd wordt door G-proteïnegekoppelde receptoren.",
+            "number_of_students": 85
+        },
+        "18": {
+            "percentage_score": 0.86,
+            "analysis": "De studenten hadden juist door dat PLC-gamma 2 wordt geactiveerd door receptortyrosinekinases. Wat minder goed naar voren kwam, is hoe deze activering plaatsvindt via fosforylering en de betrokkenheid van specifieke bindingsdomeinen. Een korte toelichting hierop zou het begrip kunnen versterken.",
+            "number_of_students": 80
+        },
+        "20": {
+            "percentage_score": 0.83,
+            "analysis": "De studenten begrepen goed dat PLC-beta 1 en PLC-gamma 2 de belangrijkste isoformen zijn van fosfolipase C en dat hun activatie verschilt. Wat ze minder goed beschreven, is de specifieke manier waarop G-proteïnegekoppelde receptoren en receptortyrosinekinases deze isoformen activeren. Een nadere uitleg over de betrokken signaalroutes zou hier extra duidelijkheid kunnen bieden.",
+            "number_of_students": 76
+        },
+        "21": {
+            "percentage_score": 0.90,
+            "analysis": "De studenten begrepen dat biosensoren een rol spelen in het detecteren van de activiteit van specifieke enzymen binnen signaaltransductie.",
+            "number_of_students": 84
+        },
+        "23": {
+            "percentage_score": 0.79,
+            "analysis": "De studenten begrepen goed dat calciumionen conformatieveranderingen in eiwitten veroorzaken. Wat minder duidelijk naar voren kwam, is hoe deze veranderingen de functie van de eiwitten beïnvloeden, bijvoorbeeld door activatie of remming van hun activiteit.",
+            "number_of_students": 77
+        },
+        "25": {
+            "percentage_score": 0.81,
+            "analysis": "De studenten wisten dat calciumconcentraties worden gereguleerd via actief transport door calciumkanalen en -pompen.",
+            "number_of_students": 79
+        },
+        "27": {
+            "percentage_score": 0.76,
+            "analysis": "De studenten begrepen goed dat een actiepotentiaal of een specifieke ligand de contractie van myosinefibrillen triggert door de vrijgave van calciumionen. Wat ze minder goed benadrukten, is hoe deze calciumionen vervolgens leiden tot de interactie tussen actine en myosine.",
+            "number_of_students": 82
+        },
+        "29": {
+            "percentage_score": 0.78,
+            "analysis": "De studenten begrepen goed dat een actiepotentiaal of een specifieke ligand de contractie van myosinefibrillen triggert door de vrijgave van calciumionen. Wat ze minder goed benadrukten, is hoe deze calciumionen vervolgens leiden tot de interactie tussen actine en myosine.",
+            "number_of_students": 75
+        },
+        "31": {
+            "percentage_score": 0.74,
+            "analysis": "De studenten hadden juist door dat een te leaky ryanodine receptor verlamming kan veroorzaken en een te high responsive receptor kan leiden tot spierkrampen. Wat ze minder goed aangaven, is waarom deze afwijkingen in calciumregulatie zulke verschillende gevolgen hebben voor de spierfunctie.",
+            "number_of_students": 80
+        },
+        "33": {
+            "percentage_score": 0.77,
+            "analysis": "De studenten begrepen goed dat een lage calciumconcentratie een positieve feedbackcyclus kan triggeren, wat resulteert in een grotere calciumgolf, terwijl een hoge concentratie juist de kanalen sluit en de golf beëindigt. Wat minder duidelijk werd uitgelegd, is hoe deze feedbackmechanismen zorgen voor een nauwkeurige controle van calciumsignalen in de cel.",
+            "number_of_students": 81
+        },
+        "35": {
+            "percentage_score": 0.80,
+            "analysis": "De studenten snapten dat vasopressine de frequentie van calciumvrijgave beïnvloedt. Wat ze minder goed verwoordden, is hoe deze regulatie van de frequentie specifiek bijdraagt aan de modulatie van cellulaire processen.",
+            "number_of_students": 78
+        },
+        "37": {
+            "percentage_score": 0.75,
+            "analysis": "De studenten begrepen dat calmoduline de activatie van calmoduline-afhankelijke proteïne kinase mogelijk maakt. Wat ze minder goed benoemden, is hoe deze activatie leidt tot verdere signaaltransductie en cellulaire responsen.",
+            "number_of_students": 83
+        },
+        "39": {
+            "percentage_score": 0.82,
+            "analysis": "De studenten wisten goed dat CaMKII actief blijft en andere eiwitten kan fosforyleren, zelfs nadat calciumionen zijn gedissocieerd. Wat minder duidelijk naar voren kwam, is hoe deze autonome activiteit bijdraagt aan de langdurige effecten op cellulaire functies.",
+            "number_of_students": 79
+        },
+        "41": {
+            "percentage_score": 0.88,
+            "analysis": "De studenten hadden over het algemeen correct door dat een overmaat aan calcium in de cel tot celdood leidt.",
+            "number_of_students": 85
+        },
+        "43": {
+            "percentage_score": 0.86,
+            "analysis": "De studenten begrepen dat convergente signalering betekent dat verschillende signalen via verschillende routes samenkomen in de celkern. Wat minder goed werd uitgelegd, is hoe deze samensmelting van signalen in de celkern leidt tot een gecoördineerde cellulaire respons.",
+            "number_of_students": 80
+        },
+        "45": {
+            "percentage_score": 0.83,
+            "analysis": "De studenten snapten dat enzymgekoppelde receptoren eiwitten in het celmembraan zijn die door fosforylering een signaaltransductieroute activeren. Wat ze echter minder goed uitlegden, is hoe deze fosforylering leidt tot verdere communicatie en activering van downstream signaalmoleculen.",
+            "number_of_students": 77
+        },
+        "47": {
+            "percentage_score": 0.89,
+            "analysis": "De studenten hadden goed door dat dimerisatie het aan elkaar binden van twee eiwitten inhoudt en dat dit kan leiden tot receptoractivatie door fosforylering. Wat ze minder goed beschreven, is hoe deze fosforylering precies de signaaltransductieroute in gang zet en de celrespons beïnvloedt.",
+            "number_of_students": 84
+        },
+        "49": {
+            "percentage_score": 0.80,
+            "analysis": "De studenten begrepen correct dat tyrosinekinasen tyrosineresiduen op eiwitten fosforyleren. Wat ze minder goed benadrukten, is hoe deze fosforylering verdere signaalroutes activeert en de celrespons beïnvloedt.",
+            "number_of_students": 78
+        },
+        "51": {
+            "percentage_score": 0.78,
+            "analysis": "De studenten begrepen dat binding van een signaalproteïne dimerisatie en autofosforylatie van RTK’s veroorzaakt, maar benoemden minder goed het vervolg in signaaltransductie.",
+            "number_of_students": 81
+        },
+        "52": {
+            "percentage_score": 0.75,
+            "analysis": "De studenten begrepen dat trans-autofosforylatie bindingssites voor signaaleiwitten creëert en downstream signaaltransductie initieert. Wat minder goed werd benoemd, is hoe dit verdere activatie van signaalroutes beïnvloedt.",
+            "number_of_students": 79
+        },
+        "54": {
+            "percentage_score": 0.77,
+            "analysis": "De studenten begrepen dat de activering van RTK via adaptor eiwitten Ras GTPase activeert en zo de MAPKinase route initieert om signalen naar de celkern te sturen. Wat ze minder goed verwoordden, is hoe deze route specifiek de genexpressie in de kern beïnvloedt.",
+            "number_of_students": 82
+        },
+        "56": {
+            "percentage_score": 0.79,
+            "analysis": "De studenten hadden door dat een mutatie in het Ras-gen kan leiden tot onophoudelijk actieve Ras-eiwitten en ongereguleerde celdeling. Wat minder duidelijk werd uitgelegd, is hoe dit bijdraagt aan de ontwikkeling van kanker.",
+            "number_of_students": 76
+        },
+        "58": {
+            "percentage_score": 0.73,
+            "analysis": "De studenten begrepen goed dat de MAPKinase-signaalroute verloopt via de activatie van Raf, Mek, en vervolgens Erk, wat resulteert in de fosforylering van doeleiwitten. Wat minder duidelijk werd genoemd, is hoe deze gefosforyleerde eiwitten specifieke cellulaire reacties aansturen.",
+            "number_of_students": 80
+        },
+        "60": {
+            "percentage_score": 0.76,
+            "analysis": "De studenten begrepen dat scaffolding eiwitten eiwitten in signaalroutes organiseren en zo de efficiëntie van signaaltransductie verhogen. Wat minder goed werd besproken, is hoe dit de specificiteit en snelheid van celreacties beïnvloedt.",
+            "number_of_students": 77
+        },
+        "62": {
+            "percentage_score": 0.80,
+            "analysis": "De studenten begrepen goed dat de PI3-kinase route apoptose remt en celoverleving bevordert. Wat minder duidelijk naar voren kwam, is hoe deze route specifieke eiwitten activeert om deze processen te ondersteunen.",
+            "number_of_students": 83
+        },
+        "64": {
+            "percentage_score": 0.78,
+            "analysis": "De studenten begrepen goed dat de PI3-kinase route begint met RTK-activatie en leidt tot de activering van Akt, wat resulteert in de fosforylering van BAD en vrijlating van een apoptose-remmend eiwit. Wat minder goed werd benoemd, is hoe deze stappen specifiek bijdragen aan celoverleving.",
+            "number_of_students": 79
+        },
+        "66": {
+            "percentage_score": 0.81,
+            "analysis": "De studenten snapten dat de JAK-STAT route directe kernsignalering is omdat receptoractivatie onmiddellijk transcriptiefactoren activeert. Wat minder duidelijk werd benoemd, is hoe dit snelle veranderingen in genexpressie mogelijk maakt.",
+            "number_of_students": 85
+        },
+        "68": {
+            "percentage_score": 0.84,
+            "analysis": "De studenten begrepen goed dat gefosforyleerde STAT-eiwitten dimeren vormen en naar de kern migreren om genexpressie te reguleren. Wat ze minder goed uitlegden, is hoe deze dimerisatie de specificiteit van de genregulatie beïnvloedt.",
+            "number_of_students": 80
+        },
+        "70": {
+            "percentage_score": 0.86,
+            "analysis": "De studenten konden een specifieke signaaltransductieroute noemen en de vier hoofdcomponenten correct identificeren, zoals de GPCR-route met de receptor (GPCR), het enzym (fosfolipase C), de second messenger (IP3), en de kinase (proteïne kinase C). Wat soms ontbrak, was een duidelijke uitleg over hoe deze onderdelen samenwerken binnen de route.",
+            "number_of_students": 78
+        }
+    }
+}

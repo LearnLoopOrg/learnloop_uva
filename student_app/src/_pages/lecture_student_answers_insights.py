@@ -346,6 +346,7 @@ class LectureInsights:
             max_tokens=4096,
             model=st.session_state.openai_model,
         )
+        # Hier moet een check komen die de question mapt naar een gegenereerde analyse.
         return response
 
     def plot_scores(self, scores):
@@ -517,7 +518,6 @@ class LectureInsights:
             module, topic["segment_indexes"]
         )
         questions_stats = self.get_topic_questions_stats(module, questions_content)
-
         all_scores = []
         total_achieved_score = 0
         total_score = 0
@@ -529,48 +529,64 @@ class LectureInsights:
                 stats_for_question["scores"]
             )  # Assuming 'scores' is always present
 
+        with open("src/data/dummy_feedback_signaaltransductie.json", "r") as file:
+            dummy_data = json.load(file)
+
         with st.container():
-            percentage_correct_topic = (
-                total_achieved_score / total_score if total_score > 0 else -1
-            )
+            if self.module == "Signaaltransductie":
+                topic_name = topic["topic_title"]
+                percentage_correct_topic = float(
+                    dummy_data["percentage_per_topic"][topic_name]
+                )
+            else:
+                percentage_correct_topic = (
+                    total_achieved_score / total_score if total_score > 0 else -1
+                )
             icon = self._get_icon_based_on_percentage(percentage_correct_topic)
             st.subheader(
                 f"{icon} {topic['topic_title']}",
                 anchor=topic["topic_title"],
             )
-            if total_score == 0:
+            if total_score == 0 and module != "Signaaltransductie":
                 st.markdown(
                     '<span style="color: gray;">Nog geen studenten hebben deze vragen gemaakt.</span>',
                     unsafe_allow_html=True,
                 )
                 return
 
-            # st.markdown(
-            #     f'<span style="color: gray;">👥 Studenten: {len(all_scores)}</span>',
-            #     unsafe_allow_html=True,
-            # )
             st.markdown(
                 f'<span style="color: gray;">📊 Gemiddelde: {percentage_correct_topic * 100:.0f}% correct</span>',
                 unsafe_allow_html=True,
             )
+
+            # Tot hier wordt er alleen maar gekeken naar het gemiddelde aantal punten per topic
             with st.expander(
                 "Analyse per vraag", expanded=True if topic_index == 0 else False
             ):
-                feedback_analyses = self.analyse_feedback(
-                    questions_content, questions_stats
-                )
+                if self.module == "Signaaltransductie":
+                    feedback_analyses = None
+                else:
+                    feedback_analyses = self.analyse_feedback(
+                        questions_content, questions_stats
+                    )
                 for j, (question_index, question_content) in enumerate(
                     questions_content.items()
                 ):
-                    question_stats = questions_stats[question_index]
-                    scores_for_question = question_stats["scores"]
-                    max_score = 0
-                    for score in scores_for_question:
-                        total_achieved_score += float(score.split("/")[0])
-                        max_score = float(score.split("/")[1])
-                        total_score += max_score
+                    if self.module == "Signaaltransductie":
+                        percentage_correct_question = dummy_data[
+                            "feedback_per_question"
+                        ][f"{question_index}"]["percentage_score"]
+                    else:
+                        question_stats = questions_stats[question_index]
+                        scores_for_question = question_stats["scores"]
+                        max_score = 0
+                        for score in scores_for_question:
+                            total_achieved_score += float(score.split("/")[0])
+                            max_score = float(score.split("/")[1])
+                            total_score += max_score
 
-                    percentage_correct_question = total_achieved_score / total_score
+                        percentage_correct_question = total_achieved_score / total_score
+
                     # i want a red, orange or green color based on the percentage correct
 
                     if len(questions_stats) > 0:
@@ -581,9 +597,16 @@ class LectureInsights:
 
                     else:
                         st.markdown(f"**{question_content['question']}**")
-                    if (
+
+                    if self.module == "Signaaltransductie":
+                        st.html(f"""
+        <div style="border-radius: 0.5rem; padding: 1rem;padding-bottom:0.1rem; background-color: #FFFCED;">
+            <p>{dummy_data["feedback_per_question"][str(question_index)]["analysis"]}</p>
+        </div>""")
+                    elif (
                         feedback_analyses is not None
                         and "title" in feedback_analyses[str(question_index)]
+                        and self.module != "Signaaltransductie"
                     ):
                         st.html(f"""
         <div style="border-radius: 0.5rem; padding: 1rem;padding-bottom:0.1rem; background-color: #FFFCED;">
@@ -610,12 +633,22 @@ class LectureInsights:
                             '<span style="color: gray;">**Statistieken**</span>',
                             unsafe_allow_html=True,
                         )
+                        if self.module == "Signaaltransductie":
+                            number_of_students = dummy_data["feedback_per_question"][
+                                f"{question_index}"
+                            ]["number_of_students"]
+                        else:
+                            number_of_students = len(scores_for_question)
                         st.markdown(
-                            f'<span style="color: gray;">👥 Studenten: {len(scores_for_question)}</span>',
+                            f'<span style="color: gray;">👥 Studenten: {number_of_students}</span>',
                             unsafe_allow_html=True,
                         )
+                        # st.markdown(
+                        #     f'<span style="color: gray;">📊 Gemiddelde: {((total_achieved_score/total_score) * max_score):.1f}/{max_score} punten</span>',
+                        #     unsafe_allow_html=True,
+                        # )
                         st.markdown(
-                            f'<span style="color: gray;">📊 Gemiddelde: {((total_achieved_score/total_score) * max_score):.1f}/{max_score} punten</span>',
+                            f'<span style="color: gray;">📊 Gemiddelde: {percentage_correct_question * 100:.0f} %</span>',
                             unsafe_allow_html=True,
                         )
                     if j < len(questions_content) - 1:
