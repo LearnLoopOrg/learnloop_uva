@@ -591,7 +591,7 @@ class LectureInsights:
 
                     if len(questions_stats) > 0:
                         st.markdown(
-                            f'<span style="font-size: 1.2em;">{self._get_icon_based_on_percentage(percentage_correct_question)} **{question_content["question"].encode("utf-8").decode("unicode_escape")}**</span>',
+                            f'<span style="font-size: 1.2em;">{self._get_icon_based_on_percentage(percentage_correct_question)} **{question_content["question"]}**</span>',
                             unsafe_allow_html=True,
                         )
 
@@ -662,7 +662,8 @@ class LectureInsights:
         and to select the topics they want to learn.
         """
         # Fetch module info to be rendered
-        self.module = st.session_state.selected_module
+        # self.module = st.session_state.selected_module
+        self.module = "Signaaltransductie"
         self.db_dal = st.session_state.db_dal
         st.session_state.page_content = self.db_dal.fetch_original_module_content(
             self.module
