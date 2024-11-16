@@ -676,4 +676,4 @@ class LectureInsights:
         for topic_index, topic in enumerate(topics):
             self.show_topic_feedback(self.module, topic, topic_index)
 
-        self.display_sidebar_page_navigation(self.module, topics)
+        # self.display_sidebar_page_navigation(self.module, topics)
