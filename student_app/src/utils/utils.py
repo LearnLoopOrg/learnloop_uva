@@ -242,12 +242,13 @@ class ImageHandler:
                 "AZURE-BLOB-STORAGE-CONNECTION-STRING", "lluniappkv"
             )
         else:
-            if st.session_state.use_LL_blob_storage:
-                self.connection_string = os.getenv(
-                    "AZURE_BLOB_STORAGE_CONNECTION_STRING"
-                )
-            else:
-                self.connection_string = os.getenv("UVA_BLOB_CONNECTION_STRING")
+            self.connection_string = os.getenv("LL_BLOB_CONNECTION_STRING")
+            # if st.session_state.use_LL_blob_storage:
+            #     self.connection_string = os.getenv(
+            #         "AZURE_BLOB_STORAGE_CONNECTION_STRING"
+            #     )
+            # else:
+            #     self.connection_string = os.getenv("UVA_BLOB_CONNECTION_STRING")
 
         self.blob_service_client = BlobServiceClient.from_connection_string(
             self.connection_string
