@@ -26,7 +26,7 @@ class UploadPage:
         module_name: str,
         course_name: str,
         description: str,
-        leerdoelen: str,
+        learning_objectives: str,
         output_language: str,
     ):
         try:
@@ -36,7 +36,7 @@ class UploadPage:
                 "course_name": course_name,
                 "description": description,
                 "output_language": output_language,
-                "leerdoelen": leerdoelen,
+                "learning_objectives": learning_objectives,
             }
 
             response = requests.get(self.api_url, params=params)
@@ -94,7 +94,7 @@ class UploadPage:
                     key="language",
                 )
                 description = st.text_input("Beschrijving", key="description")
-                leerdoelen = st.text_area("Leerdoelen", key="leerdoelen")
+                learning_objectives = st.text_area("Leerdoelen", key="leerdoelen")
                 output_language = (
                     "dutch" if output_language == "Nederlands" else "english"
                 )
@@ -119,7 +119,7 @@ class UploadPage:
                             module_name=module_name,
                             course_name=course_name,
                             description=description,
-                            leerdoelen=leerdoelen,
+                            learning_objectives=learning_objectives,
                             output_language=output_language,
                         )
                         st.success(
