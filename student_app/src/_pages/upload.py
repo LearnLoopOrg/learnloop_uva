@@ -338,7 +338,7 @@ class UploadPage:
                 asyncio.set_event_loop(loop)
 
             # Run the async function
-            future = asyncio.run_coroutine_threadsafe(self.start_pipeline_async(), loop)
+            asyncio.run_coroutine_threadsafe(self.start_pipeline_async(), loop)
 
     def display_submitted_data(self):
         # Display the form data as static text
