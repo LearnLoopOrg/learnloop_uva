@@ -10,3 +10,5 @@ __pycache__/database.cpython-311.pyc
 .DS_Store
 .venv/
 learnloop/learnloop.egg-info/
+react_app/node_modules/
+react_app/build/
