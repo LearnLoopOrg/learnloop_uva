@@ -240,6 +240,20 @@ class DatabaseAccess:
         else:
             return None
 
+    def fetch_original_module_topics(self, module):
+        page_content = st.session_state.db.content.find_one({"lecture_name": module})
+        if page_content and "original_lecturepath_topics" in page_content:
+            return page_content["original_lecturepath_topics"]
+        else:
+            return None
+
+    def fetch_corrected_module_topics(self, module):
+        page_content = st.session_state.db.content.find_one({"lecture_name": module})
+        if page_content and "corrected_lecturepath_topics" in page_content:
+            return page_content["corrected_lecturepath_topics"]
+        else:
+            return None
+
     def fetch_module_topics(self, module):
         page_content = st.session_state.db.content.find_one({"lecture_name": module})
         return page_content["corrected_lecturepath_topics"]
@@ -309,13 +323,6 @@ class DatabaseAccess:
             {"username": st.session_state.user_doc["username"]},
             {"$set": {"last_module": st.session_state.selected_module}},
         )
-
-    def fetch_corrected_module_topics(self, module):
-        page_content = st.session_state.db.content.find_one({"lecture_name": module})
-        if page_content and "corrected_lecturepath_topics" in page_content:
-            return page_content["corrected_lecturepath_topics"]
-        else:
-            return None
 
     def fetch_info(self):
         # Zorg ervoor dat nonce bestaat voordat je iets anders doet

@@ -70,7 +70,7 @@ class QualityCheck:
     def display_segment_type(self, segment):
         if segment["type"] == "theory":
             st.markdown("##### 📖 Theorie")
-        elif segment["type"] == "question":
+        elif segment["type"] == "question" and "answers" not in segment:
             st.markdown("##### ❔ Open vraag")
         else:
             st.markdown("##### ❔ Meerkeuzevraag")
@@ -178,7 +178,7 @@ class QualityCheck:
             self.display_theory_segment(segment_id, segment)
         elif segment_type == "question" and "answers" not in segment:
             self.display_question_segment(segment_id, segment)
-        elif segment_type == "question" and segment.get("subtype") == "mc_question":
+        elif segment_type == "question" and "answers" in segment:
             self.display_MC_question(segment_id, segment)
 
     def display_theory_segment(self, segment_id, segment):
@@ -201,15 +201,17 @@ class QualityCheck:
         # st.markdown("##### ❔ Open vraag")
         question_key = f"segment_{segment_id}_question"
         answer_key = f"segment_{segment_id}_answer"
+        question = segment.get("question", "")
+        answer = segment.get("answer", "")
         st.text_area(
             "Vraag",
-            value=segment.get("question", ""),
+            question,
             key=question_key,
             on_change=self.save_updates(draft_correction=True, save_to_db=False),
         )
         st.text_area(
             "Antwoord",
-            value=segment.get("answer", ""),
+            answer,
             key=answer_key,
             on_change=self.save_updates(draft_correction=True, save_to_db=False),
         )
@@ -219,22 +221,28 @@ class QualityCheck:
         question_key = f"segment_{segment_id}_question"
         correct_answer_key = f"segment_{segment_id}_correct_answer"
         wrong_answers_key = f"segment_{segment_id}_wrong_answers"
+        question = segment.get("question", "")
+        correct_answer = segment.get("answers").get("correct_answer", "")
+        wrong_answers = segment.get("answers").get("wrong_answers", [])
         st.text_area(
             "Vraag",
-            value=segment.get("question", ""),
+            # segment.get("question", ""),
+            question,
             key=question_key,
             on_change=self.save_updates(draft_correction=True, save_to_db=False),
         )
         st.text_area(
             "Goede antwoord",
             # value=", ".join(segment.get("answers", [])),
-            value=segment.get("answers").get("correct_answer"),
+            # value=segment.get("answers").get("correct_answer"),
+            correct_answer,
             key=correct_answer_key,
             on_change=self.save_updates(draft_correction=True, save_to_db=False),
         )
         st.text_area(
             "Foute antwoord(en), scheid de opties een nieuwe regel",
-            value="\n".join(segment.get("answers").get("wrong_answers")),
+            # value="\n".join(segment.get("answers").get("wrong_answers")),
+            "\n".join(wrong_answers),
             key=wrong_answers_key,
             on_change=self.save_updates(draft_correction=True, save_to_db=False),
         )
