@@ -1,7 +1,11 @@
 import streamlit as st
 from utils.utils import Utils
-import requests
 import time
+from moviepy.editor import VideoFileClip
+import io
+import aiohttp
+import asyncio
+from typing import Tuple
 
 
 class UploadPage:
@@ -19,52 +23,36 @@ class UploadPage:
         self.progress_bar.progress(min(progress, 100))
         self.progress_text.write(f"{progress}% geüpload")
 
-    def trigger_content_pipeline(
-        self,
-        input_file_name: str,
-        module_name: str,
-        course_name: str,
-        description: str,
-        learning_objectives: str,
-        output_language: str,
-    ):
-        try:
-            params = {
-                "input_file_name": input_file_name,
-                "module_name": module_name,
-                "course_name": course_name,
-                "description": description,
-                "output_language": output_language,
-                "learning_objectives": learning_objectives,
-            }
-
-            response = requests.get(self.api_url, params=params)
-
-            if response.status_code == 200:
-                return True, "Pipeline succesvol gestart"
-            else:
-                error_message = response.text
-                return False, f"Error bij het starten van de pipeline: {error_message}"
-
-        except requests.exceptions.RequestException as e:
-            return False, f"Connectie error: {str(e)}"
-
     def go_to_module_quality_check(self, phase):
         st.session_state.selected_phase = phase
         st.session_state.selected_module = st.session_state.module_name
         self.db_dal.update_last_phase(phase)
 
+    def get_video_duration(self):
+        # Direct BytesIO object gebruiken van de upload
+        video_bytes = io.BytesIO(st.session_state.uploaded_file.getvalue())
+        with VideoFileClip(video_bytes) as video:
+            return video.duration
+
     def display_eta_progress(self):
         if not st.session_state.generation_progress_started:
             st.session_state.generation_progress_started = True
-            # Simuleer voortgangsbalk
-            file_size_mb = len(st.session_state.uploaded_file.getvalue()) / (
-                1024 * 1024
+
+            # ======= HARDCODED VIDEO DURATION BECAUSE get_video_duration() DOESN'T WORK =========
+            # video_duration = self.get_video_duration()
+            video_duration = 5400  # seconden = 1,5 uur
+            # ====================================================================================
+
+            video_duration_minutes = video_duration / 60  # duur in minuten
+            estimated_seconds_per_video_minute = 14  # seconden per minuut video
+            estimated_time = int(
+                video_duration_minutes * estimated_seconds_per_video_minute
             )
-            estimated_seconds_per_mb = 1  # seconden per MB
-            estimated_time = int(file_size_mb * estimated_seconds_per_mb)
+
+            # Initialize progress bar
             progress_bar = st.progress(0)
             progress_text = st.empty()
+
             st.session_state.module_generated = False
             for i in range(estimated_time):
                 time.sleep(1)
@@ -167,6 +155,7 @@ class UploadPage:
             self.display_module_creation_form()
 
         elif st.session_state.form_submitted:
+            self.handle_form_submission()
             # Display submitted data
             self.display_submitted_data()
             if not st.session_state.module_generated:
@@ -213,6 +202,9 @@ class UploadPage:
         self.progress_text.empty()
         st.rerun()
 
+    def set_form_submitted_true(self):
+        st.session_state.form_submitted = True
+
     def display_module_creation_form(self):
         st.header("Module informatie")
         with st.form(key="generate_learning_path"):
@@ -231,51 +223,11 @@ class UploadPage:
             st.text_area("Leerdoelen", key="learning_objectives_input")
 
             if st.session_state.upload_complete:
-                submit_button = st.form_submit_button(
-                    "Creëer module", use_container_width=True
+                st.form_submit_button(
+                    "Creëer module",
+                    use_container_width=True,
+                    on_click=self.set_form_submitted_true,
                 )
-                if submit_button:
-                    missing_fields = []
-                    if not st.session_state.module_name_input:
-                        missing_fields.append("de **modulenaam**")
-                    if not st.session_state.course_name_input:
-                        missing_fields.append("de **cursus**")
-                    if not st.session_state.output_language_input:
-                        missing_fields.append("de **taal van de module**")
-                    if not st.session_state.module_description_input:
-                        missing_fields.append("de **beschrijving**")
-                    if missing_fields:
-                        if len(missing_fields) > 1:
-                            missing_fields_text = (
-                                ", ".join(missing_fields[:-1])
-                                + " en "
-                                + missing_fields[-1]
-                            )
-                        else:
-                            missing_fields_text = missing_fields[0]
-                        st.warning(
-                            f"Vul nog {missing_fields_text} in om de module te kunnen creëren."
-                        )
-                    else:
-                        st.session_state.form_submitted = True
-                        st.session_state.module_name = (
-                            st.session_state.module_name_input
-                        )
-                        st.session_state.course_name = (
-                            st.session_state.course_name_input
-                        )
-                        st.session_state.output_language = (
-                            st.session_state.output_language_input
-                        )
-                        st.session_state.module_description = (
-                            st.session_state.module_description_input
-                        )
-                        st.session_state.learning_objectives = (
-                            st.session_state.learning_objectives_input
-                        )
-                        self.handle_form_submission()
-
-                    st.rerun()
             else:
                 st.form_submit_button(
                     "Creëer module",
@@ -289,12 +241,66 @@ class UploadPage:
             if st.session_state.upload_complete:
                 st.success("Video is succesvol geüpload!")
 
-    def handle_form_submission(self):
-        # Hide any previous messages or progress bars
-        self.progress_bar.empty()
-        self.progress_text.empty()
-        # Trigger content pipeline
-        self.trigger_content_pipeline(
+    def identify_missing_fields(self):
+        missing_fields = []
+        if not st.session_state.module_name_input:
+            missing_fields.append("de **modulenaam**")
+        if not st.session_state.course_name_input:
+            missing_fields.append("de **cursus**")
+        if not st.session_state.output_language_input:
+            missing_fields.append("de **taal van de module**")
+        if not st.session_state.module_description_input:
+            missing_fields.append("de **beschrijving**")
+
+        if missing_fields:
+            return missing_fields
+        else:
+            return None
+
+    def warn_about_missing_fields(self, missing_fields):
+        if len(missing_fields) > 1:
+            missing_fields_text = (
+                ", ".join(missing_fields[:-1]) + " en " + missing_fields[-1]
+            )
+        else:
+            missing_fields_text = missing_fields[0]
+        st.warning(f"Vul nog {missing_fields_text} in om de module te kunnen creëren.")
+
+    async def trigger_content_pipeline(
+        self,
+        input_file_name: str,
+        module_name: str,
+        course_name: str,
+        description: str,
+        learning_objectives: str,
+        output_language: str,
+    ) -> Tuple[bool, str]:
+        try:
+            params = {
+                "input_file_name": input_file_name,
+                "module_name": module_name,
+                "course_name": course_name,
+                "description": description,
+                "output_language": output_language,
+                "learning_objectives": learning_objectives,
+            }
+
+            async with aiohttp.ClientSession() as session:
+                async with session.get(self.api_url, params=params) as response:
+                    if response.status == 200:
+                        return True, "Pipeline succesvol gestart"
+                    else:
+                        error_message = await response.text()
+                        return (
+                            False,
+                            f"Error bij het starten van de pipeline: {error_message}",
+                        )
+
+        except Exception as e:
+            return False, f"Connectie error: {str(e)}"
+
+    async def start_pipeline_async(self):
+        result = await self.trigger_content_pipeline(
             input_file_name=st.session_state.uploaded_file.name,
             module_name=st.session_state.module_name,
             course_name=st.session_state.course_name,
@@ -302,6 +308,37 @@ class UploadPage:
             learning_objectives=st.session_state.learning_objectives,
             output_language=st.session_state.output_language,
         )
+        return result
+
+    def handle_form_submission(self):
+        if missing_fields := self.identify_missing_fields():
+            self.warn_about_missing_fields(missing_fields)
+        else:
+            st.session_state.form_submitted = True
+            st.session_state.module_name = st.session_state.module_name_input
+            st.session_state.course_name = st.session_state.course_name_input
+            st.session_state.output_language = st.session_state.output_language_input
+            st.session_state.module_description = (
+                st.session_state.module_description_input
+            )
+            st.session_state.learning_objectives = (
+                st.session_state.learning_objectives_input
+            )
+
+            # Hide any previous messages or progress bars
+            self.progress_bar.empty()
+            self.progress_text.empty()
+
+            # Use asyncio so the front-end doesn't freeze while the pipeline is running
+            # Create event loop if it doesn't exist
+            try:
+                loop = asyncio.get_event_loop()
+            except RuntimeError:
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+
+            # Run the async function
+            future = asyncio.run_coroutine_threadsafe(self.start_pipeline_async(), loop)
 
     def display_submitted_data(self):
         # Display the form data as static text
