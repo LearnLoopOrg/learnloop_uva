@@ -2,7 +2,6 @@ from datetime import timedelta
 import datetime
 import json
 import streamlit as st
-import utils.db_config as db_config
 from typing import List
 from models.uni_database import Course, CourseCatalog, Lecture
 

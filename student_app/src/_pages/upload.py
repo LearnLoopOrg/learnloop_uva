@@ -52,20 +52,21 @@ class UploadPage:
     def go_to_module_quality_check(self, phase):
         st.session_state.selected_phase = phase
         st.session_state.selected_module = st.session_state.module_name
-        st.session_state.db_dal.update_last_phase(phase)
+        self.db_dal.update_last_phase(phase)
 
     def display_eta_progress(self):
         if not st.session_state.generation_progress_started:
             st.session_state.generation_progress_started = True
-            # Simulate generation progress bar
+            # Simuleer voortgangsbalk
             file_size_mb = len(st.session_state.uploaded_file.getvalue()) / (
                 1024 * 1024
             )
-            estimated_seconds_per_mb = 1  # seconds per MB
-            estimated_time = file_size_mb * estimated_seconds_per_mb
+            estimated_seconds_per_mb = 1  # seconden per MB
+            estimated_time = int(file_size_mb * estimated_seconds_per_mb)
             progress_bar = st.progress(0)
             progress_text = st.empty()
-            for i in range(int(estimated_time)):
+            st.session_state.module_generated = False
+            for i in range(estimated_time):
                 time.sleep(1)
                 progress = int((i + 1) / estimated_time * 100)
                 progress_bar.progress(progress)
@@ -74,12 +75,29 @@ class UploadPage:
                 progress_text.write(
                     f"Geschatte resterende tijd: {remaining_minutes:.0f} minuten en {remaining_seconds:.0f} seconden"
                 )
-            progress_bar.progress(100)
-            progress_text.write("Module gegenereerd!")
-            progress_bar.empty()
-            progress_text.empty()
-            st.session_state.module_generated = True
-            st.rerun()
+                st.session_state.selected_module = st.session_state.module_name
+                status = self.db_dal.fetch_module_status()
+                if status == "generated":
+                    st.session_state.module_generated = True
+                    break
+            if st.session_state.module_generated:
+                progress_bar.progress(100)
+                progress_text.write("Module gegenereerd!")
+                progress_bar.empty()
+                progress_text.empty()
+                st.rerun()
+            else:
+                progress_bar.progress(100)
+                with st.spinner("Nog even geduld, de module is bijna klaar..."):
+                    while st.session_state.module_generated is False:
+                        status = self.db_dal.fetch_module_status()
+
+                        if status == "generated":
+                            st.session_state.module_generated = True
+
+                        time.sleep(1)
+
+                st.rerun()
 
     def initialise_session_state(self):
         # Initialize session state variables
@@ -130,6 +148,7 @@ class UploadPage:
         st.session_state.learning_objectives = ""
 
     def run(self):
+        self.db_dal = st.session_state.db_dal
         st.title(self.title)
 
         self.initialise_session_state()
@@ -146,12 +165,14 @@ class UploadPage:
             and st.session_state.uploaded_file is not None
         ):
             self.display_module_creation_form()
+
         elif st.session_state.form_submitted:
             # Display submitted data
             self.display_submitted_data()
             if not st.session_state.module_generated:
                 self.display_eta_progress()
             else:
+                st.success("De module is gegenereerd!")
                 st.button(
                     "🔎 Bekijk nieuwe module",
                     use_container_width=True,
@@ -185,7 +206,6 @@ class UploadPage:
             st.session_state.uploaded_file.getvalue(),
             progress_callback=self.progress_callback,
         )
-
         # Upload complete
         st.session_state.upload_complete = True
         # Clear the progress bar
@@ -215,19 +235,46 @@ class UploadPage:
                     "Creëer module", use_container_width=True
                 )
                 if submit_button:
-                    st.session_state.form_submitted = True
-                    st.session_state.module_name = st.session_state.module_name_input
-                    st.session_state.course_name = st.session_state.course_name_input
-                    st.session_state.output_language = (
-                        st.session_state.output_language_input
-                    )
-                    st.session_state.module_description = (
-                        st.session_state.module_description_input
-                    )
-                    st.session_state.learning_objectives = (
-                        st.session_state.learning_objectives_input
-                    )
-                    self.handle_form_submission()
+                    missing_fields = []
+                    if not st.session_state.module_name_input:
+                        missing_fields.append("de **modulenaam**")
+                    if not st.session_state.course_name_input:
+                        missing_fields.append("de **cursus**")
+                    if not st.session_state.output_language_input:
+                        missing_fields.append("de **taal van de module**")
+                    if not st.session_state.module_description_input:
+                        missing_fields.append("de **beschrijving**")
+                    if missing_fields:
+                        if len(missing_fields) > 1:
+                            missing_fields_text = (
+                                ", ".join(missing_fields[:-1])
+                                + " en "
+                                + missing_fields[-1]
+                            )
+                        else:
+                            missing_fields_text = missing_fields[0]
+                        st.warning(
+                            f"Vul nog {missing_fields_text} in om de module te kunnen creëren."
+                        )
+                    else:
+                        st.session_state.form_submitted = True
+                        st.session_state.module_name = (
+                            st.session_state.module_name_input
+                        )
+                        st.session_state.course_name = (
+                            st.session_state.course_name_input
+                        )
+                        st.session_state.output_language = (
+                            st.session_state.output_language_input
+                        )
+                        st.session_state.module_description = (
+                            st.session_state.module_description_input
+                        )
+                        st.session_state.learning_objectives = (
+                            st.session_state.learning_objectives_input
+                        )
+                        self.handle_form_submission()
+
                     st.rerun()
             else:
                 st.form_submit_button(
@@ -235,27 +282,26 @@ class UploadPage:
                     use_container_width=True,
                     disabled=True,
                 )
-                st.info("Na het uploaden van de video kun je de module creëren.")
+                st.info(
+                    "De video wordt nog geüpload. Zodra dit klaar is, kun je de module maken."
+                )
+
+            if st.session_state.upload_complete:
+                st.success("Video is succesvol geüpload!")
 
     def handle_form_submission(self):
-        if not st.session_state.module_name:
-            st.error("Gelieve een modulenaam in te vullen.")
-        elif not st.session_state.course_name:
-            st.error("Gelieve een cursus te selecteren.")
-        else:
-            st.session_state.module_submitted = True
-            # Hide any previous messages or progress bars
-            self.progress_bar.empty()
-            self.progress_text.empty()
-            # Trigger content pipeline
-            self.trigger_content_pipeline(
-                input_file_name=st.session_state.uploaded_file.name,
-                module_name=st.session_state.module_name,
-                course_name=st.session_state.course_name,
-                description=st.session_state.module_description,
-                learning_objectives=st.session_state.learning_objectives,
-                output_language=st.session_state.output_language,
-            )
+        # Hide any previous messages or progress bars
+        self.progress_bar.empty()
+        self.progress_text.empty()
+        # Trigger content pipeline
+        self.trigger_content_pipeline(
+            input_file_name=st.session_state.uploaded_file.name,
+            module_name=st.session_state.module_name,
+            course_name=st.session_state.course_name,
+            description=st.session_state.module_description,
+            learning_objectives=st.session_state.learning_objectives,
+            output_language=st.session_state.output_language,
+        )
 
     def display_submitted_data(self):
         # Display the form data as static text
@@ -264,4 +310,8 @@ class UploadPage:
         st.write(f"**Cursus:** {st.session_state.course_name}")
         st.write(f"**Taal:** {st.session_state.output_language}")
         st.write(f"**Beschrijving:** {st.session_state.module_description}")
-        st.write(f"**Leerdoelen:** {st.session_state.learning_objectives}")
+
+        if st.session_state.learning_objectives == "":
+            st.write("**Leerdoelen:** Geen leerdoelen meegegeven")
+        else:
+            st.write(f"**Leerdoelen:** {st.session_state.learning_objectives}")
