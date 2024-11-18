@@ -128,7 +128,6 @@ class UploadPage:
         st.session_state.output_language = ""
         st.session_state.module_description = ""
         st.session_state.learning_objectives = ""
-        st.session_state.uploaded_file_name = ""
 
     def run(self):
         st.title(self.title)
@@ -137,10 +136,15 @@ class UploadPage:
 
         self.display_example_input_format()
 
-        uploaded_file = st.file_uploader("Kies een bestand", type=["mp4"])
+        st.session_state.uploaded_file = st.file_uploader(
+            "Kies een bestand", type=["mp4"]
+        )
 
         # Display the form
-        if not st.session_state.form_submitted and uploaded_file is not None:
+        if (
+            not st.session_state.form_submitted
+            and st.session_state.uploaded_file is not None
+        ):
             self.display_module_creation_form()
         elif st.session_state.form_submitted:
             # Display submitted data
@@ -160,21 +164,25 @@ class UploadPage:
                     on_click=self.reset_page,
                 )
 
-        if uploaded_file is not None and st.session_state.upload_complete is False:
-            st.session_state.uploaded_file = uploaded_file
-            self.handle_file_upload(uploaded_file)
+        if (
+            st.session_state.uploaded_file is not None
+            and st.session_state.upload_complete is False
+        ):
+            self.handle_file_upload()
 
-    def handle_file_upload(self, uploaded_file):
+    def handle_file_upload(self):
         # Show upload progress bar
         self.progress_bar = st.progress(0)
         self.progress_text = st.empty()
 
         # Begin upload
-        uploaded_file.name = uploaded_file.name.replace("MP4", "mp4")
+        st.session_state.uploaded_file.name = (
+            st.session_state.uploaded_file.name.replace("MP4", "mp4")
+        )
         self.utils.upload_content_to_blob_storage(
             self.container_name,
-            f"uploaded_materials/{uploaded_file.name}",
-            uploaded_file.getvalue(),
+            f"uploaded_materials/{st.session_state.uploaded_file.name}",
+            st.session_state.uploaded_file.getvalue(),
             progress_callback=self.progress_callback,
         )
 
@@ -183,9 +191,10 @@ class UploadPage:
         # Clear the progress bar
         self.progress_bar.empty()
         self.progress_text.empty()
-        st.session_state.uploaded_file_name = uploaded_file.name
+        st.rerun()
 
     def display_module_creation_form(self):
+        st.header("Module informatie")
         with st.form(key="generate_learning_path"):
             st.text_input("Naam van module", key="module_name_input")
             st.selectbox(
@@ -240,7 +249,7 @@ class UploadPage:
             self.progress_text.empty()
             # Trigger content pipeline
             self.trigger_content_pipeline(
-                input_file_name=st.session_state.uploaded_file_name,
+                input_file_name=st.session_state.uploaded_file.name,
                 module_name=st.session_state.module_name,
                 course_name=st.session_state.course_name,
                 description=st.session_state.module_description,
