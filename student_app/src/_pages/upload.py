@@ -1,11 +1,10 @@
 import streamlit as st
 from utils.utils import Utils
+import requests
 import time
 from moviepy.editor import VideoFileClip
 import io
-import aiohttp
-import asyncio
-from typing import Tuple
+import threading
 
 
 class UploadPage:
@@ -68,6 +67,9 @@ class UploadPage:
                 if status == "generated":
                     st.session_state.module_generated = True
                     break
+                if st.session_state.pipeline_error:
+                    st.error(st.session_state.pipeline_error)
+                    break
             if st.session_state.module_generated:
                 progress_bar.progress(100)
                 progress_text.write("Module gegenereerd!")
@@ -93,12 +95,18 @@ class UploadPage:
             st.session_state.uploaded_file = None
         if "upload_complete" not in st.session_state:
             st.session_state.upload_complete = False
+        if "requested_form_submission" not in st.session_state:
+            st.session_state.requested_form_submission = False
         if "form_submitted" not in st.session_state:
             st.session_state.form_submitted = False
         if "module_generated" not in st.session_state:
             st.session_state.module_generated = False
         if "generation_progress_started" not in st.session_state:
             st.session_state.generation_progress_started = False
+        if "pipeline_triggered" not in st.session_state:
+            st.session_state.pipeline_triggered = False
+        if "pipeline_error" not in st.session_state:
+            st.session_state.pipeline_error = None
 
         # Initialize form-related session state variables
         if "module_name" not in st.session_state:
@@ -148,37 +156,37 @@ class UploadPage:
         )
 
         # Display the form
-        if (
-            not st.session_state.form_submitted
-            and st.session_state.uploaded_file is not None
-        ):
-            self.display_module_creation_form()
+        if st.session_state.uploaded_file is not None:
+            if (
+                not st.session_state.form_submitted
+                and not st.session_state.module_generated
+                and st.session_state.requested_form_submission is False
+            ):
+                self.display_module_creation_form()
 
-        elif st.session_state.form_submitted:
-            self.handle_form_submission()
-            # Display submitted data
-            self.display_submitted_data()
-            if not st.session_state.module_generated:
-                self.display_eta_progress()
-            else:
-                st.success("De module is gegenereerd!")
-                st.button(
-                    "🔎 Bekijk nieuwe module",
-                    use_container_width=True,
-                    on_click=self.go_to_module_quality_check,
-                    args=("quality-check",),
-                )
-                st.button(
-                    "➕ Genereer nieuwe module",
-                    use_container_width=True,
-                    on_click=self.reset_page,
-                )
+            elif st.session_state.requested_form_submission:
+                self.handle_form_submission()
+                # Display submitted data
+                if st.session_state.form_submitted:
+                    self.display_submitted_data()
+                if not st.session_state.module_generated:
+                    self.display_eta_progress()
+                else:
+                    st.success("De module is gegenereerd!")
+                    st.button(
+                        "🔎 Bekijk nieuwe module",
+                        use_container_width=True,
+                        on_click=self.go_to_module_quality_check,
+                        args=("quality-check",),
+                    )
+                    st.button(
+                        "➕ Genereer nieuwe module",
+                        use_container_width=True,
+                        on_click=self.reset_page,
+                    )
 
-        if (
-            st.session_state.uploaded_file is not None
-            and st.session_state.upload_complete is False
-        ):
-            self.handle_file_upload()
+            if st.session_state.upload_complete is False:
+                self.handle_file_upload()
 
     def handle_file_upload(self):
         # Show upload progress bar
@@ -202,8 +210,8 @@ class UploadPage:
         self.progress_text.empty()
         st.rerun()
 
-    def set_form_submitted_true(self):
-        st.session_state.form_submitted = True
+    def set_requested_form_submission_true(self):
+        st.session_state.requested_form_submission = True
 
     def display_module_creation_form(self):
         st.header("Module informatie")
@@ -226,8 +234,9 @@ class UploadPage:
                 st.form_submit_button(
                     "Creëer module",
                     use_container_width=True,
-                    on_click=self.set_form_submitted_true,
+                    on_click=self.set_requested_form_submission_true,
                 )
+                st.success("Video is succesvol geüpload!")
             else:
                 st.form_submit_button(
                     "Creëer module",
@@ -237,9 +246,6 @@ class UploadPage:
                 st.info(
                     "De video wordt nog geüpload. Zodra dit klaar is, kun je de module maken."
                 )
-
-            if st.session_state.upload_complete:
-                st.success("Video is succesvol geüpload!")
 
     def identify_missing_fields(self):
         missing_fields = []
@@ -266,7 +272,7 @@ class UploadPage:
             missing_fields_text = missing_fields[0]
         st.warning(f"Vul nog {missing_fields_text} in om de module te kunnen creëren.")
 
-    async def trigger_content_pipeline(
+    def trigger_content_pipeline_thread(
         self,
         input_file_name: str,
         module_name: str,
@@ -274,7 +280,8 @@ class UploadPage:
         description: str,
         learning_objectives: str,
         output_language: str,
-    ) -> Tuple[bool, str]:
+    ):
+        # Functie die in een aparte thread wordt uitgevoerd
         try:
             params = {
                 "input_file_name": input_file_name,
@@ -284,37 +291,17 @@ class UploadPage:
                 "output_language": output_language,
                 "learning_objectives": learning_objectives,
             }
-
-            async with aiohttp.ClientSession() as session:
-                async with session.get(self.api_url, params=params) as response:
-                    if response.status == 200:
-                        return True, "Pipeline succesvol gestart"
-                    else:
-                        error_message = await response.text()
-                        return (
-                            False,
-                            f"Error bij het starten van de pipeline: {error_message}",
-                        )
-
-        except Exception as e:
-            return False, f"Connectie error: {str(e)}"
-
-    async def start_pipeline_async(self):
-        result = await self.trigger_content_pipeline(
-            input_file_name=st.session_state.uploaded_file.name,
-            module_name=st.session_state.module_name,
-            course_name=st.session_state.course_name,
-            description=st.session_state.module_description,
-            learning_objectives=st.session_state.learning_objectives,
-            output_language=st.session_state.output_language,
-        )
-        return result
+            response = requests.get(self.api_url, params=params)
+            response.raise_for_status()
+            st.session_state.pipeline_triggered = True
+        except requests.RequestException as e:
+            st.session_state.pipeline_error = f"Connectie error: {str(e)}"
 
     def handle_form_submission(self):
         if missing_fields := self.identify_missing_fields():
             self.warn_about_missing_fields(missing_fields)
+            st.session_state.form_submitted = False
         else:
-            st.session_state.form_submitted = True
             st.session_state.module_name = st.session_state.module_name_input
             st.session_state.course_name = st.session_state.course_name_input
             st.session_state.output_language = st.session_state.output_language_input
@@ -326,19 +313,29 @@ class UploadPage:
             )
 
             # Hide any previous messages or progress bars
-            self.progress_bar.empty()
-            self.progress_text.empty()
+            if self.progress_bar:
+                self.progress_bar.empty()
+            if self.progress_text:
+                self.progress_text.empty()
 
-            # Use asyncio so the front-end doesn't freeze while the pipeline is running
-            # Create event loop if it doesn't exist
-            try:
-                loop = asyncio.get_event_loop()
-            except RuntimeError:
-                loop = asyncio.new_event_loop()
-                asyncio.set_event_loop(loop)
+            # Start de API-aanroep in een aparte thread
+            st.session_state.pipeline_error = None
+            st.session_state.pipeline_triggered = False
+            threading.Thread(
+                target=self.trigger_content_pipeline_thread,
+                args=(
+                    st.session_state.uploaded_file.name,
+                    st.session_state.module_name,
+                    st.session_state.course_name,
+                    st.session_state.module_description,
+                    st.session_state.learning_objectives,
+                    st.session_state.output_language,
+                ),
+                daemon=True,
+            ).start()
 
-            # Run the async function
-            asyncio.run_coroutine_threadsafe(self.start_pipeline_async(), loop)
+            st.session_state.form_submitted = True
+            print("Form submitted? ", st.session_state.form_submitted)
 
     def display_submitted_data(self):
         # Display the form data as static text
