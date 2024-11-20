@@ -2480,9 +2480,13 @@ def initialise_pages():
         st.session_state.upload_page = UploadPage()
 
 
-def qr_code_in_query_param():
+def qr_code_and_course_and_id_in_query_params():
     query_params = st.query_params  # Gebruik van st.query_params
-    return "QR_code" in query_params
+    return (
+        "QR_code" in query_params
+        and query_params["course"] == "Plantenbiologie"
+        and query_params["id"] == "f3d0f8c3-c4f5-4b9a-9b7c-7d5e6f1a2b3c"
+    )
 
 
 # Functie om de volgende beschikbare gebruikersnaam op te halen uit één document
@@ -2513,7 +2517,7 @@ def turn_qr_code_into_username(username):
     st.session_state.user_role = "student"
     st.session_state.new_username = username
     st.session_state.user_university = "Universiteit Utrecht"
-    st.session_state.user_courses = ["Plant biology", "Cell biology"]
+    st.session_state.user_courses = ["Plantenbiologie"]
     st.session_state.user_doc = {"username": username, "role": "student"}
     save_hashed_password_account_to_database()
 
@@ -2573,7 +2577,7 @@ def show_username_page(username):
 
 def register_qr_code():
     # Controleer of de queryparameter 'QR_code' aanwezig is
-    if qr_code_in_query_param():
+    if qr_code_and_course_and_id_in_query_params():
         st.session_state.via_qr_code = True
 
         if not st.session_state.logged_in:
