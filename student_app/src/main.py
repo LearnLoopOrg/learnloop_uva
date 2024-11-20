@@ -2164,7 +2164,10 @@ def initialise_data_access_layer():
 def determine_selected_module():
     st.session_state.selected_module = st.session_state.db_dal.fetch_last_module()
     if st.session_state.selected_module is None:
-        st.session_state.selected_module = st.session_state.modules[0]
+        if st.session_state.modules:
+            st.session_state.selected_module = st.session_state.modules[0]
+        else:
+            st.session_state.selected_module = None
 
 
 def fetch_nonce_from_query():
