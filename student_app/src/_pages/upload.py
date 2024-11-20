@@ -81,13 +81,21 @@ class UploadPage:
                 with st.spinner("Nog even geduld, de module is bijna klaar..."):
                     while st.session_state.module_generated is False:
                         status = self.db_dal.fetch_module_status()
-
                         if status == "generated":
                             st.session_state.module_generated = True
-
+                            st.success("De module is gegenereerd!")
+                            st.button(
+                                "🔎 Bekijk nieuwe module",
+                                use_container_width=True,
+                                on_click=self.go_to_module_quality_check,
+                                args=("quality-check",),
+                            )
+                            st.button(
+                                "➕ Genereer nieuwe module",
+                                use_container_width=True,
+                                on_click=self.reset_page,
+                            )
                         time.sleep(1)
-
-                st.rerun()
 
     def initialise_session_state(self):
         # Initialize session state variables
@@ -127,9 +135,7 @@ class UploadPage:
                 "Upload een video zoals een collegeopname of kennisclip waarbij de slides duidelijk te zien zijn zoals in onderstaande voorbeeld."
             )
         with cols[0]:
-            st.image(
-                "src/data/example_input_format_video.png", use_container_width=True
-            )
+            st.image("src/data/example_input_format_video.png")
 
     def reset_page(self):
         st.session_state.uploaded_file = None
@@ -171,19 +177,20 @@ class UploadPage:
                     self.display_submitted_data()
                 if not st.session_state.module_generated:
                     self.display_eta_progress()
-                else:
-                    st.success("De module is gegenereerd!")
-                    st.button(
-                        "🔎 Bekijk nieuwe module",
-                        use_container_width=True,
-                        on_click=self.go_to_module_quality_check,
-                        args=("quality-check",),
-                    )
-                    st.button(
-                        "➕ Genereer nieuwe module",
-                        use_container_width=True,
-                        on_click=self.reset_page,
-                    )
+
+            # else:
+            #     st.success("De module is gegenereerd!")
+            #     st.button(
+            #         "🔎 Bekijk nieuwe module",
+            #         use_container_width=True,
+            #         on_click=self.go_to_module_quality_check,
+            #         args=("quality-check",),
+            #     )
+            #     st.button(
+            #         "➕ Genereer nieuwe module",
+            #         use_container_width=True,
+            #         on_click=self.reset_page,
+            #     )
 
             if st.session_state.upload_complete is False:
                 self.handle_file_upload()
