@@ -169,11 +169,15 @@ class LectureOverview:
         """
         # Check if there are lectures loaded in the session state
         if not st.session_state.lectures:
-            if st.session_state.user_role == "teacher":
+            if (
+                "user_role" not in st.session_state
+                or st.session_state.user_role == "teacher"
+            ):
+                st.session_state.user_role = "teacher"
                 st.write(
                     "Er zijn nog geen colleges beschikbaar voor deze cursus. Ga naar '➕Creëer module' in de sidebar om een college te genereren."
                 )
-            else:
+            elif st.session_state.user_role == "student":
                 st.write(
                     "📚 De docent is de colleges voor deze module aan het voorbereiden. Zodra ze beschikbaar zijn, kun je hier direct aan de slag! ✨"
                 )
