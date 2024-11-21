@@ -1476,9 +1476,16 @@ def render_selected_page():
     """
     Determines what type of page to display based on which module the user selected.
     """
-    st.session_state.page_content = st.session_state.db_dal.fetch_module_content(
-        st.session_state.selected_module
-    )
+    print("Selected_module: ", st.session_state.selected_module)
+    # Probeer de content op te halen van de geselcteerde module
+    try:
+        st.session_state.page_content = st.session_state.db_dal.fetch_module_content(
+            st.session_state.selected_module
+        )
+    # Als er nog geen geselecteerde module is (bijvoorbeeld bij het inloggen), zet dan de content op None
+    except KeyError as e:
+        print("KeyError: ", e)
+        st.session_state.page_content = None
 
     match st.session_state.selected_phase:
         case "courses":
@@ -2724,6 +2731,5 @@ if __name__ == "__main__":
 
         if st.session_state.selected_phase is None:
             st.session_state.selected_phase = "lectures"
-
         render_sidebar()
         render_selected_page()

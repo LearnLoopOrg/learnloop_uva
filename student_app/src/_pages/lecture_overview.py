@@ -169,9 +169,14 @@ class LectureOverview:
         """
         # Check if there are lectures loaded in the session state
         if not st.session_state.lectures:
-            st.write(
-                "Er zijn nog geen colleges beschikbaar voor deze cursus. Ga naar '➕Creëer module' in de sidebar om een college te genereren."
-            )
+            if st.session_state.user_role == "teacher":
+                st.write(
+                    "Er zijn nog geen colleges beschikbaar voor deze cursus. Ga naar '➕Creëer module' in de sidebar om een college te genereren."
+                )
+            else:
+                st.write(
+                    "📚 De docent is de colleges voor deze module aan het voorbereiden. Zodra ze beschikbaar zijn, kun je hier direct aan de slag! ✨"
+                )
             return
 
         # Loop through each lecture and render it
