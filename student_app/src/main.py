@@ -27,6 +27,7 @@ from utils.utils import AzureUtils
 from slack_sdk import WebClient
 import streamlit_authenticator as stauth
 from streamlit_authenticator import Hasher
+from streamlit_authenticator import Authenticate
 
 # Must be called first
 try:
@@ -1824,7 +1825,19 @@ def try_login(input_username, input_password, uni):
     if user_doc and "password" in user_doc:
         hashed_password = user_doc.get("password", None)
 
-        if Hasher.check_pw(input_password, hashed_password):
+        # Create authenticator instance with single user
+        authenticator = Authenticate(
+            names=[user_doc["username"]],
+            usernames=[user_doc["username"]],
+            passwords=[hashed_password],
+            cookie_name="learnloop_auth",
+            key="learnloop_key",
+            cookie_expiry_days=30,
+        )
+        authenticator.password = input_password
+        authenticator.index = 0
+
+        if authenticator.check_pw():
             st.session_state.user_doc = {
                 "username": user_doc["username"],
                 "role": user_doc["role"],
@@ -2037,6 +2050,30 @@ def set_admin_logged_in_true():
         st.session_state.admin_logged_in = True
 
 
+def render_admin_login():
+    with st.expander("Admin login", expanded=st.session_state.admin_logged_in):
+        st.text_input(
+            "Admin login",
+            label_visibility="collapsed",
+            key="admin_key",
+        )
+
+        st.button(
+            "Log in",
+            on_click=set_admin_logged_in_true,
+            use_container_width=True,
+        )
+
+        if st.session_state.admin_logged_in:
+            if st.session_state.admin_key != "":
+                if st.session_state.admin_key == "pooLnraeL":
+                    new_account_terminal()
+                else:
+                    st.warning("Wrong credentials")
+            else:
+                st.warning("Enter admin key")
+
+
 def render_login_page():
     """This is the first page the user sees when visiting the website and
     prompts the user to login via SURFconext."""
@@ -2085,33 +2122,17 @@ def render_login_page():
 
             st.markdown(html_content, unsafe_allow_html=True)
 
-            st.divider()
+            USERNAME_LOGIN_ENABLED = False
 
-            inlog_terminal("UvA")
+            if USERNAME_LOGIN_ENABLED:
+                st.divider()
+                inlog_terminal("UvA")
 
-            st.divider()
+            ADMIN_LOGIN_ENABLED = False
 
-            with st.expander("Admin login", expanded=st.session_state.admin_logged_in):
-                st.text_input(
-                    "Admin login",
-                    label_visibility="collapsed",
-                    key="admin_key",
-                )
-
-                st.button(
-                    "Log in",
-                    on_click=set_admin_logged_in_true,
-                    use_container_width=True,
-                )
-
-                if st.session_state.admin_logged_in:
-                    if st.session_state.admin_key != "":
-                        if st.session_state.admin_key == "pooLnraeL":
-                            new_account_terminal()
-                        else:
-                            st.warning("Wrong credentials")
-                    else:
-                        st.warning("Enter admin key")
+            if ADMIN_LOGIN_ENABLED:
+                st.divider()
+                render_admin_login()
 
             # st.divider()
 
