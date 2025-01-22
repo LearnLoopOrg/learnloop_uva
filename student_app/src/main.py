@@ -1649,10 +1649,8 @@ def render_sidebar():
                 use_container_width=True,
             )
 
-        if (
-            st.session_state.db_name == "UvA_KNP"
-            and st.session_state.user_doc["role"] == "student"
-        ):
+        FEEDBACK_FORM = False
+        if FEEDBACK_FORM:
             render_feedback_form()
 
     # Space for the menu rendered in Socratic Dialogue
@@ -1877,9 +1875,10 @@ def try_login(input_username, input_password, uni):
             "role": uva_users[input_username]["role"],
         }
         st.session_state.logged_in = True
-        st.session_state.db_name = (
-            "LearnLoop" if input_username == "supergeheimecode" else "UvA_KNP"
-        )
+        # st.session_state.db_name = (
+        #     "LearnLoop" if input_username == "supergeheimecode" else "UvA_KNP"
+        # )
+        st.session_state.db_name = "LearnLoop"
 
     elif input_username in vu_users:
         st.session_state.user_doc = {
@@ -1938,53 +1937,6 @@ def inlog_terminal(uni):
         st.rerun()
     elif st.session_state.get("wrong_credentials", False):
         st.warning("Onjuiste inloggegevens.")
-
-
-def login_module():
-    # @st.cache_data(ttl=600)
-    def get_user_data():
-        """Caches the login data for all users for 10 minutes in a accessible format."""
-        # Connect to database
-        db = st.session_state.db
-
-        # List  all collections in db
-        collections = list(db.users.find())  # make hashable for st.cache_data
-
-        # Format collections into { key: { "username": username, "password": password } }
-        items = {"usernames": {item["username"]: item for item in collections}}
-
-        # Revert username field to name
-        for username, item in items["usernames"].items():
-            item["username"] = item.pop("username")
-            item["password"] = item.pop("password")
-
-        return items
-
-    login_user_data = get_user_data()
-
-    cookie_name = "LearnLoopLogin"
-    cookie_key = "LearnLoopKey"
-    cookie_expiry = 0
-    preauthorized_users = []
-
-    authenticator = stauth.Authenticate(
-        login_user_data,
-        cookie_name,
-        cookie_key,
-        cookie_expiry,
-        preauthorized_users,
-    )
-
-    authenticator.login("Login", "main")
-
-    if st.session_state["authentication_status"]:
-        st.header("Account")
-        st.write(f"{st.session_state.user_doc}")
-        authenticator.logout("Log out", "main", key="unique_key")
-    elif st.session_state["authentication_status"] is False:
-        st.error("Username or password is incorrect")
-    elif st.session_state["authentication_status"] is None:
-        pass
 
 
 def save_hashed_password_account_to_database():
