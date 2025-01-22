@@ -2169,15 +2169,23 @@ def determine_selected_module():
 
 
 def fetch_nonce_from_query():
+    print(f"Fetching nonce from query: {st.query_params}")
     return st.query_params.get("nonce", None)
 
 
-def determine_username_from_nonce():
+def determine_userdoc_from_nonce():
     """
-    Fetches the username from the database using the nonce in the query parameters.
+    Fetches the user doc from the database using the nonce in the query parameters and sets it in session state.
     """
     st.session_state.nonce = fetch_nonce_from_query()
-    st.session_state.db_dal.fetch_info()
+    if st.session_state.nonce:
+        user_doc = st.session_state.db_dal.fetch_user_doc_by_nonce()
+        if user_doc:
+            # Set the full user doc in session state
+            st.session_state.user_doc = user_doc
+            # Hardcode role as student for now, as mentioned in TODO
+            if st.session_state.user_doc["role"] is None:
+                st.session_state.user_doc["role"] = "student"
 
 
 def remove_nonce_from_memories():
@@ -2646,15 +2654,6 @@ def register_qr_code():
     print("register_qr_code() completed")
 
 
-def fetch_user_doc_from_db():
-    print("Fetching user doc from db...")
-    user_doc = st.session_state.db.users.find_one(
-        {"username": st.session_state.user_doc["username"]}
-    )
-    print(f"Retrieved user_doc from db: {user_doc}")
-    st.session_state.user_doc = user_doc
-
-
 if __name__ == "__main__":
     args = get_commandline_arguments()
     # set_global_exception_handler(
@@ -2740,15 +2739,14 @@ if __name__ == "__main__":
     else:
         print("Rendering the app")
 
-        fetch_user_doc_from_db()
+        determine_userdoc_from_nonce()
+        remove_nonce_from_memories()
+        # Set the username in session state
+        st.session_state.username = st.session_state.user_doc["username"]
 
         # Toggle sets this to True when the teacher wants to see the student view
         if st.session_state.student_view:
             st.session_state.user_doc["role"] = "student"
-
-        # print(
-        #     f"Logged in as {st.session_state.user_doc['username']} with user the following user doc: {st.session_state.user_doc}"
-        # )
 
         if (
             st.session_state.modules == []
@@ -2763,9 +2761,6 @@ if __name__ == "__main__":
             st.session_state.modules = (
                 st.session_state.db_dal.initialise_course_and_modules()
             )
-
-        determine_username_from_nonce()
-        remove_nonce_from_memories()
 
         check_user_doc_and_add_missing_fields()
 

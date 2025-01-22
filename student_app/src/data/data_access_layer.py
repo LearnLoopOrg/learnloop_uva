@@ -452,3 +452,22 @@ class DatabaseAccess:
             return None
         else:
             return module["status"]
+
+    def fetch_user_doc_by_nonce(self):
+        """
+        Fetches the complete user document from the database using a nonce.
+        Returns the full user doc if found, None otherwise.
+        This is a safer alternative to fetch_info() that returns the complete document
+        instead of modifying session state directly.
+        """
+        if st.session_state.nonce is None:
+            print("Nonce is None, cannot fetch user doc.")
+            return None
+
+        user_doc = st.session_state.db.users.find_one({"nonce": st.session_state.nonce})
+        if user_doc is not None:
+            print("User found with username:", user_doc["username"])
+            return user_doc
+
+        print("No user found with the nonce.")
+        return None
