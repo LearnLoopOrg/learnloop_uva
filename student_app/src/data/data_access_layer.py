@@ -47,19 +47,27 @@ class DatabaseAccess:
         """
         Loads lectures from the database into the session state.
         """
-        course_catalog = self.get_course_catalog(
-            st.session_state.user_doc["university"],
-            st.session_state.user_doc["courses"],
-        )
-        if st.session_state.selected_course is None:
-            st.session_state.selected_course = course_catalog.courses[0].title
-
-        return [
-            module.title
-            for module in self.get_lectures_for_course(
-                st.session_state.selected_course, course_catalog
+        try:
+            course_catalog = self.get_course_catalog(
+                st.session_state.user_doc["university"],
+                st.session_state.user_doc["courses"],
             )
-        ]
+
+            if not course_catalog.courses:
+                return []
+
+            if st.session_state.selected_course is None:
+                st.session_state.selected_course = course_catalog.courses[0].title
+
+            return [
+                module.title
+                for module in self.get_lectures_for_course(
+                    st.session_state.selected_course, course_catalog
+                )
+            ]
+        except IndexError:
+            # Als er geen courses zijn, return een lege lijst
+            return []
 
     def get_course_catalog(
         self,
@@ -74,11 +82,22 @@ class DatabaseAccess:
             {"university_name": university_name}
         )
 
+        if not data:
+            st.error(
+                f"Er zijn geen cursussen gevonden voor {university_name}. Neem contact op met Luc: 06 5873 0061."
+            )
+            return CourseCatalog(courses=[])
+
         # Filter courses based on user_courses
         if user_courses:
             filtered_courses = [
                 course for course in data["courses"] if course["title"] in user_courses
             ]
+            if not filtered_courses:
+                st.error(
+                    f"De cursus(sen) {', '.join(user_courses)} zijn nog niet beschikbaar in de database. Neem contact op met Luc: 06 5873 0061."
+                )
+                return CourseCatalog(courses=[])
         else:
             filtered_courses = data["courses"]
 

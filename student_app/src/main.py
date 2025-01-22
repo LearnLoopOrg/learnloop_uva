@@ -1608,13 +1608,19 @@ def render_sidebar():
             args=("courses",),
             use_container_width=True,
         )
-        if st.session_state.user_doc["role"] == "teacher":
-            st.button(
-                "➕ Creëer module",
-                on_click=set_selected_phase,
-                args=("upload",),
-                use_container_width=True,
-            )
+
+        UU_DEMO = (
+            True  # Weghalen zodra de UU demo is afgerond of de creeer module is gefixt
+        )
+        if not UU_DEMO:
+            if st.session_state.user_doc["role"] == "teacher":
+                st.button(
+                    "➕ Creëer module",
+                    on_click=set_selected_phase,
+                    args=("upload",),
+                    use_container_width=True,
+                )
+
         if st.session_state.selected_phase in {
             "topics",
             "learning",
@@ -1626,7 +1632,6 @@ def render_sidebar():
             "theory-overview",
         }:
             st.button(
-                # f"📖 Modules | {st.session_state.selected_course}",
                 "📖 Terug naar modules",
                 on_click=set_selected_phase,
                 args=("lectures",),
@@ -1674,7 +1679,9 @@ def render_sidebar():
 
         st.button("Log uit", on_click=logout, use_container_width=True)
 
-        st.toggle("Studentweergave", key="student_view")
+        # Only show student view toggle for teachers
+        if st.session_state.user_doc["role"] == "teacher":
+            st.toggle("Studentweergave", key="student_view")
 
 
 def create_default_progress_structure(module):
@@ -1981,26 +1988,37 @@ def login_module():
 
 
 def save_hashed_password_account_to_database():
-    new_password = st.session_state.new_password
-    hashed_password = Hasher.hash(new_password)
-    st.session_state.db.users.insert_one(
-        {
-            "username": st.session_state.new_username,
-            "password": hashed_password,
-            "role": st.session_state.user_role,
-            "university": st.session_state.user_university,
-            "courses": st.session_state.user_courses,
-        }
-    )
+    new_password = st.session_state.get("new_password")
+    if not new_password:
+        st.error("Vul een wachtwoord in.")
+        return False
+
+    print(f"new_password: {new_password}")
+
+    hashed_password = Hasher(passwords=[new_password]).hash(new_password)
+    print(f"hashed_password: {hashed_password}")
+    user_doc = {
+        "username": st.session_state.new_username,
+        "password": hashed_password,
+        "role": st.session_state.user_role,
+        "university": st.session_state.user_university,
+        "courses": st.session_state.user_courses,
+    }
+    st.session_state.db.users.insert_one(user_doc)
 
     st.session_state.logged_in = True
+    # Update user_doc without the password field
     st.session_state.user_doc = {
         "username": st.session_state.new_username,
-        "role": "student",
+        "role": st.session_state.user_role,
         "university": st.session_state.user_university,
+        "courses": st.session_state.user_courses,
     }
 
+    print(f"st.session_state.user_doc: {st.session_state.user_doc}")
+
     st.session_state.admin_logged_in = False
+    return True
 
 
 def new_account_terminal():
@@ -2512,16 +2530,21 @@ def initialise_pages():
 
 
 def qr_code_and_course_and_id_in_query_params():
-    query_params = st.query_params  # Gebruik van st.query_params
-    return (
+    print("Starting qr_code_and_course_and_id_in_query_params() check...")
+    query_params = st.query_params
+    result = (
         "QR_code" in query_params
-        and query_params["course"] == "Plantenbiologie"
+        and "course" in query_params
+        and "id" in query_params
         and query_params["id"] == "f3d0f8c3-c4f5-4b9a-9b7c-7d5e6f1a2b3c"
     )
+    print(f"qr_code_and_course_and_id_in_query_params() returning: {result}")
+    return result
 
 
 # Functie om de volgende beschikbare gebruikersnaam op te halen uit één document
 def get_available_username():
+    print("Starting get_available_username()...")
     print("Getting available username for QR login...")
     users_collection = st.session_state.db.users
     # Haal het document op met alle gebruikersnamen
@@ -2538,29 +2561,54 @@ def get_available_username():
                     },  # Zoek naar de beschikbare gebruikersnaam
                     {"$set": {f"usernames.{username}": "taken"}},  # Werk de status bij
                 )
+                print(f"get_available_username() returning username: {username}")
                 return username  # Retourneer de beschikbare gebruikersnaam
     st.error("Geen beschikbare gebruikersnamen.")
+    print("get_available_username() returning None - no usernames available")
     return None
 
 
 def turn_qr_code_into_username(username):
+    print(f"Starting turn_qr_code_into_username() with username: {username}")
+    # Get course from query parameters
+    course = st.query_params.get("course")
+    if not course:
+        st.error("Geen cursus gevonden in de URL.")
+        print("turn_qr_code_into_username() failed: No course found in URL")
+        return
+
+    # Clear query params immediately after getting the course
+    st.query_params.clear()
+    print(f"Query params cleared after getting course: {course}")
+
     # Sla de username op in het gewenste format {"username": username, "role": None}
     st.session_state.user_role = "student"
     st.session_state.new_username = username
     st.session_state.user_university = "Universiteit Utrecht"
-    st.session_state.user_courses = ["Plantenbiologie"]
-    st.session_state.user_doc = {"username": username, "role": "student"}
-    save_hashed_password_account_to_database()
+    st.session_state.user_courses = [course]
+    st.session_state.user_doc = {
+        "username": username,
+        "role": "student",
+        "university": "Universiteit Utrecht",
+        "courses": [course],
+    }
+
+    if not save_hashed_password_account_to_database():
+        print(
+            "turn_qr_code_into_username() failed: Could not save password to database"
+        )
+        return
 
     st.success(f"Je bent ingelogd als {username}!")
     st.session_state.logged_in = True
     st.session_state.turned_qr_code_into_username = True
-    st.query_params.clear()
 
-    print("QR code omgezet in gebruikersnaam.")
+    print("QR code successfully converted to username")
+    print("turn_qr_code_into_username() completed successfully")
 
 
 def show_username_page(username):
+    print(f"Starting show_username_page() with username: {username}")
     cols = st.columns([1, 1, 1])
 
     with cols[1]:
@@ -2577,7 +2625,9 @@ def show_username_page(username):
             unsafe_allow_html=True,
         )
 
-        st.text_input("Nieuw wachtwoord", type="password", key="new_password")
+        password = st.text_input(
+            "Nieuw wachtwoord", type="password", key="new_password"
+        )
         st.write("\n\n")
         st.write("\n\n")
 
@@ -2585,14 +2635,16 @@ def show_username_page(username):
             "_Ik bevestig dat ik de gebruikersvoorwaarden heb gelezen en dat ik me ervan bewust ben dat LearnLoop **onafhankelijk** opereert van de universiteit, die daarom **niet** verantwoordelijk is voor mogelijke gevolgen van het gebruik van deze tool._"
         )
 
-        # Button verschijnt alleen als checkbox is aangevinkt
-        if checkbox:
+        # Button verschijnt alleen als checkbox is aangevinkt EN er een wachtwoord is ingevuld
+        if checkbox and password:
             st.button(
                 "**Ik ga akkoord en wil doorgaan**",
                 on_click=turn_qr_code_into_username,
                 args=(username,),
                 use_container_width=True,
             )
+        elif checkbox and not password:
+            st.info("Vul een wachtwoord in om door te gaan.")
 
         with st.expander("Gebruikersvoorwaarden", expanded=False):
             st.write("""
@@ -2604,30 +2656,51 @@ def show_username_page(username):
 
     **Door een account aan te maken, bevestig je dat je begrijpt en akkoord gaat dat LearnLoop in deze versie geen officiële samenwerking met de universiteit heeft. De universiteit is daarom niet verantwoordelijk of aansprakelijk voor het gebruik van deze versie.**
     """)
+    print("show_username_page() completed")
 
 
 def register_qr_code():
+    print("Starting register_qr_code()...")
     # Controleer of de queryparameter 'QR_code' aanwezig is
     if qr_code_and_course_and_id_in_query_params():
+        print("QR code parameters found in URL")
+        # Als gebruiker net geregistreerd is via QR, ga door naar de app
+        if st.session_state.get("turned_qr_code_into_username", False):
+            print("User already registered via QR code, proceeding to app")
+            return
+
+        # Reset login state when accessing via QR code
+        if "via_qr_code" not in st.session_state or not st.session_state.via_qr_code:
+            print("Resetting login state for QR code registration")
+            st.session_state.logged_in = False
+            st.session_state.user_doc = None
+            st.session_state.turned_qr_code_into_username = False
+
         st.session_state.via_qr_code = True
 
         if not st.session_state.logged_in:
             if st.session_state.generated_username is None:
+                print("Generating new username for QR code registration")
                 st.session_state.generated_username = get_available_username()
             show_username_page(st.session_state.generated_username)
         else:
+            print(f"User already logged in as {st.session_state.user_doc['username']}")
             st.write(
-                f"Je bent al ingelogd als {st.session_state['username']['username']}."
+                f"Je bent al ingelogd als {st.session_state.user_doc['username']}."
             )
     else:
+        print("No QR code parameters found in URL")
         return
+    print("register_qr_code() completed")
 
 
 def fetch_user_doc_from_db():
     print("Fetching user doc from db...")
-    st.session_state.user_doc = st.session_state.db.users.find_one(
+    user_doc = st.session_state.db.users.find_one(
         {"username": st.session_state.user_doc["username"]}
     )
+    print(f"Retrieved user_doc from db: {user_doc}")
+    st.session_state.user_doc = user_doc
 
 
 if __name__ == "__main__":
@@ -2730,6 +2803,11 @@ if __name__ == "__main__":
             or st.session_state.modules is None
             or st.session_state.selected_course is None
         ):
+            print("About to initialize courses and modules...")
+            print(f"Current user_doc: {st.session_state.user_doc}")
+            print(
+                f"Current session state courses: {st.session_state.user_courses if 'user_courses' in st.session_state else 'Not in session state'}"
+            )
             st.session_state.modules = (
                 st.session_state.db_dal.initialise_course_and_modules()
             )
