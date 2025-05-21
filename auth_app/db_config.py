@@ -10,10 +10,12 @@ def connect_db(use_LL_cosmosdb, database_name="UvA_KNP"):
     """
     Connect to either MongoDB or CosmosDB and ping to check connection.
     """
-    if use_LL_cosmosdb:
-        COSMOS_URI = os.getenv("LL_COSMOS_URI")
-    else:
-        COSMOS_URI = os.getenv("COSMOS_URI")
+    # Always use LL_COSMOS_URI when this configuration is active
+    COSMOS_URI = os.getenv("LL_COSMOS_URI")
+    # if use_LL_cosmosdb:
+    #     COSMOS_URI = os.getenv("LL_COSMOS_URI")
+    # else:
+    #     COSMOS_URI = os.getenv("COSMOS_URI")
 
     db_client = MongoClient(COSMOS_URI, tlsCAFile=certifi.where())
 

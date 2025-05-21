@@ -28,6 +28,7 @@ from slack_sdk import WebClient
 import streamlit_authenticator as stauth
 from streamlit_authenticator import Hasher
 from streamlit_authenticator import Authenticate
+import httpx  # Add this import if not already present near other imports
 
 # Must be called first
 try:
@@ -117,30 +118,55 @@ def exception_handler(e: BaseException):
 
 
 # Cache for 5 minutes the topics list
-@st.cache_resource(ttl=300)
+# @st.cache_resource(ttl=300)
 def connect_to_openai() -> OpenAI:
-    if st.session_state.openai_model == "learnloop-4o":
-        print("Using UvA instance of OpenAI GPT-4o")
+    # global args  # Ensure args is accessible
 
-        OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-        OPENAI_API_ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT")
-    else:
-        print("Using LearnLoop Azure instance of OpenAI GPT-4o")
-        if st.session_state.use_keyvault:
-            OPENAI_API_KEY = AzureUtils.get_secret(
-                "LL-AZURE-OPENAI-API-KEY", "lluniappkv"
-            )
-            OPENAI_API_ENDPOINT = AzureUtils.get_secret(
-                "LL-AZURE-OPENAI-API-ENDPOINT", "lluniappkv"
-            )
+    # Temporarily hardcoded to True to always use personal OpenAI key
+    force_use_personal_key = True
+
+    if force_use_personal_key:  # Was: if args.use_personal_openai_key:
+        print("Using Personal OpenAI API Key (hardcoded).")
+        return OpenAI()
+    # This else block will now effectively be ignored due to the hardcoding above,
+    # but is kept for easier revert if needed.
+    else:  # Use Azure OpenAI
+        if args.use_LL_openai_deployment:
+            print("Using LearnLoop instance of OpenAI GPT-4o (Azure)")
+            if args.use_keyvault:
+                OPENAI_API_KEY = AzureUtils.get_secret(
+                    "LL-AZURE-OPENAI-API-KEY", "lluniappkv"
+                )
+                OPENAI_API_ENDPOINT = AzureUtils.get_secret(
+                    "LL-AZURE-OPENAI-API-ENDPOINT", "lluniappkv"
+                )
+            else:
+                OPENAI_API_KEY = os.getenv("LL_AZURE_OPENAI_API_KEY")
+                OPENAI_API_ENDPOINT = os.getenv("LL_AZURE_OPENAI_API_ENDPOINT")
         else:
-            OPENAI_API_KEY = os.getenv("LL_AZURE_OPENAI_API_KEY")
-            OPENAI_API_ENDPOINT = os.getenv("LL_AZURE_OPENAI_API_ENDPOINT")
-    return AzureOpenAI(
-        api_key=OPENAI_API_KEY,
-        api_version="2024-04-01-preview",
-        azure_endpoint=OPENAI_API_ENDPOINT,
-    )
+            print("Using UvA instance of OpenAI GPT-4o (Azure)")
+            if args.use_keyvault:
+                OPENAI_API_KEY = AzureUtils.get_secret(
+                    "UVA-AZURE-OPENAI-API-KEY", "lluniappkv"
+                )
+                OPENAI_API_ENDPOINT = AzureUtils.get_secret(
+                    "UVA-AZURE-OPENAI-API-ENDPOINT", "lluniappkv"
+                )
+            else:
+                OPENAI_API_KEY = os.getenv("AZURE_OPENAI_API_KEY")
+                OPENAI_API_ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT")
+
+        if not OPENAI_API_KEY or not OPENAI_API_ENDPOINT:
+            error_message = "Azure OpenAI API key or endpoint niet gevonden in .env bestand of Key Vault."
+            st.error(error_message)
+            print(f"ERROR: {error_message}")
+            return None
+
+        return AzureOpenAI(
+            api_key=OPENAI_API_KEY,
+            api_version="2024-04-01-preview",  # This might need to be conditional if not using Azure
+            azure_endpoint=OPENAI_API_ENDPOINT,
+        )
 
 
 def upload_progress():
@@ -1478,6 +1504,8 @@ def render_selected_page():
     Determines what type of page to display based on which module the user selected.
     """
     print("Selected_module: ", st.session_state.selected_module)
+
+    print("Selected_phase: ", st.session_state.selected_phase)
     # Probeer de content op te halen van de geselcteerde module
     try:
         st.session_state.page_content = st.session_state.db_dal.fetch_module_content(
@@ -1947,7 +1975,13 @@ def save_hashed_password_account_to_database():
 
     print(f"new_password: {new_password}")
 
-    hashed_password = Hasher(passwords=[new_password]).hash(new_password)
+    # Correctly hash the password using streamlit-authenticator
+    # Hasher().generate() returns a list of hashed passwords.
+    hashed_passwords = Hasher([new_password]).generate()
+    hashed_password = hashed_passwords[
+        0
+    ]  # Get the single hashed password from the list
+
     print(f"hashed_password: {hashed_password}")
     user_doc = {
         "username": st.session_state.new_username,
@@ -2092,7 +2126,7 @@ def render_login_page():
 
             st.markdown(html_content, unsafe_allow_html=True)
 
-            USERNAME_LOGIN_ENABLED = False
+            USERNAME_LOGIN_ENABLED = True
 
             if USERNAME_LOGIN_ENABLED:
                 st.divider()
@@ -2218,6 +2252,12 @@ def get_commandline_arguments() -> argparse.Namespace:
         default=False,
     )
     parser.add_argument(
+        "--use_personal_openai_key",
+        help="Set to True to use a personal OpenAI API key (from PERSONAL_OPENAI_API_KEY in .env)",
+        action="store_true",
+        default=False,
+    )
+    parser.add_argument(
         "--use_LL_cosmosdb",
         help="Set to True to use the LearnLoop CosmosDB instance, otherwise use the UvA's",
         action="store_true",
@@ -2288,7 +2328,7 @@ def set_correct_settings_for_deployment_type():
         print("App draait op uva servers, gebruik uva path.")
         base_path = "src/"
         deployment_type = "uva_servers"
-        args.no_login_page = False
+        # args.no_login_page = False # Verwijder of commentarieer deze regel
 
     st.session_state.deployment_type = deployment_type
 
@@ -2661,11 +2701,25 @@ if __name__ == "__main__":
     # )
 
     no_login_page = args.no_login_page
-    if no_login_page:
+    no_login_page = True
+    test_username = "Tom Kloeck"
+    if no_login_page or test_username == "Tom Kloeck":
         st.session_state.logged_in = True
         st.session_state.db_name = "LearnLoop"
-        st.session_state.user_doc = {"username": args.test_username, "role": "student"}
-        st.session_state.selected_phase = args.run_page
+        # Ensure 'university' is set, default to "Universiteit Utrecht"
+        # if a more specific university isn't available from args or other logic for this user.
+        st.session_state.user_doc = {
+            "username": test_username,
+            "role": "teacher",  # Assuming teacher role for Tom Kloeck, adjust if needed for other test_usernames
+            "university": "Universiteit Utrecht",
+            "courses": [
+                "Celbiologie",
+            ],  # Example courses, adjust as needed
+        }
+
+    # set the user doc in session state to the query parameter role if it is present
+    if st.query_params.get("role"):
+        st.session_state.user_doc["role"] = st.query_params.get("role")
 
     args, st.session_state.base_path = set_correct_settings_for_deployment_type()
 
